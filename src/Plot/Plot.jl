@@ -13,7 +13,6 @@ using MultipleScattering
 import Plots: plot, plot!, pyplot, cgrad
 import PlotUtils: ColorGradient
 import ColorTypes: RGBA
-pyplot()
 
 include("domain.jl")
 include("model.jl")
