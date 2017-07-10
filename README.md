@@ -39,14 +39,18 @@ using MultipleScattering.Plot
 plot_model(model)
 ```
 
-This is rather abstract, for some context, use the `plot_field` function. This function runs an identical model, but measures the field at lots of points in the domain. This way we can get an understanding of what is happening (although only for one particular wavenumber).
+This is a rather abstract plot, for some context, use the `plot_field` function.
+`plot_field` runs an identical model, but measures the field at lots of points 
+in the domain.
+This way we can get an understanding of what is happening for one particular 
+wavenumber.
 
 ```julia
 plot_field(model,0.3)
 ```
 
 ## Less basic example
-However, there are a great deal of defaults implicit in this statment.
+However, there are a great deal of defaults implicit in this statement.
 For finer grain control of the problem, we first construct our set of particles,
 define their positions, radii and give them material properties
 ```julia
@@ -60,7 +64,12 @@ particles[1] = Particle{Float64}([0.2,0.8],0.1,c,ρ)
 particles[2] = Particle{Float64}([0.2,-0.8],0.2,c,ρ)
 ```
 
-We then define
+We can then run this model, and plot the resultant field:
+```julia
+two_particle_model = FrequencyModel(particles,k_arr)
+
+plot_field(two_particle_model,0.5)
+```
 
 This library was restructured from one written by Artur Gower and Jonathan 
 Deakin.
