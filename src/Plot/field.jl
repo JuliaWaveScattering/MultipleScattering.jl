@@ -50,13 +50,13 @@ function plot_field_model{T}(field_model::FrequencyModel{T}, k::T; res=10, xres=
         max_value_to_plot = maximum(resp_fnc(response_mat))
         min_value_to_plot = minimum(resp_fnc(response_mat))
         zero_point = -min_value_to_plot / (max_value_to_plot - min_value_to_plot) 
-        if zero_point < 1 && zero_point > 0
+        if (zero_point <= 1) && (zero_point >= 0)
             # If we can, produce a nice zero centred colour scheme, this should work but it doesn't
-            WaveyColours = PlotUtils.ColorGradient(
+            WaveyColours = ColorGradient(
                 [
-                    ColorTypes.RGBA{Float64}(1, 0, 0, 1),
-                    ColorTypes.RGBA{Float64}(1, 1, 1, 1),
-                    ColorTypes.RGBA{Float64}(0, 0, 1, 1)
+                    RGBA{Float64}(1, 0, 0, 1),
+                    RGBA{Float64}(1, 1, 1, 1),
+                    RGBA{Float64}(0, 0, 1, 1)
                 ],
                 [0.0, zero_point, 1.0]
             )

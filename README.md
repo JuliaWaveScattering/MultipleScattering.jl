@@ -1,9 +1,7 @@
 # MultipleScattering
 
 [![Build Status](https://travis-ci.org/jondea/MultipleScattering.jl.svg?branch=master)](https://travis-ci.org/jondea/MultipleScattering.jl)
-
 [![Coverage Status](https://coveralls.io/repos/github/jondea/MultipleScattering.jl/badge.svg?branch=master)](https://coveralls.io/github/jondea/MultipleScattering.jl?branch=master)
-
 [![codecov.io](http://codecov.io/github/jondea/MultipleScattering.jl/coverage.svg?branch=master)](http://codecov.io/github/jondea/MultipleScattering.jl?branch=master)
 
 A Julia library for simulating, processing and plotting acoustic data from
@@ -14,7 +12,7 @@ The library uses the multipole method to solve the Helmholtz equation
 In short, the method solves the problem with a series of Hankel functions 
 positioned at each particle, where the coefficents are picked so that the 
 boundary conditions are satisfied on the particle boundaries.
-For a more lucid and complete explanation, see [Martin (1995)](https://www.google.co.uk/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwiOxbXQyPTUAhUFLFAKHTD7Ah8QFggtMAA&url=https%3A%2F%2Fpdfs.semanticscholar.org%2F8bd3%2F38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf&usg=AFQjCNH8qfr55Z4ySeHt1vEan4pTwAUL2g).
+For a more lucid and complete explanation, see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf).
 
 This method is particularly efficient at solving acoustic problems with lots of
 circular scatterers set in an infinite domain.
@@ -29,7 +27,10 @@ using MultipleScattering
 ### Run
 The basic way to construct and compute a model is
 ```julia
-FrequencyModel(volfrac,radius,collect(linspace(0.01,1.0,100)))
+volfrac = 0.01
+radius = 1.0
+k_arr = collect(linspace(0.01,1.0,100))
+model = FrequencyModel(volfrac,radius,k_arr)
 ```
 ### Plot
 The package also provides an optional submodule with a set of functions for plotting models after they have been run.
