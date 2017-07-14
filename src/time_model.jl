@@ -1,8 +1,8 @@
 
 type TimeModel{T}
-    simulation::FrequencyModel{T}
+    frequency_model::FrequencyModel{T}
     response::Matrix{Complex{T}}
-    time::Vector{T}
+    time_arr::Vector{T}
 end
 
 "Convert a frequency model into a time model using the inverse fourier transform"
