@@ -56,6 +56,7 @@ end
 
 "Take model parameters, run model and populate the response array."
 function generate_responses!{T}(model::FrequencyModel{T},k_arr::Vector{T})
+    model.response = Matrix{Complex{T}}(size(k_arr, 1), size(model.listener_positions, 2))
     # Map each k in k_arr over a the response function
     for i=1:length(k_arr)
         model.response[i,:] = response(model,k_arr[i])
