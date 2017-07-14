@@ -28,18 +28,18 @@ function single_scatter_test()
 
     resp1 = [u1(listener, k) for k in k_arr];
     resp2 = [u2(listener, k) for k in k_arr];
-    
+
     # Add on incoming wave for the total solution
     resp1 += [uin(listener, k) for k in k_arr];
     resp2 += [uin(listener, k) for k in k_arr];
-    
+
     # Using the MultipleScattering package
     model1 = FrequencyModel([Particle(xp;r=a1)], collect(k_arr);
                             listener_positions=listener,
                             source_direction=[1.0, 0.0],
                             hankel_order=M1
     );
-    
+
     # Build a similar model with a different radius and hankel_order
     model2 = FrequencyModel([Particle(xp;r=a2)], collect(k_arr);
                             listener_positions=listener,

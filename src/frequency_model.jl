@@ -1,6 +1,8 @@
 
 type FrequencyModel{T <: AbstractFloat}
     shape::Shape
+    ρ::T #the medium's density
+    c::Complex{T} #the medium's phase velocity
     particles::Vector{Particle{T}}
     response::Matrix{Complex{T}}
     hankel_order::Int

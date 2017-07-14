@@ -16,15 +16,16 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
     if length(seed) == 0
         seed = Base.Random.make_seed()
     end
-    
+
     particles = random_particles(volfrac, radius, shape, seed)
 
     if isa(listener_positions,Vector)
         listener_positions = reshape(listener_positions, 2, 1)
     end
-    
+
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencyModel{T}(shape, particles, response, hankel_order, k_arr, listener_positions, source_direction, seed)
+    model = FrequencyModel{T}(shape, ρ, c, particles, response, hankel_order,
+                              k_arr, listener_positions, source_direction, seed)
     generate_responses!(model, k_arr)
     return model
 end
@@ -46,9 +47,9 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
     if isa(listener_positions, Vector)
         listener_positions = reshape(listener_positions, 2, 1)
     end
-    
+
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencyModel{T}(shape, particles, response, hankel_order, k_arr, listener_positions, source_direction, seed)
+    model = FrequencyModel{T}(shape, ρ, c, particles, response, hankel_order, k_arr, listener_positions, source_direction, seed)
     generate_responses!(model, k_arr)
     return model
 end
