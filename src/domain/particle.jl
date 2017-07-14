@@ -36,6 +36,11 @@ function mean_radius{T}(particles::Vector{Particle{T}})
     mapreduce(radius_fnc, +, particles) / length(particles)
 end
 
+function std_radius{T}(particles::Vector{Particle{T}})
+    radii = [p.r for p in particles]
+    std(radii)
+end
+
 function mean_volume{T}(particles::Vector{Particle{T}})
     volume(particles) / length(particles)
 end

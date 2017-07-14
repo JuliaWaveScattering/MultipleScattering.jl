@@ -4,7 +4,7 @@ export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
        name, boundary_functions, 
        Particle, volume, array_of_particles, random_particles, isequal,
        mean_radius, mean_volume,
-       FrequencyModel, volfrac, generate_responses!,
+       FrequencyModel, calculate_volfrac, generate_responses!,
        Moments,
        TimeModel
 
