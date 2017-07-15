@@ -6,16 +6,22 @@ type Rectangle{T <: AbstractFloat} <: Shape
     topright::Vector{T}
 end
 
+"Generates a rectangle for Specified volfrac, radius and num_particles"
+function Rectangle{T}(volfrac::Number, radius::T, num_particles::Int)
+    w = sqrt(num_particles*radius^2*pi/volfrac)
+    Rectangle([0.0,-w/2], [w,w/2])
+end
+
 "Generates a rectangle which contains all the particles"
 function Rectangle{T}(particles::Vector{Particle{T}})
     temp_max(M) = maximum(M, 2)
     topright_particle(p) = p.x .+ p.r
     topright = mapreduce(topright_particle, temp_max, particles)
-    
+
     bottomleft_particle(p) = p.x .- p.r
     temp_min(M) = minimum(M, 2)
     bottomleft = mapreduce(bottomleft_particle, temp_min, particles)
-    
+
     Rectangle(bottomleft, topright)
 end
 
@@ -24,7 +30,7 @@ function inside{T}(shape::Rectangle{T}, particle::Particle{T})
 end
 
 function volume{T}(shape::Rectangle{T})
-    return prod(shape.topright .- shape.bottomleft) 
+    return prod(shape.topright .- shape.bottomleft)
 end
 
 # Rectangles already are bounding boxes
@@ -83,7 +89,7 @@ function boundary_functions{T}(shape::Circle{T})
 end
 
 # =============================== TimeOfFlight =================================
-# We define a shape where all particles are less than time away from 
+# We define a shape where all particles are less than time away from
 # listener_position, but also with a positive x coordinate (circle segment).
 type TimeOfFlight{T <: AbstractFloat} <: Shape
     listener_position::Vector{T}

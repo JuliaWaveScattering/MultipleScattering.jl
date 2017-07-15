@@ -1,15 +1,17 @@
 """
 Constructor which takes volfrac, particle radius and k_arr along with a load of
 optional keyword arguments. This constructor automtically generates random
-particles inside a shape (default to TimeOfFlight) then generates the response.
+particles inside a shape (default to a square Rectangle with 4 particles) then generates the response.
 """
 function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         source_direction=[one(T), zero(T)],
         c = one(Complex{T}),
         ρ = one(T),
-        time = 40 * one(T),
+        # time = 40 * one(T),
         listener_positions = [-10one(T), zero(T)],
-        shape = TimeOfFlight{T}(listener_positions, time),
+        # shape = TimeOfFlight{T}(listener_positions, time),
+        num_particles = 4,
+        shape = Rectangle{T}(volfrac, radius, num_particles),
         hankel_order = 3,
         seed = Vector{UInt32}(0)
     )
