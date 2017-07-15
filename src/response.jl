@@ -27,8 +27,8 @@ function scattered_waves_at{T}(model, k::T, coefficient_matrix::Matrix{Complex{T
     θs  = [atan2(x[2] - p.x[2], x[1] - p.x[1]) for p in model.particles]
 
     scattered_from(i) = sum(-Nh:Nh) do m
-        coefficient_matrix[m+Nh+1, i] * hankelh1(m, krs[i]) * exp(im * m * θs[i])
-    end
+          coefficient_matrix[m+Nh+1, i] * hankelh1(m, krs[i]) * exp(im * m * θs[i])
+      end
 
     #Sum wave scattered from each particle then divide by the incident wave
     return sum(scattered_from, eachindex(model.particles)) * exp(-im * k * dot(x, model.source_direction))
@@ -40,19 +40,19 @@ function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix:
     Nh = model.hankel_order
     p = model.particles[i]
     γ = model.c/p.c
+    # If the particle is impenetrable then return zero(T)
+    if abs(p.c) == T(Inf) || abs(p.ρ) == T(Inf) || abs(model.ρ) == zero(T)
+      return zero(T)
+    end
     internal_coefficient(m) = (coefficient_matrix[m+Nh+1,i]/besselj(m, γ*k*p.r))*
         (hankelh1(m,γ*k*p.r) - besselj(m,k*p.r)/Zn(model,p,k,m))
 
-    # If the particle is impenetrable then return zero(T)
-    if abs(p.c) == T(Inf) || abs(p.ρ) == T(Inf) || abs(model.ρ) == zero(T)
-        return zero(T)
-    else
-        R = norm(x-p.x)
-        Θ = atan2(x[2] - p.x[2], x[1] - x[1])
-        return sum(-Nh:Nh) do m
-                internal_coefficient(m)*besselj(m,γ*k*R)*exp(im*m*Θ)
-            end
-    end
+    R = norm(x-p.x)
+    Θ = atan2(x[2] - p.x[2], x[1] - p.x[1])
+    return sum(-Nh:Nh) do m
+            internal_coefficient(m)*besselj(m,γ*k*R)*exp(im*m*Θ)
+      end
+
 end
 
 function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)
