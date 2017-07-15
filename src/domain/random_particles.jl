@@ -1,25 +1,35 @@
 const MAX_ATTEMPTS_TO_FIT_PARTICLE = 2000
 
 "Generate a non-overlapping Vector of N random particles of radius r that fit inside the shape passed in"
-function random_particles(volfrac::Number,a::Number,shape::Shape,seed::Vector{UInt32}=Base.Random.make_seed())
+function random_particles{T}(volfrac::Number,a::T,shape::Shape;
+        c=one(Complex{T}), ρ=zero(T),
+        seed::Vector{UInt32}=Base.Random.make_seed()
+    )
     if volfrac > 0.7854
         error("Specified volume fraction is larger than optimal packing of circles.")
     end
     N = Int(round(volume(shape) / (π * a^2) * volfrac))
-    particles = array_of_particles(N, a)
-    random_particles!(particles, N, shape, seed)
+    particles = [Particle{typeof(a)}(zeros(T, 2), a, c, ρ) for i=1:N]
+    random_particles!(particles, shape; seed=seed)
     return particles
 end
 
 "Generate a non-overlapping Vector of N random particles of radius r that fit inside the shape passed in"
-function random_particles(N::Int, a::Number, shape::Shape, seed::Vector{UInt32}=Base.Random.make_seed())
-    particles = Particles{typeof(a)}(N, a)
-    random_particles!(particles, N, shape, seed)
+function random_particles{T}(N::Int, a::T, shape::Shape;
+        c=one(Complex{T}), ρ=zero(T),
+        seed::Vector{UInt32}=Base.Random.make_seed()
+    )
+    # particles = Particles{typeof(a)}(N, a)
+    particles = [Particle{typeof(a)}(zeros(T, 2), a, c, ρ) for i=1:N]
+    random_particles!(particles, shape; seed=seed)
     return particles
 end
 
 "Place N non-overlapping random particles that fit inside the shape passed in. Modifies the particles Vector."
-function random_particles!{T}(particles::Vector{Particle{T}}, N::Int, shape::Shape, seed::Vector{UInt32})
+function random_particles!{T}(particles::Vector{Particle{T}}, shape::Shape;
+        N::Int=length(particles),
+        seed::Vector{UInt32}=Base.Random.make_seed()
+    )
     randgen = MersenneTwister(seed)
     # separation distance, the minimum distance between the centres of particles relative to the two radiuses
     separation_ratio = 1.05
@@ -52,7 +62,7 @@ function random_particles!{T}(particles::Vector{Particle{T}}, N::Int, shape::Sha
             end
             num_attempts += 1
             if num_attempts > MAX_ATTEMPTS_TO_FIT_PARTICLE
-                error("Tried to place a scatterer $MAX_ATTEMPTS_TO_FIT_PARTICLE times unsuccessfully, just not enough room!")
+                error("Tried to place a scatterer $MAX_ATTEMPTS_TO_FIT_PARTICLE times unsuccessfully, just not enough room! You could try increaseing MAX_ATTEMPTS_TO_FIT_PARTICLE")
             end
         end
     end

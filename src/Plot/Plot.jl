@@ -1,6 +1,6 @@
 # """
 # Submodule to plot models built with MultipleScattering. Is a submodule due to
-# size of package Plots, which is a requirement 
+# size of package Plots, which is a requirement
 # """
 module Plot
 

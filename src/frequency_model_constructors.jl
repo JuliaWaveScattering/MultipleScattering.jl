@@ -7,11 +7,11 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         source_direction=[one(T), zero(T)],
         c = one(Complex{T}),
         ρ = one(T),
-        # time = 40 * one(T),
         listener_positions = [-10one(T), zero(T)],
+        # time = 40 * one(T),
         # shape = TimeOfFlight{T}(listener_positions, time),
         num_particles = 4,
-        shape = Rectangle{T}(volfrac, radius, num_particles),
+        shape = Rectangle(volfrac, radius, num_particles),
         hankel_order = 3,
         seed = Vector{UInt32}(0)
     )
@@ -19,7 +19,7 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         seed = Base.Random.make_seed()
     end
 
-    particles = random_particles(volfrac, radius, shape, seed)
+    particles = random_particles(volfrac, radius, shape; seed = seed)
 
     if isa(listener_positions,Vector)
         listener_positions = reshape(listener_positions, 2, 1)

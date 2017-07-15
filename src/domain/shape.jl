@@ -7,7 +7,7 @@ type Rectangle{T <: AbstractFloat} <: Shape
 end
 
 "Generates a rectangle for Specified volfrac, radius and num_particles"
-function Rectangle{T}(volfrac::Number, radius::T, num_particles::Int)
+function Rectangle{T}(volfrac::Number, radius::T, num_particles::Number)
     w = sqrt(num_particles*radius^2*pi/volfrac)
     Rectangle([0.0,-w/2], [w,w/2])
 end

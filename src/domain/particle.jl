@@ -24,12 +24,8 @@ end
 
 "A kind of constructor for an array of homogenous particles"
 function array_of_particles{T}(N::Int, a::T; c=one(Complex{T}), ρ=zero(T))
-    particles = Vector{Particle{T}}(N)
-    for i=1:N
-        particles[i] = Particle(zeros(T, 2), a, c, ρ)
-    end
-    return particles
-end
+    return [Particle(zeros(T, 2), a, c, ρ) for i=1:N]
+end # Art: I'm not sure this function is necessary
 
 function mean_radius{T}(particles::Vector{Particle{T}})
     radius_fnc(particle) = particle.r
