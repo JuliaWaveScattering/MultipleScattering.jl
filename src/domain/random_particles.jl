@@ -1,7 +1,7 @@
 const MAX_ATTEMPTS_TO_FIT_PARTICLE = 2000
 
 "Generate a non-overlapping Vector of N random particles of radius r that fit inside the shape passed in"
-function random_particles{T}(volfrac::Number,a::T,shape::Shape;
+function random_particles{T}(volfrac::Number, a::T, shape::Shape;
         c=one(Complex{T}), ρ=zero(T),
         seed::Vector{UInt32}=Base.Random.make_seed()
     )
@@ -15,7 +15,7 @@ function random_particles{T}(volfrac::Number,a::T,shape::Shape;
 end
 
 "Generate a non-overlapping Vector of N random particles of radius r that fit inside the shape passed in"
-function random_particles{T}(N::Int, a::T, shape::Shape;
+function random_particles{T}(N::Int, a::T, shape::Shape = Rectangle(0.1, a, N);
         c=one(Complex{T}), ρ=zero(T),
         seed::Vector{UInt32}=Base.Random.make_seed()
     )

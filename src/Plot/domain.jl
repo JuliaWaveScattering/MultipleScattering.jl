@@ -4,7 +4,7 @@ function plot_particles{T}(particles::Vector{Particle{T}}; newplot=true)
     # Make vector of function pointers for each particle, which will draw a circle centred at said particle
     P = length(particles)
     if newplot plot() end
-    
+
     if P==0
         warn("There are no particles to draw")
         plot!()
@@ -29,14 +29,14 @@ end
 # "Draw the listener as a pacman with a radius the mean of all the particles"
 function plot_listeners{T}(model::FrequencyModel{T}; newplot=true)
     if newplot plot() end
-    
+
     if length(model.particles)==0
-        warn("There are no particles, the listener will be drawn with a radius of 1.0")
-        r = 1.0
+        warn("There are no particles, the listener will be drawn with a radius of 0.5")
+        r = .5
     else
-        r = mean_radius(model.particles)
+        r = mean_radius(model.particles)/2.0
     end
-    
+
     for i=1:size(model.listener_positions, 2)
         x_listener_boundary(t) = r * cos(t) + model.listener_positions[1, i]
         y_listener_boundary(t) = r * sin(t) + model.listener_positions[2, i]
@@ -58,14 +58,14 @@ function plot_domain{T}(model::FrequencyModel{T}; newplot=true, particles_flag=t
     if particles_flag
         plot_particles(model; newplot=false)
     end
-    
+
     if shape_flag
         plot_shape(model.shape)
     end
-    
+
     if listeners_flag
         plot_listeners(model; newplot=false)
     end
-    
+
     plot!()
 end

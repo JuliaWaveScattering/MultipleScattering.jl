@@ -26,8 +26,12 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
     end
 
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencyModel{T}(shape, ρ, c, particles, response, hankel_order,
-                              k_arr, listener_positions, source_direction, seed)
+    model = FrequencyModel{T}(
+        shape, ρ, c, particles,
+        response, hankel_order,
+        k_arr, listener_positions,
+        source_direction, seed
+    )
     generate_responses!(model, k_arr)
     return model
 end
@@ -40,7 +44,6 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
         source_direction = [one(T), zero(T)],
         c = one(Complex{T}),
         ρ = one(T),
-        time = 40 * one(T),
         listener_positions = reshape([-10one(T), zero(T)], 2, 1),
         shape = Rectangle(particles),
         hankel_order = 3,
@@ -51,7 +54,12 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
     end
 
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencyModel{T}(shape, ρ, c, particles, response, hankel_order, k_arr, listener_positions, source_direction, seed)
+    model = FrequencyModel{T}(
+        shape, ρ, c, particles,
+        response, hankel_order,
+        k_arr, listener_positions,
+        source_direction, seed
+    )
     generate_responses!(model, k_arr)
     return model
 end

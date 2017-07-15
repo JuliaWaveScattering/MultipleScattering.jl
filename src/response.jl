@@ -26,9 +26,9 @@ function scattered_waves_at{T}(model, k::T, coefficient_matrix::Matrix{Complex{T
     krs = [k*norm(x - p.x) for p in model.particles]
     θs  = [atan2(x[2] - p.x[2], x[1] - p.x[1]) for p in model.particles]
 
-    scattered_from(i) = sum(
-        m -> coefficient_matrix[m+Nh+1, i] * hankelh1(m, krs[i]) * exp(im * m * θs[i])
-    , -Nh:Nh)
+    scattered_from(i) = sum(-Nh:Nh) do m
+        coefficient_matrix[m+Nh+1, i] * hankelh1(m, krs[i]) * exp(im * m * θs[i])
+    end
 
     #Sum wave scattered from each particle then divide by the incident wave
     return sum(scattered_from, eachindex(model.particles)) * exp(-im * k * dot(x, model.source_direction))
@@ -72,7 +72,7 @@ function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)
 
     # hankel_order is the order of Hankel function (2hankel_order +1 = # of unknowns) for each particle
     # deciding the type and strength of the scatterer is in the function Zn.
-    Zn_mat = [ Zn(model,p,k, m) for m=-model.hankel_order:model.hankel_order, p in model.particles]
+    Zn_mat = [Zn(model,p,k, m) for m=-model.hankel_order:model.hankel_order, p in model.particles]
 
     # Pre-calculate these to save doing it for all n and m
     # matrix of angles of the vectors pointing from particle p to particle s

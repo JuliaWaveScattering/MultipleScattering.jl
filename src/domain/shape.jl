@@ -14,13 +14,11 @@ end
 
 "Generates a rectangle which contains all the particles"
 function Rectangle{T}(particles::Vector{Particle{T}})
-    temp_max(M) = maximum(M, 2)
     topright_particle(p) = p.x .+ p.r
-    topright = mapreduce(topright_particle, temp_max, particles)
+    topright = mapreduce(topright_particle, max, particles)
 
     bottomleft_particle(p) = p.x .- p.r
-    temp_min(M) = minimum(M, 2)
-    bottomleft = mapreduce(bottomleft_particle, temp_min, particles)
+    bottomleft = mapreduce(bottomleft_particle, min, particles)
 
     Rectangle(bottomleft, topright)
 end
