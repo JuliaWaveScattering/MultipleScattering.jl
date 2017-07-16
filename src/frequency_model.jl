@@ -9,6 +9,7 @@ type FrequencyModel{T <: AbstractFloat}
     k_arr::Vector{T}
     # Each column in this matrix is a vector at which we listen for the response
     listener_positions::Matrix{T}
+    source_position::Vector{T}
     source_direction::Vector{T}
     seed::Vector{UInt32}
 end

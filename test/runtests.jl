@@ -48,6 +48,12 @@ using Base.Test
         @test single_scatter_test()
     end
 
+    @testset "test boundary conditions" begin
+        include("boundary_conditions.jl")
+        # Test boundary conditions for 4 particles with random properties and positions.
+        @test boundary_conditions_test()
+    end
+
     @testset "Plot test" begin
         using MultipleScattering.Plot
         # Just run it to see if we have any errors (yes thats a very low bar)

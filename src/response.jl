@@ -1,4 +1,4 @@
-# This is where the actual maths happens
+## This is where the actual maths happens
 
 function response{T}(model::FrequencyModel{T}, k::T)
     coefficient_matrix = scattering_coefficients_matrix(model, k)
@@ -12,9 +12,11 @@ function response_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix::Matr
     # check if x is inside a scatterer
     inside_p(p) = norm(x - p.x) < p.r
     i = findfirst(inside_p, model.particles)
+    # one(Complex{T}) is the incident wave when emitted and measured at x
     if i ==0
-        # one(Complex{T}) is the incident wave when emitted and measured at x
-        return one(Complex{T}) + scattered_waves_at(model, k, coefficient_matrix, x)
+        return exp(im * k * dot(x - model.source_position, model.source_direction)) +
+          scattered_waves_at(model, k, coefficient_matrix, x)
+        # one(Complex{T}) + scattered_waves_at(model, k, coefficient_matrix, x) * exp(-im * k * dot(x, model.source_direction))
     else
         return internal_wave_at(model, k, coefficient_matrix, x, i)
     end
@@ -29,9 +31,8 @@ function scattered_waves_at{T}(model, k::T, coefficient_matrix::Matrix{Complex{T
     scattered_from(i) = sum(-Nh:Nh) do m
           coefficient_matrix[m+Nh+1, i] * hankelh1(m, krs[i]) * exp(im * m * θs[i])
       end
-
-    #Sum wave scattered from each particle then divide by the incident wave
-    return sum(scattered_from, eachindex(model.particles)) * exp(-im * k * dot(x, model.source_direction))
+    #Sum wave scattered from each particle
+    return sum(scattered_from, eachindex(model.particles))
 end
 
 "the internal wave exists only within a particle and is the total response"
@@ -45,7 +46,7 @@ function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix:
       return zero(T)
     end
     internal_coefficient(m) = (coefficient_matrix[m+Nh+1,i]/besselj(m, γ*k*p.r))*
-        (hankelh1(m,γ*k*p.r) - besselj(m,k*p.r)/Zn(model,p,k,m))
+        (hankelh1(m,k*p.r) - besselj(m,k*p.r)/Zn(model,p,k,m))
 
     R = norm(x-p.x)
     Θ = atan2(x[2] - p.x[2], x[1] - p.x[1])
@@ -95,7 +96,7 @@ function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)
     L_mat = reshape(L_mat, (B, B))
 
     # Vector which represents the inncident wave in the k direction i.e. exp(im* dot(k,x)) for each basis function
-    ψ = reshape([exp(im * (k * dot(p.x, model.source_direction) + m * pi / 2)) for m=-Nh:Nh, p in model.particles], B)
+    ψ = reshape([exp(im * (k * dot(p.x - model.source_position, model.source_direction) + m * pi / 2)) for m=-Nh:Nh, p in model.particles], B)
 
     # the scattering coefficients A_mat in matrix, A[1,2] multiplies hankelh1(1, k*r) contributing to the 2nd particle scattered wave
     A_mat = reshape(-(L_mat + eye(B)) \ ψ, (H, P))
