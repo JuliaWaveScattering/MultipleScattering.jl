@@ -34,12 +34,13 @@ function random_particles!{T}(particles::Vector{Particle{T}}, shape::Shape;
     # separation distance, the minimum distance between the centres of particles relative to the two radiuses
     separation_ratio = 1.05
     # The factor 2.1radius is seen in several papers (therefore ratio of 1.05)
-    println("Generating $N particles with mean radius $(mean_radius(particles)) and total volume of $(volume(particles)) in a shape of volume $(volume(shape)).")
 
     shape_bounding_box = bounding_box(shape)
     topright = shape_bounding_box.topright
     bottomleft = shape_bounding_box.bottomleft
-    println("Using a bounding box with volume $(volume(shape_bounding_box))")
+    
+    @printf("Generating %d randomly positioned particles with mean radius of %0.5g. Total volume of particles is %0.5g in a %s of volume %0.5g (volume fraction %0.5g). Using a bounding box with volume %0.5g. \n", N, mean_radius(particles), volume(particles), name(shape), volume(shape), volume(particles)/volume(shape), volume(shape_bounding_box))
+    
     for n = 1:N
 
         num_attempts = 0

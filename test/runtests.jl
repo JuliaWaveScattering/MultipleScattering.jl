@@ -42,6 +42,15 @@ using Base.Test
         @test particles1 != particles2
     end
 
+    @testset "Type test" begin
+        # Define everything as a Float32
+        volfrac = 0.01f0
+        radius = 1.0f0
+        k_arr = collect(linspace(0.01f0,1.0f0,100))
+        model = FrequencyModel(volfrac,radius,k_arr)
+        @test typeof(model.response[1]) == Complex{Float32}
+    end
+
     @testset "Scattering test" begin
         include("single_scatter.jl")
         # Test against analytic solution

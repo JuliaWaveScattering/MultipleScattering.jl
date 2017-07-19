@@ -9,7 +9,7 @@ end
 "Generates a rectangle for Specified volfrac, radius and num_particles"
 function Rectangle{T}(volfrac::Number, radius::T, num_particles::Number)
     w = sqrt(num_particles*radius^2*pi/volfrac)
-    Rectangle([0.0,-w/2], [w,w/2])
+    Rectangle([zero(T),-w/2], [w,w/2])
 end
 
 "Generates a rectangle which contains all the particles"

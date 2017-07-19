@@ -56,7 +56,7 @@ function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix:
 
 end
 
-function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)
+function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)::Matrix{Complex{T}}
     # Generate response for one specific k
     # Number of particles
     P = length(model.particles)
@@ -78,40 +78,38 @@ function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)
     # Pre-calculate these to save doing it for all n and m
     # matrix of angles of the vectors pointing from particle p to particle s
     θ_mat = [atan2(s.x[2] - p.x[2], s.x[1] - p.x[1]) for p in model.particles, s in model.particles]
-    # println("Built θ_mat, $(summary(θ_mat))")
+
     # k times distance from particle p to particle s
     kr_mat = [k*norm(s.x .- p.x) for p in model.particles, s in model.particles]
-    # println("Built kr_mat, $(summary(kr_mat))")
+
     # Function we will use to generate the L matrix
     function L_fnc(m::Int, n::Int, s::Int, p::Int)
         if s == p
             zero(Complex{T})
         else
-            Complex{T}(hankelh1(n-m, kr_mat[p, s])) * Zn_mat[n+Nh+1,p] * exp(im * (n - m) * θ_mat[p, s])
+            hankelh1(T(n-m), kr_mat[p, s]) * Zn_mat[n+Nh+1,p] * exp(im * (n - m) * θ_mat[p, s])
         end
     end
     # Generate \mathbb{L} or LL
     L_mat = [L_fnc(m, n, s, p) for m=-Nh:Nh, s=1:P, n=-Nh:Nh, p=1:P]
-    # println("Built L_mat, $(summary(L_mat))")
     L_mat = reshape(L_mat, (B, B))
 
     # Vector which represents the inncident wave in the k direction i.e. exp(im* dot(k,x)) for each basis function
-    ψ = reshape([exp(im * (k * dot(p.x - model.source_position, model.source_direction) + m * pi / 2)) for m=-Nh:Nh, p in model.particles], B)
-
+    ψ = reshape([exp(im * (k * dot(p.x - model.source_position, model.source_direction) + m * T(pi) / 2)) for m=-Nh:Nh, p in model.particles], B)
     # the scattering coefficients A_mat in matrix, A[1,2] multiplies hankelh1(1, k*r) contributing to the 2nd particle scattered wave
-    A_mat = reshape(-(L_mat + eye(B)) \ ψ, (H, P))
+    A_mat = reshape(-(L_mat + eye(T,B)) \ ψ, (H, P))
 
     return Zn_mat .* A_mat
 end
 
 "Returns a ratio used in multiple scattering which reflects the material properties of the particles"
 function Zn{T}(model::FrequencyModel{T}, p::Particle{T}, k::T,  m::Int)
-    m = abs(m)
+    m = T(abs(m))
     ak = p.r*k
     # check for material properties that don't make sense or haven't been implemented
-    if abs(p.c*p.ρ) == NaN
+    if abs(p.c*p.ρ) == T(NaN)
         error("scattering from a particle with density =$(p.ρ) and phase speed =$(p.c) is not defined")
-    elseif abs(model.c*model.ρ) == NaN
+    elseif abs(model.c*model.ρ) == T(NaN)
         error("wave propagation in a medium with density =$(model.ρ) and phase speed =$(model.c) is not defined")
     elseif abs(model.c) == zero(T)
         error("wave propagation in a medium with phase speed =$(model.c) is not defined")
@@ -142,7 +140,7 @@ function diffhankelh1(n, z)
     if n != 0
         (hankelh1(-1 + n, z) - hankelh1(1 + n, z)) / 2
     else
-        -hankelh1(1, z)
+        -hankelh1(typeof(n)(1), z)
     end
 end
 
@@ -151,6 +149,6 @@ function diffbesselj(n, z)
     if n != 0
         (besselj(-1 + n, z) - besselj(1 + n, z)) / 2
     else
-        -besselj(1, z)
+        -besselj(typeof(n)(1), z)
     end
 end

@@ -41,14 +41,14 @@ function boundary_conditions{T}(model::FrequencyModel{T}, k_arr::Vector{T};
     end
 
     # choose listeners just outside boundary
-      outside_responses = [responses(p,10*eps()) for p in ps]
+      outside_responses = [responses(p,10*eps(T)) for p in ps]
       # listeners further out
-      outside2_responses = [responses(p,dr + 10*eps()) for p in ps]
+      outside2_responses = [responses(p,dr + 10*eps(T)) for p in ps]
       diff_outside_responses = (1/model.ρ)*(outside2_responses - outside_responses)/dr
 
     # choose listeners just inside boundary
-      inside_responses = [responses(p,-10*eps()) for p in ps]
-      inside2_responses = [responses(p,-dr-10*eps()) for p in ps]
+      inside_responses = [responses(p,-10*eps(T)) for p in ps]
+      inside2_responses = [responses(p,-dr-10*eps(T)) for p in ps]
       diff_inside_responses = [
           (1/ps[i].ρ)*(inside_responses[i] - inside2_responses[i])/dr
       for i in eachindex(inside_responses)]

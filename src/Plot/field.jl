@@ -70,11 +70,12 @@ function plot_field_model{T}(field_model::FrequencyModel{T}, k::T; res=10, xres=
 end
 
 "Plot the field for a specific wavenumber from a model you have already set up."
-function plot_field{T}(model::FrequencyModel{T}, k::T; res=10, xres=res, yres=res, resp_fnc=real, zero_centred=true)
+function plot_field{T}(model::FrequencyModel{T}, k::T; res=10, xres=res, yres=res, resp_fnc=real, zero_centred=true, domain_flag=true, particles_flag=domain_flag, shape_flag=domain_flag, listeners_flag=domain_flag)
     field_model = build_field_model(model, k; xres=xres, yres=yres)
 
     plot_field_model(field_model, k; xres=xres, yres=yres, resp_fnc=resp_fnc, zero_centred=zero_centred)
 
     # Finally, add particles and listener position from original model
-    plot_domain(model; newplot=false)
+    plot_domain(model; newplot=false, particles_flag=particles_flag, shape_flag=shape_flag, listeners_flag=listeners_flag)
+
 end
