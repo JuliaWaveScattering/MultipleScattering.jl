@@ -12,7 +12,7 @@ export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
 abstract Shape
 
 import Base.isequal, Base.(==), Base.(!=)
-using SpecialFunctions
+import SpecialFunctions: besselj, hankelh1
 
 # Functions and types for defining the domains we solve on
 include("domain/particle.jl")
