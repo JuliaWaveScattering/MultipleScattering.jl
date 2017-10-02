@@ -126,7 +126,7 @@ function Zn{T}(model::FrequencyModel{T}, p::Particle{T}, k::T,  m::Int)
         numer = diffbesselj(m, ak) * besselj(m, γ * ak)
         denom = diffhankelh1(m, ak) * besselj(m, γ * ak)
     else
-        q = (p.c*p.ρ)/model.c*model.ρ #the impedance
+        q = (p.c*p.ρ)/(model.c*model.ρ) #the impedance
         γ = model.c/p.c #speed ratio
         numer = q * diffbesselj(m, ak) * besselj(m, γ * ak) - besselj(m, ak)*diffbesselj(m, γ * ak)
         denom = q * diffhankelh1(m, ak) * besselj(m, γ * ak) - hankelh1(m, ak)*diffbesselj(m, γ * ak)
