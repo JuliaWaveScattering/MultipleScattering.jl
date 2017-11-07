@@ -3,7 +3,6 @@ using Base.Test
 
 
 @testset "Summary" begin
-    # @test single_scatter_test()
 
     @testset "Shape tests" begin
         # Test shapes and their bounding boxes
@@ -75,6 +74,19 @@ using Base.Test
         plot_model(model)
         plot_field(model,0.2)
 
+        @test true
+    end
+
+    @testset "TimeModel test" begin
+        # Time response from a single particle
+        include("../example/time_model.jl")
+        freq_model, time_model = run_time_response_single_particle()
+        # Need to test that the spike appears at the right place
+        @test true
+        
+        include("../example/lens.jl")
+        freq_model, time_model = run_lens()
+        # Need to test that the spike appears at the right place
         @test true
     end
 

@@ -16,9 +16,9 @@ function plot_particles{T}(particles::Vector{Particle{T}}; newplot=true)
             y_particles_boundaries[p] = t->particles[p].r * cos(t) + particles[p].x[2]
         end
         # Add all the particles to the plot as paramteric plots
-        plot!(x_particles_boundaries, y_particles_boundaries, 0, 2π, line=0, fill=(0, :grey), aspect_ratio=1.0, legend=nothing)
+        plot!(x_particles_boundaries, y_particles_boundaries, 0, 2π, line=0, fill=(0, :grey), aspect_ratio=1.0)
     end
-    plot!()
+    plot!(grid=false, legend=nothing, xlab="x", ylab="y")
 end
 
 # "Plots the particles from a specific model. Wrapper using model instead of vector of particles to plot the particles"

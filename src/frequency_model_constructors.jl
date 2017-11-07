@@ -1,7 +1,8 @@
 """
 Constructor which takes volfrac, particle radius and k_arr along with a load of
 optional keyword arguments. This constructor automtically generates random
-particles inside a shape (default to a square Rectangle with 4 particles) then generates the response.
+particles inside a shape (default to a square Rectangle with 4 particles) then 
+generates the response.
 """
 function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         source_direction=[one(T), zero(T)],
@@ -12,7 +13,8 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         num_particles = 4,
         shape = Rectangle(volfrac, radius, num_particles),
         hankel_order = 3,
-        seed = Vector{UInt32}(0)
+        seed = Vector{UInt32}(0),
+        generate_responses=true
     )
     if length(seed) == 0
         seed = Base.Random.make_seed()
@@ -32,7 +34,7 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         source_position, source_direction,
         seed
     )
-    generate_responses!(model, k_arr)
+    if generate_responses generate_responses!(model, k_arr) end
     return model
 end
 
@@ -48,7 +50,8 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
         source_position = [-10one(T), zero(T)],
         shape = Rectangle(particles),
         hankel_order = 3,
-        seed = Vector{UInt32}(0)
+        seed = Vector{UInt32}(0),
+        generate_responses=true
     )
     if isa(listener_positions, Vector)
         listener_positions = reshape(listener_positions, 2, 1)
@@ -62,7 +65,7 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
         source_position, source_direction,
         seed
     )
-    generate_responses!(model, k_arr)
+    if generate_responses generate_responses!(model, k_arr) end
     return model
 end
 

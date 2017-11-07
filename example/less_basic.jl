@@ -1,7 +1,7 @@
 using MultipleScattering
 using MultipleScattering.Plot
 
-k_Arr = collect(linspace(0.1,1.0,10))
+k_arr = collect(linspace(0.1,1.0,10))
 
 # You can also pick your own shape, an generate random particles inside it 
 # with a certain radius ands volume fraction
