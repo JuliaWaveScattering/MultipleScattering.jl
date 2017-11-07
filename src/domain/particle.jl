@@ -6,11 +6,7 @@ type Particle{T}
     ρ::T # the particles density
 end
 
-function Particle{T}(x::Vector{T}; r::T = 1.0, c::Complex{T} = one(Complex{T}), ρ::T = zero(T))
-    Particle{T}(x,r,c,ρ)
-end
-
-function Particle{T}(x::Vector{T}, r::T; c::Complex{T} = one(Complex{T}), ρ::T = zero(T))
+function Particle{T}(x::Vector{T}, r::T = 1.0; c::Complex{T} = one(Complex{T}), ρ::T = zero(T))
     Particle{T}(x,r,c,ρ)
 end
 
@@ -22,11 +18,6 @@ function volume{T}(p::Particle{T})
     π*(p.r)^2
 end
 
-"A kind of constructor for an array of homogenous particles"
-function array_of_particles{T}(N::Int, a::T; c=one(Complex{T}), ρ=zero(T))
-    return [Particle(zeros(T, 2), a, c, ρ) for i=1:N]
-end # Art: I'm not sure this function is necessary
-
 function mean_radius{T}(particles::Vector{Particle{T}})
     radius_fnc(particle) = particle.r
     mapreduce(radius_fnc, +, particles) / length(particles)
@@ -37,14 +28,11 @@ function std_radius{T}(particles::Vector{Particle{T}})
     std(radii)
 end
 
-function mean_volume{T}(particles::Vector{Particle{T}})
-    volume(particles) / length(particles)
+function isequal(p1::Particle, p2::Particle)
+    isequal(p1.x,p2.x) && isequal(p1.r,p2.r) && 
+    isequal(p1.c,p2.c) && isequal(p1.ρ,p2.ρ)
 end
 
-function isequal(p1::Particle, p2::Particle)
+function ==(p1::Particle, p2::Particle)
     (p1.x == p2.x) && (p1.r == p2.r) && (p1.c == p2.c) && (p1.ρ == p2.ρ)
 end
-
-==(p1::Particle, p2::Particle) = isequal(p1, p2)
-
-!=(p1::Particle, p2::Particle) = !isequal(p1, p2)

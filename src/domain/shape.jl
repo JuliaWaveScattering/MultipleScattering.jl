@@ -109,7 +109,7 @@ function bounding_box{T}(shape::TimeOfFlight{T})
     return Rectangle([zero(T), -box_height / 2], [box_width, box_height / 2])
 end
 
-name(shape::TimeOfFlight) = "TimeOfFlight"
+name(shape::TimeOfFlight) = "Time of flight"
 
 function boundary_functions(shape::TimeOfFlight)
     function x(t)

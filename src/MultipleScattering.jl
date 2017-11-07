@@ -3,7 +3,7 @@ module MultipleScattering
 export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
        name, boundary_functions,
        Particle, volume, array_of_particles, random_particles, random_particles!, isequal,
-       mean_radius, mean_volume,
+       mean_radius, std_radius,
        FrequencyModel, calculate_volfrac, generate_responses!,
        Moments,
        TimeModel, frequency_to_time, delta_fnc
@@ -11,7 +11,7 @@ export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
 
 abstract Shape
 
-import Base.isequal, Base.(==), Base.(!=)
+import Base.isequal, Base.(==)
 import SpecialFunctions: besselj, hankelh1
 
 # Functions and types for defining the domains we solve on

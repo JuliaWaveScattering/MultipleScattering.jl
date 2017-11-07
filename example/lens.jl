@@ -2,12 +2,14 @@ using MultipleScattering
 using MultipleScattering.Plot
 import Plots
 
-function run_lens()
-    a=1.0
-    volfrac=0.2
-    listener_position=[-10.0;0.0]
-    outertime=30.0
-    innertime=20.0
+function run_lens(;
+        a=1.0,
+        volfrac=0.2,
+        listener_position=[-10.0;0.0],
+        outertime=30.0,
+        innertime=20.0
+    )
+
     k_arr=collect(linspace(0.01,1.0,100))
 
     # Generate particles which are at most outertime away from our listener
