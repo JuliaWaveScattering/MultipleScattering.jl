@@ -46,7 +46,8 @@ function plot_listeners{T}(model::FrequencyModel{T}; newplot=true)
 end
 
 function plot_shape(shape::Shape)
-    warn("plot_shape not implemented")
+    x, y = boundary_functions(shape)
+    plot!(x, y, 0, 1, line=(1, :red), fill=(0,:transparent), aspect_ratio=1.0, label=name(shape), grid=false)
 end
 
 # "Plot all the elements of the domain"

@@ -40,22 +40,26 @@ name(shape::Rectangle) = "Rectangle"
 
 function boundary_functions(shape::Rectangle)
     function x(t)
-        if 0 <= t <= 1/4 x = shape.bottomleft[1]
-        elseif t <= 2/4 x = shape.bottomleft[1]
-        elseif t <= 3/4 x = shape.bottomleft[1]
-        elseif t <= 4/4 x = shape.bottomleft[1]
-        else error("Boundary coordinate t should only be between 0 and 1")
+        if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
+
+        width = shape.topright[1] - shape.bottomleft[1]
+        if     t <= 1/4 x = shape.bottomleft[1] + 4t*width
+        elseif t <= 2/4 x = shape.topright[1]
+        elseif t <= 3/4 x = shape.topright[1] - 4*(t-2/4)*width
+        else            x = shape.bottomleft[1]
         end
     end
     function y(t)
-        if 0 <= t <= 1/4 x = shape.bottomleft[1]
-        elseif t <= 2/4 x = shape.bottomleft[1]
-        elseif t <= 3/4 x = shape.bottomleft[1]
-        elseif t <= 4/4 x = shape.bottomleft[1]
-        else error("Boundary coordinate t should only be between 0 and 1")
+        if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
+
+        height = shape.topright[2] - shape.bottomleft[2]
+        if     t <= 1/4 x = shape.bottomleft[2]
+        elseif t <= 2/4 x = shape.bottomleft[2] + 4*(t-1/4)*height
+        elseif t <= 3/4 x = shape.topright[2]
+        else            x = shape.topright[2] - 4*(t-3/4)*height
         end
     end
-    return (x, y)
+    return x, y
 end
 
 
@@ -81,9 +85,17 @@ end
 name(shape::Circle) = "Circle"
 
 function boundary_functions{T}(shape::Circle{T})
-    x(t) = shape.cos(2π * t) + shape.centre[1]
-    y(t) = shape.sin(2π * t) + shape.centre[2]
-    return (x, y)
+    function x(t) 
+        if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
+        cos(2π * t) + shape.centre[1]
+    end
+    
+    function y(t) 
+        if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
+        sin(2π * t) + shape.centre[2]
+    end
+    
+    return x, y
 end
 
 # =============================== TimeOfFlight =================================
@@ -113,16 +125,24 @@ name(shape::TimeOfFlight) = "Time of flight"
 
 function boundary_functions(shape::TimeOfFlight)
     function x(t)
-        if 0 <= t <= 1/2 x = 0
-        elseif t <= 2/2 x = bottomleft[1]
-        else error("Boundary coordinate t should only be between 0 and 1")
+        if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
+        
+        if t <= 1/2 
+            θ = acos(-shape.listener_position[1] / shape.time)
+            return shape.time*cos(θ*(4t-1)) + shape.listener_position[1]
+        else
+            return 0.0
         end
     end
     function y(t)
-        if 0 <= t <= 1/2 x = bottomleft[1]
-        elseif t <= 2/2 x = bottomleft[1]
-        else error("Boundary coordinate t should only be between 0 and 1")
+        if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
+        
+        if t <= 1/2 
+            θ = acos(-shape.listener_position[1] / shape.time)
+            return shape.time*sin(θ*(4t-1)) + shape.listener_position[2]
+        else
+            return 2*(3/4-t)*2*sqrt(shape.time^2 - shape.listener_position[1]^2)
         end
     end
-    return (x, y)
+    return x, y
 end
