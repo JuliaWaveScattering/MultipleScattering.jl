@@ -143,9 +143,18 @@ using Base.Test
         # Time response from a single particle
         include("../example/time_model.jl")
         freq_model, time_model = run_time_response_single_particle()
-        # Need to test that the spike appears at the right place
-        @test true
-        
+        # Spike at start (same one at end), and a reply at index 36, then 
+        # almost nothing everywhere else
+        @test abs(time_model.response[1]) > 0.9997 && 
+              abs(time_model.response[36]) > 0.04 && 
+              abs(time_model.response[200]) < 1.0e-4 && 
+              abs(time_model.response[400]) < 1.0e-4 && 
+              abs(time_model.response[600]) < 1.0e-4 && 
+              abs(time_model.response[800]) < 1.0e-4
+        # Take samples every 35 (this picks up the correct spike) and compare to
+        # previously run result
+        @test abs.(time_model.response[1:35:1001]) ≈ [0.9997610543993756, 0.04032674361599573, 0.00029316911471682417, 0.0001476269842155356, 9.946092306789748e-5, 7.568349093113884e-5, 6.168287965696597e-5, 5.258973181434327e-5, 4.6320786590828974e-5, 4.183878864207524e-5, 3.8572434380825434e-5, 3.618456753372203e-5, 3.446715583575059e-5, 3.328924674321584e-5, 3.256957613682795e-5, 3.2261788209764806e-5, 3.2346802123258695e-5, 3.282984368481514e-5, 3.3741248017650994e-5, 3.5141270814154625e-5, 3.713039587382103e-5, 3.986866158958389e-5, 4.361167091785049e-5, 4.8780569782800176e-5, 5.610831966481772e-5, 6.697887653991401e-5, 8.433750790799958e-5, 0.00011572911102945159, 0.00018796797807378484]
+
         include("../example/lens.jl")
         freq_model, time_model = run_lens()
         # Need to test that the spike appears at the right place

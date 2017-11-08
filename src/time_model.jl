@@ -62,7 +62,7 @@ function frequency_to_time{T}(freq_response::Matrix{Complex{T}},k_arr::AbstractA
                 k = k_arr[ki]
                 uhat = freq_response[ki]
                 t = time_arr[i]
-                u[i,j] += impulse(k)*uhat*exp(im*k*t)*dk
+                u[i,j] += impulse(k)*uhat*exp(-im*k*t)*dk
             end
         end
     end

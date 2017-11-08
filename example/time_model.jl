@@ -1,8 +1,10 @@
 using MultipleScattering
 using MultipleScattering.Plot
 
-function run_time_response_single_particle()
-    k_arr = collect(linspace(0.01,1.0,100))
+function run_time_response_single_particle(;
+        k_arr = collect(linspace(0.001,1.0,1000)),
+        particle_x = 100.0
+    )
 
     # Vector of one particle
     particles = Vector{Particle{Float64}}(1)
@@ -13,7 +15,7 @@ function run_time_response_single_particle()
     # Density of particle
     ρ = 10.0
     # Define positions and radii
-    particles[1] = Particle{Float64}([0.0,0.0],radius,c,ρ)
+    particles[1] = Particle{Float64}([particle_x,0.0],radius,c,ρ)
 
     # Simulate a single particle in frequency space
     freq_model = FrequencyModel(particles,k_arr)
@@ -27,6 +29,5 @@ end
 function plot_time_response_single_particle()
     freq_model, time_model = run_time_response_single_particle()
 
-    Plots.pyplot()
     Plots.plot(plot_model(freq_model), plot_model(time_model))
 end

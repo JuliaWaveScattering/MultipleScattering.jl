@@ -48,8 +48,8 @@ function single_scatter_test()
     );
 
     # Take the L^2 error between the analytic solution and our model
-    err1 = mean(abs(resp1 - model1.response[:]));
-    err2 = mean(abs(resp2 - model2.response[:]));
+    err1 = mean(abs.(resp1 - model1.response[:]));
+    err2 = mean(abs.(resp2 - model2.response[:]));
 
     print("completed for radius=$a1 and $a2 with errors $err1 and $err2 \n")
     if err1 < 1e-9 && err2 < 1e-9
