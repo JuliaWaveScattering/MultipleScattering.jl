@@ -22,7 +22,7 @@ function run_time_response_single_particle(;
 
     # Convert the frequency model into a time model
     time_model = TimeModel(freq_model)
-    
+
     return freq_model, time_model
 end
 

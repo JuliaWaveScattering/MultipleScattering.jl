@@ -1,7 +1,7 @@
 
 type TimeModel{T}
     frequency_model::FrequencyModel{T}
-    response::Matrix{Complex{T}}
+    response::Matrix{T}
     time_arr::Vector{T}
     impulse::Function
 end
@@ -9,8 +9,8 @@ end
 "Convert a frequency model into a time model using the inverse fourier transform"
 function TimeModel{T}(
         freq_model::FrequencyModel{T};
-        timesteps=length(freq_model.k_arr)+1,
-        time_arr=linspace(zero(T),one(T)*π*2/firstnonzero(freq_model.k_arr),timesteps),
+        timesteps=length(freq_model.k_arr),
+        time_arr=linspace(zero(T),one(T)*π*2/firstnonzero(freq_model.k_arr),timesteps+1)[1:timesteps],
         impulse=delta_fnc
     )
     response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse)
@@ -67,12 +67,12 @@ function frequency_to_time{T}(freq_response::Matrix{Complex{T}},k_arr::AbstractA
             for ki=1:(freqsteps-1)
                 dk = k_arr[ki+1] - k_arr[ki]
                 k = k_arr[ki]/2 + k_arr[ki+1]/2
-                uhat = real(freq_response[ki]+freq_response[ki+1])/2
+                uhat = (freq_response[ki]+freq_response[ki+1])/2
                 t = time_arr[i]
                 u[i,j] += impulse(k)*uhat*exp(-im*k*t)*dk
             end
         end
     end
 
-    return u/pi # constant due to our convention and because we are using only positive frequencies.
+    return real(u)/pi # constant due to our convention and because we are using only positive frequencies.
 end
