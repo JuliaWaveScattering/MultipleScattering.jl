@@ -19,7 +19,7 @@ end
 
 
 """
-Returns the first element of array which isn't zero (assumes elements are 
+Returns the first element of array which isn't zero (assumes elements are
 increasing and distinct)
 """
 function firstnonzero{T}(arr::AbstractArray{T})
@@ -32,42 +32,45 @@ end
 
 
 """
-Function which is one everywhere in frequency domain. Represents a delta 
+Function which is one everywhere in frequency domain. Represents a delta
 function of unit area in the time domain, centred at t=zero.
 """
 delta_fnc{T}(k::T) = one(T)
 
 
 """
-Perform an inverse Fourier transform with the frequency response.
-Calculates the response of the system to the frequency impulse, used to convert
-a frequency model into a time model.
+Calculates the time response from the frequency response by approximating an inverse Fourier transform.
+ The time signal is assumed to be real and only positive frequenices k_arr given.
+ The result is convoluted with the user specified impulse, which is a function of the frequency.
 """
 function frequency_to_time{T}(freq_response::Matrix{Complex{T}},k_arr::AbstractArray{T},time_arr::AbstractArray{T},impulse::Function)
+    # we assume the convention: f(t) = 1/(2π) ∫f(w)exp(-im*w*t)dw
 
+    if !(k_arr[1] ≈ 0) # adds the response for k=0 if not present
+      f0 = (k_arr[2]*freq_response[1] - k_arr[1]*freq_response[2])/(k_arr[2]-k_arr[1])
+      freq_response = [f0; freq_response]
+      k_arr = [0; k_arr]
+    end
     timesteps = length(time_arr)
     positions = size(freq_response,2)
     freqsteps = size(freq_response,1)
 
     impulse_vec = map(impulse,k_arr)
 
-    # Size of each slice of k which we integrate over, assumes k_arr is uniform
-    dk = k_arr[2] - k_arr[1]
-
     u = Matrix{Complex{T}}(timesteps,positions)
     for i=1:timesteps
         for j=1:positions
             u[i,j] = zero(T)
-            for ki=1:freqsteps
-                k = k_arr[ki]
-                uhat = freq_response[ki]
+            # using trapezoidal rule
+            for ki=1:(freqsteps-1)
+                dk = k_arr[ki+1] - k_arr[ki]
+                k = k_arr[ki]/2 + k_arr[ki+1]/2
+                uhat = real(freq_response[ki]+freq_response[ki+1])/2
                 t = time_arr[i]
                 u[i,j] += impulse(k)*uhat*exp(-im*k*t)*dk
             end
         end
     end
 
-    return u
+    return u/pi # constant due to our convention and because we are using only positive frequencies.
 end
-
-
