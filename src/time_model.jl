@@ -43,10 +43,12 @@ Calculates the time response from the frequency response by approximating an inv
  The time signal is assumed to be real and only positive frequenices k_arr given.
  The result is convoluted with the user specified impulse, which is a function of the frequency.
 """
-function frequency_to_time{T}(freq_response::Matrix{Complex{T}},k_arr::AbstractArray{T},time_arr::AbstractArray{T},impulse::Function)
+function frequency_to_time{T}(freq_response::Matrix{Complex{T}},k_arr::AbstractArray{T},
+  time_arr::AbstractArray{T}, impulse::Function;
+  addzerofrequency=true)
     # we assume the convention: f(t) = 1/(2π) ∫f(w)exp(-im*w*t)dw
 
-    if !(k_arr[1] ≈ 0) # adds the response for k=0 if not present
+    if addzerofrequency && !(k_arr[1] ≈ 0) # adds the response for k=0 if not present
       f0 = (k_arr[2]*freq_response[1] - k_arr[1]*freq_response[2])/(k_arr[2]-k_arr[1])
       freq_response = [f0; freq_response]
       k_arr = [0; k_arr]
