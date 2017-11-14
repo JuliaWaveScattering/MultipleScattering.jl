@@ -14,6 +14,8 @@ abstract Shape
 import Base.isequal, Base.(==)
 import SpecialFunctions: besselj, hankelh1
 
+using RecipesBase
+
 # Functions and types for defining the domains we solve on
 include("domain/particle.jl")
 include("domain/shape.jl")
@@ -31,7 +33,7 @@ include("time_model.jl")
 # Statistical analysis of a batch of models
 include("moments.jl")
 
-# Submodule for plotting as it uses package Plots (which is heavy)
-include("Plot/Plot.jl")
+# Recipes for plotting
+include("plot.jl")
 
 end # module

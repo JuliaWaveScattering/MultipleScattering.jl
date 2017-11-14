@@ -54,8 +54,8 @@ function boundary_conditions{T}(model::FrequencyModel{T}, k_arr::Vector{T};
       for i in eachindex(inside_responses)]
 
       # mean displacement and traction difference on all boundaries
-      displacement = mean(mean(abs.(outside_responses - inside_responses)),2)
-      traction = mean(mean(abs.(diff_outside_responses - diff_inside_responses)),2)
+      displacement = mean(mean(abs.(outside_responses .- inside_responses)),2)
+      traction = mean(mean(abs.(diff_outside_responses .- diff_inside_responses)),2)
 
       return (displacement, traction)
 end

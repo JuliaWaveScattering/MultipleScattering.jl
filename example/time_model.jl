@@ -1,5 +1,5 @@
 using MultipleScattering
-using MultipleScattering.Plot
+using Plots
 
 function run_time_response_single_particle(;
         k_arr = collect(linspace(0.001,1.0,1000)),
@@ -29,5 +29,8 @@ end
 function plot_time_response_single_particle()
     freq_model, time_model = run_time_response_single_particle()
 
-    Plots.plot(plot_model(freq_model), plot_model(time_model))
+    plot(
+        plot(freq_model, particles),
+        plot(time_model)
+    )
 end

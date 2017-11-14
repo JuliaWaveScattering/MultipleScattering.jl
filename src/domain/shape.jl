@@ -15,10 +15,12 @@ end
 "Generates a rectangle which contains all the particles"
 function Rectangle{T}(particles::Vector{Particle{T}})
     topright_particle(p) = p.x .+ p.r
-    topright = mapreduce(topright_particle, max, particles)
+    broadcastmax(x,y) = max.(x,y)
+    topright = mapreduce(topright_particle, broadcastmax, particles)
 
     bottomleft_particle(p) = p.x .- p.r
-    bottomleft = mapreduce(bottomleft_particle, min, particles)
+    broadcastmin(x,y) = min.(x,y)
+    bottomleft = mapreduce(bottomleft_particle, broadcastmin, particles)
 
     Rectangle(bottomleft, topright)
 end
