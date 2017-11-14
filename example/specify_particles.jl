@@ -1,18 +1,6 @@
 using MultipleScattering
-using MultipleScattering.Plot
 
 k_arr = collect(linspace(0.1,1.0,10))
-
-# You can also pick your own shape, an generate random particles inside it 
-# with a certain radius ands volume fraction
-radius = 0.1
-volfrac = 0.2
-
-shape = Circle([0.0,0.0],5.0)
-circle_model = FrequencyModel(volfrac,radius,k_arr;shape=circle)
-
-plot_field(circle_model,0.5)
-
 
 # Or if you want a lot of control over the scattering problem, you can define
 # each particle individually
@@ -27,4 +15,5 @@ particles[2] = Particle{Float64}([0.2,-0.8],0.2,c,ρ)
 
 two_particle_model = FrequencyModel(particles,k_arr)
 
-plot_field(two_particle_model,0.5)
+using Plots
+plot(two_particle_model,0.5)

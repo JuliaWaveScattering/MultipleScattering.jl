@@ -4,14 +4,17 @@
 # them
 using MultipleScattering
 
-volfrac = 0.01
-radius = 1.0
-k_arr = collect(linspace(0.01,1.0,100))
+function moments_example()
+    volfrac = 0.01
+    radius = 1.0
+    k_arr = collect(linspace(0.01,1.0,100))
 
-# Holder for our models
-models = Vector{FrequencyModel{Float64}}(10)
-for i=1:10
-    models[i] = FrequencyModel(volfrac,radius,k_arr)
+    # Holder for our models
+    models = Vector{FrequencyModel{Float64}}(10)
+    for i=1:10
+        models[i] = FrequencyModel(volfrac,radius,k_arr;seed=[0x7f5def91, 0x82255da3, 0xc5e461c7, UInt32(i)])
+    end
+
+    moments = Moments(models)
+    return moments
 end
-
-moments = Moments(models)

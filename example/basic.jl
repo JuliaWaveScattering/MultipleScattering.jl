@@ -13,12 +13,8 @@ radius = 1.0
 k_arr = collect(linspace(0.01,1.0,100))
 model = FrequencyModel(volfrac,radius,k_arr)
 
-using MultipleScattering.Plot
-Plots.pyplot()
-
-plot_model(model)
-
-import PyPlot.figure
-figure(2)
-
-plot_field(model,0.8;res=100)
+using Plots
+plot(
+    plot(model),
+    plot(model,0.8;res=100)
+)

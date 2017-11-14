@@ -1,6 +1,5 @@
 using MultipleScattering
-using MultipleScattering.Plot
-import Plots
+using Plots
 
 function run_lens(;
         a=1.0,
@@ -26,10 +25,10 @@ function run_lens(;
 end
 
 function plot_lens()
-    freqmodel, timemodel = run_time_of_flight()
-    Plots.pyplot()
-    Plots.plot(
-        plot_particles(freqmodel),
-        plot_model(timemodel)
+    freqmodel, timemodel = run_lens()
+
+    plot(
+        plot(freqmodel.particles),
+        plot(timemodel)
     )
 end

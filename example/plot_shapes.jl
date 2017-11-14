@@ -1,13 +1,11 @@
 using MultipleScattering
-using MultipleScattering.Plot
-
-Plots.plot()
+using Plots
 
 rectangle = Rectangle([0.0,0.0],[2.0,3.0])
-plot_shape(rectangle)
+plot(rectangle)
 
 circle = Circle(3.0,[-1.0,2.0])
-plot_shape(circle)
+plot!(circle)
 
 timeofflight = TimeOfFlight([-1.0,0.0],3.0)
-plot_shape(timeofflight)
+plot!(timeofflight)

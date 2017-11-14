@@ -25,7 +25,8 @@ using MultipleScattering
 ```
 ## Very basic example
 ### Run
-The basic way to construct and compute a model is
+The basic way to construct and compute a model is to specify the volume
+fraction, particle radius and wavenumbers:
 ```julia
 volfrac = 0.01
 radius = 1.0
@@ -33,26 +34,30 @@ k_arr = collect(linspace(0.01,1.0,100))
 model = FrequencyModel(volfrac,radius,k_arr)
 ```
 ### Plot
-The package also provides an optional submodule with a set of functions for plotting models after they have been run.
-In our above model we ran the simulation for 100 different wavenumbers, and measured the response at a location away from the side wall.
+The package also provides recipes to be used with the `Plots` package for 
+plotting models after they have been run.
+In our above model we ran the simulation for 100 different wavenumbers, and 
+measured the response at a location away from the side wall.
+We can plot the time-harmonic response across these wavenumbers by typing:
 ```julia
-using MultipleScattering.Plot
-plot_model(model)
+using Plots
+plot(model)
 ```
 
-This is a rather abstract plot, for some context, use the `plot_field` function.
-`plot_field` runs an identical model, but measures the field at lots of points 
-in the domain.
+This is a rather abstract plot, for some context, you can plot the whole field
+at a specific k by typing.
+This runs an identical model, but measures the field at lots of points in the 
+domain rather than just at the listener position.
 This way we can get an understanding of what is happening for one particular 
 wavenumber.
 
 ```julia
-plot_field(model,0.3)
+plot(model,0.3)
 ```
 
 ## Less basic example
 However, there are a great deal of defaults implicit in this statement.
-For finer grain control of the problem, we first construct our set of particles,
+For finer grain control of the problem, we can construct our set of particles,
 define their positions, radii and give them material properties
 ```julia
 particles = Vector{Particle{Float64}}(2)
@@ -69,7 +74,7 @@ We can then run this model, and plot the resultant field:
 ```julia
 two_particle_model = FrequencyModel(particles,k_arr)
 
-plot_field(two_particle_model,0.5)
+plot(two_particle_model,0.5)
 ```
 
 This library was restructured from one written by Artur Gower and Jonathan 

@@ -1,7 +1,6 @@
 using MultipleScattering
-using MultipleScattering.Plot
 using Base.Test
-
+using Plots
 
 @testset "Summary" begin
 
@@ -61,7 +60,6 @@ using Base.Test
         end
 
         @testset "Plot Shapes" begin
-            using MultipleScattering.Plot
             # Just run it to see if we have any errors (yes thats a very low bar)
             include("../example/plot_shapes.jl")
             @test true
@@ -102,6 +100,12 @@ using Base.Test
         particles = [ Particle([0.0,0.0],radii[i]) for i=1:5 ]
         @test std_radius(particles) === std(radii)
         @test mean_radius(particles) === mean(radii)
+        
+        @testset "Plot Particles" begin
+            # Just run it to see if we have any errors (yes thats a very low bar)
+            include("../example/plot_particles.jl")
+            @test true
+        end
     end
 
     @testset "Type stability" begin
@@ -127,14 +131,13 @@ using Base.Test
 
     @testset "Plot FrequencyModel" begin
         # Just run it to see if we have any errors (yes thats a very low bar)
-
         volfrac = 0.01
         radius = 2.0
         k_arr = collect(linspace(0.2,1.0,5))
         model = FrequencyModel(volfrac,radius,k_arr)
 
-        plot_model(model)
-        plot_field(model,0.2)
+        plot(model)
+        plot(model,0.2)
 
         @test true
     end
@@ -162,26 +165,30 @@ using Base.Test
     end
 
     @testset "Moments" begin
-        # Test against a problem which can be easily solved
-        models = Vector{FrequencyModel{Float64}}(3)
-        # Fake responses, with mean 4.0, standard deviation 2.0 and skew 0.0
-        responses = [2.0, 4.0, 6.0]
-        particles = [Particle([0.0,0.0])]
-        for i=1:3
-            models[i] = FrequencyModel(particles,[1.0];generate_responses=false)
-            models[i].response = reshape([responses[i]+0.0im],1,1)
+        begin
+            # Test against a problem which can be easily solved
+            models = Vector{FrequencyModel{Float64}}(3)
+            # Fake responses, with mean 4.0, standard deviation 2.0 and skew 0.0
+            responses = [2.0, 4.0, 6.0]
+            particles = [Particle([0.0,0.0])]
+            for i=1:3
+                models[i] = FrequencyModel(particles,[1.0];generate_responses=false)
+                models[i].response = reshape([responses[i]+0.0im],1,1)
+            end
+            moments = Moments(models)
+            @test moments.moments[1][1] ≈ 4.0 && 
+                  moments.moments[2][1] ≈ 2.0 && 
+                  moments.moments[3][1] ≈ 0.0
         end
-        moments = Moments(models).moments
-        @test moments.moments[1][1] ≈ 4.0 && 
-              moments.moments[2][1] ≈ 2.0 && 
-              moments.moments[3][1] ≈ 0.0
-    
-        # Test against a previously computed problem with a known seed
-        include("../example/moments.jl")
-        @test moments.moments[1][23] ≈ 0.9323251967911877  && 
-              moments.moments[2][78] ≈ 0.2487558908409563  &&
-              moments.moments[3][91] ≈ 0.15597075451712927 &&
-              moments.moments[4][32] ≈ 0.17865717302214346
+        begin
+            # Test against a previously computed problem with a known seed
+            include("../example/moments.jl")
+            moments = moments_example() 
+            @test moments.moments[1][23] ≈ 0.9323251967911877  && 
+                  moments.moments[2][78] ≈ 0.2487558908409563  &&
+                  moments.moments[3][91] ≈ 0.15597075451712927 &&
+                  moments.moments[4][32] ≈ 0.17865717302214346
+        end
     end
 
 end
