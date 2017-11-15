@@ -100,7 +100,7 @@ using Plots
         particles = [ Particle([0.0,0.0],radii[i]) for i=1:5 ]
         @test std_radius(particles) === std(radii)
         @test mean_radius(particles) === mean(radii)
-        
+
         @testset "Plot Particles" begin
             # Just run it to see if we have any errors (yes thats a very low bar)
             include("../example/plot_particles.jl")
@@ -146,13 +146,13 @@ using Plots
         # Time response from a single particle
         include("../example/time_model.jl")
         freq_model, time_model = run_time_response_single_particle()
-        # Spike at start (same one at end), and a reply at index 36, then 
+        # Spike at start and a reply at index 36, then
         # almost nothing everywhere else
-        @test abs(time_model.response[1]) > 0.9997 && 
-              abs(time_model.response[36]) > 0.04 && 
-              abs(time_model.response[200]) < 1.0e-4 && 
-              abs(time_model.response[400]) < 1.0e-4 && 
-              abs(time_model.response[600]) < 1.0e-4 && 
+        @test abs(time_model.response[1]) > 0.9997 &&
+              abs(time_model.response[36]) > 0.04 &&
+              abs(time_model.response[200]) < 1.0e-4 &&
+              abs(time_model.response[400]) < 1.0e-4 &&
+              abs(time_model.response[600]) < 1.0e-4 &&
               abs(time_model.response[800]) < 1.0e-4
         # Take samples every 35 (this picks up the correct spike) and compare to
         # previously run result
@@ -176,15 +176,15 @@ using Plots
                 models[i].response = reshape([responses[i]+0.0im],1,1)
             end
             moments = Moments(models)
-            @test moments.moments[1][1] ≈ 4.0 && 
-                  moments.moments[2][1] ≈ 2.0 && 
+            @test moments.moments[1][1] ≈ 4.0 &&
+                  moments.moments[2][1] ≈ 2.0 &&
                   moments.moments[3][1] ≈ 0.0
         end
         begin
             # Test against a previously computed problem with a known seed
             include("../example/moments.jl")
-            moments = moments_example() 
-            @test moments.moments[1][23] ≈ 0.9323251967911877  && 
+            moments = moments_example()
+            @test moments.moments[1][23] ≈ 0.9323251967911877  &&
                   moments.moments[2][78] ≈ 0.2487558908409563  &&
                   moments.moments[3][91] ≈ 0.15597075451712927 &&
                   moments.moments[4][32] ≈ 0.17865717302214346
