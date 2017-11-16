@@ -20,8 +20,7 @@ model.source_direction
 # to change these defaults use
 model = FrequencyModel(particles, w_arr;
     listener_positions = [-10.,-10.],
-    source_direction=[1.,1.],
-    shape = Rectangle([0.,-10.],[10.,20.]))
+    source_direction=[1.,1.])
 
 # to plot the frequency response over a region that includes the particles
 w = 3.2

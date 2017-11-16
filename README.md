@@ -7,10 +7,10 @@
 A Julia library for simulating, processing and plotting acoustic data from
 scattering problems, particularly random ones.
 
-The library uses the multipole method to solve the Helmholtz equation 
+The library uses the multipole method to solve the Helmholtz equation
 (time-harmonic acoustics) in two dimensions.
-In short, the method solves the problem with a series of Hankel functions 
-positioned at each particle, where the coefficents are picked so that the 
+In short, the method solves the problem with a series of Hankel functions
+positioned at each particle, where the coefficents are picked so that the
 boundary conditions are satisfied on the particle boundaries.
 For a more lucid and complete explanation, see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf).
 
@@ -18,7 +18,7 @@ This method is particularly efficient at solving acoustic problems with lots of
 circular scatterers set in an infinite domain.
 
 ## Get started
-This package is tested and works for Julia 0.6 and 0.5. 
+This package is tested and works for Julia 0.6 and 0.5.
 To get started, download and include the basic library
 ```julia
 Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
@@ -36,9 +36,9 @@ k_arr = collect(linspace(0.01,1.0,100))
 model = FrequencyModel(volfrac,radius,k_arr)
 ```
 ### Plot
-The package also provides recipes to be used with the `Plots` package for 
+The package also provides recipes to be used with the `Plots` package for
 plotting models after they have been run.
-In our above model we ran the simulation for 100 different wavenumbers, and 
+In our above model we ran the simulation for 100 different wavenumbers, and
 measured the response at a location away from the side wall.
 We can plot the time-harmonic response across these wavenumbers by typing:
 ```julia
@@ -49,9 +49,9 @@ plot(model)
 
 This is a rather abstract plot, for some context, you can plot the whole field
 at a specific k by typing.
-This runs an identical model, but measures the field at lots of points in the 
+This runs an identical model, but measures the field at lots of points in the
 domain rather than just at the listener position.
-This way we can get an understanding of what is happening for one particular 
+This way we can get an understanding of what is happening for one particular
 wavenumber.
 
 ```julia
@@ -65,13 +65,11 @@ need an insight into a specific part of your model.
 ## More examples
 There are a lot of defaults implicit in this basic example.
 Almost every part of the problem can be controlled, for example we can manually
-construct the set of particles, define their positions, radii and give them 
-specific material properties (see [here](example/specify_shapes) for an example
-of this).
-For all examples see [here](example/README.md).
+construct the set of particles, define their positions, radii and give them
+specific material properties. For all examples see [here](example/README.md).
 
 ## Acknowledgements and contributing
-This library was restructured from one written by Artur Gower and Jonathan 
+This library was restructured from one written by Artur Gower and Jonathan
 Deakin.
 Please contribute, if nothing else, criticism is welcome.
 We are relatively new to Julia, and this is our first package, if anything is

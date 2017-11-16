@@ -81,7 +81,8 @@ function build_field_model{T}(model::FrequencyModel{T},k::T,bounds::Rectangle{T}
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot{T}(model::FrequencyModel{T},k::T;res=10, xres=res, yres=res, resp_fnc=real)
+@recipe function plot{T}(model::FrequencyModel{T},k::T;res=10, xres=res, yres=res,
+                         resp_fnc=real, drawshape = false)
 
     @series begin
         # find a box which covers everything
@@ -108,11 +109,11 @@ end
 
         (x_pixels, y_pixels, resp_fnc(response_mat))
     end
-
-    @series begin
-        model.shape
+    if drawshape
+      @series begin
+          model.shape
+      end
     end
-
     for i=1:length(model.particles) @series model.particles[i] end
 
     @series begin
