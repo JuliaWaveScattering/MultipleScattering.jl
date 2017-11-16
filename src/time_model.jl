@@ -9,10 +9,11 @@ end
 "Convert a frequency model into a time model using the inverse fourier transform. Assumes only positive frequencies and a real time signal"
 function TimeModel{T}(
         freq_model::FrequencyModel{T};
-        time_arr = w_to_t(freq_model.k_arr),
-        impulse = delta_fnc
+        time_arr = wTot(freq_model.k_arr),
+        impulse = delta_fnc,
+        method =:dft
     )
-    response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse)
+    response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse; method = method)
     TimeModel{T}(freq_model,response,time_arr,impulse)
 end
 

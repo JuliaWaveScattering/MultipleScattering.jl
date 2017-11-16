@@ -2,7 +2,7 @@ using MultipleScattering
 using Plots
 
 function run_time_response_single_particle(;
-        k_arr = collect(linspace(0.001,1.0,1000)),
+        k_arr = collect(linspace(0.001,50.0,2000)),
         particle_x = 100.0
     )
 
@@ -11,15 +11,13 @@ function run_time_response_single_particle(;
     # Radius of particle
     radius = 1.0
     # Phase speed inside the particle
-    c = 1.0 + 0.0*im
+    c = 0.5 + 0.0*im
     # Density of particle
     ρ = 10.0
     # Define positions and radii
     particles[1] = Particle{Float64}([particle_x,0.0],radius,c,ρ)
-
     # Simulate a single particle in frequency space
-    freq_model = FrequencyModel(particles,k_arr)
-
+    freq_model = FrequencyModel(particles,k_arr; hankel_order = 10)
     # Convert the frequency model into a time model
     time_model = TimeModel(freq_model)
 
@@ -39,6 +37,7 @@ end
 Test known Fourier transforms and frequency to time properties
 """
 function test_fourier()
+    pass = true
     w_arr = collect(linspace(0.0,100.0,200))
     t_arr = wTot(w_arr)
     N = length(w_arr) - 1
@@ -47,16 +46,15 @@ function test_fourier()
     # test invertablity
     w_arr ≈ tTow(wTot(w_arr))
     fs = rand(-1:0.01:1.,2N+1,1)
-    fs ≈ frequency_to_time(time_to_frequency(fs,w_arr),w_arr)
+    pass = pass && fs ≈ frequency_to_time(time_to_frequency(fs,w_arr),w_arr)
 
     # Gaussian to Gaussian
     as = [0.5];
     Fs = Complex{Float64}[exp(-a*w^2)*exp(im*t0*w) for w in w_arr, a in as]
     fs =  frequency_to_time(Fs,w_arr,t_arr);
     true_fs = (1/(2pi))*[sqrt(pi/a)*exp(-(t-t0)^2/(4*a)) for t in t_arr, a in as]
-    fs ≈ true_fs
-    Fs ≈ time_to_frequency(fs,w_arr,t_arr)
-    plot(t_arr,[fs,true_fs])
+    pass = pass && fs ≈ true_fs
+    pass = pass && Fs ≈ time_to_frequency(fs,w_arr,t_arr)
 
     # sinc to rectangle
     rect(t) = (abs(t)<0.5) ? 1.0:0.
@@ -64,7 +62,7 @@ function test_fourier()
     Fs = Complex{Float64}[ (w == 0.) ? 1:sin(a*pi*w)*exp(im*t0*w)/(a*pi*w) for w in w_arr, a in as]
     fs =  frequency_to_time(Fs,w_arr,t_arr) # only correct for half of time_arr
     true_fs = (1/(2pi))*[(1/abs(a))*rect((t-t0)/(2*pi*a)) for t in t_arr, a in as]
-    mean(abs.(fs-true_fs)) < 0.02*mean(abs.(true_fs))
+    pass = pass && mean(abs.(fs-true_fs)) < 0.02*mean(abs.(true_fs))
 
     # trapezoidal integration
     fs = cos.(t_arr).*exp(-(t_arr - t_arr[end]/2).^2/(t_arr[end]^2/25))
@@ -73,10 +71,10 @@ function test_fourier()
     Fs_trap = time_to_frequency(fs,w_arr; method=:trapezoidal)
     Fs =time_to_frequency(fs,w_arr)
     plot(w_arr,[real(Fs),real(Fs_trap)])
-    mean(abs.(Fs-Fs_trap)) < 0.0012*mean(abs.(Fs))
+    pass = pass && mean(abs.(Fs-Fs_trap)) < 0.0012*mean(abs.(Fs))
 
     fs_trap = frequency_to_time(Fs_trap,w_arr; method=:trapezoidal)
-    mean(abs.(fs-fs_trap))< 1e-4*mean(abs.(fs))
+    pass = pass && mean(abs.(fs-fs_trap))< 1e-4*mean(abs.(fs))
 
     # rectangle to sinc
     # as = [1/(2*(maximum(w_arr)+w_arr[2]))]; #only positive values
@@ -97,5 +95,5 @@ function test_fourier()
     # true_fs = [exp(-a*t) for t in time_arr, a in as]
 
 
-    return freq_model, time_model
+    return pass
 end

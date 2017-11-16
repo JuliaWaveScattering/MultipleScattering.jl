@@ -146,17 +146,21 @@ using Plots
         # Time response from a single particle
         include("../example/time_model.jl")
         freq_model, time_model = run_time_response_single_particle()
-        # Spike at start and a reply at index 36, then
-        # almost nothing everywhere else
-        @test abs(time_model.response[1]) > 0.9997 &&
-              abs(time_model.response[36]) > 0.04 &&
-              abs(time_model.response[200]) < 1.0e-4 &&
-              abs(time_model.response[400]) < 1.0e-4 &&
-              abs(time_model.response[600]) < 1.0e-4 &&
-              abs(time_model.response[800]) < 1.0e-4
-        # Take samples every 35 (this picks up the correct spike) and compare to
+        # Spike at start and then two diffracted spikes later, then
+        # not much else 
+
+              # incident plane wave
+        @test abs(time_model.response[1] - 16) < 1e-1     &&
+              # first reflection
+              time_model.response[3473] > 0.7             &&
+              abs(time_model.time_arr[3473] - 218) < 1e-1 &&
+              # largest diffraction
+              time_model.response[3601] > 0.9             &&
+              abs(time_model.time_arr[3601] - 226) < 1e-1
+
+        # Take samples every 200 and compare to
         # previously run result
-        @test abs.(time_model.response[1:35:1001]) ≈ [0.9997610543993756, 0.04032674361599573, 0.00029316911471682417, 0.0001476269842155356, 9.946092306789748e-5, 7.568349093113884e-5, 6.168287965696597e-5, 5.258973181434327e-5, 4.6320786590828974e-5, 4.183878864207524e-5, 3.8572434380825434e-5, 3.618456753372203e-5, 3.446715583575059e-5, 3.328924674321584e-5, 3.256957613682795e-5, 3.2261788209764806e-5, 3.2346802123258695e-5, 3.282984368481514e-5, 3.3741248017650994e-5, 3.5141270814154625e-5, 3.713039587382103e-5, 3.986866158958389e-5, 4.361167091785049e-5, 4.8780569782800176e-5, 5.610831966481772e-5, 6.697887653991401e-5, 8.433750790799958e-5, 0.00011572911102945159, 0.00018796797807378484]
+        @test time_model.response[1:200:4000,1] ≈ [15.91568766260155,-0.010114700804103129,-0.010849657057909082,-0.0094274294391117,-0.008064690305764446,-0.008065776499280565,-0.008227945663215533,-0.007811684591217631,-0.0066031417092440635,-0.005390619379328917,-0.004513676793355925,-0.003388964946642101,-0.0017444062810255325,-9.962160860650897e-5,0.0011156638442981646,0.002269075560701978,0.003948284351502541,0.007065202861450666,0.9172645743771086,0.014864642396833697]
 
         include("../example/lens.jl")
         freq_model, time_model = run_lens()
