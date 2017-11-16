@@ -16,7 +16,7 @@
     end
     begin
         # Test against a previously computed problem with a known seed
-        include("../example/moments.jl")
+        include("../example/moments/moments.jl")
         moments = moments_example()
         @test moments.moments[1][23] ≈ 0.9323251967911877  &&
               moments.moments[2][78] ≈ 0.2487558908409563  &&

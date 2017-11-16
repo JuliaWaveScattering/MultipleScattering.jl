@@ -53,8 +53,16 @@
     end
 
     @testset "Plot Shapes" begin
-        # Just run it to see if we have any errors (yes thats a very low bar)
-        include("../example/plot_shapes.jl")
+        # Just try each to see if we have any errors (yes thats a very low bar)
+        rectangle = Rectangle([0.0,0.0],[2.0,3.0])
+        plot(rectangle)
+
+        circle = Circle(3.0,[-1.0,2.0])
+        plot!(circle)
+
+        timeofflight = TimeOfFlight([-1.0,0.0],3.0)
+        plot!(timeofflight)
+        
         @test true
     end
 end

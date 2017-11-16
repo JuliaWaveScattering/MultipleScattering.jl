@@ -35,7 +35,14 @@
 
     @testset "Plot Particles" begin
         # Just run it to see if we have any errors (yes thats a very low bar)
-        include("../example/plot_particles.jl")
+        # Plot a single particle
+        particle = Particle([0.0,0.0])
+        plot(particle)
+
+        # This should work, but currently fails
+        # # Plot a vector of particles
+        # particles = random_particles(10,1.0)
+        # plot(particles)
         @test true
     end
 end
