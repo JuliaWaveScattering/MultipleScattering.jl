@@ -13,13 +13,12 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         num_particles = 4,
         shape = Rectangle(volfrac, radius, num_particles),
         hankel_order = 3,
-        seed = Vector{UInt32}(0),
+        seed = Base.Random.make_seed(),
         generate_responses=true
     )
-    if length(seed) == 0
-        seed = Base.Random.make_seed()
-    end
-    seed = MersenneTwister(seed).seed # convert seed into type Vector{UInt32}
+
+    # Get the seed from the Twister so its definitely of type Vector{UInt32}
+    seed = MersenneTwister(seed).seed
     particles = random_particles(volfrac, radius, shape; seed = seed)
 
     if isa(listener_positions,Vector)
