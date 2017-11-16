@@ -3,7 +3,7 @@ const MAX_ATTEMPTS_TO_FIT_PARTICLE = 2000
 "Generate a non-overlapping Vector of N random particles of radius r that fit inside the shape passed in"
 function random_particles{T}(volfrac::Number, a::T, shape::Shape;
         c=one(Complex{T}), ρ=zero(T),
-        seed::Vector{UInt32}=Base.Random.make_seed()
+        seed=Base.Random.make_seed()
     )
     if volfrac > 0.7854
         error("Specified volume fraction is larger than optimal packing of circles.")
@@ -28,7 +28,7 @@ end
 "Place N non-overlapping random particles that fit inside the shape passed in. Modifies the particles Vector."
 function random_particles!{T}(particles::Vector{Particle{T}}, shape::Shape;
         N::Int=length(particles),
-        seed::Vector{UInt32}=Base.Random.make_seed()
+        seed=Base.Random.make_seed()
     )
     randgen = MersenneTwister(seed)
     # separation distance, the minimum distance between the centres of particles relative to the two radiuses

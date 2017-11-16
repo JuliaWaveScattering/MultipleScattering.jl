@@ -1,7 +1,7 @@
 """
 Constructor which takes volfrac, particle radius and k_arr along with a load of
 optional keyword arguments. This constructor automtically generates random
-particles inside a shape (default to a square Rectangle with 4 particles) then 
+particles inside a shape (default to a square Rectangle with 4 particles) then
 generates the response.
 """
 function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
@@ -19,7 +19,7 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
     if length(seed) == 0
         seed = Base.Random.make_seed()
     end
-
+    seed = MersenneTwister(seed).seed # convert seed into type Vector{UInt32}
     particles = random_particles(volfrac, radius, shape; seed = seed)
 
     if isa(listener_positions,Vector)
@@ -56,7 +56,7 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
     if isa(listener_positions, Vector)
         listener_positions = reshape(listener_positions, 2, 1)
     end
-
+    seed = MersenneTwister(seed).seed # convert seed into type Vector{UInt32}
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
     model = FrequencyModel{T}(
         shape, ρ, c, particles,
