@@ -1,6 +1,6 @@
 
 # ================================ Rectangle ==================================
-# We define a rectangle using the two corners where topright .> bottomleft
+"We define a rectangle using the two corners where topright .> bottomleft"
 type Rectangle{T <: AbstractFloat} <: Shape
     bottomleft::Vector{T}
     topright::Vector{T}
@@ -26,7 +26,8 @@ function Rectangle{T}(particles::Vector{Particle{T}})
 end
 
 function inside{T}(shape::Rectangle{T}, particle::Particle{T})
-    all(particle.x .- particle.r .> shape.bottomleft) && all(particle.x .+ particle.r .< shape.topright)
+    all(particle.x .- particle.r .> shape.bottomleft) &&
+    all(particle.x .+ particle.r .< shape.topright)
 end
 
 function volume{T}(shape::Rectangle{T})
@@ -66,7 +67,7 @@ end
 
 
 # ================================= Circle ===================================
-# Circle defined by a centre and a radius
+"Circle defined by a centre and a radius"
 type Circle{T <: AbstractFloat} <: Shape
     radius::T
     centre::Vector{T}
@@ -101,15 +102,18 @@ function boundary_functions{T}(shape::Circle{T})
 end
 
 # =============================== TimeOfFlight =================================
-# We define a shape where all particles are less than time away from
-# listener_position, but also with a positive x coordinate (circle segment).
+"""
+We define a shape where all particles are less than time away from
+listener_position, but also with a positive x coordinate (circle segment).
+"""
 type TimeOfFlight{T <: AbstractFloat} <: Shape
     listener_position::Vector{T}
     time::T
 end
 
 function inside{T}(shape::TimeOfFlight{T},particle::Particle{T})
-    particle.x[1] > 0.0 && norm(particle.x - shape.listener_position) < shape.time
+    particle.x[1] > 0.0 &&
+    norm(particle.x - shape.listener_position) < shape.time
 end
 
 function volume{T}(shape::TimeOfFlight{T})
@@ -147,4 +151,21 @@ function boundary_functions(shape::TimeOfFlight)
         end
     end
     return x, y
+end
+
+# =============================== Utility =================================
+"Create a box which bounds two shapes"
+function bounding_box(shape1::Shape,shape2::Shape)
+    box1 = bounding_box(shape1)
+    box2 = bounding_box(shape2)
+
+    bottomleft = min.(box1.bottomleft,box2.bottomleft)
+    topright = max.(box1.topright,box2.topright)
+
+    return Rectangle(bottomleft,topright)
+end
+
+"Generates a rectangle which contains all the particles"
+function bounding_box{T}(particles::Vector{Particle{T}})
+    Rectangle(particles)
 end

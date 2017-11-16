@@ -18,11 +18,13 @@ This method is particularly efficient at solving acoustic problems with lots of
 circular scatterers set in an infinite domain.
 
 ## Get started
+This package is tested and works for Julia 0.6 and 0.5. 
 To get started, download and include the basic library
 ```julia
 Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
 using MultipleScattering
 ```
+
 ## Very basic example
 ### Run
 The basic way to construct and compute a model is to specify the volume
@@ -43,6 +45,7 @@ We can plot the time-harmonic response across these wavenumbers by typing:
 using Plots
 plot(model)
 ```
+![Plot of response against wavenumber](example/basic/plot_model.png)
 
 This is a rather abstract plot, for some context, you can plot the whole field
 at a specific k by typing.
@@ -52,31 +55,22 @@ This way we can get an understanding of what is happening for one particular
 wavenumber.
 
 ```julia
-plot(model,0.3)
+plot(model,0.8)
 ```
+![Plot real part of acoustic field](example/basic/plot_field.png)
 
-## Less basic example
-However, there are a great deal of defaults implicit in this statement.
-For finer grain control of the problem, we can construct our set of particles,
-define their positions, radii and give them material properties
-```julia
-particles = Vector{Particle{Float64}}(2)
-# Phase speed inside the particle
-c = 1.0 + 0.0*im
-# Density of particle
-ρ = 1.0
-# Define their positions and radii
-particles[1] = Particle{Float64}([0.2,0.8],0.1,c,ρ)
-particles[2] = Particle{Float64}([0.2,-0.8],0.2,c,ρ)
-```
+Note: most things in the package can be plotted by typing `plot(thing)` if you
+need an insight into a specific part of your model.
 
-We can then run this model, and plot the resultant field:
-```julia
-two_particle_model = FrequencyModel(particles,k_arr)
+## More examples
+There are a lot of defaults implicit in this basic example.
+Almost every part of the problem can be controlled, for example we can manually
+construct the set of particles, define their positions, radii and give them 
+specific material properties (see [here](example/specify_shapes) for an example
+of this).
+For all examples see [here](example/README.md).
 
-plot(two_particle_model,0.5)
-```
-
+## Acknowledgements and contributing
 This library was restructured from one written by Artur Gower and Jonathan 
 Deakin.
 Please contribute, if nothing else, criticism is welcome.

@@ -49,12 +49,11 @@ Build a 'field model' with lots of listeners using the same domain as model
 you pass in. This 'field model' can then be used to plot the whole field for 
 this wavenumber.
 """
-function build_field_model{T}(model::FrequencyModel{T},k::T;res=10,xres=res,yres=res)
+function build_field_model{T}(model::FrequencyModel{T},k::T,bounds::Rectangle{T};res=10,xres=res,yres=res)
     # Create deep copy of model so that we can add lots of new listener positions and rerun the model
     field_model = deepcopy(model)
 
     # Build the listeners or pixels
-    bounds = bounding_box(model.shape)
     box_size = bounds.topright - bounds.bottomleft
     box_width = box_size[1]
     box_height = box_size[2]
@@ -85,11 +84,17 @@ end
 @recipe function plot{T}(model::FrequencyModel{T},k::T;res=10, xres=res, yres=res, resp_fnc=real)
 
     @series begin
-        field_model = build_field_model(model, k; xres=xres, yres=yres)
+        # find a box which covers everything
+        shape_bounds = bounding_box(model.shape)
+        listeners_as_particles = map(
+            l -> Particle(model.listener_positions[:,l],mean_radius(model)/2), 
+            1:size(model.listener_positions,2)
+        )
+        particle_bounds = bounding_box([model.particles; listeners_as_particles])
+        bounds = bounding_box(shape_bounds, particle_bounds)
 
-        # Build the listeners or pixels
-        bounds = bounding_box(field_model.shape)
-
+        field_model = build_field_model(model, k, bounds; xres=xres, yres=yres)
+        
         # For this we sample at the centre of each pixel
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
         y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
@@ -98,7 +103,8 @@ end
         response_mat = transpose(reshape(field_model.response, (xres+1, yres+1)))
         linetype --> :contour
         fill --> true
-        # fillcolor=fillcolor
+        fillcolor --> :pu_or
+        title --> "Field at k=$k"
 
         (x_pixels, y_pixels, resp_fnc(response_mat))
     end
@@ -111,19 +117,17 @@ end
 
     @series begin
         line --> 0
-        fill --> (0, :blue)
+        fill --> (0, :lightgreen)
         legend --> false
         grid --> false
         colorbar --> true
         aspect_ratio := 1.0
-        title --> "Field at k=$k"
-        fillcolor --> :pu_or
 
         r = mean_radius(model.particles)/2
         x(t) = r * cos(t) + model.listener_positions[1, 1]
         y(t) = r * sin(t) + model.listener_positions[2, 1]
 
-        (x, y, -π/3, π/3)
+        (x, y, -2π/3, 2π/3)
     end
 
 end
