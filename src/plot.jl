@@ -45,8 +45,8 @@ end
 end
 
 """
-Build a 'field model' with lots of listeners using the same domain as model 
-you pass in. This 'field model' can then be used to plot the whole field for 
+Build a 'field model' with lots of listeners using the same domain as model
+you pass in. This 'field model' can then be used to plot the whole field for
 this wavenumber.
 """
 function build_field_model{T}(model::FrequencyModel{T},k::T,bounds::Rectangle{T};res=10,xres=res,yres=res)
@@ -87,14 +87,14 @@ end
         # find a box which covers everything
         shape_bounds = bounding_box(model.shape)
         listeners_as_particles = map(
-            l -> Particle(model.listener_positions[:,l],mean_radius(model)/2), 
+            l -> Particle(model.listener_positions[:,l],mean_radius(model)/2),
             1:size(model.listener_positions,2)
         )
         particle_bounds = bounding_box([model.particles; listeners_as_particles])
         bounds = bounding_box(shape_bounds, particle_bounds)
 
         field_model = build_field_model(model, k, bounds; xres=xres, yres=yres)
-        
+
         # For this we sample at the centre of each pixel
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
         y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
@@ -149,8 +149,7 @@ end
     xlabel --> "Time (t)"
     ylabel --> "Response"
     grid --> false
-    title --> "Response from particles of radius $(signif(model.frequency_model.particles[1].r,2)) contained in a $(lowercase(name(model.frequency_model.shape)))\n with volfrac=$(signif(calculate_volfrac(frequency_model.model),2)) measured at ($(model.frequency_model.listener_positions[1,1]), $(model.frequency_model.listener_positions[2,1]))"
+    title --> "Response from particles of radius $(signif(model.frequency_model.particles[1].r,2)) contained in a $(lowercase(name(model.frequency_model.shape)))\n with volfrac=$(signif(calculate_volfrac(model.frequency_model),2)) measured at ($(model.frequency_model.listener_positions[1,1]), $(model.frequency_model.listener_positions[2,1]))"
 
     (model.time_arr, [real(model.response) imag(model.response)])
 end
-
