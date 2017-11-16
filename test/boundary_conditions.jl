@@ -16,7 +16,7 @@ function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
     tractions_jumps = [ d[2] for d in boundary_data]
     # to be rigorous we expect three things:
     # first, the maximum error for the displacement < 0.01 and traction < 0.01. NOTE, traction is only calculated approximately, so can be inaccurate.
-    firstpass = maximum(displacement_jumps[1]) < 0.01 && maximum(tractions_jumps[1]) < 0.01
+    firstpass = maximum(displacement_jumps[1]) < 0.005 && maximum(tractions_jumps[1]) < 0.01
     # second, the error should, on average, increase with frequency when the hankel_order is fixed
     secondpass = issorted(mean(displacement_jumps)[:])  && issorted(mean(tractions_jumps)[:])
     # last the error should, on average, decrease when increasing the hankel_order

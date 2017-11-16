@@ -56,7 +56,6 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
     if isa(listener_positions, Vector)
         listener_positions = reshape(listener_positions, 2, 1)
     end
-    seed = MersenneTwister(seed).seed # convert seed into type Vector{UInt32}
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
     model = FrequencyModel{T}(
         shape, ρ, c, particles,
