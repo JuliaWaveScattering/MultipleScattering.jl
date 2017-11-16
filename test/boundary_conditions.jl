@@ -1,11 +1,12 @@
 
 "runs a test for the boundary conditions of penetrable particles nad returns true if passed."
 function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
-    srand(seed) # a non-default seed != 1 may not pass all tests
+    srand(seed) # a non-default seed may not pass all tests
     # generate 4 particles with random material properties
     particles = [Particle([0.,0.], rand(0.1:0.1:2.0), rand(0.2:0.1:10)+0.0im, rand(0.2:0.1:10)) for i=1:numberofparticles]
     shape = Rectangle(0.1, mapreduce(p->p.r,max,particles), numberofparticles)
-    random_particles!(particles, shape) # choose random positions
+    random_particles!(particles, shape; seed=seed) # choose random positions
+    particles
     k_arr = collect(linspace(0.01,1.0,10));
     model = FrequencyModel(particles,k_arr);
     boundary_data= map(4:6) do m

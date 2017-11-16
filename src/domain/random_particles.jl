@@ -38,9 +38,9 @@ function random_particles!{T}(particles::Vector{Particle{T}}, shape::Shape;
     shape_bounding_box = bounding_box(shape)
     topright = shape_bounding_box.topright
     bottomleft = shape_bounding_box.bottomleft
-    
+
     @printf("Generating %d randomly positioned particles with mean radius of %0.5g. Total volume of particles is %0.5g in a %s of volume %0.5g (volume fraction %0.5g). Using a bounding box with volume %0.5g. \n", N, mean_radius(particles), volume(particles), name(shape), volume(shape), volume(particles)/volume(shape), volume(shape_bounding_box))
-    
+
     for n = 1:N
 
         num_attempts = 0
