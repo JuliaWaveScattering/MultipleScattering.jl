@@ -17,7 +17,7 @@ w_arr = collect(0.1:0.01:1.)
 model = FrequencyModel(particles, w_arr)
 plot(model)
 ```
-![Plot against frequency](basic/two_particles_model.png)
+![Plot against frequency](two_particles_model.png)
 
 The above used an incident plane with the default reciever/listener position and incident plane wave direction
 ```julia
@@ -35,6 +35,6 @@ then plot the response around the particles and receiver
 w = 3.2
 plot(model,w; res=80, resp_fnc=abs)
 ```
-![Plot absolute value of wave field](basic/two_particles.png)
+![Plot absolute value of wave field](two_particles.png)
 
 the green circle in the plot is the receiver position. Looking at the region between the particles we see the complicated results of multiple scatttering.
