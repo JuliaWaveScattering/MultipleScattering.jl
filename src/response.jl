@@ -42,7 +42,7 @@ function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix:
     p = model.particles[i]
     γ = model.c/p.c
     # If the particle is impenetrable then return zero(T)
-    if abs(p.c) == T(Inf) || abs(p.ρ) == T(Inf) || abs(model.ρ) == zero(T)
+    if abs(p.c) == zero(T) || abs(p.c) == T(Inf) || abs(p.ρ) == T(Inf)
       return zero(T)
     end
     internal_coefficient(m) = (coefficient_matrix[m+Nh+1,i]/besselj(m, γ*k*p.r))*
