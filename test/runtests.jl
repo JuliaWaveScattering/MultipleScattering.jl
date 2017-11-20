@@ -9,6 +9,12 @@ using Plots
     include("time_model_tests.jl")
     include("moments_tests.jl")
 
+    # test our discretised Fourier transforms
+    @testset "Fourier tranforms" begin
+      include("fourier_test.jl")
+      @test fourier_test()
+    end
+
     @testset "Type stability" begin
         # Define everything as a Float32
         volfrac = 0.01f0
