@@ -27,37 +27,41 @@ using MultipleScattering
 
 ## Very basic example
 ### Run
-The basic way to construct and compute a model is to specify the volume
-fraction, particle radius and wavenumbers:
+Define two particles with the first centred at [1.,1.]
 ```julia
-volfrac = 0.01
-radius = 1.0
-k_arr = collect(linspace(0.01,1.0,100))
-model = FrequencyModel(volfrac,radius,k_arr)
+p1 = Particle([-2.,2.])
+p2 = Particle([-2.,-2.])
+particles = [p1,p2]
 ```
+
+Specify the angular frequency of the incident wave and calculate the response
+```julia
+w_arr = collect(0.1:0.01:1.)
+model = FrequencyModel(particles, w_arr)
+```
+
 ### Plot
 The package also provides recipes to be used with the `Plots` package for
 plotting models after they have been run.
 In our above model we ran the simulation for 100 different wavenumbers, and
-measured the response at a location away from the side wall.
+measured the response at the default location (-10.,0.).
 We can plot the time-harmonic response across these wavenumbers by typing:
 ```julia
 using Plots
+pyplot()
 plot(model)
 ```
-![Plot of response against wavenumber](example/basic/plot_model.png)
+![Plot of response against wavenumber](example/into/plot_model.png)
 
-This is a rather abstract plot, for some context, you can plot the whole field
-at a specific k by typing.
-This runs an identical model, but measures the field at lots of points in the
-domain rather than just at the listener position.
-This way we can get an understanding of what is happening for one particular
-wavenumber.
-
+For a better overview you can plot the whole field for a specific k by typing:
 ```julia
 plot(model,0.8)
 ```
-![Plot real part of acoustic field](example/basic/plot_field.png)
+![Plot real part of acoustic field](example/into/plot_field.png)
+
+This measures the field at lots of points in the domain rather than just at the listener position.
+This way we can get an understanding of what is happening for one particular
+wavenumber.
 
 Note: most things in the package can be plotted by typing `plot(thing)` if you
 need an insight into a specific part of your model.

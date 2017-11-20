@@ -49,6 +49,7 @@ function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix:
         (hankelh1(m,k*p.r) - besselj(m,k*p.r)/Zn(model,p,k,m))
 
     R = norm(x-p.x)
+    if R == zero(T) R = eps(T) end # besselj(-1, 0.0) gives an error when it shouldn't
     Θ = atan2(x[2] - p.x[2], x[1] - p.x[1])
     return sum(-Nh:Nh) do m
             internal_coefficient(m)*besselj(m,γ*k*R)*exp(im*m*Θ)
