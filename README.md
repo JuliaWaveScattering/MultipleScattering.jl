@@ -51,13 +51,13 @@ using Plots
 pyplot()
 plot(model)
 ```
-![Plot of response against wavenumber](example/into/plot_model.png)
+![Plot of response against wavenumber](example/intro/plot_model.png)
 
 For a better overview you can plot the whole field for a specific k by typing:
 ```julia
 plot(model,0.8)
 ```
-![Plot real part of acoustic field](example/into/plot_field.png)
+![Plot real part of acoustic field](example/intro/plot_field.png)
 
 This measures the field at lots of points in the domain rather than just at the listener position.
 This way we can get an understanding of what is happening for one particular
