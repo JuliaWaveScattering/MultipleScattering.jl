@@ -1,4 +1,4 @@
-# Basic example
+# Simple random particles example
 
 If it isn't installed, clone it from github
 ```julia

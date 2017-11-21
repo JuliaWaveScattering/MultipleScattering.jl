@@ -1,6 +1,6 @@
 # Examples
 
-## [Basic](basic/README.md)
+## [Simple random particles](random_particles/README.md)
 - Simple example of random particles in rectangle
 - Demonstrate plotting
 
