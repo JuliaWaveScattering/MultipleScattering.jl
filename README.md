@@ -19,13 +19,13 @@ circular scatterers set in an infinite domain.
 
 ## Get started
 This package is tested and works for Julia 0.6 and 0.5.
-To get started, download and include the basic library
+To get started, download and include the library
 ```julia
 Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
 using MultipleScattering
 ```
 
-## Very basic example
+## Simple example
 ### Run
 Define two particles, the first centred at [-2.,2.] and the second at [-2.,-2.]
 ```julia

@@ -1,8 +1,11 @@
 # Examples
 
+## [Simple intro](intro/README.md)
+- Introductory example where two particle positions and radii are specified
+- Demonstrate plotting
+
 ## [Simple random particles](random_particles/README.md)
 - Simple example of random particles in rectangle
-- Demonstrate plotting
 
 ## [Two particles](two_particles/README.md)
 - Specify particle positions manually
