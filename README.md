@@ -27,17 +27,17 @@ using MultipleScattering
 
 ## Very basic example
 ### Run
-Define two particles with the first centred at [1.,1.]
+Define two particles, the first centred at [-2.,2.] and the second at [-2.,-2.]
 ```julia
 p1 = Particle([-2.,2.])
 p2 = Particle([-2.,-2.])
 particles = [p1,p2]
 ```
 
-Specify the angular frequency of the incident wave and calculate the response
+Specify the angular frequency of the defualt incident plane wave ![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D) and calculate the response
 ```julia
 w_arr = collect(0.1:0.01:1.)
-model = FrequencyModel(particles, w_arr)
+model = FrequencyModel(particles, w_arr; source_direction = [1.0,0.0])
 ```
 
 ### Plot
@@ -59,7 +59,7 @@ plot(model,0.8)
 ```
 ![Plot real part of acoustic field](example/intro/plot_field.png)
 
-This measures the field at lots of points in the domain rather than just at the listener position.
+This measures the field at lots of points in the domain rather than just at the listener position (the big green ball).
 This way we can get an understanding of what is happening for one particular
 wavenumber.
 
