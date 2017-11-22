@@ -15,7 +15,7 @@ function hankel_order_convergence(m=[0,1,2,3,4,5,6,7,8,9,10], volfrac = 0.1,
     for i = eachindex(m)
         models[i] = FrequencyModel(particles, k_arr; seed=seed, hankel_order=m[i])
     end
-    
+
     return models
 end
 
@@ -41,11 +41,11 @@ function plot_hankel_order_convergence(models)
     plot(
         plot(models[end],0.5),
         plot(models[1].k_arr, [real(responses),imag(responses)],
-             labels=[("real ".*labels) ("imag ".*labels)],
+             labels=[ map(c -> "real "*c,labels)  map(c -> "imag "*c,labels)],
              xlab="Wavenumber (k)", ylab="Response", linecolor=[realcolors imagcolors]
         ),
-        plot(models[1].k_arr, absvec.(v),
-             yscale=:log10, labels=labels, linecolor=colors, 
+        plot(models[1].k_arr, absvec.(error),
+             yscale=:log10, labels=labels, linecolor=colors,
              xlab="Wavenumber (k)", ylab="Absolute error",
         ),
         plot(m[1:end-1], integrated_error,
