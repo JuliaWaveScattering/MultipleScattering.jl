@@ -15,6 +15,7 @@ import Base.isequal, Base.(==)
 import SpecialFunctions: besselj, hankelh1
 
 using RecipesBase
+using ProgressMeter
 
 # Functions and types for defining the domains we solve on
 include("domain/particle.jl")

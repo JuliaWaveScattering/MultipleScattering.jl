@@ -71,7 +71,13 @@ end
 function generate_responses!{T}(model::FrequencyModel{T},k_arr::Vector{T}=model.k_arr)
     model.response = Matrix{Complex{T}}(size(k_arr, 1), size(model.listener_positions, 2))
     # Map each k in k_arr over a the response function
-    for i=1:length(k_arr)
+    
+    B = (2*model.hankel_order+1)*length(model.particles)
+    println("\nConstructing and solving $(length(k_arr)) linear systems of size $(B)x$(B)...")
+    starttime = time()
+    @showprogress 0.1 "" for i=1:length(k_arr)
         model.response[i,:] = response(model,k_arr[i])
     end
+    average_dur = signif((time() - starttime)/length(k_arr),3)
+    println("Average time per wavelength: $average_dur seconds")
 end

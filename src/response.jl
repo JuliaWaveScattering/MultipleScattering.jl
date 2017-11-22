@@ -29,8 +29,8 @@ function scattered_waves_at{T}(model, k::T, coefficient_matrix::Matrix{Complex{T
     θs  = [atan2(x[2] - p.x[2], x[1] - p.x[1]) for p in model.particles]
 
     scattered_from(i) = sum(-Nh:Nh) do m
-          coefficient_matrix[m+Nh+1, i] * hankelh1(m, krs[i]) * exp(im * m * θs[i])
-      end
+        coefficient_matrix[m+Nh+1, i] * hankelh1(m, krs[i]) * exp(im * m * θs[i])
+    end
     #Sum wave scattered from each particle
     return sum(scattered_from, eachindex(model.particles))
 end
@@ -52,8 +52,8 @@ function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix:
     if R == zero(T) R = eps(T) end # besselj(-1, 0.0) gives an error when it shouldn't
     Θ = atan2(x[2] - p.x[2], x[1] - p.x[1])
     return sum(-Nh:Nh) do m
-            internal_coefficient(m)*besselj(m,γ*k*R)*exp(im*m*Θ)
-      end
+        internal_coefficient(m)*besselj(m,γ*k*R)*exp(im*m*Θ)
+    end
 
 end
 
