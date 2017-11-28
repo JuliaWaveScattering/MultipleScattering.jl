@@ -185,6 +185,7 @@ end
         linetype --> :contour
         fill --> true
         fillcolor --> :pu_or
+        clims --> 0.9*(-maximum(response_mat),maximum(response_mat)) # so that white is always = 0
         title --> "Field at time=$(t_arr[1])"
 
         (x_pixels, y_pixels, resp_fnc.(response_mat))

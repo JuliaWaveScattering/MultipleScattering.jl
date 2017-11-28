@@ -30,7 +30,7 @@ function fourier_test()
     pass = pass && mean(abs.(fs-true_fs)) < 0.02*mean(abs.(true_fs))
 
     # trapezoidal integration
-    fs = cos.(t_arr).*exp(-(t_arr - t_arr[end]/2).^2/(t_arr[end]^2/25))
+    fs = cos.(t_arr).*exp.(-(t_arr - t_arr[end]/2).^2/(t_arr[end]^2/25))
     fs = reshape(fs,length(fs),1)
 
     Fs_trap = time_to_frequency(fs,w_arr; method=:trapezoidal)
