@@ -4,6 +4,7 @@ type TimeModel{T}
     response::Matrix{T}
     time_arr::Vector{T}
     impulse::Function
+    method::Symbol
 end
 
 "Convert a frequency model into a time model using the inverse fourier transform. Assumes only positive frequencies and a real time signal"
@@ -14,7 +15,16 @@ function TimeModel{T}(
         method =:dft
     )
     response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse; method = method)
-    TimeModel{T}(freq_model,response,time_arr,impulse)
+    TimeModel{T}(freq_model,response,time_arr,impulse,method)
+end
+
+"Take model parameters, run model and populate the response array."
+function generate_responses!{T}(timemodel::TimeModel{T},t_arr::Vector{T}=timemodel.time_arr)
+    timemodel.time_arr = t_arr
+    timemodel.response = frequency_to_time(
+        timemodel.frequency_model.response, timemodel.frequency_model.k_arr,
+        timemodel.time_arr, timemodel.impulse; method = timemodel.method
+    )
 end
 
 """

@@ -51,7 +51,8 @@ Build a 'field model' with lots of listeners using the same domain as model
 you pass in. This 'field model' can then be used to plot the whole field for
 this wavenumber.
 """
-function build_field_model{T}(model::FrequencyModel{T},k::T,bounds::Rectangle{T};res=10,xres=res,yres=res)
+function build_field_model{T}(model::FrequencyModel{T}, bounds::Rectangle{T},
+                              k_arr::Vector{T}=model.k_arr; res=10,xres=res,yres=res)
     # Create deep copy of model so that we can add lots of new listener positions and rerun the model
     field_model = deepcopy(model)
 
@@ -76,8 +77,7 @@ function build_field_model{T}(model::FrequencyModel{T},k::T,bounds::Rectangle{T}
     end
 
     field_model.listener_positions = listener_positions
-    field_model.response = Matrix{T}(1, num_pixels)
-    generate_responses!(field_model, [k])
+    generate_responses!(field_model,k_arr)
 
     return field_model
 end
@@ -95,8 +95,7 @@ end
         )
         particle_bounds = bounding_box([model.particles; listeners_as_particles])
         bounds = bounding_box(shape_bounds, particle_bounds)
-
-        field_model = build_field_model(model, k, bounds; xres=xres, yres=yres)
+        field_model = build_field_model(model, bounds, [k]; xres=xres, yres=yres)
 
         # For this we sample at the centre of each pixel
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
@@ -109,7 +108,7 @@ end
         fillcolor --> :pu_or
         title --> "Field at k=$k"
 
-        (x_pixels, y_pixels, resp_fnc(response_mat))
+        (x_pixels, y_pixels, resp_fnc.(response_mat))
     end
     if drawshape
       @series begin
@@ -155,4 +154,61 @@ end
     title --> "Response from particles of radius $(signif(model.frequency_model.particles[1].r,2)) contained in a $(lowercase(name(model.frequency_model.shape)))\n with volfrac=$(signif(calculate_volfrac(model.frequency_model),2)) measured at ($(model.frequency_model.listener_positions[1,1]), $(model.frequency_model.listener_positions[2,1]))"
 
     (model.time_arr, [real(model.response) imag(model.response)])
+end
+
+"Plot the field for a particular an array of time"
+@recipe function plot{T}(timemodel::TimeModel{T}, t_arr;
+                        res=10, xres=res, yres=res, resp_fnc=real, drawshape = false)
+    model = timemodel.frequency_model
+
+    @series begin
+        # find a box which covers everything
+        shape_bounds = bounding_box(model.shape)
+        listeners_as_particles = map(
+            l -> Particle(model.listener_positions[:,l],mean_radius(model)/2),
+            1:size(model.listener_positions,2)
+        )
+        particle_bounds = bounding_box([model.particles; listeners_as_particles])
+        bounds = bounding_box(shape_bounds, particle_bounds)
+
+        field_model = build_field_model(model, bounds; xres=xres, yres=yres)
+        field_timemodel = deepcopy(timemodel) # to use all the same options/fields as timemodel
+        field_timemodel.frequency_model = field_model
+        generate_responses!(field_timemodel, t_arr)
+
+        # For this we sample at the centre of each pixel
+        x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
+        y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
+
+        # NOTE only plots the first time plot for now...
+        response_mat = transpose(reshape(field_timemodel.response[1,:], (xres+1, yres+1)))
+        linetype --> :contour
+        fill --> true
+        fillcolor --> :pu_or
+        title --> "Field at time=$(t_arr[1])"
+
+        (x_pixels, y_pixels, resp_fnc.(response_mat))
+    end
+    if drawshape
+      @series begin
+          model.shape
+      end
+    end
+    for i=1:length(model.particles) @series model.particles[i] end
+
+    @series begin
+        line --> 0
+        fill --> (0, :lightgreen)
+        legend --> false
+        grid --> false
+        colorbar --> true
+        aspect_ratio := 1.0
+
+        r = mean_radius(model.particles)/2
+        x(t) = r * cos(t) + model.listener_positions[1, 1]
+        y(t) = r * sin(t) + model.listener_positions[2, 1]
+
+        (x, y, -2π/3, 2π/3)
+    end
+
 end
