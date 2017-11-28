@@ -6,7 +6,7 @@ export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
        mean_radius, std_radius,
        FrequencyModel, calculate_volfrac, generate_responses!,
        Moments,
-       TimeModel, frequency_to_time, time_to_frequency, wTot, tTow, delta_fnc
+       TimeModel, frequency_to_time, time_to_frequency, wTot, tTow, delta_fnc, gaussian_impulses
 
 
 abstract Shape

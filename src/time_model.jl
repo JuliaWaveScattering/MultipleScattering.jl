@@ -11,7 +11,7 @@ end
 function TimeModel{T}(
         freq_model::FrequencyModel{T};
         time_arr = wTot(freq_model.k_arr),
-        impulse = gaussian_impuses(maximum(freq_model.k_arr)),
+        impulse = gaussian_impulses(maximum(freq_model.k_arr)),
         method =:dft
     )
     response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse; method = method)
@@ -75,7 +75,7 @@ delta_fnc{T}(k::T) = one(T)
 """
 Returns a gaussian impulse function in the frequency domain. In the time domain this impulse is exp(-t^2/(4a))
 """
-gaussian_impuses{T}(maxk::T, a::T = T(3)/maxk^2) = w -> exp(-a*w^2)*(2sqrt(a*pi))
+gaussian_impulses{T}(maxk::T, a::T = T(3)/maxk^2) = w -> exp(-a*w^2)*(2sqrt(a*pi))
 
 
 """

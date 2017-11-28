@@ -158,7 +158,8 @@ end
 
 "Plot the field for a particular an array of time"
 @recipe function plot{T}(timemodel::TimeModel{T}, t_arr;
-                        res=10, xres=res, yres=res, resp_fnc=real, drawshape = false)
+                        res=10, xres=res, yres=res, resp_fnc=real,
+                        drawshape = false, drawlisteners = false)
     model = timemodel.frequency_model
 
     @series begin
@@ -180,12 +181,12 @@ end
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
         y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
 
+
         # NOTE only plots the first time plot for now...
         response_mat = transpose(reshape(field_timemodel.response[1,:], (xres+1, yres+1)))
         linetype --> :contour
         fill --> true
         fillcolor --> :pu_or
-        clims --> 0.9*(-maximum(response_mat),maximum(response_mat)) # so that white is always = 0
         title --> "Field at time=$(t_arr[1])"
 
         (x_pixels, y_pixels, resp_fnc.(response_mat))
@@ -196,20 +197,22 @@ end
       end
     end
     for i=1:length(model.particles) @series model.particles[i] end
+    if drawlisteners
+      @series begin
+          line --> 0
+          fill --> (0, :lightgreen)
+          grid --> false
+          colorbar --> true
+          aspect_ratio --> 1.0
+          legend --> false
 
-    @series begin
-        line --> 0
-        fill --> (0, :lightgreen)
-        legend --> false
-        grid --> false
-        colorbar --> true
-        aspect_ratio := 1.0
+          r = mean_radius(model.particles)/2
+          x(t) = r * cos(t) + model.listener_positions[1, 1]
+          y(t) = r * sin(t) + model.listener_positions[2, 1]
 
-        r = mean_radius(model.particles)/2
-        x(t) = r * cos(t) + model.listener_positions[1, 1]
-        y(t) = r * sin(t) + model.listener_positions[2, 1]
-
-        (x, y, -2π/3, 2π/3)
+          (x, y, -2π/3, 2π/3)
+      end
     end
 
+    # clims --> (-0.65,0.65) # so that white is always = 0, these values are suitable when using default gaussian impulse
 end
