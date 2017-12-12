@@ -1,4 +1,3 @@
-
 @recipe function plot(particles::Vector{Particle})
     grid --> false
     legend --> nothing

@@ -21,7 +21,7 @@ function run_lens(;
 
     freqmodel = FrequencyModel(particles, k_arr; listener_positions=listener_position)
 
-    return freqmodel, TimeModel(freqmodel)
+    return freqmodel, TimeModel(freqmodel; impulse = gaussian_impulses(1.0, 3./maximum(k_arr)^2))
 end
 
 function plot_lens()

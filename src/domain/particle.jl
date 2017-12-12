@@ -29,7 +29,7 @@ function std_radius{T}(particles::Vector{Particle{T}})
 end
 
 function isequal(p1::Particle, p2::Particle)
-    isequal(p1.x,p2.x) && isequal(p1.r,p2.r) && 
+    isequal(p1.x,p2.x) && isequal(p1.r,p2.r) &&
     isequal(p1.c,p2.c) && isequal(p1.ρ,p2.ρ)
 end
 

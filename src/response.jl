@@ -24,6 +24,7 @@ end
 
 "a scattered waves is the total response minus the incident"
 function scattered_waves_at{T}(model, k::T, coefficient_matrix::Matrix{Complex{T}}, x::Vector{T})
+    if isempty(model.particles) return zero(Complex{T}) end
     Nh = model.hankel_order
     krs = [k*norm(x - p.x) for p in model.particles]
     θs  = [atan2(x[2] - p.x[2], x[1] - p.x[1]) for p in model.particles]
@@ -63,7 +64,7 @@ function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)::Matr
     P = length(model.particles)
     # No particles means wave is unchanged, response matrix is a scalar
     if P == 0
-        return one(Complex{T})
+        return zeros(Complex{T},(2model.hankel_order+1,0))
     end
     # Highest hankel order used
     Nh = model.hankel_order

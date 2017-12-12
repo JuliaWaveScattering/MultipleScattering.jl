@@ -14,6 +14,8 @@ end
 
 "Generates a rectangle which contains all the particles"
 function Rectangle{T}(particles::Vector{Particle{T}})
+
+    if isempty(particles) return Rectangle([zero(T),zero(T)], [zero(T),zero(T)]) end 
     topright_particle(p) = p.x .+ p.r
     broadcastmax(x,y) = max.(x,y)
     topright = mapreduce(topright_particle, broadcastmax, particles)
@@ -88,16 +90,16 @@ end
 name(shape::Circle) = "Circle"
 
 function boundary_functions{T}(shape::Circle{T})
-    function x(t) 
+    function x(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
         cos(2π * t) + shape.centre[1]
     end
-    
-    function y(t) 
+
+    function y(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
         sin(2π * t) + shape.centre[2]
     end
-    
+
     return x, y
 end
 
@@ -132,8 +134,8 @@ name(shape::TimeOfFlight) = "Time of flight"
 function boundary_functions(shape::TimeOfFlight)
     function x(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
-        
-        if t <= 1/2 
+
+        if t <= 1/2
             θ = acos(-shape.listener_position[1] / shape.time)
             return shape.time*cos(θ*(4t-1)) + shape.listener_position[1]
         else
@@ -142,8 +144,8 @@ function boundary_functions(shape::TimeOfFlight)
     end
     function y(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
-        
-        if t <= 1/2 
+
+        if t <= 1/2
             θ = acos(-shape.listener_position[1] / shape.time)
             return shape.time*sin(θ*(4t-1)) + shape.listener_position[2]
         else

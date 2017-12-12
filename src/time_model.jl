@@ -75,7 +75,7 @@ delta_fnc{T}(k::T) = one(T)
 """
 Returns a gaussian impulse function in the frequency domain. In the time domain this impulse is exp(-t^2/(4a))
 """
-gaussian_impulses{T}(maxk::T, a::T = T(3)/maxk^2) = w -> exp(-a*w^2)*(2sqrt(a*pi))
+gaussian_impulses{T}(maxk::T, a::T = T(2.5)/maxk^2) = w -> exp(-a*w^2)*(2sqrt(a*pi))
 
 
 """
