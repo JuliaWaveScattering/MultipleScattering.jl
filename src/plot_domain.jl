@@ -1,16 +1,8 @@
 @recipe function plot(particles::Vector{Particle})
-    grid --> false
-    legend --> nothing
-    xlab --> "x"
-    ylab --> "y"
-    aspect_ratio := 1.0
-    fill --> (0, :grey)
-    line --> 0
+    # for p in particles @series identity(p) end
+    # for i=1:length(particles) @series particles[i] end
 
-    x = map(p -> (t -> p.r*cos(t) + p.x[1]), particles)
-    y = map(p -> (t -> p.r*sin(t) + p.x[2]), particles)
-
-    (x, y, 0, 2π)
+    @series particles[1]
 end
 
 @recipe function plot(particle::Particle)

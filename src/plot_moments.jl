@@ -9,9 +9,8 @@
 # end
 
 @recipe function plot_ribbon{T}(mnts::Moments{T};
-      use_moments = [1,2,4], X = mnts.x_arr)
-
-    labs = ["mean" "std" "skew" "kurt"]
+      use_moments = [1,2,4], X = mnts.x_arr,
+      labs = ["mean" "std" "skew" "kurt"])
     use_moments = sort(union([1; use_moments]))
     if labs == [] labs = repeat([""], inner = length(mnts.moments)) end
     colors =[:black, :green, :orange, :red]
