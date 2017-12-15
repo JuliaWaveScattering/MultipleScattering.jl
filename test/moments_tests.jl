@@ -1,15 +1,15 @@
-@testset "Moments" begin
+@testset "StatisticalMoments" begin
     begin
         # Test against a problem which can be easily solved
-        models = Vector{FrequencyModel{Float64}}(3)
+        models = Vector{FrequencySimulation{Float64}}(3)
         # Fake responses, with mean 4.0, standard deviation 2.0 and skew 0.0
         responses = [2.0, 4.0, 6.0]
         particles = [Particle([0.0,0.0])]
         for i=1:3
-            models[i] = FrequencyModel(particles,[1.0];generate_responses=false)
+            models[i] = FrequencySimulation(particles,[1.0];generate_responses=false)
             models[i].response = reshape([responses[i]+0.0im],1,1)
         end
-        moments = Moments(models)
+        moments = StatisticalMoments(models)
         @test moments.moments[1][1] ≈ 4.0 &&
               moments.moments[2][1] ≈ 2.0 &&
               moments.moments[3][1] ≈ 0.0

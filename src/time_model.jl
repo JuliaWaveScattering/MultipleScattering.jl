@@ -1,6 +1,6 @@
 
-type TimeModel{T}
-    frequency_model::FrequencyModel{T}
+type TimeSimulation{T}
+    frequency_model::FrequencySimulation{T}
     response::Matrix{T}
     time_arr::Vector{T}
     impulse::Function
@@ -8,22 +8,22 @@ type TimeModel{T}
 end
 
 "Convert a frequency model into a time model using the inverse fourier transform. Assumes only positive frequencies and a real time signal"
-function TimeModel{T}(
-        freq_model::FrequencyModel{T};
+function TimeSimulation{T}(
+        freq_model::FrequencySimulation{T};
         time_arr = wTot(freq_model.k_arr),
         impulse = gaussian_impulses(maximum(freq_model.k_arr)),
         method =:dft
     )
     response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse; method = method)
-    TimeModel{T}(freq_model,response,time_arr,impulse,method)
+    TimeSimulation{T}(freq_model,response,time_arr,impulse,method)
 end
 
 "Take model parameters, run model and populate the response array."
-function generate_responses!{T}(timemodel::TimeModel{T},t_arr::Vector{T}=timemodel.time_arr)
-    timemodel.time_arr = t_arr
-    timemodel.response = frequency_to_time(
-        timemodel.frequency_model.response, timemodel.frequency_model.k_arr,
-        timemodel.time_arr, timemodel.impulse; method = timemodel.method
+function generate_responses!{T}(TimeSimulation::TimeSimulation{T},t_arr::Vector{T}=TimeSimulation.time_arr)
+    TimeSimulation.time_arr = t_arr
+    TimeSimulation.response = frequency_to_time(
+        TimeSimulation.frequency_model.response, TimeSimulation.frequency_model.k_arr,
+        TimeSimulation.time_arr, TimeSimulation.impulse; method = TimeSimulation.method
     )
 end
 

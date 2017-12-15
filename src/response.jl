@@ -1,6 +1,6 @@
 ## This is where the actual maths happens
 
-function response{T}(model::FrequencyModel{T}, k::T)
+function response{T}(model::FrequencySimulation{T}, k::T)
     coefficient_matrix = scattering_coefficients_matrix(model, k)
     # the matrix of scattering coefficient mat is given by mat[m,p] = Zn_vec[m,p]*A_mat[m,p]
     # where mat[m+hankel_order+1,p] is the coefficient for hankelh1[m, kr] of the p-th particle[:,p]
@@ -8,7 +8,7 @@ function response{T}(model::FrequencyModel{T}, k::T)
     return [response_at(model, k, coefficient_matrix, model.listener_positions[:,i]) for i in 1:size(model.listener_positions,2)]
 end
 
-function response_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix::Matrix{Complex{T}}, x::Vector{T})
+function response_at{T}(model::FrequencySimulation{T}, k::T, coefficient_matrix::Matrix{Complex{T}}, x::Vector{T})
     # check if x is inside a scatterer
     inside_p(p) = norm(x - p.x) < p.r
     i = findfirst(inside_p, model.particles)
@@ -37,7 +37,7 @@ function scattered_waves_at{T}(model, k::T, coefficient_matrix::Matrix{Complex{T
 end
 
 "the internal wave exists only within a particle and is the total response"
-function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix::Matrix{Complex{T}}, x::Vector{T}, i::Int)
+function internal_wave_at{T}(model::FrequencySimulation{T}, k::T, coefficient_matrix::Matrix{Complex{T}}, x::Vector{T}, i::Int)
     # B(m,i) = A[m,i] Zn(model,p,k,m)/ Jm(k_j a_j)(Hm(k a_j) - Jm(k a_j)/Zn(model,p,k,m) )
     Nh = model.hankel_order
     p = model.particles[i]
@@ -58,7 +58,7 @@ function internal_wave_at{T}(model::FrequencyModel{T}, k::T, coefficient_matrix:
 
 end
 
-function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)::Matrix{Complex{T}}
+function scattering_coefficients_matrix{T}(model::FrequencySimulation{T}, k::T)::Matrix{Complex{T}}
     # Generate response for one specific k
     # Number of particles
     P = length(model.particles)
@@ -105,7 +105,7 @@ function scattering_coefficients_matrix{T}(model::FrequencyModel{T}, k::T)::Matr
 end
 
 "Returns a ratio used in multiple scattering which reflects the material properties of the particles"
-function Zn{T}(model::FrequencyModel{T}, p::Particle{T}, k::T,  m::Int)
+function Zn{T}(model::FrequencySimulation{T}, p::Particle{T}, k::T,  m::Int)
     m = T(abs(m))
     ak = p.r*k
     # check for material properties that don't make sense or haven't been implemented

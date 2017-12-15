@@ -17,9 +17,9 @@ function run_time_response_single_particle(;
     # Define positions and radii
     particles[1] = Particle{Float64}([particle_x,0.0],radius,c,ρ)
     # Simulate a single particle in frequency space
-    freq_model = FrequencyModel(particles,k_arr; hankel_order = 10)
+    freq_model = FrequencySimulation(particles,k_arr; hankel_order = 10)
     # Convert the frequency model into a time model
-    time_model = TimeModel(freq_model; impulse = gaussian_impulses(1.0, 3./maximum(k_arr)^2))
+    time_model = TimeSimulation(freq_model; impulse = gaussian_impulses(1.0, 3./maximum(k_arr)^2))
 
     return freq_model, time_model
 end

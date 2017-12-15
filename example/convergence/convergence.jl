@@ -10,10 +10,10 @@ function hankel_order_convergence(m=[0,1,2,3,4,5,6,7,8,9,10], volfrac = 0.1,
     seed = MersenneTwister(1).seed
     particles = random_particles(volfrac, radius, shape; seed = seed)
 
-    models = Vector{FrequencyModel{Float64}}(length(m))
+    models = Vector{FrequencySimulation{Float64}}(length(m))
 
     for i = eachindex(m)
-        models[i] = FrequencyModel(particles, k_arr; seed=seed, hankel_order=m[i])
+        models[i] = FrequencySimulation(particles, k_arr; seed=seed, hankel_order=m[i])
     end
 
     return models

@@ -4,9 +4,9 @@ export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
        name, boundary_functions,
        Particle, volume, array_of_particles, random_particles, random_particles!, isequal,
        mean_radius, std_radius,
-       FrequencyModel, calculate_volfrac, generate_responses!,
-       Moments,
-       TimeModel, frequency_to_time, time_to_frequency, wTot, tTow, delta_fnc, gaussian_impulses
+       FrequencySimulation, calculate_volfrac, generate_responses!,
+       StatisticalMoments,
+       TimeSimulation, frequency_to_time, time_to_frequency, wTot, tTow, delta_fnc, gaussian_impulses
 
 
 abstract Shape

@@ -11,7 +11,7 @@ using MultipleScattering
 volfrac = 0.01
 radius = 1.0
 k_arr = collect(linspace(0.01,1.0,100))
-model = FrequencyModel(volfrac,radius,k_arr)
+model = FrequencySimulation(volfrac,radius,k_arr)
 
 # We use the `Plots` package to plot both the response at the listener position
 # and the whole field for a specific wavenumber (k=0.8)

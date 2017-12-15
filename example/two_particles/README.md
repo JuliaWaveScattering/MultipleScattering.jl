@@ -14,7 +14,7 @@ particles = [p1,p2]
 Specify the angular frequency of the incident wave and calculate the response
 ```julia
 w_arr = collect(0.1:0.01:1.)
-model = FrequencyModel(particles, w_arr)
+model = FrequencySimulation(particles, w_arr)
 plot(model)
 ```
 ![Plot against frequency](plot_model.png)
@@ -26,7 +26,7 @@ model.source_direction
 ```
 to change these defaults use
 ```julia
-model = FrequencyModel(particles, w_arr;
+model = FrequencySimulation(particles, w_arr;
     listener_positions = [-10.,-10.],
     source_direction=[1.,1.])
 ```

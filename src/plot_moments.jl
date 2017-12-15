@@ -1,4 +1,4 @@
-# function plot{T}(mnts::Moments{T}; ribbon=false, X = mnts.x_arr, use_moments = [1,2,4]) #, kws...)
+# function plot{T}(mnts::StatisticalMoments{T}; ribbon=false, X = mnts.x_arr, use_moments = [1,2,4]) #, kws...)
 #     # if ribbon == true
 #       # plot_ribbon(mnts)
 #       plot_ribbon(mnts; X=X, use_moments=use_moments)
@@ -8,7 +8,7 @@
 #     # println("well hello mister put me nose in other peoples code")
 # end
 
-@recipe function plot_ribbon{T}(mnts::Moments{T};
+@recipe function plot_ribbon{T}(mnts::StatisticalMoments{T};
       use_moments = [1,2,4], X = mnts.x_arr,
       labs = ["mean" "std" "skew" "kurt"])
     use_moments = sort(union([1; use_moments]))

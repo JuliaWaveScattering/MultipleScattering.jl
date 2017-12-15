@@ -37,7 +37,7 @@ particles = [p1,p2]
 Specify the angular frequency of the defualt incident plane wave ![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D) and calculate the response
 ```julia
 w_arr = collect(0.1:0.01:1.)
-model = FrequencyModel(particles, w_arr; source_direction = [1.0,0.0])
+model = FrequencySimulation(particles, w_arr; source_direction = [1.0,0.0])
 ```
 
 ### Plot

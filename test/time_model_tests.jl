@@ -1,4 +1,4 @@
-@testset "TimeModel" begin
+@testset "TimeSimulation" begin
     # Time response from a single particle
     include("../example/time_response_single_particle/time_response_single_particle.jl")
     freq_model, time_model = run_time_response_single_particle()

@@ -6,7 +6,7 @@ Build a 'field model' with lots of listeners using the same domain as model
 you pass in. This 'field model' can then be used to plot the whole field for
 this wavenumber.
 """
-function build_field_model{T}(model::FrequencyModel{T}, bounds::Rectangle{T},
+function build_field_model{T}(model::FrequencySimulation{T}, bounds::Rectangle{T},
                               k_arr::Vector{T}=model.k_arr; res=10,xres=res,yres=res)
     # Create deep copy of model so that we can add lots of new listener positions and rerun the model
     field_model = deepcopy(model)
@@ -38,7 +38,7 @@ function build_field_model{T}(model::FrequencyModel{T}, bounds::Rectangle{T},
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot{T}(model::FrequencyModel{T},k::T;res=10, xres=res, yres=res,
+@recipe function plot{T}(model::FrequencySimulation{T},k::T;res=10, xres=res, yres=res,
                          resp_fnc=real, drawshape = false)
 
     @series begin
@@ -90,7 +90,7 @@ end
 end
 
 "Plot the response across all wavenumbers"
-@recipe function plot(model::FrequencyModel)
+@recipe function plot(model::FrequencySimulation)
     label --> ["real" "imaginary"]
     xlabel --> "Wavenumber (k)"
     ylabel --> "Response"
@@ -101,7 +101,7 @@ end
 end
 
 "Plot the response across time"
-@recipe function plot(model::TimeModel)
+@recipe function plot(model::TimeSimulation)
     label --> ["real" "imaginary"]
     xlabel --> "Time (t)"
     ylabel --> "Response"
@@ -112,10 +112,10 @@ end
 end
 
 "Plot the field for a particular an array of time"
-@recipe function plot{T}(timemodel::TimeModel{T}, t_arr;
+@recipe function plot{T}(TimeSimulation::TimeSimulation{T}, t_arr;
                         res=10, xres=res, yres=res, resp_fnc=real,
                         drawshape = false, drawlisteners = false)
-    model = timemodel.frequency_model
+    model = TimeSimulation.frequency_model
 
     @series begin
         # find a box which covers everything
@@ -128,9 +128,9 @@ end
         bounds = bounding_box(shape_bounds, particle_bounds)
 
         field_model = build_field_model(model, bounds; xres=xres, yres=yres)
-        field_timemodel = deepcopy(timemodel) # to use all the same options/fields as timemodel
-        field_timemodel.frequency_model = field_model
-        generate_responses!(field_timemodel, t_arr)
+        field_TimeSimulation = deepcopy(TimeSimulation) # to use all the same options/fields as TimeSimulation
+        field_TimeSimulation.frequency_model = field_model
+        generate_responses!(field_TimeSimulation, t_arr)
 
         # For this we sample at the centre of each pixel
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
@@ -138,7 +138,7 @@ end
 
 
         # NOTE only plots the first time plot for now...
-        response_mat = transpose(reshape(field_timemodel.response[1,:], (xres+1, yres+1)))
+        response_mat = transpose(reshape(field_TimeSimulation.response[1,:], (xres+1, yres+1)))
         linetype --> :contour
         fill --> true
         fillcolor --> :pu_or

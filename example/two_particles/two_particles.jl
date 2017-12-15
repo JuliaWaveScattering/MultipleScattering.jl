@@ -11,14 +11,14 @@ particles = [p1,p2]
 # specify the angular frequency of the incident wave
 w_arr = collect(0.1:0.01:1.)
 # calculate and plot the frequency response
-model = FrequencyModel(particles, w_arr)
+model = FrequencySimulation(particles, w_arr)
 plot(model)
 # the above plot used the default reciever/listener position is [-10.0; 0.0]
 model.listener_positions
 # and incident plane in the x direction
 model.source_direction
 # to change these defaults use
-model = FrequencyModel(particles, w_arr;
+model = FrequencySimulation(particles, w_arr;
     listener_positions = [-10.,-10.],
     source_direction=[1.,1.])
 
@@ -27,7 +27,7 @@ w = 3.2
 plot(model,w; res=80, resp_fnc=abs)
 # the green circle in the plot is the reciever position
 
-timemodel = TimeModel(model)
-plot(timemodel)
+TimeSimulation = TimeSimulation(model)
+plot(TimeSimulation)
 
-# model = FrequencyModel(particles, w_arr; source_direction = [0.,1.], shape = Rectangle([0.,-10.],[10.,40.]))
+# model = FrequencySimulation(particles, w_arr; source_direction = [0.,1.], shape = Rectangle([0.,-10.],[10.,40.]))

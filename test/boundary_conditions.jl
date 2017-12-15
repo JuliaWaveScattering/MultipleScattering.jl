@@ -7,7 +7,7 @@ function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
     shape = Rectangle(0.1, mapreduce(p->p.r,max,particles), numberofparticles)
     random_particles!(particles, shape; seed=seed) # choose random positions
     k_arr = collect(linspace(0.01,1.0,10));
-    model = FrequencyModel(particles,k_arr);
+    model = FrequencySimulation(particles,k_arr);
     boundary_data= map(4:6) do m
       model.hankel_order = m
       boundary_conditions(model,k_arr; numberofparticles=numberofparticles)
@@ -27,7 +27,7 @@ end
 
 
 "returns (displacement_jump, stress_jump) along the boundaries of numberofparticles with wavenumbers k_arr. NOTE the stress is calculated by numerically approximately the derivative, so can be inaccurate."
-function boundary_conditions{T}(model::FrequencyModel{T}, k_arr::Vector{T};
+function boundary_conditions{T}(model::FrequencySimulation{T}, k_arr::Vector{T};
         numberofparticles::Int = min(4, length(model.particles)), dr = 100000*eps(T))
 
     model2 = deepcopy(model)
@@ -61,7 +61,7 @@ function boundary_conditions{T}(model::FrequencyModel{T}, k_arr::Vector{T};
       return (displacement, traction)
 end
 
-function radial_response_model{T}(model::FrequencyModel{T}, p::Particle{T}, k_arr::Vector{T}; opts...)
+function radial_response_model{T}(model::FrequencySimulation{T}, p::Particle{T}, k_arr::Vector{T}; opts...)
     model2 = deepcopy(model)
     # choose listeners along a radial axes
       model2.listener_positions = hcat(points_on_radial_axes(p; opts...)...)

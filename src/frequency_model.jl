@@ -1,5 +1,5 @@
 
-type FrequencyModel{T <: AbstractFloat}
+type FrequencySimulation{T <: AbstractFloat}
     shape::Shape
     ρ::T #the medium's density
     c::Complex{T} #the medium's phase velocity
@@ -18,16 +18,16 @@ end
 Calcuate the volume fraction of this simulation from the volume of the particles
 and the bounding shape.
 """
-function calculate_volfrac(model::FrequencyModel)
+function calculate_volfrac(model::FrequencySimulation)
     volume(model.particles)/volume(model.shape)
 end
 
 """
 Find the mean radius of the particles in this model
 """
-mean_radius(model::FrequencyModel) = mean_radius(model.particles)
+mean_radius(model::FrequencySimulation) = mean_radius(model.particles)
 
 """
 Find the standard deviation of the radii of the particles in this model
 """
-std_radius(model::FrequencyModel) = std_radius(model.particles)
+std_radius(model::FrequencySimulation) = std_radius(model.particles)

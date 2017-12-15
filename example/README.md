@@ -22,6 +22,6 @@
 ## [Random particles in a circle](random_particles_in_circle/README.md)
 - Generate random particles in a circle
 
-## [Moments](moments/README.md)
+## [StatisticalMoments](moments/README.md)
 - How to extract statistical information from a batch of simulations, in this
   case: mean, standard deviation, skew and kurtosis (also known as moments). 

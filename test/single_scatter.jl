@@ -34,14 +34,14 @@ function single_scatter_test()
     resp2 += [uin(listener, k) for k in k_arr];
 
     # Using the MultipleScattering package
-    model1 = FrequencyModel([Particle(xp,a1)], collect(k_arr);
+    model1 = FrequencySimulation([Particle(xp,a1)], collect(k_arr);
                             listener_positions=listener,
                             source_direction=[1.0, 0.0],
                             hankel_order=M1
     );
 
     # Build a similar model with a different radius and hankel_order
-    model2 = FrequencyModel([Particle(xp,a2)], collect(k_arr);
+    model2 = FrequencySimulation([Particle(xp,a2)], collect(k_arr);
                             listener_positions=listener,
                             source_direction=[1.;0.],
                             hankel_order=M2

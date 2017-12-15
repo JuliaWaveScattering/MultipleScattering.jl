@@ -4,7 +4,7 @@ optional keyword arguments. This constructor automtically generates random
 particles inside a shape (default to a square Rectangle with 4 particles) then
 generates the response.
 """
-function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
+function FrequencySimulation{T}(volfrac::Number, radius::T, k_arr::Vector{T};
         source_direction=[one(T), zero(T)],
         c = one(Complex{T}),
         ρ = one(T),
@@ -26,7 +26,7 @@ function FrequencyModel{T}(volfrac::Number, radius::T, k_arr::Vector{T};
     end
 
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencyModel{T}(
+    model = FrequencySimulation{T}(
         shape, ρ, c, particles,
         response, hankel_order,
         k_arr, listener_positions,
@@ -41,7 +41,7 @@ end
 Constructor which takes a vector of particles, k_arr and a load of optional
 keyword arguments. This constructor automtically generates the response.
 """
-function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
+function FrequencySimulation{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
         source_direction = [one(T), zero(T)],
         c = one(Complex{T}),
         ρ = one(T),
@@ -56,7 +56,7 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
         listener_positions = reshape(listener_positions, 2, 1)
     end
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencyModel{T}(
+    model = FrequencySimulation{T}(
         shape, ρ, c, particles,
         response, hankel_order,
         k_arr, listener_positions,
@@ -68,7 +68,7 @@ function FrequencyModel{T}(particles::Vector{Particle{T}}, k_arr::Vector{T};
 end
 
 "Take model parameters, run model and populate the response array."
-function generate_responses!{T}(model::FrequencyModel{T},k_arr::Vector{T}=model.k_arr)
+function generate_responses!{T}(model::FrequencySimulation{T},k_arr::Vector{T}=model.k_arr)
     model.response = Matrix{Complex{T}}(size(k_arr, 1), size(model.listener_positions, 2))
     # Map each k in k_arr over a the response function
 

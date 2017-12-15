@@ -1,16 +1,16 @@
 """
-Statistical moments for a batch of models at each value of k or t. Models must
+Statistical moments for a batch of simulations at each value of k or t. Simulations must
 all have the same label (particle radius and volume fraction)
 """
-type Moments{T}
+type StatisticalMoments{T}
     label::Vector{T}
     x_arr::Vector{T}
     moments::Vector{Vector{T}} # First Vector is mean, second is stddev, etc
     num_realisations::Int
 end
 
-function Moments{T}(models::Vector{TimeModel{T}}, num_moments=4; response_apply=real)
-    Moments(
+function StatisticalMoments{T}(models::Vector{TimeSimulation{T}}, num_moments=4; response_apply=real)
+    StatisticalMoments(
         models_to_label(models),
         models[1].time_arr,
         calculate_moments(models,num_moments),
@@ -18,8 +18,8 @@ function Moments{T}(models::Vector{TimeModel{T}}, num_moments=4; response_apply=
     )
 end
 
-function Moments{T}(models::Vector{FrequencyModel{T}}, num_moments=4; response_apply=real)
-    Moments(
+function StatisticalMoments{T}(models::Vector{FrequencySimulation{T}}, num_moments=4; response_apply=real)
+    StatisticalMoments(
         models_to_label(models),
         models[1].k_arr,
         calculate_moments(models,num_moments;response_apply=response_apply),
@@ -47,12 +47,12 @@ function calculate_moments(models::Vector,num_moments::Int;response_apply=real)
     return moments
 end
 
-function models_to_label{T}(models::Vector{TimeModel{T}})
+function models_to_label{T}(models::Vector{TimeSimulation{T}})
     frequency_models = [models[i].frequency_model for i=1:R]
     return models_to_label(frequency_models)
 end
 
-function models_to_label{T}(models::Vector{FrequencyModel{T}})
+function models_to_label{T}(models::Vector{FrequencySimulation{T}})
     std_radii = std_radius.(models)
     if mean(std_radii) > 10*eps(T)
         error("Particles are different sizes: all particles in all models must be the same size to assign the moments a single label.")

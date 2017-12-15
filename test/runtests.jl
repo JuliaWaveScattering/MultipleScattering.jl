@@ -20,7 +20,7 @@ using Plots
         volfrac = 0.01f0
         radius = 1.0f0
         k_arr = collect(linspace(0.01f0,1.0f0,100))
-        model = FrequencyModel(volfrac,radius,k_arr)
+        model = FrequencySimulation(volfrac,radius,k_arr)
         @test typeof(model.response[1]) == Complex{Float32}
     end
 
@@ -36,12 +36,12 @@ using Plots
         @test boundary_conditions_test()
     end
 
-    @testset "Plot FrequencyModel" begin
+    @testset "Plot FrequencySimulation" begin
         # Just run it to see if we have any errors (yes thats a very low bar)
         volfrac = 0.01
         radius = 2.0
         k_arr = collect(linspace(0.2,1.0,5))
-        model = FrequencyModel(volfrac,radius,k_arr)
+        model = FrequencySimulation(volfrac,radius,k_arr)
 
         plot(model)
         plot(model,0.2)

@@ -8,7 +8,7 @@ radius = 0.5
 volfrac = 0.2
 
 circle = Circle(5.0,[0.0,0.0])
-circle_model = FrequencyModel(volfrac,radius,k_arr;shape=circle)
+circle_model = FrequencySimulation(volfrac,radius,k_arr;shape=circle)
 
 using Plots
 plot(circle_model,0.5)
