@@ -1,9 +1,8 @@
-
 type TimeSimulation{T}
     frequency_model::FrequencySimulation{T}
     response::Matrix{T}
     time_arr::Vector{T}
-    impulse::Function
+    impulse::Vector{Complex{T}}
     method::Symbol
 end
 
@@ -15,7 +14,7 @@ function TimeSimulation{T}(
         method =:dft
     )
     response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse; method = method)
-    TimeSimulation{T}(freq_model,response,time_arr,impulse,method)
+    TimeSimulation{T}(freq_model,response,time_arr,impulse.(freq_model.k_arr),method)
 end
 
 "Take model parameters, run model and populate the response array."
@@ -76,6 +75,11 @@ delta_fnc{T}(k::T) = one(T)
 Returns a gaussian impulse function in the frequency domain. In the time domain this impulse is exp(-t^2/(4a))
 """
 gaussian_impulses{T}(maxk::T, a::T = T(2.48)/maxk^2) = w -> exp(-a*w^2)*(2sqrt(a*pi))
+
+"""
+Returns a gaussian impulse function in the time domain.
+"""
+gaussian_time_impulses{T}(maxk::T, a::T = T(2.48)/maxk^2) = t -> exp(-t^2/(4a))
 
 
 """
