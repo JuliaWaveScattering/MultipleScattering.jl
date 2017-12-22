@@ -2,7 +2,7 @@ type TimeSimulation{T}
     frequency_model::FrequencySimulation{T}
     response::Matrix{T}
     time_arr::Vector{T}
-    impulse::Vector{Complex{T}}
+    impulse_arr::Vector{Complex{T}}
     method::Symbol
 end
 
