@@ -102,13 +102,12 @@ end
 
 "Plot the response across time"
 @recipe function plot(model::TimeSimulation)
-    label --> ["real" "imaginary"]
     xlabel --> "Time (t)"
     ylabel --> "Response"
     grid --> false
     title --> "Response from particles of radius $(signif(model.frequency_model.particles[1].r,2)) contained in a $(lowercase(name(model.frequency_model.shape)))\n with volfrac=$(signif(calculate_volfrac(model.frequency_model),2)) measured at ($(model.frequency_model.listener_positions[1,1]), $(model.frequency_model.listener_positions[2,1]))"
 
-    (model.time_arr, [real(model.response) imag(model.response)])
+    (model.time_arr, model.response)
 end
 
 "Plot the field for a particular an array of time"
