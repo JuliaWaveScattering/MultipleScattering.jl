@@ -11,7 +11,7 @@ fts = frequency_to_time(fs,w_arr, t_arr);
 
 # A gaussian covering same frequency range which leads to a time pulse with height 1
 a = 3./maximum(w_arr)^2;
-gauss_impulse = gaussian_impuses(maximum(w_arr))
+gauss_impulse = get_gaussian_freq_impulse(maximum(w_arr))
 ft2s = frequency_to_time(fs,w_arr, t_arr, gauss_impulse);
 
 # true impulse in time

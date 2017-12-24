@@ -21,7 +21,7 @@ function run_lens(;
 
     freqmodel = FrequencySimulation(particles, k_arr; listener_positions=listener_position)
 
-    return freqmodel, TimeSimulation(freqmodel; impulse = gaussian_impulses(1.0, 3./maximum(k_arr)^2))
+    return freqmodel, TimeSimulation(freqmodel; impulse = get_gaussian_freq_impulse(1.0, 3./maximum(k_arr)^2))
 end
 
 function plot_lens()

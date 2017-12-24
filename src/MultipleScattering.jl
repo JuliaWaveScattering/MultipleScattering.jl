@@ -6,7 +6,7 @@ export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
        mean_radius, std_radius,
        FrequencySimulation, calculate_volfrac, generate_responses!,
        StatisticalMoments,
-       TimeSimulation, frequency_to_time, time_to_frequency, wTot, tTow, delta_fnc, gaussian_impulses
+       TimeSimulation, frequency_to_time, time_to_frequency, ω_to_t, t_to_ω, delta_freq_impulse, get_gaussian_freq_impulse
 
 
 abstract Shape
