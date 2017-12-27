@@ -30,6 +30,15 @@ function generate_responses!{T}(TimeSimulation::TimeSimulation{T},t_arr::Vector{
 end
 
 """
+Calcuate the volume fraction of this simulation from the volume of the particles
+and the bounding shape.
+"""
+function calculate_volfrac(time_model::TimeSimulation)
+    volume(time_model.frequency_model.particles)/volume(time_model.frequency_model.shape)
+end
+
+
+"""
 returns an array of time from the frequency array ω_arr.
 Uses the same convention for sampling the time as the discrete Fourier transfrom.
 Assumes ω_arr is ordered and non-negative.

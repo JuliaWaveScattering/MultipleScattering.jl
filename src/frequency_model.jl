@@ -3,6 +3,7 @@ type FrequencySimulation{T <: AbstractFloat}
     shape::Shape
     ρ::T #the medium's density
     c::Complex{T} #the medium's phase velocity
+    # volfrac::T # the volume fraction of the particles
     particles::Vector{Particle{T}}
     response::Matrix{Complex{T}}
     hankel_order::Int

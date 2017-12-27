@@ -32,7 +32,7 @@ function calculate_moments(models::Vector,num_moments::Int;response_apply=real)
     K = length(models[1].response)
     # Number of realisations
     R = length(models)
-    moments = [Vector{typeof(models[1].response[1,1].re)}(K) for i=1:num_moments]
+    moments = [Vector{typeof(response_apply(models[1].response[1,1]))}(K) for i=1:num_moments]
 
     # For each wavenumber or timestep, calculate each moment up to num_moments
     for i = 1:K
@@ -48,22 +48,23 @@ function calculate_moments(models::Vector,num_moments::Int;response_apply=real)
 end
 
 function models_to_label{T}(models::Vector{TimeSimulation{T}})
-    frequency_models = [models[i].frequency_model for i=1:R]
+    frequency_models = [m.frequency_model for m in models]
     return models_to_label(frequency_models)
 end
 
 function models_to_label{T}(models::Vector{FrequencySimulation{T}})
     std_radii = std_radius.(models)
-    if mean(std_radii) > 10*eps(T)
+    if mean(std_radii) > 100*eps(T)
         error("Particles are different sizes: all particles in all models must be the same size to assign the moments a single label.")
     end
     # We now know they are all the same size, we can just take the first one
     a = models[1].particles[1].r
 
+    # volfracs are never exactly the same
     volfracs = calculate_volfrac.(models)
-    if std(volfracs) > 10*eps(T)
+    if std(volfracs) > T(0.01)
         error("Models have different volfracs: all models must have the same volfrac to assign the moments a single label.")
     end
 
-    return [a,volfracs[1]]
+    return [a,mean(volfracs)]
 end
