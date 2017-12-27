@@ -27,7 +27,7 @@ function FrequencySimulation{T}(volfrac::Number, radius::T, k_arr::Vector{T};
 
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
     model = FrequencySimulation{T}(
-        shape, ρ, c, particles,
+        shape, ρ, c, volfrac, particles,
         response, hankel_order,
         k_arr, listener_positions,
         source_position, source_direction,
@@ -57,7 +57,8 @@ function FrequencySimulation{T}(particles::Vector{Particle{T}}, k_arr::Vector{T}
     end
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
     model = FrequencySimulation{T}(
-        shape, ρ, c, particles,
+        shape, ρ, c, volume(particles)/volume(shape)
+        particles,
         response, hankel_order,
         k_arr, listener_positions,
         source_position, source_direction,
