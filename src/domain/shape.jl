@@ -15,7 +15,7 @@ end
 "Generates a rectangle which contains all the particles"
 function Rectangle{T}(particles::Vector{Particle{T}})
 
-    if isempty(particles) return Rectangle([zero(T),zero(T)], [zero(T),zero(T)]) end 
+    if isempty(particles) return Rectangle([zero(T),zero(T)], [zero(T),zero(T)]) end
     topright_particle(p) = p.x .+ p.r
     broadcastmax(x,y) = max.(x,y)
     topright = mapreduce(topright_particle, broadcastmax, particles)
@@ -118,9 +118,16 @@ function inside{T}(shape::TimeOfFlight{T},particle::Particle{T})
     norm(particle.x - shape.listener_position) < shape.time
 end
 
+# let T = shape.time, xr = shape.listener_position[1], yr = shape.listener_position[1], and assume all particles are placed in x>0.
+# Let (x,y) be a point on the curved part of the shape, then
+# x - xr + sqrt((x - xr)^2 + (y - yr)^2) == T => x == T/2 + xr - (y - yr)^2/(2T)
+# then the area = 2*Integrate[ T/2 + xr - (y - yr)^2/(2T), {y,yr, yr + sqrt(T^2 + 2xr*T)}]
 function volume{T}(shape::TimeOfFlight{T})
-    θ = 2acos(-shape.listener_position[1] / shape.time)
-    return shape.time^2 * (θ - sin(θ)) / 2
+    # θ = 2acos(-shape.listener_position[1] / shape.time)
+    # return shape.time^2 * (θ - sin(θ)) / 2
+    xr = shape.listener_position[1]
+    yr = shape.listener_position[2]
+    return T(2/(3*shape.time))*T((shape.time^2 + 2*xr*shape.time)^(3/2))
 end
 
 function bounding_box{T}(shape::TimeOfFlight{T})
