@@ -57,7 +57,7 @@ function FrequencySimulation{T}(particles::Vector{Particle{T}}, k_arr::Vector{T}
     end
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
     model = FrequencySimulation{T}(
-        shape, ρ, c, volume(particles)/volume(shape)
+        shape, ρ, c, volume(particles)/volume(shape),
         particles,
         response, hankel_order,
         k_arr, listener_positions,
