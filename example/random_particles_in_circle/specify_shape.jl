@@ -2,7 +2,7 @@ using MultipleScattering
 
 k_arr = collect(linspace(0.1,1.0,10))
 
-# You can also pick your own shape, an generate random particles inside it 
+# You can also pick your own shape, an generate random particles inside it
 # with a certain radius ands volume fraction
 radius = 0.5
 volfrac = 0.2

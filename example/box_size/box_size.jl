@@ -6,7 +6,7 @@ function box_size_convergence(m=4, volfrac = 0.05,
 
     listener_position = [-10.0,0.0]
     bigshape = TimeOfFlight(listener_position,maximum(times))
-    
+
     seed = MersenneTwister(1).seed
     allparticles = random_particles(volfrac, radius, bigshape; seed = seed)
 

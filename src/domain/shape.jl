@@ -137,7 +137,7 @@ function bounding_box{T}(shape::TimeOfFlight{T})
     t = shape.time
     l = shape.listener_position
     x_max = max(t/2 + l[1], zero(T))
-    return Rectangle([ zero(T), l[2] - sqrt(t^2 + 2t*l[1]) ], 
+    return Rectangle([ zero(T), l[2] - sqrt(t^2 + 2t*l[1]) ],
                      [ x_max,   l[2] + sqrt(t^2 + 2t*l[1]) ])
 end
 

@@ -83,7 +83,7 @@
 
         timeofflight = TimeOfFlightFromPoint([-1.0,0.0],3.0)
         plot!(timeofflight)
-        
+
         @test true
     end
 end

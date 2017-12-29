@@ -1,7 +1,7 @@
 # Shapes
 
 ## Existing shapes
-The package provides 3 built in basic shapes to put your random particles in, 
+The package provides 3 built in basic shapes to put your random particles in,
 you can plot them using:
 ```julia
 using MultipleScattering

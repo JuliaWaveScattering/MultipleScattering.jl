@@ -1,7 +1,7 @@
 const MAX_ATTEMPTS_TO_FIT_PARTICLE = 2000
 
 """
-Generate a non-overlapping Vector of N random particles of radius r that fit 
+Generate a non-overlapping Vector of N random particles of radius r that fit
 inside the shape passed in
 """
 function random_particles{T}(volfrac::Number, a::T, shape::Shape;
@@ -16,7 +16,7 @@ function random_particles{T}(volfrac::Number, a::T, shape::Shape;
 end
 
 """
-Generate a non-overlapping Vector of N random particles of radius r that fit 
+Generate a non-overlapping Vector of N random particles of radius r that fit
 inside the shape passed in
 """
 function random_particles{T}(N::Int, a::T, shape::Shape = Rectangle(0.1, a, N);
@@ -29,7 +29,7 @@ function random_particles{T}(N::Int, a::T, shape::Shape = Rectangle(0.1, a, N);
 end
 
 """
-Place N non-overlapping random particles that fit inside the shape passed in. 
+Place N non-overlapping random particles that fit inside the shape passed in.
 Modifies the particles Vector.
 """
 function random_particles!{T}(particles::Vector{Particle{T}}, shape::Shape;
@@ -44,15 +44,15 @@ function random_particles!{T}(particles::Vector{Particle{T}}, shape::Shape;
     bounds = bounding_box(shape)
     topright = bounds.topright
     bottomleft = bounds.bottomleft
-    
+
     @printf("""\n
         Generating %d randomly positioned particles
         Mean radius: %0.5g
         Total particle volume: %0.5g
-        Inside %s of volume: %0.5g 
-        Particle volume fraction: %0.5g 
+        Inside %s of volume: %0.5g
+        Particle volume fraction: %0.5g
         Bounding box volume: %0.5g
-        """, N, mean_radius(particles), volume(particles), name(shape), 
+        """, N, mean_radius(particles), volume(particles), name(shape),
         volume(shape), volume(particles)/volume(shape), volume(bounds)
     )
 
