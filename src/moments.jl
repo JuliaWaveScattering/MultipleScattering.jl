@@ -66,5 +66,5 @@ function models_to_label{T}(models::Vector{FrequencySimulation{T}})
         error("Models have different volfracs: all models must have the same volfrac to assign the moments a single label.")
     end
 
-    return [a,mean(volfracs)]
+    return [mean(volfracs),a]
 end
