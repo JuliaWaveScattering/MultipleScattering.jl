@@ -42,7 +42,28 @@
         @test name(time_of_flight) == "Time of flight"
 
         @testset "Boundary functions" begin
-            x, y = boundary_functions(TimeOfFlight([-1.0,0.0],3.0))
+            # This a nice shape because the dimensions form a Pythagorean triple
+            x, y = boundary_functions(TimeOfFlight([-3.0,0.0],8.0))
+            @test x.(0:0.125:1) ≈ [0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 1.0, 0.75, 0.0]
+            @test y.(0:0.125:1) ≈ [-4.0, -2.0, 0.0, 2.0, 4.0, 2.0, 0.0, -2.0, -4.0]
+            @test_throws(Exception,x(-eps(Float64)))
+            @test_throws(Exception,x(1.0 + eps(Float64)))
+            @test_throws(Exception,y(-eps(Float64)))
+            @test_throws(Exception,y(1.0 + eps(Float64)))
+        end
+    end
+
+    @testset "Time of flight from point" begin
+        time_of_flight = TimeOfFlightFromPoint([-10.0,0.0],40.0)
+        time_of_flight_bounding_box = bounding_box(time_of_flight)
+        ratio = volume(time_of_flight)/volume(time_of_flight_bounding_box)
+        # Geometric arguments dictate that the ratio must be between 0.5 and 1.0
+        @test ratio > 0.5
+        @test ratio < 1.0
+        @test name(time_of_flight) == "Time of flight from point"
+
+        @testset "Boundary functions" begin
+            x, y = boundary_functions(TimeOfFlightFromPoint([-1.0,0.0],3.0))
             @test x.(0:0.1:1) ≈ [0.0,1.2182846930812632,1.9095426112571139,1.9095426112571139,1.2182846930812632,0.0,0.0,0.0,0.0,0.0,0.0]
             @test y.(0:0.1:1) ≈ [-2.82842712474619,-2.019706171808505,-0.7311373286046446,0.7311373286046446,2.0197061718085054,2.82842712474619,1.6970562748477145,0.5656854249492386,-0.5656854249492386,-1.6970562748477145,-2.8284271247461903]
             @test_throws(Exception,x(-eps(Float64)))
@@ -60,7 +81,7 @@
         circle = Circle(3.0,[-1.0,2.0])
         plot!(circle)
 
-        timeofflight = TimeOfFlight([-1.0,0.0],3.0)
+        timeofflight = TimeOfFlightFromPoint([-1.0,0.0],3.0)
         plot!(timeofflight)
         
         @test true

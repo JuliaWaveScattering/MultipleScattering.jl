@@ -1,12 +1,13 @@
 module MultipleScattering
 
-export Shape, Circle, Rectangle, TimeOfFlight, volume, inside, bounding_box,
-       name, boundary_functions,
+export Shape, Circle, Rectangle, TimeOfFlight, TimeOfFlightFromPoint, volume, 
+       inside, bounding_box, name, boundary_functions,
        Particle, volume, array_of_particles, random_particles, random_particles!, isequal,
        mean_radius, std_radius,
        FrequencySimulation, calculate_volfrac, generate_responses!,
        StatisticalMoments,
-       TimeSimulation, frequency_to_time, time_to_frequency, ω_to_t, t_to_ω, delta_freq_impulse, get_gaussian_freq_impulse
+       TimeSimulation, frequency_to_time, time_to_frequency, ω_to_t, t_to_ω, 
+       delta_freq_impulse, get_gaussian_freq_impulse
 
 
 abstract Shape

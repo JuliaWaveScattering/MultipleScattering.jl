@@ -105,8 +105,13 @@ end
 
 # =============================== TimeOfFlight =================================
 """
-We define a shape where all particles are less than time away from
-listener_position, but also with a positive x coordinate (circle segment).
+A shape where anything inside could cause a disturbance at the listener position
+from a planar wavefront parallel to the y axis starting at the listener. Also
+everything inside has a positive `x` coordinate.
+
+More precisely, if the listener is at (l_x,l_y) then the interior of the shape
+is defined as
+x-l_x+sqrt((x-l_x)^2+(y-l_y)^2)<time and x>0
 """
 type TimeOfFlight{T <: AbstractFloat} <: Shape
     listener_position::Vector{T}
@@ -114,35 +119,93 @@ type TimeOfFlight{T <: AbstractFloat} <: Shape
 end
 
 function inside{T}(shape::TimeOfFlight{T},particle::Particle{T})
-    particle.x[1] > 0.0 &&
-    norm(particle.x - shape.listener_position) < shape.time
+    l_to_p = particle.x - shape.listener_position
+    return (particle.x[1] > 0.0) && (l_to_p[1] + norm(l_to_p) < shape.time)
 end
 
-# let T = shape.time, xr = shape.listener_position[1], yr = shape.listener_position[1], and assume all particles are placed in x>0.
+# Let T = shape.time, xr = shape.listener_position[1], yr = shape.listener_position[2]
+# and assume all particles are placed in x>0.
 # Let (x,y) be a point on the curved part of the shape, then
 # x - xr + sqrt((x - xr)^2 + (y - yr)^2) == T => x == T/2 + xr - (y - yr)^2/(2T)
 # then the area = 2*Integrate[ T/2 + xr - (y - yr)^2/(2T), {y,yr, yr + sqrt(T^2 + 2xr*T)}]
 function volume{T}(shape::TimeOfFlight{T})
-    # θ = 2acos(-shape.listener_position[1] / shape.time)
-    # return shape.time^2 * (θ - sin(θ)) / 2
-    xr = shape.listener_position[1]
-    yr = shape.listener_position[2]
-    return T(2/(3*shape.time))*T((shape.time^2 + 2*xr*shape.time)^(3/2))
+    l_x = shape.listener_position[1]
+    return 2/(3*shape.time)*(shape.time^2 + 2*l_x*shape.time)^(3//2)
 end
 
 function bounding_box{T}(shape::TimeOfFlight{T})
+    t = shape.time
+    l = shape.listener_position
+    x_max = max(t/2 + l[1], zero(T))
+    return Rectangle([ zero(T), l[2] - sqrt(t^2 + 2t*l[1]) ], 
+                     [ x_max,   l[2] + sqrt(t^2 + 2t*l[1]) ])
+end
+
+name(shape::TimeOfFlight) = "Time of flight"
+
+function boundary_functions{T}(shape::TimeOfFlight{T})
+    function x(τ)
+        if τ<0 || τ>1 error("Boundary coordinate must be between 0 and 1") end
+        if τ <= 1//2
+            return zero(T)
+        else
+            t = shape.time
+            l = shape.listener_position
+            y_sq = (4*(3//4-τ))^2*(t^2 + 2t*l[1])
+            return l[1] + (t^2-y_sq)/(2t)
+        end
+    end
+    function y(τ)
+        if τ<0 || τ>1 error("Boundary coordinate must be between 0 and 1") end
+        t = shape.time
+        l = shape.listener_position
+        if τ <= 1//2
+            return l[2] + 4*(τ-1//4)*sqrt(t^2 + 2t*l[1])
+        else
+            return l[2] + 4*(3//4-τ)*sqrt(t^2 + 2t*l[1])
+        end
+    end
+    return x, y
+end
+
+# ========================== TimeOfFlightFromPoint ============================
+"""
+A shape where anything inside could cause a disturbance at the listener position
+from a point source wavefront starting at the listener. Also everything inside
+has a positive `x` coordinate. It is equivalent to a segment of a circle.
+
+More precisely, if the listener is at (l_x,l_y) then the interior of the shape
+is defined as
+sqrt((x-l_x)^2+(y-l_y)^2)<time and x>0
+"""
+type TimeOfFlightFromPoint{T <: AbstractFloat} <: Shape
+    listener_position::Vector{T}
+    time::T
+end
+
+function inside{T}(shape::TimeOfFlightFromPoint{T},particle::Particle{T})
+    particle.x[1] > 0 &&
+    norm(particle.x - shape.listener_position) < shape.time
+end
+
+function volume{T}(shape::TimeOfFlightFromPoint{T})
+    θ = 2acos(-shape.listener_position[1] / shape.time)
+    return shape.time^2 * (θ - sin(θ)) / 2
+end
+
+function bounding_box{T}(shape::TimeOfFlightFromPoint{T})
     box_height = 2sqrt(shape.time^2 - shape.listener_position[1]^2)
     box_width = max(shape.time + shape.listener_position[1], zero(T))
     return Rectangle([zero(T), -box_height / 2], [box_width, box_height / 2])
 end
 
-name(shape::TimeOfFlight) = "Time of flight"
+name(shape::TimeOfFlightFromPoint) = "Time of flight from point"
 
-function boundary_functions(shape::TimeOfFlight)
+function boundary_functions(shape::TimeOfFlightFromPoint)
     function x(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
 
-        if t <= 1/2
+        if t <= 1//2
             θ = acos(-shape.listener_position[1] / shape.time)
             return shape.time*cos(θ*(4t-1)) + shape.listener_position[1]
         else
@@ -152,11 +215,11 @@ function boundary_functions(shape::TimeOfFlight)
     function y(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
 
-        if t <= 1/2
+        if t <= 1//2
             θ = acos(-shape.listener_position[1] / shape.time)
             return shape.time*sin(θ*(4t-1)) + shape.listener_position[2]
         else
-            return 2*(3/4-t)*2*sqrt(shape.time^2 - shape.listener_position[1]^2)
+            return 2*(3//4-t)*2*sqrt(shape.time^2 - shape.listener_position[1]^2)
         end
     end
     return x, y

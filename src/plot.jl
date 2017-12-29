@@ -111,10 +111,13 @@ end
 end
 
 "Plot the field for a particular an array of time"
-@recipe function plot{T}(TimeSimulation::TimeSimulation{T}, t_arr;
+@recipe function plot{T}(TimeSimulation::TimeSimulation{T}, t::Union{T,Vector{T}};
                         res=10, xres=res, yres=res, resp_fnc=real,
                         drawshape = false, drawlisteners = false)
     model = TimeSimulation.frequency_model
+
+    if isa(t,T) t_arr = [t]
+    else        t_arr = t  end
 
     @series begin
         # find a box which covers everything
