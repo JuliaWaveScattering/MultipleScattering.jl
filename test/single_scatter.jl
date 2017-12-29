@@ -34,22 +34,22 @@ function single_scatter_test()
     resp2 += [uin(listener, k) for k in k_arr];
 
     # Using the MultipleScattering package
-    model1 = FrequencySimulation([Particle(xp,a1)], collect(k_arr);
+    simulation1 = FrequencySimulation([Particle(xp,a1)], collect(k_arr);
                             listener_positions=listener,
                             source_direction=[1.0, 0.0],
                             hankel_order=M1
     );
 
-    # Build a similar model with a different radius and hankel_order
-    model2 = FrequencySimulation([Particle(xp,a2)], collect(k_arr);
+    # Build a similar simulation with a different radius and hankel_order
+    simulation2 = FrequencySimulation([Particle(xp,a2)], collect(k_arr);
                             listener_positions=listener,
                             source_direction=[1.;0.],
                             hankel_order=M2
     );
 
-    # Take the L^2 error between the analytic solution and our model
-    err1 = mean(abs.(resp1 - model1.response[:]));
-    err2 = mean(abs.(resp2 - model2.response[:]));
+    # Take the L^2 error between the analytic solution and our simulation
+    err1 = mean(abs.(resp1 - simulation1.response[:]));
+    err2 = mean(abs.(resp2 - simulation2.response[:]));
 
     print("completed for radius=$a1 and $a2 with errors $err1 and $err2 \n")
     if err1 < 1e-9 && err2 < 1e-9

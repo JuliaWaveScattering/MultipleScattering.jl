@@ -6,7 +6,7 @@ using Plots
 
     include("shapetests.jl")
     include("particle_tests.jl")
-    include("time_model_tests.jl")
+    include("time_simulation_tests.jl")
     include("moments_tests.jl")
 
     # test our discretised Fourier transforms
@@ -20,8 +20,8 @@ using Plots
         volfrac = 0.01f0
         radius = 1.0f0
         k_arr = collect(linspace(0.01f0,1.0f0,100))
-        model = FrequencySimulation(volfrac,radius,k_arr)
-        @test typeof(model.response[1]) == Complex{Float32}
+        simulation = FrequencySimulation(volfrac,radius,k_arr)
+        @test typeof(simulation.response[1]) == Complex{Float32}
     end
 
     @testset "Single scatterer" begin
@@ -41,10 +41,10 @@ using Plots
         volfrac = 0.01
         radius = 2.0
         k_arr = collect(linspace(0.2,1.0,5))
-        model = FrequencySimulation(volfrac,radius,k_arr)
+        simulation = FrequencySimulation(volfrac,radius,k_arr)
 
-        plot(model)
-        plot(model,0.2)
+        plot(simulation)
+        plot(simulation,0.2)
 
         @test true
     end

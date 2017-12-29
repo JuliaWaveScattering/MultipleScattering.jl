@@ -11,14 +11,14 @@ using MultipleScattering
 volfrac = 0.01
 radius = 1.0
 k_arr = collect(linspace(0.01,1.0,100))
-model = FrequencySimulation(volfrac,radius,k_arr)
+simulation = FrequencySimulation(volfrac,radius,k_arr)
 
 # We use the `Plots` package to plot both the response at the listener position
 # and the whole field for a specific wavenumber (k=0.8)
 using Plots
 plot(
-    plot(model),
-    plot(model,0.8;res=100)
+    plot(simulation),
+    plot(simulation,0.8;res=100)
 )
 
 # ## Things to try

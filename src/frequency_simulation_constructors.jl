@@ -26,15 +26,15 @@ function FrequencySimulation{T}(volfrac::Number, radius::T, k_arr::Vector{T};
     end
 
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencySimulation{T}(
+    simulation = FrequencySimulation{T}(
         shape, ρ, c, volfrac, particles,
         response, hankel_order,
         k_arr, listener_positions,
         source_position, source_direction,
         seed
     )
-    if generate_responses generate_responses!(model, k_arr) end
-    return model
+    if generate_responses generate_responses!(simulation, k_arr) end
+    return simulation
 end
 
 """
@@ -56,7 +56,7 @@ function FrequencySimulation{T}(particles::Vector{Particle{T}}, k_arr::Vector{T}
         listener_positions = reshape(listener_positions, 2, 1)
     end
     response = Matrix{Complex{T}}(size(k_arr, 1), size(listener_positions, 2))
-    model = FrequencySimulation{T}(
+    simulation = FrequencySimulation{T}(
         shape, ρ, c, volume(particles)/volume(shape),
         particles,
         response, hankel_order,
@@ -64,21 +64,21 @@ function FrequencySimulation{T}(particles::Vector{Particle{T}}, k_arr::Vector{T}
         source_position, source_direction,
         seed
     )
-    if generate_responses generate_responses!(model, k_arr) end
-    return model
+    if generate_responses generate_responses!(simulation, k_arr) end
+    return simulation
 end
 
-"Take model parameters, run model and populate the response array."
-function generate_responses!{T}(model::FrequencySimulation{T},k_arr::Vector{T}=model.k_arr)
-    model.response = Matrix{Complex{T}}(size(k_arr, 1), size(model.listener_positions, 2))
+"Take simulation parameters, run simulation and populate the response array."
+function generate_responses!{T}(simulation::FrequencySimulation{T},k_arr::Vector{T}=simulation.k_arr)
+    simulation.response = Matrix{Complex{T}}(size(k_arr, 1), size(simulation.listener_positions, 2))
     # Map each k in k_arr over a the response function
 
-    B = (2*model.hankel_order+1)*length(model.particles)
+    B = (2*simulation.hankel_order+1)*length(simulation.particles)
     println("\nConstructing and solving $(length(k_arr)) linear systems of size $(B)x$(B)...")
     starttime = time()
     # @showprogress 0.1 ""
     for i=1:length(k_arr)
-        model.response[i,:] = response(model,k_arr[i])
+        simulation.response[i,:] = response(simulation,k_arr[i])
     end
     average_dur = signif((time() - starttime)/length(k_arr),3)
     println("Average time per wavelength: $average_dur seconds")

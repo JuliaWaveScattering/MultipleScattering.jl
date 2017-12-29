@@ -10,28 +10,28 @@ function hankel_order_convergence(m=[0,1,2,3,4,5,6,7,8,9,10], volfrac = 0.1,
     seed = MersenneTwister(1).seed
     particles = random_particles(volfrac, radius, shape; seed = seed)
 
-    models = Vector{FrequencySimulation{Float64}}(length(m))
+    simulations = Vector{FrequencySimulation{Float64}}(length(m))
 
     for i = eachindex(m)
-        models[i] = FrequencySimulation(particles, k_arr; seed=seed, hankel_order=m[i])
+        simulations[i] = FrequencySimulation(particles, k_arr; seed=seed, hankel_order=m[i])
     end
 
-    return models
+    return simulations
 end
 
-function plot_hankel_order_convergence(models)
-    responses = Vector{Vector{Complex{Float64}}}(length(models))
-    m = Vector{Int64}(length(models))
+function plot_hankel_order_convergence(simulations)
+    responses = Vector{Vector{Complex{Float64}}}(length(simulations))
+    m = Vector{Int64}(length(simulations))
 
     labels = Matrix{String}(1,0)
-    for i = eachindex(models)
-        responses[i] = reshape(models[i].response, size(models[i].response,1))
-        m[i] = models[i].hankel_order
+    for i = eachindex(simulations)
+        responses[i] = reshape(simulations[i].response, size(simulations[i].response,1))
+        m[i] = simulations[i].hankel_order
         labels = [labels "m = $(m[i])"]
     end
 
     error = [r .- responses[end] for r in responses[1:end-1]]
-    integrated_error = norm.(error).*map(m->((m.k_arr[end]-m.k_arr[1])/length(m.k_arr)),models[1:end-1])
+    integrated_error = norm.(error).*map(m->((m.k_arr[end]-m.k_arr[1])/length(m.k_arr)),simulations[1:end-1])
 
     colors = reshape(linspace(RGB(0.6,1,0.6),RGB(0,0.4,0),length(m)),1,length(m))
     realcolors = reshape(linspace(RGB(0.6,0.6,1),RGB(0,0,0.4),length(m)),1,length(m))
@@ -39,12 +39,12 @@ function plot_hankel_order_convergence(models)
 
     absvec(v) = abs.(v)
     plot(
-        plot(models[end],0.5),
-        plot(models[1].k_arr, [real(responses),imag(responses)],
+        plot(simulations[end],0.5),
+        plot(simulations[1].k_arr, [real(responses),imag(responses)],
              labels=[ map(c -> "real "*c,labels)  map(c -> "imag "*c,labels)],
              xlab="Wavenumber (k)", ylab="Response", linecolor=[realcolors imagcolors]
         ),
-        plot(models[1].k_arr, absvec.(error),
+        plot(simulations[1].k_arr, absvec.(error),
              yscale=:log10, labels=labels, linecolor=colors,
              xlab="Wavenumber (k)", ylab="Absolute error",
         ),
@@ -56,5 +56,5 @@ function plot_hankel_order_convergence(models)
 
 end
 
-models = hankel_order_convergence()
-plot_hankel_order_convergence(models)
+simulations = hankel_order_convergence()
+plot_hankel_order_convergence(simulations)

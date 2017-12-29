@@ -9,12 +9,12 @@ function moments_example()
     radius = 1.0
     k_arr = collect(linspace(0.01,1.0,100))
 
-    # Holder for our models
-    models = Vector{FrequencySimulation{Float64}}(10)
+    # Holder for our simulations
+    simulations = Vector{FrequencySimulation{Float64}}(10)
     for i=1:10
-        models[i] = FrequencySimulation(volfrac,radius,k_arr;seed=[0x7f5def91, 0x82255da3, 0xc5e461c7, UInt32(i)])
+        simulations[i] = FrequencySimulation(volfrac,radius,k_arr;seed=[0x7f5def91, 0x82255da3, 0xc5e461c7, UInt32(i)])
     end
 
-    moments = StatisticalMoments(models)
+    moments = StatisticalMoments(simulations)
     return moments
 end

@@ -19,16 +19,16 @@ function run_lens(;
     innershape = TimeOfFlight(listener_position,innertime)
     particles = filter(p -> !inside(innershape,p), outerparticles)
 
-    freqmodel = FrequencySimulation(particles, k_arr; listener_positions=listener_position)
+    freqsimulation = FrequencySimulation(particles, k_arr; listener_positions=listener_position)
 
-    return freqmodel, TimeSimulation(freqmodel; impulse = get_gaussian_freq_impulse(1.0, 3./maximum(k_arr)^2))
+    return freqsimulation, TimeSimulation(freqsimulation; impulse = get_gaussian_freq_impulse(1.0, 3./maximum(k_arr)^2))
 end
 
 function plot_lens()
-    freqmodel, TimeSimulation = run_lens()
+    freqsimulation, TimeSimulation = run_lens()
 
     plot(
-        plot(freqmodel.particles),
+        plot(freqsimulation.particles),
         plot(TimeSimulation)
     )
 end

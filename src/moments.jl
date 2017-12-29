@@ -9,34 +9,34 @@ type StatisticalMoments{T}
     num_realisations::Int
 end
 
-function StatisticalMoments{T}(models::Vector{TimeSimulation{T}}, num_moments=4; response_apply=real)
+function StatisticalMoments{T}(simulations::Vector{TimeSimulation{T}}, num_moments=4; response_apply=real)
     StatisticalMoments(
-        models_to_label(models),
-        models[1].time_arr,
-        calculate_moments(models,num_moments),
-        length(models)
+        simulations_to_label(simulations),
+        simulations[1].time_arr,
+        calculate_moments(simulations,num_moments),
+        length(simulations)
     )
 end
 
-function StatisticalMoments{T}(models::Vector{FrequencySimulation{T}}, num_moments=4; response_apply=real)
+function StatisticalMoments{T}(simulations::Vector{FrequencySimulation{T}}, num_moments=4; response_apply=real)
     StatisticalMoments(
-        models_to_label(models),
-        models[1].k_arr,
-        calculate_moments(models,num_moments;response_apply=response_apply),
-        length(models)
+        simulations_to_label(simulations),
+        simulations[1].k_arr,
+        calculate_moments(simulations,num_moments;response_apply=response_apply),
+        length(simulations)
     )
 end
 
-function calculate_moments(models::Vector,num_moments::Int;response_apply=real)
+function calculate_moments(simulations::Vector,num_moments::Int;response_apply=real)
     # Number of wavenumbers or time points sampled
-    K = length(models[1].response)
+    K = length(simulations[1].response)
     # Number of realisations
-    R = length(models)
-    moments = [Vector{typeof(response_apply(models[1].response[1,1]))}(K) for i=1:num_moments]
+    R = length(simulations)
+    moments = [Vector{typeof(response_apply(simulations[1].response[1,1]))}(K) for i=1:num_moments]
 
     # For each wavenumber or timestep, calculate each moment up to num_moments
     for i = 1:K
-        responses = [response_apply(models[j].response[i,1]) for j=1:R]
+        responses = [response_apply(simulations[j].response[i,1]) for j=1:R]
         μ = mean(responses)
         moments[1][i] = μ
         for m=2:num_moments
@@ -47,23 +47,23 @@ function calculate_moments(models::Vector,num_moments::Int;response_apply=real)
     return moments
 end
 
-function models_to_label{T}(models::Vector{TimeSimulation{T}})
-    frequency_models = [m.frequency_model for m in models]
-    return models_to_label(frequency_models)
+function simulations_to_label{T}(simulations::Vector{TimeSimulation{T}})
+    frequency_simulations = [s.frequency_simulation for s in simulations]
+    return simulations_to_label(frequency_simulations)
 end
 
-function models_to_label{T}(models::Vector{FrequencySimulation{T}})
-    std_radii = std_radius.(models)
+function simulations_to_label{T}(simulations::Vector{FrequencySimulation{T}})
+    std_radii = std_radius.(simulations)
     if mean(std_radii) > 100*eps(T)
-        error("Particles are different sizes: all particles in all models must be the same size to assign the moments a single label.")
+        error("Particles are different sizes: all particles in all simulations must be the same size to assign the moments a single label.")
     end
     # We now know they are all the same size, we can just take the first one
-    a = models[1].particles[1].r
+    a = simulations[1].particles[1].r
 
     # volfracs are never exactly the same
-    volfracs = calculate_volfrac.(models)
+    volfracs = calculate_volfrac.(simulations)
     if std(volfracs) > T(0.01)
-        error("Models have different volfracs: all models must have the same volfrac to assign the moments a single label.")
+        error("Simulations have different volfracs: all simulations must have the same volfrac to assign the moments a single label.")
     end
 
     return [mean(volfracs),a]

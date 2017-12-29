@@ -17,18 +17,18 @@ function run_time_response_single_particle(;
     # Define positions and radii
     particles[1] = Particle{Float64}([particle_x,0.0],radius,c,ρ)
     # Simulate a single particle in frequency space
-    freq_model = FrequencySimulation(particles,k_arr; hankel_order = 10)
-    # Convert the frequency model into a time model
-    time_model = TimeSimulation(freq_model; impulse = get_gaussian_freq_impulse(1.0, 3./maximum(k_arr)^2))
+    freq_simulation = FrequencySimulation(particles,k_arr; hankel_order = 10)
+    # Convert the frequency simulation into a time simulation
+    time_simulation = TimeSimulation(freq_simulation; impulse = get_gaussian_freq_impulse(1.0, 3./maximum(k_arr)^2))
 
-    return freq_model, time_model
+    return freq_simulation, time_simulation
 end
 
 function plot_time_response_single_particle()
-    freq_model, time_model = run_time_response_single_particle()
+    freq_simulation, time_simulation = run_time_response_single_particle()
 
     plot(
-        plot(freq_model, particles),
-        plot(time_model)
+        plot(freq_simulation, particles),
+        plot(time_simulation)
     )
 end

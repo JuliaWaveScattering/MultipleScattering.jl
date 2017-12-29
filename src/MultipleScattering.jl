@@ -23,16 +23,16 @@ include("domain/particle.jl")
 include("domain/shape.jl")
 include("domain/random_particles.jl")
 
-# Type definition to hold our model
-include("frequency_model.jl")
+# Type definition to hold our simulation
+include("frequency_simulation.jl")
 # Where the actual maths (multipole method) happens
 include("response.jl")
 # Different constructor definitions which run the whole thing
-include("frequency_model_constructors.jl")
+include("frequency_simulation_constructors.jl")
 
-# Turn the frequency model into a time model
-include("time_model.jl")
-# Statistical analysis of a batch of models
+# Turn the frequency simulation into a time simulation
+include("time_simulation.jl")
+# Statistical analysis of a batch of simulations
 include("moments.jl")
 
 # Recipes for plotting

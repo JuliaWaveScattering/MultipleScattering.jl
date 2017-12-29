@@ -2,14 +2,14 @@ include("plot_domain.jl")
 include("plot_moments.jl")
 
 """
-Build a 'field model' with lots of listeners using the same domain as model
-you pass in. This 'field model' can then be used to plot the whole field for
+Build a 'field simulation' with lots of listeners using the same domain as simulation
+you pass in. This 'field simulation' can then be used to plot the whole field for
 this wavenumber.
 """
-function build_field_model{T}(model::FrequencySimulation{T}, bounds::Rectangle{T},
-                              k_arr::Vector{T}=model.k_arr; res=10,xres=res,yres=res)
-    # Create deep copy of model so that we can add lots of new listener positions and rerun the model
-    field_model = deepcopy(model)
+function build_field_simulation{T}(simulation::FrequencySimulation{T}, bounds::Rectangle{T},
+                              k_arr::Vector{T}=simulation.k_arr; res=10,xres=res,yres=res)
+    # Create deep copy of simulation so that we can add lots of new listener positions and rerun the simulation
+    field_simulation = deepcopy(simulation)
 
     # Build the listeners or pixels
     box_size = bounds.topright - bounds.bottomleft
@@ -31,33 +31,33 @@ function build_field_model{T}(model::FrequencySimulation{T}, bounds::Rectangle{T
         end
     end
 
-    field_model.listener_positions = listener_positions
-    generate_responses!(field_model,k_arr)
+    field_simulation.listener_positions = listener_positions
+    generate_responses!(field_simulation,k_arr)
 
-    return field_model
+    return field_simulation
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot{T}(model::FrequencySimulation{T},k::T;res=10, xres=res, yres=res,
+@recipe function plot{T}(simulation::FrequencySimulation{T},k::T;res=10, xres=res, yres=res,
                          resp_fnc=real, drawshape = false)
 
     @series begin
         # find a box which covers everything
-        shape_bounds = bounding_box(model.shape)
+        shape_bounds = bounding_box(simulation.shape)
         listeners_as_particles = map(
-            l -> Particle(model.listener_positions[:,l],mean_radius(model)/2),
-            1:size(model.listener_positions,2)
+            l -> Particle(simulation.listener_positions[:,l],mean_radius(simulation)/2),
+            1:size(simulation.listener_positions,2)
         )
-        particle_bounds = bounding_box([model.particles; listeners_as_particles])
+        particle_bounds = bounding_box([simulation.particles; listeners_as_particles])
         bounds = bounding_box(shape_bounds, particle_bounds)
-        field_model = build_field_model(model, bounds, [k]; xres=xres, yres=yres)
+        field_simulation = build_field_simulation(simulation, bounds, [k]; xres=xres, yres=yres)
 
         # For this we sample at the centre of each pixel
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
         y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
 
         # Turn the responses (a big long vector) into a matrix, so that the heatmap will understand us
-        response_mat = transpose(reshape(field_model.response, (xres+1, yres+1)))
+        response_mat = transpose(reshape(field_simulation.response, (xres+1, yres+1)))
         linetype --> :contour
         fill --> true
         fillcolor --> :pu_or
@@ -67,10 +67,10 @@ end
     end
     if drawshape
       @series begin
-          model.shape
+          simulation.shape
       end
     end
-    for i=1:length(model.particles) @series model.particles[i] end
+    for i=1:length(simulation.particles) @series simulation.particles[i] end
 
     @series begin
         line --> 0
@@ -80,9 +80,9 @@ end
         colorbar --> true
         aspect_ratio := 1.0
 
-        r = mean_radius(model.particles)/2
-        x(t) = r * cos(t) + model.listener_positions[1, 1]
-        y(t) = r * sin(t) + model.listener_positions[2, 1]
+        r = mean_radius(simulation.particles)/2
+        x(t) = r * cos(t) + simulation.listener_positions[1, 1]
+        y(t) = r * sin(t) + simulation.listener_positions[2, 1]
 
         (x, y, -2π/3, 2π/3)
     end
@@ -90,48 +90,48 @@ end
 end
 
 "Plot the response across all wavenumbers"
-@recipe function plot(model::FrequencySimulation)
+@recipe function plot(simulation::FrequencySimulation)
     label --> ["real" "imaginary"]
     xlabel --> "Wavenumber (k)"
     ylabel --> "Response"
     grid --> false
-    title --> "Response from particles of radius $(signif(model.particles[1].r,2)) contained in a $(lowercase(name(model.shape)))\n with volfrac=$(signif(calculate_volfrac(model),2)) measured at ($(model.listener_positions[1,1]), $(model.listener_positions[2,1]))"
+    title --> "Response from particles of radius $(signif(simulation.particles[1].r,2)) contained in a $(lowercase(name(simulation.shape)))\n with volfrac=$(signif(calculate_volfrac(simulation),2)) measured at ($(simulation.listener_positions[1,1]), $(simulation.listener_positions[2,1]))"
 
-    (model.k_arr, [real(model.response) imag(model.response)])
+    (simulation.k_arr, [real(simulation.response) imag(simulation.response)])
 end
 
 "Plot the response across time"
-@recipe function plot(model::TimeSimulation)
+@recipe function plot(simulation::TimeSimulation)
     xlabel --> "Time (t)"
     ylabel --> "Response"
     grid --> false
-    title --> "Response from particles of radius $(signif(model.frequency_model.particles[1].r,2)) contained in a $(lowercase(name(model.frequency_model.shape)))\n with volfrac=$(signif(calculate_volfrac(model.frequency_model),2)) measured at ($(model.frequency_model.listener_positions[1,1]), $(model.frequency_model.listener_positions[2,1]))"
+    title --> "Response from particles of radius $(signif(simulation.frequency_simulation.particles[1].r,2)) contained in a $(lowercase(name(simulation.frequency_simulation.shape)))\n with volfrac=$(signif(calculate_volfrac(simulation.frequency_simulation),2)) measured at ($(simulation.frequency_simulation.listener_positions[1,1]), $(simulation.frequency_simulation.listener_positions[2,1]))"
 
-    (model.time_arr, model.response)
+    (simulation.time_arr, simulation.response)
 end
 
 "Plot the field for a particular an array of time"
 @recipe function plot{T}(TimeSimulation::TimeSimulation{T}, t::Union{T,Vector{T}};
                         res=10, xres=res, yres=res, resp_fnc=real,
                         drawshape = false, drawlisteners = false)
-    model = TimeSimulation.frequency_model
+    simulation = TimeSimulation.frequency_simulation
 
     if isa(t,T) t_arr = [t]
     else        t_arr = t  end
 
     @series begin
         # find a box which covers everything
-        shape_bounds = bounding_box(model.shape)
+        shape_bounds = bounding_box(simulation.shape)
         listeners_as_particles = map(
-            l -> Particle(model.listener_positions[:,l],mean_radius(model)/2),
-            1:size(model.listener_positions,2)
+            l -> Particle(simulation.listener_positions[:,l],mean_radius(simulation)/2),
+            1:size(simulation.listener_positions,2)
         )
-        particle_bounds = bounding_box([model.particles; listeners_as_particles])
+        particle_bounds = bounding_box([simulation.particles; listeners_as_particles])
         bounds = bounding_box(shape_bounds, particle_bounds)
 
-        field_model = build_field_model(model, bounds; xres=xres, yres=yres)
+        field_simulation = build_field_simulation(simulation, bounds; xres=xres, yres=yres)
         field_TimeSimulation = deepcopy(TimeSimulation) # to use all the same options/fields as TimeSimulation
-        field_TimeSimulation.frequency_model = field_model
+        field_TimeSimulation.frequency_simulation = field_simulation
         generate_responses!(field_TimeSimulation, t_arr)
 
         # For this we sample at the centre of each pixel
@@ -150,10 +150,10 @@ end
     end
     if drawshape
       @series begin
-          model.shape
+          simulation.shape
       end
     end
-    for i=1:length(model.particles) @series model.particles[i] end
+    for i=1:length(simulation.particles) @series simulation.particles[i] end
     if drawlisteners
       @series begin
           line --> 0
@@ -163,9 +163,9 @@ end
           aspect_ratio --> 1.0
           legend --> false
 
-          r = mean_radius(model.particles)/2
-          x(t) = r * cos(t) + model.listener_positions[1, 1]
-          y(t) = r * sin(t) + model.listener_positions[2, 1]
+          r = mean_radius(simulation.particles)/2
+          x(t) = r * cos(t) + simulation.listener_positions[1, 1]
+          y(t) = r * sin(t) + simulation.listener_positions[2, 1]
 
           (x, y, -2π/3, 2π/3)
       end

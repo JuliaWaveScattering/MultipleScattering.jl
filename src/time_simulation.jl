@@ -1,5 +1,5 @@
 type TimeSimulation{T}
-    frequency_model::FrequencySimulation{T}
+    frequency_simulation::FrequencySimulation{T}
     response::Matrix{T}
     time_arr::Vector{T}
     impulse_arr::Vector{Complex{T}}
@@ -7,24 +7,24 @@ type TimeSimulation{T}
 end
 
 """
-Convert a frequency model into a time model using the inverse fourier transform.
+Convert a frequency simulation into a time simulation using the inverse fourier transform.
 Assumes only positive frequencies and a real time signal
 """
 function TimeSimulation{T}(
-        freq_model::FrequencySimulation{T};
-        time_arr = ω_to_t(freq_model.k_arr),
-        impulse = get_gaussian_freq_impulse(maximum(freq_model.k_arr)),
+        freq_simulation::FrequencySimulation{T};
+        time_arr = ω_to_t(freq_simulation.k_arr),
+        impulse = get_gaussian_freq_impulse(maximum(freq_simulation.k_arr)),
         method =:dft
     )
-    response = frequency_to_time(freq_model.response,freq_model.k_arr,time_arr,impulse; method = method)
-    TimeSimulation{T}(freq_model,response,time_arr,impulse.(freq_model.k_arr),method)
+    response = frequency_to_time(freq_simulation.response,freq_simulation.k_arr,time_arr,impulse; method = method)
+    TimeSimulation{T}(freq_simulation,response,time_arr,impulse.(freq_simulation.k_arr),method)
 end
 
-"Take model parameters, run model and populate the response array."
+"Take simulation parameters, run simulation and populate the response array."
 function generate_responses!{T}(TimeSimulation::TimeSimulation{T},t_arr::Vector{T}=TimeSimulation.time_arr)
     TimeSimulation.time_arr = t_arr
     TimeSimulation.response = frequency_to_time(
-        TimeSimulation.frequency_model.response, TimeSimulation.frequency_model.k_arr,
+        TimeSimulation.frequency_simulation.response, TimeSimulation.frequency_simulation.k_arr,
         TimeSimulation.time_arr, TimeSimulation.impulse; method = TimeSimulation.method
     )
 end
@@ -33,8 +33,8 @@ end
 Calcuate the volume fraction of this simulation from the volume of the particles
 and the bounding shape.
 """
-function calculate_volfrac(time_model::TimeSimulation)
-    volume(time_model.frequency_model.particles)/volume(time_model.frequency_model.shape)
+function calculate_volfrac(time_simulation::TimeSimulation)
+    volume(time_simulation.frequency_simulation.particles)/volume(time_simulation.frequency_simulation.shape)
 end
 
 

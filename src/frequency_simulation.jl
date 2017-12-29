@@ -19,16 +19,16 @@ end
 Calcuate the volume fraction of this simulation from the volume of the particles
 and the bounding shape.
 """
-function calculate_volfrac(model::FrequencySimulation)
-    volume(model.particles)/volume(model.shape)
+function calculate_volfrac(simulation::FrequencySimulation)
+    volume(simulation.particles)/volume(simulation.shape)
 end
 
 """
-Find the mean radius of the particles in this model
+Find the mean radius of the particles in this simulation
 """
-mean_radius(model::FrequencySimulation) = mean_radius(model.particles)
+mean_radius(simulation::FrequencySimulation) = mean_radius(simulation.particles)
 
 """
-Find the standard deviation of the radii of the particles in this model
+Find the standard deviation of the radii of the particles in this simulation
 """
-std_radius(model::FrequencySimulation) = std_radius(model.particles)
+std_radius(simulation::FrequencySimulation) = std_radius(simulation.particles)

@@ -14,26 +14,26 @@ particles = [p1,p2]
 Specify the angular frequency of the incident wave and calculate the response
 ```julia
 w_arr = collect(0.1:0.01:1.)
-model = FrequencySimulation(particles, w_arr)
-plot(model)
+simulation = FrequencySimulation(particles, w_arr)
+plot(simulation)
 ```
-![Plot against frequency](plot_model.png)
+![Plot against frequency](plot_simulation.png)
 
 The above used an incident plane with the default reciever/listener position and incident plane wave direction
 ```julia
-model.listener_positions
-model.source_direction
+simulation.listener_positions
+simulation.source_direction
 ```
 to change these defaults use
 ```julia
-model = FrequencySimulation(particles, w_arr;
+simulation = FrequencySimulation(particles, w_arr;
     listener_positions = [-10.,-10.],
     source_direction=[1.,1.])
 ```
 then plot the response around the particles and receiver
 ```julia
 w = 3.2
-plot(model,w; res=80, resp_fnc=abs)
+plot(simulation,w; res=80, resp_fnc=abs)
 ```
 ![Plot absolute value of wave field](plot_field.png)
 

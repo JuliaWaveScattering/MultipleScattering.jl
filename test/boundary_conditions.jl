@@ -7,10 +7,10 @@ function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
     shape = Rectangle(0.1, mapreduce(p->p.r,max,particles), numberofparticles)
     random_particles!(particles, shape; seed=seed) # choose random positions
     k_arr = collect(linspace(0.01,1.0,10));
-    model = FrequencySimulation(particles,k_arr);
+    simulation = FrequencySimulation(particles,k_arr);
     boundary_data= map(4:6) do m
-      model.hankel_order = m
-      boundary_conditions(model,k_arr; numberofparticles=numberofparticles)
+      simulation.hankel_order = m
+      boundary_conditions(simulation,k_arr; numberofparticles=numberofparticles)
     end
     displacement_jumps = [ d[1] for d in boundary_data]
     tractions_jumps = [ d[2] for d in boundary_data]
@@ -27,25 +27,25 @@ end
 
 
 "returns (displacement_jump, stress_jump) along the boundaries of numberofparticles with wavenumbers k_arr. NOTE the stress is calculated by numerically approximately the derivative, so can be inaccurate."
-function boundary_conditions{T}(model::FrequencySimulation{T}, k_arr::Vector{T};
-        numberofparticles::Int = min(4, length(model.particles)), dr = 100000*eps(T))
+function boundary_conditions{T}(simulation::FrequencySimulation{T}, k_arr::Vector{T};
+        numberofparticles::Int = min(4, length(simulation.particles)), dr = 100000*eps(T))
 
-    model2 = deepcopy(model)
-    model2.particles = shuffle(model2.particles) # randomly shuffle the order
-    ps = model2.particles[1:numberofparticles]
+    simulation2 = deepcopy(simulation)
+    simulation2.particles = shuffle(simulation2.particles) # randomly shuffle the order
+    ps = simulation2.particles[1:numberofparticles]
 
-    positions(p,r) = hcat(points_on_boundary(p, 2*model.hankel_order+1; addtoradius = r)...)
+    positions(p,r) = hcat(points_on_boundary(p, 2*simulation.hankel_order+1; addtoradius = r)...)
     function responses(p,r)
-        model2.listener_positions = positions(p,r)
-        generate_responses!(model2, k_arr)
-        model2.response
+        simulation2.listener_positions = positions(p,r)
+        generate_responses!(simulation2, k_arr)
+        simulation2.response
     end
 
     # choose listeners just outside boundary
       outside_responses = [responses(p,10*eps(T)) for p in ps]
       # listeners further out
       outside2_responses = [responses(p,dr + 10*eps(T)) for p in ps]
-      diff_outside_responses = (1/model.ρ)*(outside2_responses - outside_responses)/dr
+      diff_outside_responses = (1/simulation.ρ)*(outside2_responses - outside_responses)/dr
 
     # choose listeners just inside boundary
       inside_responses = [responses(p,-10*eps(T)) for p in ps]
@@ -61,12 +61,12 @@ function boundary_conditions{T}(model::FrequencySimulation{T}, k_arr::Vector{T};
       return (displacement, traction)
 end
 
-function radial_response_model{T}(model::FrequencySimulation{T}, p::Particle{T}, k_arr::Vector{T}; opts...)
-    model2 = deepcopy(model)
+function radial_response_simulation{T}(simulation::FrequencySimulation{T}, p::Particle{T}, k_arr::Vector{T}; opts...)
+    simulation2 = deepcopy(simulation)
     # choose listeners along a radial axes
-      model2.listener_positions = hcat(points_on_radial_axes(p; opts...)...)
-      generate_responses!(model2, k_arr)
-      return model2
+      simulation2.listener_positions = hcat(points_on_radial_axes(p; opts...)...)
+      generate_responses!(simulation2, k_arr)
+      return simulation2
 end
 
 "returns points on the boundary of a particle in matrix dimensions 2 x numberofpoints"

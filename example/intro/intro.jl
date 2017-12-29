@@ -5,13 +5,13 @@ p2 = Particle([-2.,-2.])
 particles = [p1,p2]
 
 w_arr = collect(0.1:0.01:1.)
-model = FrequencySimulation(particles, w_arr)
+simulation = FrequencySimulation(particles, w_arr)
 
 using Plots
 pyplot()
-plot(model)
+plot(simulation)
 
-savefig("plot_model.png")
+savefig("plot_simulation.png")
 
-plot(model,0.8)
+plot(simulation,0.8)
 savefig("plot_field.png")
