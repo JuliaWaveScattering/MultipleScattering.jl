@@ -5,8 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/jondea/MultipleScattering.jl/badge.svg?branch=master)](https://coveralls.io/github/jondea/MultipleScattering.jl?branch=master)
 [![codecov.io](http://codecov.io/github/jondea/MultipleScattering.jl/coverage.svg?branch=master)](http://codecov.io/github/jondea/MultipleScattering.jl?branch=master)
 
-A Julia library for simulating, processing and plotting acoustic data from
-scattering problems, particularly random ones.
+A Julia library for simulating, processing and plotting multiple scattering of waves. 
 
 The library uses the multipole method to solve the Helmholtz equation
 (time-harmonic acoustics) in two dimensions.
