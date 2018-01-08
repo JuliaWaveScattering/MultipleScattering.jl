@@ -5,6 +5,7 @@ export Shape, Circle, Rectangle, TimeOfFlight, TimeOfFlightFromPoint, volume,
        Particle, volume, array_of_particles, random_particles, random_particles!, isequal,
        mean_radius, std_radius,
        FrequencySimulation, calculate_volfrac, generate_responses!,
+       build_field_simulation,
        StatisticalMoments,
        TimeSimulation, frequency_to_time, time_to_frequency, ω_to_t, t_to_ω,
        delta_freq_impulse, get_gaussian_freq_impulse

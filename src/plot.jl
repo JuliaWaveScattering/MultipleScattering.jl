@@ -39,7 +39,8 @@ end
 
 "Plot the field for a particular wavenumber"
 @recipe function plot{T}(simulation::FrequencySimulation{T},k::T;res=10, xres=res, yres=res,
-                         resp_fnc=real, drawshape = false)
+                         resp_fnc=real, build_field=true,
+                         drawparticles=true, drawshape=false, drawlisteners=build_field)
 
     @series begin
         # find a box which covers everything
@@ -50,7 +51,11 @@ end
         )
         particle_bounds = bounding_box([simulation.particles; listeners_as_particles])
         bounds = bounding_box(shape_bounds, particle_bounds)
-        field_simulation = build_field_simulation(simulation, bounds, [k]; xres=xres, yres=yres)
+        if build_field
+          field_simulation = build_field_simulation(simulation, bounds, [k]; xres=xres, yres=yres)
+        else
+          field_simulation = simulation
+        end
 
         # For this we sample at the centre of each pixel
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
@@ -70,23 +75,25 @@ end
           simulation.shape
       end
     end
-    for i=1:length(simulation.particles) @series simulation.particles[i] end
+    if drawparticles
+      for i=1:length(simulation.particles) @series simulation.particles[i] end
+    end  
+    if drawlisteners
+      @series begin
+          line --> 0
+          fill --> (0, :lightgreen)
+          legend --> false
+          grid --> false
+          colorbar --> true
+          aspect_ratio := 1.0
 
-    @series begin
-        line --> 0
-        fill --> (0, :lightgreen)
-        legend --> false
-        grid --> false
-        colorbar --> true
-        aspect_ratio := 1.0
+          r = mean_radius(simulation.particles)/2
+          x(t) = r * cos(t) + simulation.listener_positions[1, 1]
+          y(t) = r * sin(t) + simulation.listener_positions[2, 1]
 
-        r = mean_radius(simulation.particles)/2
-        x(t) = r * cos(t) + simulation.listener_positions[1, 1]
-        y(t) = r * sin(t) + simulation.listener_positions[2, 1]
-
-        (x, y, -2π/3, 2π/3)
+          (x, y, -2π/3, 2π/3)
+      end
     end
-
 end
 
 "Plot the response across all wavenumbers"
