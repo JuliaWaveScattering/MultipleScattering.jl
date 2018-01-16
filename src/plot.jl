@@ -77,7 +77,7 @@ end
     end
     if drawparticles
       for i=1:length(simulation.particles) @series simulation.particles[i] end
-    end  
+    end
     if drawlisteners
       @series begin
           line --> 0
@@ -117,10 +117,19 @@ end
     (simulation.time_arr, simulation.response)
 end
 
-"Plot the field for a particular an array of time"
+# "Plot the field for an array of time"
+# @recipe function plot{T}(TimeSimulation::TimeSimulation{T}; res=res)
+#     map(indices(TimeSimulation.time_arr)) do i
+#         simulation = deepcopy(TimeSimulation)
+#         simulation.response = reshape(TimeSimulation.response[i,:],1,:)
+#         plot(simulation,TimeSimulation.time_arr[i]; res=res, build_field=false)
+#     end
+# end
+
+"Plot the field for one time"
 @recipe function plot{T}(TimeSimulation::TimeSimulation{T}, t::Union{T,Vector{T}};
                         res=10, xres=res, yres=res, resp_fnc=real,
-                        drawshape = false, drawlisteners = false)
+                        drawshape = false, build_field=true, drawlisteners = build_field)
     simulation = TimeSimulation.frequency_simulation
 
     if isa(t,T) t_arr = [t]
@@ -136,15 +145,18 @@ end
         particle_bounds = bounding_box([simulation.particles; listeners_as_particles])
         bounds = bounding_box(shape_bounds, particle_bounds)
 
-        field_simulation = build_field_simulation(simulation, bounds; xres=xres, yres=yres)
-        field_TimeSimulation = deepcopy(TimeSimulation) # to use all the same options/fields as TimeSimulation
-        field_TimeSimulation.frequency_simulation = field_simulation
-        generate_responses!(field_TimeSimulation, t_arr)
+        if build_field
+          field_simulation = build_field_simulation(simulation, bounds; xres=xres, yres=yres)
+          field_TimeSimulation = deepcopy(TimeSimulation) # to use all the same options/fields as TimeSimulation
+          field_TimeSimulation.frequency_simulation = field_simulation
+          generate_responses!(field_TimeSimulation, t_arr)
+        else
+          field_TimeSimulation = TimeSimulation
+        end
 
         # For this we sample at the centre of each pixel
         x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
         y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
-
 
         # NOTE only plots the first time plot for now...
         response_mat = transpose(reshape(field_TimeSimulation.response[1,:], (xres+1, yres+1)))

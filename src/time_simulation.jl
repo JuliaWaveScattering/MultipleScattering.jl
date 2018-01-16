@@ -14,10 +14,12 @@ function TimeSimulation{T}(
         freq_simulation::FrequencySimulation{T};
         time_arr = ω_to_t(freq_simulation.k_arr),
         impulse = get_gaussian_freq_impulse(maximum(freq_simulation.k_arr)),
+        impulse_arr = impulse.(freq_simulation.k_arr),
         method =:dft
     )
-    response = frequency_to_time(freq_simulation.response,freq_simulation.k_arr,time_arr,impulse; method = method)
-    TimeSimulation{T}(freq_simulation,response,time_arr,impulse.(freq_simulation.k_arr),method)
+    response = frequency_to_time(freq_simulation.response,freq_simulation.k_arr,time_arr;
+        impulse = impulse, impulse_arr = impulse_arr, method = method)
+    TimeSimulation{T}(freq_simulation,response,time_arr,impulse_arr,method)
 end
 
 "Take simulation parameters, run simulation and populate the response array."
@@ -25,7 +27,7 @@ function generate_responses!{T}(TimeSimulation::TimeSimulation{T},t_arr::Vector{
     TimeSimulation.time_arr = t_arr
     TimeSimulation.response = frequency_to_time(
         TimeSimulation.frequency_simulation.response, TimeSimulation.frequency_simulation.k_arr,
-        TimeSimulation.time_arr, TimeSimulation.impulse; method = TimeSimulation.method
+        TimeSimulation.time_arr; impulse_arr = TimeSimulation.impulse_arr, method = TimeSimulation.method
     )
 end
 
@@ -103,7 +105,9 @@ result is convoluted ωith the user specified impulse, which is a function of th
 frequency.
 """
 function frequency_to_time{T}(freq_response::Matrix{Complex{T}},ω_arr::AbstractArray{T},
-  time_arr::AbstractArray{T}=ω_to_t(ω_arr), impulse::Function = delta_freq_impulse;
+  time_arr::AbstractArray{T}=ω_to_t(ω_arr);
+  impulse::Function = delta_freq_impulse,
+  impulse_arr = impulse.(ω_arr),
   addzerofrequency=true, method=:dft)
     # we assume the convention: f(t) = 1/(2π) ∫f(ω)exp(-im*ω*t)dω
 
@@ -115,6 +119,12 @@ function frequency_to_time{T}(freq_response::Matrix{Complex{T}},ω_arr::Abstract
         (ω_arr[2]*freq_response[1,j] - ω_arr[1]*freq_response[2,j])/(ω_arr[2]-ω_arr[1])
       for j in 1:positions]
       freq_response = [transpose(zeroresponse); freq_response]
+      if impulse_arr == impulse.(ω_arr)
+        impulse_arr = impulse.([0; ω_arr])
+      else
+        impulse_zero = (ω_arr[2]*impulse_arr[1] - ω_arr[1]*impulse_arr[2])/(ω_arr[2]-ω_arr[1])
+        impulse_arr = impulse.([impulse_zero; impulse_arr])
+      end
       ω_arr = [0; ω_arr]
     end
 
@@ -125,22 +135,22 @@ function frequency_to_time{T}(freq_response::Matrix{Complex{T}},ω_arr::Abstract
         sum(1:(freqsteps-1)) do ωi
             ω = ω_arr[ωi]
             uhat = freq_response[ωi,j]
-            f1 = impulse(ω)*uhat*exp(-im*ω*t)
+            f1 = impulse_arr[ωi]*uhat*exp(-im*ω*t)
             ω = ω_arr[ωi+1]
             uhat = freq_response[ωi+1,j]
-            f2 = impulse(ω)*uhat*exp(-im*ω*t)
+            f2 = impulse_arr[ωi+1]*uhat*exp(-im*ω*t)
             dω = ω_arr[ωi+1] - ω_arr[ωi]
             (f1+f2)*dω/2
         end
     else
-      # integral to match exactly standard dft
+      # integral to match exactly standard dft, assuming ω_arr[1] == 0
       fourier_integral = (t,j) ->
-        impulse(0)*freq_response[1,j]*(ω_arr[2]-ω_arr[1])/2 +  # because ω=0 should not be added tωice later
+        impulse_arr[1]*freq_response[1,j]*(ω_arr[2]-ω_arr[1])/2 +  # because ω=0 should not be added tωice later
         sum(2:freqsteps) do ωi
           dω = ω_arr[ωi]-ω_arr[ωi-1]
           ω = ω_arr[ωi]
           uhat = freq_response[ωi,j]
-          impulse(ω)*uhat*exp(-im*ω*t)*dω
+          impulse_arr[ωi]*uhat*exp(-im*ω*t)*dω
         end
     end
     # impulse(ω_arr[freqsteps])*freq_response[freqsteps,j]*(ω_arr[freqsteps]-ω_arr[freqsteps-1]) +
@@ -155,7 +165,10 @@ The inverse of the function frequency_to_time (only an exact inverse when using
 :dft integration)
 """
 function time_to_frequency{T}(time_response::Matrix{T},ω_arr::AbstractArray{T},
-  time_arr::AbstractArray{T}=ω_to_t(ω_arr); impulse::Function = delta_freq_impulse, method=:dft)
+  time_arr::AbstractArray{T}=ω_to_t(ω_arr);
+  impulse::Function = delta_freq_impulse,
+  impulse_arr = impulse.(time_arr),
+  method=:dft)
     # we assume the convention: f(ω) =  ∫f(t)exp(im*ω*t)dt
 
     # determine how to approximate  ∫f(t)exp(im*ω*t)dt
@@ -166,10 +179,10 @@ function time_to_frequency{T}(time_response::Matrix{T},ω_arr::AbstractArray{T},
             dt = time_arr[ti+1] - time_arr[ti]
             t = time_arr[ti]
             u = time_response[ti,j]
-            f1 = impulse(t)*u*exp(im*ω*t)
+            f1 = impulse_arr[ti]*u*exp(im*ω*t)
             t = time_arr[ti+1]
             u = time_response[ti+1,j]
-            f2 = impulse(t)*u*exp(im*ω*t)
+            f2 = impulse_arr[ti+1]*u*exp(im*ω*t)
             (f1+f2)*dt/2
         end
     else
@@ -180,7 +193,7 @@ function time_to_frequency{T}(time_response::Matrix{T},ω_arr::AbstractArray{T},
           dt = time_arr[ti]-time_arr[ti-1]
           t  = time_arr[ti]
           u  = time_response[ti,j]
-          impulse(t)*u*exp(im*ω*t)*dt
+          impulse_arr[ti]*u*exp(im*ω*t)*dt
         end
     end
 

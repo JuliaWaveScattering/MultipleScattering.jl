@@ -1,4 +1,4 @@
-const MAX_ATTEMPTS_TO_FIT_PARTICLE = 2000
+const MAX_ATTEMPTS_TO_FIT_PARTICLE = 3000
 
 """
 Generate a non-overlapping Vector of N random particles of radius r that fit

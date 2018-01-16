@@ -76,8 +76,7 @@ function generate_responses!{T}(simulation::FrequencySimulation{T},k_arr::Vector
     B = (2*simulation.hankel_order+1)*length(simulation.particles)
     println("\nConstructing and solving $(length(k_arr)) linear systems of size $(B)x$(B)...")
     starttime = time()
-    # @showprogress 0.1 ""
-    for i=1:length(k_arr)
+    @showprogress 0.1 "" for i=1:length(k_arr)
         simulation.response[i,:] = response(simulation,k_arr[i])
     end
     average_dur = signif((time() - starttime)/length(k_arr),3)
