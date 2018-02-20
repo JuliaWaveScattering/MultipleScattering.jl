@@ -5,7 +5,7 @@ function run_lens(;
         a=0.25,
         volfrac=0.2,
         listener_position=[-10.0;0.0],
-        outertime=35.0,
+        outertime=35.5,
         innertime=34.0
     )
 
@@ -20,7 +20,7 @@ function run_lens(;
     particles = filter(p -> !inside(innershape,p), outerparticles)
 
     freqsimulation = FrequencySimulation(particles, k_arr; listener_positions=listener_position)
-    time_arr = 0.:0.5:90.
+    time_arr = 0.:0.3:90.
     return freqsimulation, TimeSimulation(freqsimulation; time_arr=time_arr, impulse = get_gaussian_freq_impulse(1.0, 4.5/maximum(k_arr)^2))
 end
 
