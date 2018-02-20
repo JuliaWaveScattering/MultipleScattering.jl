@@ -1,6 +1,6 @@
 # StatisticalMoments
 
-Here we are going to simulate the scattered wave for many different configurations of particles. We can then take the average and standard deviation (the moments) scattered wave. In statistical mechanics this process is called [ensemble average](https://en.wikipedia.org/wiki/Ensemble_average_(statistical_mechanics)).
+Here we are going to simulate the scattered wave for many different configurations of particles. We can then take the average and standard deviation (the moments) of the scattered wave. In statistical mechanics this process is called [ensemble average](https://en.wikipedia.org/wiki/Ensemble_average_(statistical_mechanics)).
 
 ## Choose the type of particles
 ```julia
@@ -24,7 +24,6 @@ plot(shape)
 The code below chooses a random (uniform distribution) configuration of particles inside `shape` and calculates the received signal at `listener`
 ```julia
 listener = [-10.0, 0.0]
-seed =
 simulation = FrequencySimulation(volfrac,radius,k_arr; shape=shape, listener_positions = listener, seed = 1)
 plot(simulation)
 ```
