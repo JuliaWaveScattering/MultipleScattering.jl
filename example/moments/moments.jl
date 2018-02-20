@@ -7,8 +7,11 @@ using MultipleScattering
 function moments_example()
     volfrac = 0.01
     radius = 1.0
+    num_particles = 10
     k_arr = collect(linspace(0.01,1.0,100))
 
+    # region to place the particles
+    shape = Rectangle(volfrac, radius, num_particles)
     # Holder for our simulations
     simulations = Vector{FrequencySimulation{Float64}}(10)
     for i=1:10

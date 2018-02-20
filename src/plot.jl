@@ -7,7 +7,7 @@ you pass in. This 'field simulation' can then be used to plot the whole field fo
 this wavenumber.
 """
 function build_field_simulation{T}(simulation::FrequencySimulation{T}, bounds::Rectangle{T},
-                              k_arr::Vector{T}=simulation.k_arr; res=10,xres=res,yres=res)
+                              k_arr::Vector{T}=simulation.k_arr; res=20,xres=res,yres=res)
     # Create deep copy of simulation so that we can add lots of new listener positions and rerun the simulation
     field_simulation = deepcopy(simulation)
 
@@ -131,7 +131,7 @@ end
 
 "Plot the field for one time"
 @recipe function plot{T}(TimeSimulation::TimeSimulation{T}, t::Union{T,Vector{T}};
-                        res=10, xres=res, yres=res, resp_fnc=real,
+                        res=20, xres=res, yres=res, resp_fnc=real,
                         drawshape = false, build_field=true, drawlisteners = build_field)
     simulation = TimeSimulation.frequency_simulation
 

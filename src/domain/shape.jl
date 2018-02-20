@@ -92,12 +92,12 @@ name(shape::Circle) = "Circle"
 function boundary_functions{T}(shape::Circle{T})
     function x(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
-        cos(2π * t) + shape.centre[1]
+        shape.radius * cos(2π * t) + shape.centre[1]
     end
 
     function y(t)
         if t<0 || t>1 error("Boundary coordinate must be between 0 and 1") end
-        sin(2π * t) + shape.centre[2]
+        shape.radius * sin(2π * t) + shape.centre[2]
     end
 
     return x, y

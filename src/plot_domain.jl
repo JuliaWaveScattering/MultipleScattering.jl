@@ -1,10 +1,3 @@
-@recipe function plot(particles::Vector{Particle})
-    # for p in particles @series identity(p) end
-    # for i=1:length(particles) @series particles[i] end
-
-    @series particles[1]
-end
-
 @recipe function plot(particle::Particle)
     grid --> false
     legend --> nothing
@@ -21,6 +14,14 @@ end
     y = t -> particle.r*sin(t) + particle.x[2]
 
     (x, y, 0, 2π)
+end
+
+#Currently plot(Vector{Particle}) does not work
+@recipe function plot(particles::Vector{Particle})
+    # for p in particles @series identity(p) end
+    for i=1:length(particles) @series particles[i] end
+
+    # @series particles[1]
 end
 
 @recipe function plot(shape::Shape)

@@ -18,7 +18,7 @@ simulation = FrequencySimulation(volfrac,radius,k_arr)
 using Plots
 plot(
     plot(simulation),
-    plot(simulation,0.8;res=100)
+    plot(simulation,0.8;res=100,drawshape=true)
 )
 
 # ## Things to try
