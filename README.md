@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/jondea/MultipleScattering.jl/badge.svg?branch=master)](https://coveralls.io/github/jondea/MultipleScattering.jl?branch=master)
 [![codecov.io](http://codecov.io/github/jondea/MultipleScattering.jl/coverage.svg?branch=master)](http://codecov.io/github/jondea/MultipleScattering.jl?branch=master)
 
-A Julia library for simulating, processing and plotting multiple scattering of waves. 
+A Julia library for simulating, processing, and plotting multiple scattering of acoustic waves.
 
 The library uses the multipole method to solve the Helmholtz equation
 (time-harmonic acoustics) in two dimensions.
@@ -27,16 +27,16 @@ using MultipleScattering
 
 ## Simple example
 ### Run
-Define two particles, the first centred at [-2.,2.] and the second at [-2.,-2.]
+Define two particles, the first centred at [-2.,2.] with radius 2.0 and the second at [-2.,-2.] with radius 0.5,
 ```julia
-p1 = Particle([-2.,2.])
-p2 = Particle([-2.,-2.])
+p1 = Particle([-2.,2.], 2.0)
+p2 = Particle([-8.,-2.], 0.5)
 particles = [p1,p2]
 ```
 
 Specify the angular frequency of the defualt incident plane wave ![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D) and calculate the response
 ```julia
-w_arr = collect(0.1:0.01:1.)
+w_arr = collect(0.01:0.01:1.)
 simulation = FrequencySimulation(particles, w_arr; source_direction = [1.0,0.0])
 ```
 
@@ -65,6 +65,13 @@ wavenumber.
 
 Note: most things in the package can be plotted by typing `plot(thing)` if you
 need an insight into a specific part of your simulation.
+
+To calculate an incident plane wave pulse in time use:
+```julia
+time_simulation = TimeSimulation(simulation)
+plot(time_simulation)
+```
+![Plot real part of acoustic field](example/intro/plot_time_simulation.png)
 
 ## More examples
 There are a lot of defaults implicit in this basic example.
