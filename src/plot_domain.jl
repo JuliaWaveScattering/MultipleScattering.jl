@@ -4,7 +4,7 @@
     xlab --> "x"
     ylab --> "y"
     aspect_ratio := 1.0
-    fillalpha --> 0.0
+    fillalpha = 0.0
     # fillalpha = 0.7/(1.0 + abs(particle.ρ*particle.c)) # darker fill the larger the impendence
     fill --> (0, fillalpha, :grey)
     linecolor --> :grey
