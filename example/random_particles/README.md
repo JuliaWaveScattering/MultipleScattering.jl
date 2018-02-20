@@ -25,7 +25,7 @@ and the whole field for a specific wavenumber (k=0.8)
 using Plots
 plot(
     plot(simulation),
-    plot(simulation,0.8;res=100)
+    plot(simulation,0.8;res=100,drawshape=true)
 )
 ```
 

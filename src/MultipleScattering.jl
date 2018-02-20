@@ -11,7 +11,7 @@ export Shape, Circle, Rectangle, TimeOfFlight, TimeOfFlightFromPoint, volume,
        delta_freq_impulse, get_gaussian_freq_impulse
 
 
-abstract type Shape end
+abstract Shape
 
 import Base.isequal, Base.(==)
 import SpecialFunctions: besselj, hankelh1
