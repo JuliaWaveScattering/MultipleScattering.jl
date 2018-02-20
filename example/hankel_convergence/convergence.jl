@@ -55,6 +55,3 @@ function plot_hankel_order_convergence(simulations)
     )
 
 end
-
-simulations = hankel_order_convergence()
-plot_hankel_order_convergence(simulations)
