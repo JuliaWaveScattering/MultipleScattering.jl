@@ -28,8 +28,8 @@ function Rectangle{T}(particles::Vector{Particle{T}})
 end
 
 function inside{T}(shape::Rectangle{T}, particle::Particle{T})
-    all(particle.x .- particle.r .> shape.bottomleft) &&
-    all(particle.x .+ particle.r .< shape.topright)
+    all(particle.x .- particle.r .>= shape.bottomleft) &&
+    all(particle.x .+ particle.r .<= shape.topright)
 end
 
 function volume{T}(shape::Rectangle{T})
@@ -76,7 +76,7 @@ type Circle{T <: AbstractFloat} <: Shape
 end
 
 function inside{T}(shape::Circle{T}, particle::Particle{T})
-    norm(shape.centre - particle.x) < shape.radius - particle.r
+    norm(shape.centre - particle.x) <= shape.radius - particle.r
 end
 
 function volume{T}(shape::Circle{T})
@@ -120,7 +120,7 @@ end
 
 function inside{T}(shape::TimeOfFlight{T},particle::Particle{T})
     l_to_p = particle.x - shape.listener_position
-    return (particle.x[1] > 0.0) && (l_to_p[1] + norm(l_to_p) < shape.time)
+    return (particle.x[1] > 0.0) && (l_to_p[1] + norm(l_to_p) <= shape.time)
 end
 
 # Let T = shape.time, xr = shape.listener_position[1], yr = shape.listener_position[2]

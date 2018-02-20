@@ -39,18 +39,20 @@ end
 
 "Plot the field for a particular wavenumber"
 @recipe function plot{T}(simulation::FrequencySimulation{T},k::T;res=10, xres=res, yres=res,
-                         resp_fnc=real, build_field=true,
+                         resp_fnc=real, build_field=true, bounds = :auto,
                          drawparticles=true, drawshape=false, drawlisteners=build_field)
 
     @series begin
         # find a box which covers everything
-        shape_bounds = bounding_box(simulation.shape)
-        listeners_as_particles = map(
-            l -> Particle(simulation.listener_positions[:,l],mean_radius(simulation)/2),
-            1:size(simulation.listener_positions,2)
-        )
-        particle_bounds = bounding_box([simulation.particles; listeners_as_particles])
-        bounds = bounding_box(shape_bounds, particle_bounds)
+        if bounds == :auto
+          shape_bounds = bounding_box(simulation.shape)
+          listeners_as_particles = map(
+              l -> Particle(simulation.listener_positions[:,l],mean_radius(simulation)/2),
+              1:size(simulation.listener_positions,2)
+          )
+          particle_bounds = bounding_box([simulation.particles; listeners_as_particles])
+          bounds = bounding_box(shape_bounds, particle_bounds)
+        end
         if build_field
           field_simulation = build_field_simulation(simulation, bounds, [k]; xres=xres, yres=yres)
         else
@@ -75,8 +77,9 @@ end
           simulation.shape
       end
     end
-    if drawparticles
-      for i=1:length(simulation.particles) @series simulation.particles[i] end
+    if drawparticles # written in strange way due to odd behaviour of @series
+      particles = filter(p -> inside(bounds, p), simulation.particles)
+      for i=1:length(particles) @series particles[i] end
     end
     if drawlisteners
       @series begin
