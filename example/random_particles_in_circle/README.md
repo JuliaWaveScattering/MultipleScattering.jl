@@ -36,4 +36,4 @@ If we compare the response measured at the listener `[-10., 0.]`, they should be
 plot(circle_simulation)
 plot!(big_particle_simulation,title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
 ```
-![The response comparison](plot_repsonse_compare.png)
+![The response comparison](plot_response_compare.png)
