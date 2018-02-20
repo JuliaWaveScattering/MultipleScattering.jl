@@ -55,7 +55,7 @@ plot(simulation)
 
 For a better overview you can plot the whole field for a specific k by typing:
 ```julia
-plot(simulation,0.8)
+plot(simulation,1.0)
 ```
 ![Plot real part of acoustic field](example/intro/plot_field.png)
 
