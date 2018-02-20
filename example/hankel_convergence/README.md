@@ -7,6 +7,6 @@ simulations = hankel_order_convergence()
 plot_hankel_order_convergence(simulations)
 
 ```
-![Plot lens shape and response in time](plot_lens.png)
+![Plot lens shape and response in time](plot_hankel_convergence.png)
 
 In the figures above `m` is the maximum order of the Hankel functions. The top left figure shows the configuration of particles considered.  
