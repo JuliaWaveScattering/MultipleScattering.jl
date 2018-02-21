@@ -69,31 +69,23 @@ plot(plot_converge)
 plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", ylabel ="error %", label="time convergence")
 savefig("compare_convergence.png")
 
+times = 40.:15.:80.
 near_surface_simulations = map(times) do t
     shape = TimeOfFlight(listener_position,t) # choose a material with particles only in the near surface region
     ps = filter(p -> inside(shape,p), particles) # shave off particles
-    FrequencySimulation(ps, k_arr) # calculate backscattering
+    FrequencySimulation(ps, k_arr; shape=shape) # calculate backscattering
 end
 save("near_surface_simulations.jld","Array{FrequencySimulation{Float64},1}",near_surface_simulations)
 
 time_near_simulations = TimeSimulation.(near_surface_simulations)
-times = 2*(widths .- listener_position[1]) # time if takes for an incident plane wave to reach the furthest particles and then return to the receiver
 
-# [Int.(round.(linspace(1,length(num_particles)-1,5))); length(num_particles)]
 plot()
-for i in [1,3,6,9,12,13]
-    plot!(time_simulations[i],label="$(num_particles[i]) particles"
+for i in 1:length(times)
+    plot!(time_near_simulations[i],label="time of flight $(times[i])"
         , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
-        , xticks = [0.; 30.; times]
+        , xticks = [0.; times], title=""
     )
 end
 gui()
 
-plot()
-for i in [1,3,6,9,12,13]
-    plot!(near_surface_simulations[i],label="$(num_particles[i]) particles"
-        , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
-        , xticks = [0.; 30.; times]
-    )
-end
-gui()
+savefig("time_of_flight_response.png")
