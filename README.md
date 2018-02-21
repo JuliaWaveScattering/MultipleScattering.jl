@@ -8,14 +8,11 @@
 A Julia library for simulating, processing, and plotting multiple scattering of acoustic waves.
 
 The library uses the multipole method to solve the Helmholtz equation
-(time-harmonic acoustics) in two dimensions.
-In short, the method solves the problem with a series of Hankel functions
-positioned at each particle, where the coefficents are picked so that the
-boundary conditions are satisfied on the particle boundaries.
-For a more lucid and complete explanation, see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf).
+(time-harmonic acoustics) in two dimensions. This method is particularly efficient at solving scattering problems for particles in an infinite domain. Currently the library is configured for circular particles with any radius, density, sound speed and packing fraction. For details on the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
 
-This method is particularly efficient at solving acoustic problems with lots of
-circular scatterers set in an infinite domain.
+#### Near Surface Backscattering
+If you are here to learn about 
+[Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490).
 
 ## Get started
 This package is tested and works for Julia 0.6 and 0.5.
