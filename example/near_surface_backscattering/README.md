@@ -24,7 +24,7 @@ We will measure the backscattering at `listener_position`:
 ```julia
 listener_position = [-10.,0.]
 scatter([listener_position[1]],[listener_position[2]]);
-annotate!([(listener_position[1], listener_position[2] -2.0, "Receiver")])
+annotate!([(listener_position[1], listener_position[2] -max_width/10., "Receiver")])
 plot!.(particles);
 plot!(shape)
 ```
@@ -54,16 +54,18 @@ plot_converge = plot(num_particles[1:(M-1)], differences, xlabel = "number of pa
 ![The convergence of the response in frequency, when increasing the number of particles](freq_convergence.png)
 
 The graph shows the rate of convergence, that is, it tell us how many particles we need before the backscattered wave no longer changes.
+
+## Calculate backscattering in time
 ```julia
 time_simulations = TimeSimulation.(simulations)
 
 times = 2*(widths[1:5] .- listener_position[1]) # time if takes for an incident plane wave to reach the furthest particles and then return to the receiver
 
 plot()
-for i=i in [1,3,6,9,12,13]
+for i in [1,3,6,9,12,13]
     plot!(time_simulations[i],label="$(num_particles[i]) particles"
         , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
-        , xticks = [0.; times]
+        , xticks = [0.; 30.; times]
     )
 end
 gui()
@@ -84,10 +86,44 @@ plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", ylabe
 ```
 ![Compare converges for responses in time and responses in frequency](compare_convergence.png)
 
+The convergence of the time response, for time `0<t<34`, is much faster. The reason we don't show these as log plots, is because there is a small constant error (about `0.01%`) due to the discrete Fourier transform. This error is due to the Gibbs phenomena and assuming the backscattering is periodic (when it is not). Both these errors are well understood and can be controlled.
+
+## Calculate backscattering only from near-surface particles
+This last step is about efficiency. We want to only include particle which contribute to the backscattering for short time intervals. To do this we created a region called `TimeOfFlight(listener,time)`: every particle in this shape takes less than `time` for their first scattered wave (due to an incident plane wave) to return to the `listener`.  More precisely, if `listener = (lx,ly)`, then every point `(x,y)` inside this shape satisfies:
+`x-lx+((x-lx)^2+(y-ly)^2)^(1/2)<time` and `x>0`.
+
+For example, look at the largest quantity of particle we used
+
 ```julia
+listener_position = [-10.,0.]
+shape = TimeOfFlight(listener_position,80.0)
+scatter([listener_position[1]],[listener_position[2]]);
+annotate!([(listener_position[1], listener_position[2] -max_width/10., "Receiver")])
+plot!.(particles);
+plot!(shape)
+```
+![Shows the particles in the shape TimeOfFlight](time_of_flight_shape.png)
+
+For time `0<t<80` the backscattering from these particles is the same as an infinite halfspace filled with particles. To achieve this result we need only the particles inside the shape `TimeOfFlight` (region with the red outline). The particles outside this shape were unnecessary. To see this inaction:
+```julia
+times = 40.:15.:80.
 near_surface_simulations = map(times) do t
     shape = TimeOfFlight(listener_position,t) # choose a material with particles only in the near surface region
     ps = filter(p -> inside(shape,p), particles) # shave off particles
-    FrequencySimulation(ps, k_arr) # calculate backscattering
+    FrequencySimulation(ps, k_arr; shape=shape) # calculate backscattering
 end
+
+time_near_simulations = TimeSimulation.(near_surface_simulations)
+
+plot()
+for i in 1:length(times)
+    plot!(time_near_simulations[i],label="time of flight $(times[i])"
+        , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
+        , xticks = [0.; times], title=""
+    )
+end
+gui()
 ```
+![Response from particles in the shapes TimeOfFlight](time_of_flight_response.png)
+
+Note the incident pulse has a thickness of about `10` in time, which is why the `time of flight 40` diverges from the other curves slightly before time `40`, and likewise for the other curves.

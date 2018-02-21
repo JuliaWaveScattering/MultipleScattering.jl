@@ -32,7 +32,8 @@ end
     aspect_ratio := 1.0
     label --> name(shape)
     fill --> (0, :transparent)
-    line --> (1, :red)
+    linecolor --> :red
+    # line --> (1, :red)
 
     x, y = boundary_functions(shape)
 

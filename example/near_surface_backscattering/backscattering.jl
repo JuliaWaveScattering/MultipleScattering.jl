@@ -75,3 +75,25 @@ near_surface_simulations = map(times) do t
     FrequencySimulation(ps, k_arr) # calculate backscattering
 end
 save("near_surface_simulations.jld","Array{FrequencySimulation{Float64},1}",near_surface_simulations)
+
+time_near_simulations = TimeSimulation.(near_surface_simulations)
+times = 2*(widths .- listener_position[1]) # time if takes for an incident plane wave to reach the furthest particles and then return to the receiver
+
+# [Int.(round.(linspace(1,length(num_particles)-1,5))); length(num_particles)]
+plot()
+for i in [1,3,6,9,12,13]
+    plot!(time_simulations[i],label="$(num_particles[i]) particles"
+        , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
+        , xticks = [0.; 30.; times]
+    )
+end
+gui()
+
+plot()
+for i in [1,3,6,9,12,13]
+    plot!(near_surface_simulations[i],label="$(num_particles[i]) particles"
+        , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
+        , xticks = [0.; 30.; times]
+    )
+end
+gui()
