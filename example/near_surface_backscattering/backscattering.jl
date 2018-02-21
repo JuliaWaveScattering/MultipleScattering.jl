@@ -53,7 +53,7 @@ plot()
 for i in [1,3,6,9,12,13]
     plot!(time_simulations[i],label="$(num_particles[i]) particles"
         , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
-        , xticks = [0.; times]
+        , xticks = [0.; 30.; times]
     )
 end
 gui()

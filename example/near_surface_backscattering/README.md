@@ -52,22 +52,24 @@ differences = [norm(b - bM) for b in backscattered_waves[1:(M-1)]]./norm(bM)
 plot_converge = plot(num_particles[1:(M-1)], differences, xlabel = "number of particles", ylabel ="error %", label="frequency convergence")
 ```
 ![The convergence of the response in frequency, when increasing the number of particles](freq_convergence.png)
+
 The graph shows the rate of convergence, that is, it tell us how many particles we need before the backscattered wave no longer changes.
 ```julia
 time_simulations = TimeSimulation.(simulations)
 
-times = 2*(widths .- listener_position[1]) # time if takes for an incident plane wave to reach the furthest particles and then return to the receiver
+times = 2*(widths[1:5] .- listener_position[1]) # time if takes for an incident plane wave to reach the furthest particles and then return to the receiver
 
 plot()
-for i=1:length(num_particles)
+for i=i in [1,3,6,9,12,13]
     plot!(time_simulations[i],label="$(num_particles[i]) particles"
-        , xlims=(0,maximum(xticks)+10.), ylims=(-0.2,0.2)
+        , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
         , xticks = [0.; times]
     )
 end
 gui()
 ```
 ![The responses in time for different quantity of particles](time_response.png)
+
 We see that the responses in time diverge from each other more and more as time goes by. Meaning that if we only calculate the response for a short amount of time `34`, then the convergence will be accelerated.
 
 ```julia
