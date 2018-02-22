@@ -1,5 +1,6 @@
-# Near-surface backscattering: a method of accurately calculating the backscattering from an infinite halfspace.
+# Near-surface backscattering
 
+Near-surface backscattering is a method of accurately calculating the backscattering from an infinite halfspace.
 First, let us see why it is difficult to approximate the scattering from a halfspace filled with particles. That is, let us find out how many particles are required before the backscattering converges.
 
 ## Generate a large material filled with particles.
@@ -31,7 +32,7 @@ plot!(shape)
 ![The largest quantity of particles used](big_box.png)
 
 ## Calculate backscattering for different quantity of particles
-We will shave off particles on the right of this group of particles (material), and then calculate the resulting backscattered waves.
+We will shave off particles on the right of this group of particles (above), and then calculate the resulting backscattered waves.
 ```julia
 widths = 10.:10.:max_width # choose the width of the region filled with particles
 k_arr = collect(0.01:0.01:1.) # choose the wavenumbers of the incident wave
@@ -53,7 +54,9 @@ plot_converge = plot(num_particles[1:(M-1)], differences, xlabel = "number of pa
 ```
 ![The convergence of the response in frequency, when increasing the number of particles](freq_convergence.png)
 
-The graph shows the rate of convergence, that is, it tell us how many particles we need before the backscattered wave no longer changes.
+The graph shows the rate of convergence, that is, how much the backscattering changes when including more particles (making the material deeper). The graph has not clearly converged, so we can only conclude that more than 400 particles are needed to accurately approximate the backscattering from an infinite halfspace. 
+
+We can accelerate this convergence by considering backscattering in time.
 
 ## Calculate backscattering in time
 ```julia
@@ -86,10 +89,10 @@ plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", ylabe
 ```
 ![Compare converges for responses in time and responses in frequency](compare_convergence.png)
 
-The convergence of the time response, for time `0<t<34`, is much faster. The reason we don't show these as log plots, is because there is a small constant error (about `0.01%`) due to the discrete Fourier transform. This error is due to the Gibbs phenomena and assuming the backscattering is periodic (when it is not). Both these errors are well understood and can be controlled.
+The convergence of the time response, for time `0<t<34`, is much faster. In fact, less than 100 particles are needed to accurately approximate the backscattering from an infinite halfspace. The reason we don't show these as log plots is because there is a small constant error (about `0.01%`) due to the discrete Fourier transform. This error is caused by the Gibbs phenomena and by assuming the backscattering is periodic (when it is not). Both these errors are well understood and can be controlled.
 
 ## Calculate backscattering only from near-surface particles
-This last step is about efficiency. We want to only include particle which contribute to the backscattering for short time intervals. To do this we created a region called `TimeOfFlight(listener,time)`: every particle in this shape takes less than `time` for their first scattered wave (due to an incident plane wave) to return to the `listener`.  More precisely, if `listener = (lx,ly)`, then every point `(x,y)` inside this shape satisfies:
+This last step is about efficiency. We want to only include particle which contribute to the backscattering for short time intervals. To do this we created a region called `TimeOfFlight(listener,time)`, where every particle in this shape takes less than `time` for their first scattered wave (due to an incident plane wave) to return to the `listener.`  More precisely, if `listener = (lx,ly)`, then every point `(x,y)` inside this shape satisfies:
 `x-lx+((x-lx)^2+(y-ly)^2)^(1/2)<time` and `x>0`.
 
 For example, look at the largest quantity of particle we used
