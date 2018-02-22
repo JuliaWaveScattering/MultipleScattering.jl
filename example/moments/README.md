@@ -41,7 +41,7 @@ gui()
 ```
 ![Plot of the position of the particles](plot_particles.png)
 
-Now we will do simulations for the particles placed in different configurations and take the moments:
+Now we will do simulations for particles placed in many different configurations and take the moments:
 ```julia
 simulations = [
     FrequencySimulation(volfrac,radius,k_arr; shape=shape, listener_positions = listener, seed = i)
