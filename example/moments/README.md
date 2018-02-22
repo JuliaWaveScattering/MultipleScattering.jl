@@ -20,7 +20,7 @@ pyplot()
 listener = [-10.0, 0.0]
 plot(shape);
 scatter!([listener[1]],[listener[2]]);
-annotate!([(listener_position[1], listener_position[2] -2., "Receiver")])
+plot_shape = annotate!([(listener_position[1], listener_position[2] -2., "Receiver")])
 ```
 ![Plot of shape and receiver](shape_receiver.png)
 
@@ -35,9 +35,9 @@ plot(simulation)
 
 To see the position of the chosen particles:
 ```julia
-plot()
+plot(plot_shape)
 plot!.(simulation.particles);
-gui()
+plot!()
 ```
 ![Plot of the position of the particles](plot_particles.png)
 
