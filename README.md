@@ -15,7 +15,7 @@ If you are here to learn about
 [Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490). To see how to take the [moments](example/moments) of the backscattering [click here](example/moments).
 
 ## Get started
-This package is tested and works for Julia 0.6 and 0.5.
+This package is tested and works for Julia 0.6.
 To get started, download and include the library
 ```julia
 Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
