@@ -1,0 +1,128 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.9 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{ganesh_algorithm_2017}{article}{}
+      \name{author}{2}{}{%
+        {{hash=a462dcf7b7b393c0900402c991c0792d}{%
+           family={Ganesh},
+           familyi={G\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=6619c21b1d6abaae548ac61ad531fb09}{%
+           family={Hawkins},
+           familyi={H\bibinitperiod},
+           given={S.\bibnamedelimi C.},
+           giveni={S\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{e1203b9866b5e3099c0378be5d34a05d}
+      \strng{fullhash}{e1203b9866b5e3099c0378be5d34a05d}
+      \strng{bibnamehash}{e1203b9866b5e3099c0378be5d34a05d}
+      \strng{authorbibnamehash}{e1203b9866b5e3099c0378be5d34a05d}
+      \strng{authornamehash}{e1203b9866b5e3099c0378be5d34a05d}
+      \strng{authorfullhash}{e1203b9866b5e3099c0378be5d34a05d}
+      \field{sortinit}{G}
+      \field{sortinithash}{5e8d2bf9d38de41b1528bd307546008f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{The T-matrix ({TMAT}) of a scatterer fully describes the way the scatterer interacts with incident fields and scatters waves, and is therefore used extensively in several science and engineering applications. The T-matrix is independent of several input parameters in a wave propagation model and hence the offline computation of the T-matrix provides an efficient reduced order model ({ROM}) framework for performing online scattering simulations for various choices of the input parameters. The authors developed and mathematically analyzed a numerically stable formulation for computing the T-matrix (J. Comput. Appl. Math. 234 (2010), 1702--1709). The {TMATROM} software package provides an object-oriented implementation of the numerically stable formulation and can be used in conjunction with the user’s preferred forward solver for the two-dimensional Helmholtz model. We compare {TMATROM} with standard methods to compute the T-matrix for a range of two-dimensional test scatterers with large aspect ratios and acoustic sizes. Our numerical results demonstrate the robust numerical stability of the {TMATROM} implementation, even with scatterers for which the standard methods are numerically unstable. The efficiency and flexibility of the {TMATROM} software package to handle a wide range of two-dimensional scatterers with various shapes and material properties are also demonstrated.}
+      \field{issn}{0098-3500}
+      \field{journaltitle}{{ACM} Trans. Math. Softw.}
+      \field{month}{7}
+      \field{number}{1}
+      \field{shorttitle}{Algorithm 975}
+      \field{title}{Algorithm 975: {TMATROM}—A T-Matrix Reduced Order Model Software}
+      \field{urlday}{23}
+      \field{urlmonth}{3}
+      \field{urlyear}{2018}
+      \field{volume}{44}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{9:1\bibrangedash 9:18}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1145/3054945
+      \endverb
+      \verb{file}
+      \verb ACM Full Text PDF:/home/art/uom/references/Zotero/storage/4X45PW4K/Ganesh and Hawkins - 2017 - Algorithm 975 TMATROM—A T-Matrix Reduced Order Mo.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://doi.acm.org/10.1145/3054945
+      \endverb
+      \verb{url}
+      \verb http://doi.acm.org/10.1145/3054945
+      \endverb
+      \keyw{acoustic scattering,far field,numerical stability,T-matrix}
+    \endentry
+    \entry{ganesh_far-field_2010}{article}{}
+      \name{author}{2}{}{%
+        {{hash=3b2a61274751b4a441c200383acbecbb}{%
+           family={Ganesh},
+           familyi={G\bibinitperiod},
+           given={Mahadevan},
+           giveni={M\bibinitperiod}}}%
+        {{hash=ba6150981dedbe0d02e44b328a5e7486}{%
+           family={Hawkins},
+           familyi={H\bibinitperiod},
+           given={Stuart\bibnamedelima Collin},
+           giveni={S\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{18283d655ba81442ce65d70a2499a913}
+      \strng{fullhash}{18283d655ba81442ce65d70a2499a913}
+      \strng{bibnamehash}{18283d655ba81442ce65d70a2499a913}
+      \strng{authorbibnamehash}{18283d655ba81442ce65d70a2499a913}
+      \strng{authornamehash}{18283d655ba81442ce65d70a2499a913}
+      \strng{authorfullhash}{18283d655ba81442ce65d70a2499a913}
+      \field{sortinit}{G}
+      \field{sortinithash}{5e8d2bf9d38de41b1528bd307546008f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{12}
+      \field{issn}{1445-8810}
+      \field{journaltitle}{{ANZIAM} Journal}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{0}
+      \field{title}{A far-field based T-matrix method for two dimensional obstacle scattering}
+      \field{urlday}{23}
+      \field{urlmonth}{3}
+      \field{urlyear}{2018}
+      \field{volume}{51}
+      \field{year}{2010}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{215\bibrangedash 230}
+      \range{pages}{16}
+      \verb{file}
+      \verb Full Text PDF:/home/art/uom/references/Zotero/storage/IKFMUZ2M/Ganesh and Hawkins - 2010 - A far-field based T-matrix method for two dimensio.pdf:application/pdf;Snapshot:/home/art/uom/references/Zotero/storage/J5YLEFG5/1319.html:text/html
+      \endverb
+      \verb{urlraw}
+      \verb https://journal.austms.org.au/ojs/index.php/ANZIAMJ/article/view/2581
+      \endverb
+      \verb{url}
+      \verb https://journal.austms.org.au/ojs/index.php/ANZIAMJ/article/view/2581
+      \endverb
+      \keyw{acoustic scattering,far field,T-matrix}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
