@@ -1,4 +1,4 @@
-
+# Want more general Particle type
 type Particle{T}
     x::Vector{T} #position of the centre
     r::T # radius
