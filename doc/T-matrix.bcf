@@ -1925,6 +1925,7 @@
   <bcf:section number="0">
     <bcf:citekey order="1">ganesh_far-field_2010</bcf:citekey>
     <bcf:citekey order="1">ganesh_algorithm_2017</bcf:citekey>
+    <bcf:citekey order="2">gower_reflection_2017</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

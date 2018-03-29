@@ -122,6 +122,65 @@
       \endverb
       \keyw{acoustic scattering,far field,T-matrix}
     \endentry
+    \entry{gower_reflection_2017}{article}{}
+      \name{author}{4}{}{%
+        {{hash=d22219c1551a2bfff691eb44f47d8c6a}{%
+           family={Gower},
+           familyi={G\bibinitperiod},
+           given={Artur\bibnamedelima L.},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=6b1d5b8d85e54e8f7c0a9e5816e40fb2}{%
+           family={Smith},
+           familyi={S\bibinitperiod},
+           given={Michael\bibnamedelimb J.\bibnamedelimi A.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=163a3a06ead9d7f06d2d716c1a8a0584}{%
+           family={Parnell},
+           familyi={P\bibinitperiod},
+           given={William\bibnamedelima J.},
+           giveni={W\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=bc16b8d1134bcc997d7e02df32e1c84c}{%
+           family={Abrahams},
+           familyi={A\bibinitperiod},
+           given={Ian\bibnamedelima David},
+           giveni={I\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{deba6dd11d36624a9e72ad7b8d7f4345}
+      \strng{fullhash}{0dd83cf7be506aa8120b472b1eeef5a2}
+      \strng{bibnamehash}{deba6dd11d36624a9e72ad7b8d7f4345}
+      \strng{authorbibnamehash}{deba6dd11d36624a9e72ad7b8d7f4345}
+      \strng{authornamehash}{deba6dd11d36624a9e72ad7b8d7f4345}
+      \strng{authorfullhash}{0dd83cf7be506aa8120b472b1eeef5a2}
+      \field{sortinit}{G}
+      \field{sortinithash}{5e8d2bf9d38de41b1528bd307546008f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We formally deduce closed-form expressions for the transmitted effective wavenumber of a material comprising multiple types of inclusions or particles (multi-species), dispersed in a uniform background medium. The expressions, derived here for the first time, are valid for moderate volume fractions and without restriction on the frequency. We show that the multi-species effective wavenumber is not a straightforward extension of expressions for a single species. Comparisons are drawn with state-of-the-art models in acoustics by presenting numerical results for a concrete and a water-oil emulsion in two dimensions. The limit of when one species is much smaller than the other is also discussed and we determine the background felt by the larger species in this limit. Surprisingly, we show that the answer is not the intuitive result predicted by self-consistent multiple scattering theories. The derivation presented here applies to the scalar wave equation with cylindrical or spherical inclusions, with any distribution of sizes, densities, and wave speeds. The reflection coefficient for cylindrical inclusions is also formally derived.}
+      \field{day}{14}
+      \field{eprinttype}{arxiv}
+      \field{journaltitle}{{arXiv}:1712.05427 [physics]}
+      \field{month}{12}
+      \field{title}{Reflection from a multi-species material and its transmitted effective wavenumber}
+      \field{urlday}{13}
+      \field{urlmonth}{1}
+      \field{urlyear}{2018}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{eprint}
+      \verb 1712.05427
+      \endverb
+      \verb{file}
+      \verb arXiv\:1712.05427 PDF:/home/art/uom/references/Zotero/storage/QLKQ35X3/Gower et al. - 2017 - Reflection from a multi-species material and its t.pdf:application/pdf;arXiv.org Snapshot:/home/art/uom/references/Zotero/storage/92GAG8N9/1712.html:text/html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1712.05427
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1712.05427
+      \endverb
+      \keyw{78-02,82D02,Physics - Applied Physics,Physics - Classical Physics}
+    \endentry
   \enddatalist
 \endrefsection
 \endinput

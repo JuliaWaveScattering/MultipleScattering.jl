@@ -45,25 +45,26 @@ short explanation
 
 \section{Single scatterer}
 
-We will be following the notation used in \href{a9-ganesh.pdf}{A T-Matrix Reduced Order
+We will be following a similar notation as used in \href{a9-ganesh.pdf}{A T-Matrix Reduced Order
 Model Software}~\parencite{ganesh_far-field_2010,ganesh_algorithm_2017}.
 
 Any incident and scattered wave in 2D, centred at the same polar coordinate axis, can be written as
 \begin{align}
-  & \psi^\inc = \sum_n f_n J_{|n|}(k r) \ee^{\ii n \theta},
+  & \psi^\inc = \sum_{n=-\infty}^\infty f_n J_{n}(k r) \ee^{\ii n \theta},
   \\
-  & \psi^\scat = \sum_n a_n H_{|n|}(k r) \ee^{\ii n \theta}.
+  & \psi^\scat = \sum_{n=-\infty}^\infty a_n H_{n}(k r) \ee^{\ii n \theta}.
 \end{align}
 The T-matrix is an infinite matrix such that
 \begin{equation}
-  a_n = \sum_m T_{nm} f_m.
+  a_n = \sum_{m=-\infty}^\infty T_{nm} f_m.
 \end{equation}
 Such a matrix $T$ exists when scattering is a linear (elastic scattering).
 
 For instance, if $\rho$ and $c$ are the background density and wavespeed, then for a circular scatterer with density $\rho_j$, soundspeed $c_j$ and radius $a_j$, we have that
-\[
-T_{nm} = - \delta_{nm} Z^m_j, \;\; \text{with} \;\; Z^m_j = \frac{q_j J_m' (k a_j) J_m (k_j a_j) - J_m (k a_j) J_m' (k_j a_j) }{q_j H_m '(k a_j) J_m(k_j a_j) - H_m(k a_j) J_m '(k_j a_j)},
-\]
+\begin{equation}
+  T_{nm} = - \delta_{nm} Z^m_j, \;\; \text{with} \;\; Z^m_j = \frac{q_j J_m' (k a_j) J_m (k_j a_j) - J_m (k a_j) J_m' (k_j a_j) }{q_j H_m '(k a_j) J_m(k_j a_j) - H_m(k a_j) J_m '(k_j a_j)},
+  \label{eqn:circular_t-matrix}
+\end{equation}
 where $q_j = (\rho_j c_j)/(\rho c)$ and $k_j = \omega/c_j$.
 
 \subsection{Single circular capsule}
@@ -75,9 +76,9 @@ where $q_j = (\rho_j c_j)/(\rho c)$ and $k_j = \omega/c_j$.
 \end{figure}
 
 \begin{align}
-  & \psi^0 = \sum_n f_n^0 J_{|n|}(k_0 r) \ee^{\ii n \theta},
+  & \psi^0 = \sum_{n=-\infty}^\infty f_n^0 J_{n}(k_0 r) \ee^{\ii n \theta},
   \\
-  & \psi^1 = \sum_n \left [ f_n^1 J_{|n|}(k_1 r) + a_n^1 H_{|n|}(k_1 r) \right ] \ee^{\ii n \theta}.
+  & \psi^1 = \sum_{n=-\infty}^\infty \left [ f_n^1 J_{n}(k_1 r) + a_n^1 H_{n}(k_1 r) \right ] \ee^{\ii n \theta}.
 \end{align}
 Applying the boundary conditions,
 \begin{align}
@@ -123,23 +124,45 @@ where $q = \rho c/(\rho_1 c_1)$, $q_0 = \rho_0 c_0/( \rho_1 c_1)$, and
 Graf's addition theorem
 \begin{align}
   & H_n(k R_\ell)\ee^{\ii n \Theta_\ell} =
-  \sum_{m=-\infty}^\infty H_{n-m}(k R_{\ell j})\ee^{\ii(n-m)\Theta_{\ell j}} J_m(k R_j)\ee^{\ii m \Theta_j}, \;\;\text{for}\;\; R_j < R_{\ell j},
+  \sum_{m=-\infty}^\infty H_{n-m}(k R_{\ell j})\ee^{\ii(n-m)\Theta_{\ell j}} J_{m}(k R_j)\ee^{\ii m \Theta_j}, \;\;\text{for}\;\; R_j < R_{\ell j},
 \label{eqn:Graf}
 \end{align}
 where we can also swap $H_n$ and $H_{n-m}$ for $J_n$ and $J_{n-m}$.
 
-Each particle scatters a field
-Then we can define $u_j$ as the scattered pressure field from the $j$-th cylinder,
+Particle-$j$ scatters a field
 \begin{equation}
   \label{eqn:outwaves}
-  \psi_j(R_j,\Theta_j) = \sum_{m=-\infty}^\infty A_j^m H_m(k R_j) \ee^{\ii m \Theta_j}, \quad \text{for} \;\; R_j > a_j,
+  \psi_j = \sum_{m=-\infty}^\infty A_j^m H_{m}(k R_j) \ee^{\ii m \Theta_j}, \quad \text{for} \;\; R_j > a_j,
 \end{equation}
-where $(R_j,\Theta_j)$ are the polar coordinates of $\vec x - \vec x_j$, where $\vec x_j$ is the centre of particle $j$. Let the incident wave, with coordinate system centred at $\vec x_j$, be
+where $(R_j,\Theta_j)$ are the polar coordinates of $\vec x - \vec x_j$, where $\vec x_j$ is the centre of particle $j$.
+
+Let the incident wave, with coordinate system centred at $\vec x_j$, be
 \begin{equation}
   \label{eqn:incident}
-  \psi_\inc(R_j,\Theta_j) = \sum_{m=-\infty}^\infty f^m J_m(k R_j) \ee^{\ii m \Theta_j}
+  \psi_\inc = \sum_{m=-\infty}^\infty f^m_j J_{m}(k R_j) \ee^{\ii m \Theta_j},
 \end{equation}
+then the wave exciting particle-$j$ is
+\begin{equation}
+  \label{eqn:exciter}
+  \psi_j^E = \sum_{m=-\infty}^\infty F^m_j J_m(k R_j) \ee^{\ii m \Theta_j},
+\end{equation}
+where
+\begin{equation}
+  F^m_j = f^m_j + \sum_{\ell\not = j} \sum_{p=-\infty}^\infty A_\ell^p H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}}.
+\end{equation}
+Using the T-matrix of particle-$j$ we reach $A_j^n = \sum_m T^{nm}_j F^m_j$, which leads to
+\begin{equation}
+A_j^n  = \sum_{m=-\infty}^\infty T^{nm}_j f^m_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty A_\ell^p T^{nm}_j H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}}.
+\end{equation}
+As a check, if we use~\eqref{eqn:circular_t-matrix} and swap $A_j^n \to A_j^n Z^n_j$, then we arrive at equation (2.11) in \cite{gower_reflection_2017}.
+% \begin{equation}
+% A_j^n  = -  f^n_j - \sum_{\ell\not = j} \sum_{p=-\infty}^\infty A_\ell^p Z^p_\ell H_{p-n}(k R_{\ell j})\ee^{\ii(p-n)\Theta_{\ell j}}.
+% \end{equation}
 
+For easy implementation we need functions that
+\[
+\psi_\inc \mapsto f^m_j \quad \text{and} \quad \text{particle} \mapsto T^{nm}_j. 
+\]
 \printbibliography
 
 \end{document}

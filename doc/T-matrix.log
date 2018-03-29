@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2018/dev/Debian) (preloaded format=pdflatex 2018.3.22)  23 MAR 2018 18:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2018/dev/Debian) (preloaded format=pdflatex 2018.3.22)  29 MAR 2018 12:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1238,28 +1238,28 @@ Overfull \hbox (29.25508pt too wide) in paragraph at lines 38--38
 <capsule.jpg, id=22, 3205.9775pt x 2804.4775pt>
 File: capsule.jpg Graphic file (type jpg)
 <use capsule.jpg>
-Package pdftex.def Info: capsule.jpg  used on input line 73.
+Package pdftex.def Info: capsule.jpg  used on input line 74.
 (pdftex.def)             Requested size: 155.99762pt x 136.42352pt.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (2.70703pt too wide) in paragraph at lines 89--91
+Overfull \hbox (2.70703pt too wide) in paragraph at lines 90--92
 \OT1/cmr/m/n/12 Solving these bound-ary con-di-tions (see []capsule-boundary-co
 nditions.nb[]) leads
  []
 
 
-Overfull \hbox (48.67674pt too wide) detected at line 98
+Overfull \hbox (48.67674pt too wide) detected at line 99
  []$[]  \OML/cmm/m/it/12 T[] \OT1/cmr/m/n/12 = \OMS/cmsy/m/n/12 ^^@[] ^^@ [] []
 $ 
  []
 
-[2 <./capsule.jpg>] [3]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 145.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 145.
+[2 <./capsule.jpg>] [3] [4]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 168.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 168.
  (./T-matrix.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 145.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 145.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 168.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 168.
 Package rerunfilecheck Info: File `T-matrix.out' has not changed.
 (rerunfilecheck)             Checksum: 7C343FD8309051383FF8DC1AD3C1D85B;177.
 Package logreq Info: Writing requests to 'T-matrix.run.xml'.
@@ -1267,13 +1267,13 @@ Package logreq Info: Writing requests to 'T-matrix.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 23765 strings out of 492978
- 445085 string characters out of 6134922
- 841862 words of memory out of 5000000
- 26911 multiletter control sequences out of 15000+600000
- 16465 words of font info for 62 fonts, out of 8000000 for 9000
+ 23781 strings out of 492978
+ 445441 string characters out of 6134922
+ 842022 words of memory out of 5000000
+ 26920 multiletter control sequences out of 15000+600000
+ 16634 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,11n,54p,1513b,1175s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,11n,54p,1513b,1302s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
@@ -1289,11 +1289,12 @@ pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texli
 ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on T-matrix.pdf (3 pages, 1319997 bytes).
+f-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on T-matrix.pdf (4 pages, 1329937 bytes).
 PDF statistics:
- 133 PDF objects out of 1000 (max. 8388607)
- 108 compressed objects within 2 object streams
- 24 named destinations out of 1000 (max. 500000)
+ 150 PDF objects out of 1000 (max. 8388607)
+ 123 compressed objects within 2 object streams
+ 30 named destinations out of 1000 (max. 500000)
  42 words of extra memory for PDF output out of 10000 (max. 10000000)
 
