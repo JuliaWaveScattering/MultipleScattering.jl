@@ -1,5 +1,5 @@
 
-mutable struct RandomFrequencySimulation{P,T,Dim} <: Simulation{T,Dim} where T <: AbstractFloat, P <: PhysicalProperties{T,Dim,FieldDim}, Dim::Int
+mutable struct RandomFrequencySimulation{P,T,Dim} <: Simulation{T,Dim} where T <: AbstractFloat, P <: PhysicalProperties{Dim,FieldDim,T}, Dim::Int
     medium::P
     source::Source{P,T}
     shape::Shape
@@ -24,7 +24,7 @@ end
 function run(sim::RandomFrequencySimulation{P,T,Dim}, ω::Vector{T}, x::Vector{SVector{Dim,T}}, seed)
 end
 
-struct RandomFrequencySimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{T,Dim,FieldDim}, T <: AbstractFloat, Dim::Int
+struct RandomFrequencySimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{Dim,FieldDim,T}, T <: AbstractFloat, Dim::Int
     field::Matrix{MVector{T,FieldDim}}
     x::Vector{MVector{T,FieldDim}}
     ω::RowVector{T}

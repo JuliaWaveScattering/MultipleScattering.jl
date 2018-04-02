@@ -2,15 +2,15 @@
 "Abstract class for Results of Simulations"
 abstract type Result end
 
-struct FrequencySimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{T,Dim,FieldDim}, T <: AbstractFloat, Dim::Int
+struct FrequencySimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{Dim,FieldDim,T}, T <: AbstractFloat, Dim::Int
     field::Matrix{MVector{T,FieldDim}}
     x::Vector{MVector{T,FieldDim}}
     ω::RowVector{T}
 end
 
-struct TimeSimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{T,Dim,FieldDim}, T <: AbstractFloat, Dim::Int
+struct TimeSimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{Dim,FieldDim,T}, T <: AbstractFloat, Dim::Int
     field::Vector{Vector{{MVector{T,FieldDim}}}}
-    x::Vector{MVector{T,Dim}}
+    x::Vector{MVector{Dim,T}}
     t::RowVector{T}
 end
 
