@@ -13,6 +13,8 @@ type Acoustics{T,Dim} <: PhysicalProperties{T,Dim,1}
     c::Complex{T} # Phase velocity
 end
 
+name(a::Acoustics{T,Dim}) where T, Dim = "$(Dim)D Acoustic"
+
 function φ(x::MVector{2,T}, physics::Acoustics{T,2}, ω::T, m::Integer)
     r = norm(x)
     θ = atan2(x[2],x[1])
@@ -33,13 +35,16 @@ characteristic length scale of the two shapes is `size_ratio`. Inner and outer
 are both a homogenous isotropic acoustic medium. Produces a scalar (1D) field in
 arbitrary dimensions.
 """
-type CapsuleAcoustics{T,Dim} <: PhysicalProperties{T,Dim,1}
+type AcousticCapsule{T,Dim} <: PhysicalProperties{T,Dim,1}
     inner_ρ::T # Density in inner shape
     inner_c::Complex{T} # Phase velocity in inner shape
     outer_ρ::T # Density in outer shape
     outer_c::Complex{T} # Phase velocity in outer shape
     size_ratio::T # Ratio of size of inner shape to outer shape
 end
+
+name(a::AcousticCapsule{T,Dim}) where T, Dim = "$(Dim)D Acoustic Capsule"
+
 
 """
 Physical properties for a homogenous isotropic electromagnetic medium. Produces
@@ -50,3 +55,5 @@ type Electromagnetism{T,Dim} <: PhysicalProperties{T,Dim,3}
     ε::Complex{T} # Permittivity
     σ::Complex{T} # Conductivity
 end
+
+name(e::Electromagnetism{T,Dim}) where T, Dim = "$(Dim)D Electromagnetic"
