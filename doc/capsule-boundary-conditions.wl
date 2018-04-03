@@ -1,0 +1,81 @@
+(* ::Package:: *)
+
+(* ::Input:: *)
+(*$Assumptions ={ao>0,a[_]>0,ko>0,k[_]>0,c[_]>0,co>0, n \[Element] Integers};*)
+(**)
+(*\[Psi]o = fo[n] BesselJ[Abs[n],ko r];*)
+(*\[Psi][s] = Ao[n]HankelH1[Abs[n],ko r];*)
+(*\[Psi][0] = f[0,n] BesselJ[Abs[n],k[0] r];*)
+(*\[Psi][1] = f[1,n] BesselJ[Abs[n],k[1] r] + A[1,n]HankelH1[Abs[n],k[1] r];*)
+(**)
+(**)
+(*eqs = {\[Psi][1]  == \[Psi][0]/.r-> a[0],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][0],r]/\[Rho][0]/.r-> a[0], \[Psi][s] + \[Psi]o  == \[Psi][1]/.r-> a[1],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][s] + \[Psi]o ,r]/\[Rho]o/.r-> a[1]};*)
+(**)
+(*Ao[n]/.Solve[eqs,{Ao[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]} //Simplify*)
+
+
+(* ::Input:: *)
+(*ClearAll[\[Psi]o,\[Psi],J,H]*)
+(*\[Psi]o = fo[n] Subscript[J, n][ko r];*)
+(*\[Psi][s] = Ao[n]Subscript[H, n][ko r];*)
+(*\[Psi][0] = f[0,n] Subscript[J, n][k[0] r];*)
+(*\[Psi][1] = f[1,n] Subscript[J, n][k[1] r] + A[1,n]Subscript[H, n][k[1] r];*)
+(*eqs = {\[Psi][1]  == \[Psi][0]/.r-> a[0],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][0],r]/\[Rho][0]/.r-> a[0], \[Psi][s] + \[Psi]o  == \[Psi][1]/.r-> a[1],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][s] + \[Psi]o ,r]/\[Rho]o/.r-> a[1]};*)
+(*Ao[n]/.Solve[eqs,{Ao[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]} ;*)
+(*tmp = Apart@FullSimplify[%[[1]]/.{Inactive[BesselJ]:> J,Inactive[HankelH1]:> H, a[n_]:> Subscript[a, n], q[n_]:> Subscript[q, n], k[n_]:> Subscript[k, n]}];*)
+
+
+(* ::Input:: *)
+(*tmp == fo[n]/Subscript[H, n][ko Subscript[a, 1]] (-Subscript[J, n][ko Subscript[a, 1]]+Subscript[q, 1]((Subscript[J, n][ko Subscript[a, 1]] Derivative[1][Subscript[H, n]][ko Subscript[a, 1]]- Derivative[1][Subscript[J, n]][ko Subscript[a, 1]]Subscript[H, n][ko Subscript[a, 1]]) (Subscript[q, 1] (Subscript[H, n][Subscript[a, 1] Subscript[k, 1]] Subscript[J, n][Subscript[a, 0] Subscript[k, 1]]-Subscript[H, n][Subscript[a, 0] Subscript[k, 1]] Subscript[J, n][Subscript[a, 1] Subscript[k, 1]]) Derivative[1][Subscript[J, n]][Subscript[a, 0] Subscript[k, 0]]+Subscript[q, 0] Subscript[J, n][Subscript[a, 0] Subscript[k, 0]] (Subscript[J, n][Subscript[a, 1] Subscript[k, 1]] Derivative[1][Subscript[H, n]][Subscript[a, 0] Subscript[k, 1]]-Subscript[H, n][Subscript[a, 1] Subscript[k, 1]] Derivative[1][Subscript[J, n]][Subscript[a, 0] Subscript[k, 1]])) )/(Subscript[q, 1] Derivative[1][Subscript[J, n]][Subscript[a, 0] Subscript[k, 0]] (Subscript[q, 1] Derivative[1][Subscript[H, n]][ko Subscript[a, 1]](Subscript[H, n][Subscript[a, 1] Subscript[k, 1]] Subscript[J, n][Subscript[a, 0] Subscript[k, 1]]-Subscript[H, n][Subscript[a, 0] Subscript[k, 1]] Subscript[J, n][Subscript[a, 1] Subscript[k, 1]]) +qo Subscript[H, n][ko Subscript[a, 1]] (Subscript[H, n][Subscript[a, 0] Subscript[k, 1]] Derivative[1][Subscript[J, n]][Subscript[a, 1] Subscript[k, 1]]-Subscript[J, n][Subscript[a, 0] Subscript[k, 1]] Derivative[1][Subscript[H, n]][Subscript[a, 1] Subscript[k, 1]]))+Subscript[q, 0] Subscript[J, n][Subscript[a, 0] Subscript[k, 0]] (Subscript[q, 1] Derivative[1][Subscript[H, n]][ko Subscript[a, 1]] (Subscript[J, n][Subscript[a, 1] Subscript[k, 1]] Derivative[1][Subscript[H, n]][Subscript[a, 0] Subscript[k, 1]]-Subscript[H, n][Subscript[a, 1] Subscript[k, 1]] Derivative[1][Subscript[J, n]][Subscript[a, 0] Subscript[k, 1]])+qo Subscript[H, n][ko Subscript[a, 1]] (Derivative[1][Subscript[H, n]][Subscript[a, 1] Subscript[k, 1]] Derivative[1][Subscript[J, n]][Subscript[a, 0] Subscript[k, 1]]-Derivative[1][Subscript[H, n]][Subscript[a, 0] Subscript[k, 1]] Derivative[1][Subscript[J, n]][Subscript[a, 1] Subscript[k, 1]]))))//Simplify*)
+
+
+(* ::Input:: *)
+(*F[f_,g_][x_,y_]:= f[x] g[y]-f[y] g[x]*)
+(*Fd[f_,g_][x_,y_]:= f[x] g'[y]-f'[y] g[x]*)
+(**)
+(**)
+(*Yd[x_,y_]=  Fd[Subscript[H, n],Subscript[J, n]] [x,y];*)
+(*Y[x_,y_]=  F[Subscript[H, n],Subscript[J, n]] [x,y];*)
+(*Ydd[x_,y_]=  F[Subscript[H, n]',Subscript[J, n]'] [x,y];*)
+(*ClearAll[q]*)
+(*dq = qo/Subscript[q, 1];*)
+(*dq0 = Subscript[q, 0]/Subscript[q, 1];*)
+(* dq/.{qo -> \[Rho]o co, Subscript[q, 1]-> Subscript[\[Rho], 1] Subscript[c, 1] , Subscript[q, 0]-> Subscript[\[Rho], 0] Subscript[c, 0]}*)
+(*dq0/.{qo -> \[Rho]o co, Subscript[q, 1]-> Subscript[\[Rho], 1] Subscript[c, 1] , Subscript[q, 0]-> Subscript[\[Rho], 0] Subscript[c, 0]}*)
+(**)
+(*tmp == -fo[n] Subscript[J, n][ko Subscript[a, 1]]/Subscript[H, n][ko Subscript[a, 1]]-fo[n] Yd [ko Subscript[a, 1],ko Subscript[a, 1]] /Subscript[H, n][ko Subscript[a, 1]] (  Y [Subscript[a, 1] Subscript[k, 1],Subscript[a, 0] Subscript[k, 1]] Derivative[1][Subscript[J, n]][Subscript[a, 0] Subscript[k, 0]]-dq0 Subscript[J, n][Subscript[a, 0] Subscript[k, 0]] Yd [Subscript[a, 1] Subscript[k, 1],Subscript[a, 0] Subscript[k, 1]] )/( Derivative[1][Subscript[J, n]][Subscript[a, 0] Subscript[k, 0]] (dq Subscript[H, n][ko Subscript[a, 1]] Yd [Subscript[a, 0] Subscript[k, 1],Subscript[a, 1] Subscript[k, 1]]+ Derivative[1][Subscript[H, n]][ko Subscript[a, 1]]Y[Subscript[a, 1] Subscript[k, 1],Subscript[a, 0] Subscript[k, 1]])+dq0 Subscript[J, n][Subscript[a, 0] Subscript[k, 0]] (dq Subscript[H, n][ko Subscript[a, 1]]Ydd [Subscript[a, 1] Subscript[k, 1],Subscript[a, 0] Subscript[k, 1]]- Derivative[1][Subscript[H, n]][ko Subscript[a, 1]] Yd[Subscript[a, 1] Subscript[k, 1],Subscript[a, 0] Subscript[k, 1]])) //Simplify*)
+(**)
+
+
+(* ::Input:: *)
+(*D[Y[x,y],x,y]*)
+(**)
+(*Yd [y,x]+Yd [x,y]//Simplify*)
+
+
+(* ::Section:: *)
+(*Addition Theorems*)
+
+
+(* ::Input:: *)
+(**)
+(*ClearAll[Graf,R,\[CapitalTheta]]*)
+(*R[l_] := Norm[{x,y}-{x[l],y[l]}];*)
+(*\[CapitalTheta][l_] := ArcTan@@({x,y}-{x[l],y[l]});*)
+(*R[l_,j_] := Norm[{x[j],y[j]}-{x[l],y[l]}];*)
+(*\[CapitalTheta][l_,j_] := ArcTan@@({x[j],y[j]}-{x[l],y[l]});*)
+(**)
+(*Graf[H_,M_]:= H[n,R[l]]E^(I n \[CapitalTheta][l])  - Sum[H[n-m,R[l,j]]E^(I (n-m) \[CapitalTheta][l,j]) BesselJ[m, R[j]]E^(I m \[CapitalTheta][j]),{m,-M,M}];*)
+(*error =Abs[ Graf[HankelH1,50]/HankelH1[n,R[l]] ]/.{x[l]-> 0,y[l]-> 0, x[j]-> 2,y[j]-> 0, y->0};*)
+(*Plot[error/.{n->3},{x,0.1,1},PlotRange-> All]*)
+(**)
+(*error =Abs[ Graf[HankelH1,3]/HankelH1[n,R[l]] ]/.{x[l]-> 0,y[l]-> 0, x[j]-> 2,y[j]-> 0, y->0};*)
+(*Plot[error/.{n->3},{x,1.,2},PlotRange-> All]*)
+(**)
+
+
+(* ::Input:: *)
+(*error =Abs[ Graf[BesselJ,20]/BesselJ[n,R[l]] ]/.{x[l]-> 0,y[l]-> 0, x[j]-> 2,y[j]-> 0, y->0};*)
+(*Plot[error/.{n->3},{x,0.3,2},PlotRange-> All]*)
+(**)
+(**)
