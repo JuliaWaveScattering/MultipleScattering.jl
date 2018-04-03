@@ -2,15 +2,15 @@
 Abstract idea which defines the external boundary of object. Two objects have
 the same shape if they are congruence.
 """
-abstract type Shape{T,Dim} end
+abstract type Shape{Dim,T<:AbstractFloat} end
 
-volume(shape::Shape) = error("Volume function not implemented for shape")
+volume(shape::Shape) = error("Volume function not implemented for this shape")
 
-name(shape::Shape) = error("Volume function not implemented for shape")
+name(shape::Shape) = error("Volume function not implemented for this shape")
 
 
 "Shape where boundary is fixed distance from a point"
-type Circle{T} <: Shape{T,2}
+type Circle{T} <: Shape{2,T}
     radius::T
 end
 
@@ -22,11 +22,11 @@ name(shape::Circle) = "Circle"
 
 
 "Shape with 4 right-angles, defined by a height and width"
-type Rectangle{T} <: Shape{T,2}
+type Rectangle{T} <: Shape{2,T}
     width::T
     height::T
 end
 
-function volume(rectangle::Rectangle{T}) = rectangle.width*rectangle.height
+volume(rectangle::Rectangle) = rectangle.width*rectangle.height
 
 name(shape::Rectangle) = "Rectangle"
