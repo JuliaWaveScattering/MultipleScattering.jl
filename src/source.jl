@@ -71,4 +71,4 @@ function *(a,s::Source{P,T})::Source{P,T} where {P,T}
     Source{P,T}(field,coef)
 end
 
-*(s::Source{P,T},a)::Source{P,T} where {P,T} = *(a,s)
+*(s::Source,a) = *(a,s)

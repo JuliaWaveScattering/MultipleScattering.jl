@@ -1,52 +1,31 @@
+import Base.Test: @testset, @test, @test_throws
+
+import StaticArrays: MVector
+
 using MultipleScattering
-using Base.Test
-using Plots
 
-@testset "Summary" begin
+@testset "Tests" begin
+    x = MVector(1.0,1.0)
+    c = Circle(2.0)
 
-    include("shapetests.jl")
-    include("particle_tests.jl")
-    include("time_simulation_tests.jl")
-    include("moments_tests.jl")
+    # 2D Acoustics
+    a2 = Acoustics(1.0,1.0 + 0.0im,2)
+    @test dim(a2) == 2
+    @test field_dim(a2) == 1
 
-    # test our discretised Fourier transforms
-    @testset "Fourier tranforms" begin
-      include("fourier_test.jl")
-      @test fourier_test()
-    end
+    # 3D Acoustics
+    a3 = Acoustics(1.0,1.0 + 0.0im,3)
+    @test dim(a3) == 3
+    @test field_dim(a3) == 1
 
-    @testset "Type stability" begin
-        # Define everything as a Float32
-        volfrac = 0.01f0
-        radius = 1.0f0
-        k_arr = collect(linspace(0.01f0,1.0f0,100))
-        simulation = FrequencySimulation(volfrac,radius,k_arr)
-        @test typeof(simulation.response[1]) == Complex{Float32}
-    end
+    p = Particle(x,a2,c)
 
-    @testset "Single scatterer" begin
-        include("single_scatter.jl")
-        # Test against analytic solution
-        @test single_scatter_test()
-    end
+    @test_throws MethodError Particle(x,a3,c)
 
-    @testset "Boundary conditions" begin
-        include("boundary_conditions.jl")
-        # Test boundary conditions for 4 particles with random properties and positions.
-        @test boundary_conditions_test()
-    end
+    source_position = MVector(0.0,1.0)
+    amplitude = 1.0
+    s1 = TwoDimAcousticPointSource(a2, source_position, amplitude)
+    s2 = TwoDimAcousticPointSource(a2, 2.*source_position, amplitude)
 
-    @testset "Plot FrequencySimulation" begin
-        # Just run it to see if we have any errors (yes thats a very low bar)
-        volfrac = 0.01
-        radius = 2.0
-        k_arr = collect(linspace(0.2,1.0,5))
-        simulation = FrequencySimulation(volfrac,radius,k_arr)
-
-        plot(simulation)
-        plot(simulation,0.2)
-
-        @test true
-    end
-
+    s3 = 2*s1 + s2
 end
