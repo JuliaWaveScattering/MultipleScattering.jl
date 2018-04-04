@@ -7,6 +7,10 @@ using MultipleScattering
 @testset "Tests" begin
     x = MVector(1.0,1.0)
     c = Circle(2.0)
+    rect = Rectangle(2.0,3.0)
+
+    @test volume(c) == π*2.0^2
+    @test volume(rect) == 2.0*3.0
 
     # 2D Acoustic
     a2 = Acoustic(1.0,1.0 + 0.0im,2)
@@ -18,14 +22,28 @@ using MultipleScattering
     @test dim(a3) == 3
     @test field_dim(a3) == 1
 
+    # Construct three particles, with two the same
     p = Particle(x,a2,c)
+    p_identical = Particle(x,a2,c)
+    p_different = Particle(x,a2,rect)
 
+    # Test comparison operators
+    @test p == p_identical
+    @test p != p_different
+
+    # Cannot combine a 2D vector and shape with 3D physics
     @test_throws MethodError Particle(x,a3,c)
 
+    # Create two point sources
     source_position = MVector(0.0,1.0)
     amplitude = 1.0
     s1 = TwoDimAcousticPointSource(a2, source_position, amplitude)
     s2 = TwoDimAcousticPointSource(a2, 2.*source_position, amplitude)
 
+    # Create new souce as a linear combination of two other sources
     s3 = 2*s1 + s2
+
+    # Check that the field is indeed a linear conbination
+    @test s3.field(x,1.0) == 2*s1.field(x,1.0) + s2.field(x,1.0)
+
 end
