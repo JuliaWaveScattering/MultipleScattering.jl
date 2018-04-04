@@ -6,23 +6,26 @@ mutable struct FrequencySimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <
     source::Source{P,T}
 end
 
-# Type aliases for convenience
-if !isdefined(:TwoDimAcousticFrequencySimulation)
-    TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{2,Acoustics{2,T},T}
-end
+
+typealias TwoDimAcousticFrequencySimulation{T} FrequencySimulation{2,Acoustic{2,T},T}
 
 import Base.run
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::MVector{Dim,T}) where {Dim,P,T}
+# Main run function, all other run functions use this
+function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{MVector{Dim,T}})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{MVector{Dim,T}}) where {Dim,P,T}
+function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::Vector{MVector{Dim,T}})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    # Compute for each angular frequency, then join up all the results
+    mapreduce(ω->run(sim,ω,x), union, ω)
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::MVector{Dim,T}) where {Dim,P,T}
+function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::MVector{Dim,T})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    run(sim,ω,[x])
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::Vector{MVector{Dim,T}}) where {Dim,P,T}
+function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::MVector{Dim,T})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    run(sim,[ω],[x])
 end
 
 mutable struct TimeSimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <: Simulation{Dim,T}

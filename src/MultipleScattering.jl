@@ -1,7 +1,7 @@
 module MultipleScattering
 
 export Shape, Circle, Rectangle, volume, name
-export PhysicalProperties, Acoustics, Electromagnetism, AcousticCapsule,
+export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        basis_function, dim, field_dim
 export Particle, (==)
 export Source, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,

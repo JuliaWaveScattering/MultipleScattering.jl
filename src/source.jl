@@ -37,18 +37,18 @@ function self_test(source::Source{P,T}) where {P,T}
     return true
 end
 
-function TwoDimAcousticPointSource{T}(medium::Acoustics{2,T}, source_position::AbstractVector{T}, amplitude::T)::Source{Acoustics{2,T},T}
+function TwoDimAcousticPointSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*hankelh1(0,ω/medium.c*norm(x-source_position))
     coef(n,center,radius,ω) = n*one(Complex{T})
 
-    return Source{Acoustics{2,T},T}(field,coef)
+    return Source{Acoustic{2,T},T}(field,coef)
 end
 
-function TwoDimAcousticPlanarSource{T}(medium::Acoustics{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T}, amplitude::T)::Source{Acoustics{2,T},T}
+function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*exp(ω/medium.c*dot(x-source_position,source_direction))
     coef(n,center,radius,ω) = (one(T)*im)^n
 
-    return Source{Acoustics{2,T},T}(field,coef)
+    return Source{Acoustic{2,T},T}(field,coef)
 end
 
 import Base.(+)

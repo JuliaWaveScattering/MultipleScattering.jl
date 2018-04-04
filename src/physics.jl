@@ -20,17 +20,17 @@ dim(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T}} = D
 Physical properties for a homogenous isotropic acoustic medium. Produces a
 scalar (1D) field in arbitrary dimensions.
 """
-type Acoustics{Dim,T} <: PhysicalProperties{Dim,1,T}
+type Acoustic{Dim,T} <: PhysicalProperties{Dim,1,T}
     ρ::T # Density
     c::Complex{T} # Phase velocity
 end
 
 # Constructor which supplies the dimension without explicitly mentioning type
-Acoustics(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustics{Dim,T}(c,ρ)
+Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{Dim,T}(c,ρ)
 
-name(a::Acoustics{Dim,T}) where {Dim,T} = "$(Dim)D Acoustic"
+name(a::Acoustic{Dim,T}) where {Dim,T} = "$(Dim)D Acoustic"
 
-function basis_function(medium::Acoustics{2,T}, ω::T) where {T}
+function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::MVector{2,T})
         r = norm(x)
         θ = atan2(x[2],x[1])
@@ -38,6 +38,8 @@ function basis_function(medium::Acoustics{2,T}, ω::T) where {T}
         hankelh1(k*r,m)*exp(im*θ*m)
     end
 end
+
+typealias TwoDimAcoustic{T} Acoustic{2,T}
 
 """
 Basis functions in a specific dimension for a specific physics type.
@@ -67,10 +69,10 @@ name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 Physical properties for a homogenous isotropic electromagnetic medium. Produces
 a vector (??) field in arbitrary dimensions.
 """
-type Electromagnetism{Dim,T} <: PhysicalProperties{Dim,3,T}
+type Electromagnetic{Dim,T} <: PhysicalProperties{Dim,3,T}
     μ::Complex{T} # Permeability
     ε::Complex{T} # Permittivity
     σ::Complex{T} # Conductivity
 end
 
-name(e::Electromagnetism{T,Dim}) where {T,Dim} = "$(Dim)D Electromagnetic"
+name(e::Electromagnetic{T,Dim}) where {T,Dim} = "$(Dim)D Electromagnetic"

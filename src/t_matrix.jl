@@ -1,6 +1,6 @@
 
 
-function t_matrix{T}(circle::Circle{T}, inner_medium::Acoustics{T,2}, outer_medium::Acoustics{T,2}, ω::T, M::Integer)::Diagonal{T} where T <: AbstractFloat
+function t_matrix{T}(circle::Circle{T}, inner_medium::Acoustic{T,2}, outer_medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{T} where T <: AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
     if isnan(inner_medium.c*inner_medium.ρ)
