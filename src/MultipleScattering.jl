@@ -9,6 +9,7 @@ export Source, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
 export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation
 export SimulationResult, FrequencySimulationResult, TimeSimulationResult
 export SimulationDistribution, FrequencySimulationDistribution, sample
+export t_matrix
 
 
 import SpecialFunctions: besselj, hankelh1
@@ -25,5 +26,7 @@ include("source.jl")
 include("simulation.jl")
 include("result.jl")
 include("random.jl")
+include("diffbessel.jl")
+include("t_matrix.jl")
 
 end # module

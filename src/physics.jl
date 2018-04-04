@@ -26,7 +26,7 @@ type Acoustic{Dim,T} <: PhysicalProperties{Dim,1,T}
 end
 
 # Constructor which supplies the dimension without explicitly mentioning type
-Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{Dim,T}(c,ρ)
+Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{Dim,T}(ρ,c)
 
 name(a::Acoustic{Dim,T}) where {Dim,T} = "$(Dim)D Acoustic"
 

@@ -1,18 +1,18 @@
 
 
-function t_matrix{T}(circle::Circle{T}, inner_medium::Acoustic{T,2}, outer_medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{T} where T <: AbstractFloat
+function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::Acoustic{2,T}, ω::T, M::Integer)::Diagonal{T} where T<:AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
     if isnan(inner_medium.c*inner_medium.ρ)
-        error("Scattering from a particle with zero density or zero phase speed is not defined")
+        throw(DomainError("Scattering from a particle with zero density or zero phase speed is not defined"))
     elseif isnan(outer_medium.c*outer_medium.ρ)
-        error("Wave propagation in a medium with zero density or zero phase speed is not defined")
+        throw(DomainError("Wave propagation in a medium with zero density or zero phase speed is not defined"))
     elseif iszero(outer_medium.c)
-        error("Wave propagation in a medium with zero phase speed is not defined")
+        throw(DomainError("Wave propagation in a medium with zero phase speed is not defined"))
     elseif iszero(outer_medium.ρ) && iszero(inner_medium.c*inner_medium.ρ)
-        error("Scattering in a medium with zero density from a particle with zero density or zero phase speed is not defined")
-    elseif circle.radius
-        error("Scattering from a circle of zero radius is not implemented yet")
+        throw(DomainError("Scattering in a medium with zero density from a particle with zero density or zero phase speed is not defined"))
+    elseif iszero(circle.radius)
+        throw(DomainError("Scattering from a circle of zero radius is not implemented yet"))
     end
 
     "Returns a ratio used in multiple scattering which reflects the material properties of the particles"
@@ -30,7 +30,7 @@ function t_matrix{T}(circle::Circle{T}, inner_medium::Acoustic{T,2}, outer_mediu
             denom = diffhankelh1(m, ak) * besselj(m, γ * ak)
         else
             q = (inner_medium.c*inner_medium.ρ)/(outer_medium.c*outer_medium.ρ) #the impedance
-            γ = outer_medium.c/p.c #speed ratio
+            γ = outer_medium.c/inner_medium.c #speed ratio
             numer = q * diffbesselj(m, ak) * besselj(m, γ * ak) - besselj(m, ak)*diffbesselj(m, γ * ak)
             denom = q * diffhankelh1(m, ak) * besselj(m, γ * ak) - hankelh1(m, ak)*diffbesselj(m, γ * ak)
         end
@@ -49,6 +49,6 @@ Returns a 2M+1 by 2M+1 T-matrix for particle with specific shape, physical
 properties in a medium with a specific physical property at a specific angular
 wavenumber.
 """
-function t_matrix{T}(shape::Shape{T}, inner_medium::PhysicalProperties{Dim,FieldDim,T}, outer_medium::PhysicalProperties{Dim,FieldDim,T}, ω::T, M::Integer)::AbstractMatrix{T} where T <: AbstractFloat
+function t_matrix(shape::Shape{T}, inner_medium::PhysicalProperties{Dim,FieldDim,T}, outer_medium::PhysicalProperties{Dim,FieldDim,T}, ω::T, M::Integer)::AbstractMatrix{T} where {Dim,FieldDim,T<:AbstractFloat}
     error("T-matrix function is not yet written for $(name(inner_medium)) $(name(shape)) in a $(name(outer_medium)) medium")
 end
