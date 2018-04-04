@@ -39,7 +39,7 @@ function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
     end
 end
 
-typealias TwoDimAcoustic{T} Acoustic{2,T}
+TwoDimAcoustic{T} = Acoustic{2,T}
 
 """
 Basis functions in a specific dimension for a specific physics type.
