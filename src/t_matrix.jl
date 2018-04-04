@@ -49,6 +49,6 @@ Returns a 2M+1 by 2M+1 T-matrix for particle with specific shape, physical
 properties in a medium with a specific physical property at a specific angular
 wavenumber.
 """
-function t_matrix{T}(shape::Shape{T}, inner_medium::PhysicalProperties{T}, outer_medium::PhysicalProperties{T}, ω::T, M::Integer)::AbstractMatrix{T} where T <: AbstractFloat
+function t_matrix{T}(shape::Shape{T}, inner_medium::PhysicalProperties{Dim,FieldDim,T}, outer_medium::PhysicalProperties{Dim,FieldDim,T}, ω::T, M::Integer)::AbstractMatrix{T} where T <: AbstractFloat
     error("T-matrix function is not yet written for $(name(inner_medium)) $(name(shape)) in a $(name(outer_medium)) medium")
 end

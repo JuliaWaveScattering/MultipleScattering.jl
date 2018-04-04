@@ -4,6 +4,18 @@ the field and the number of dimensions it is a function of.
 """
 abstract type PhysicalProperties{Dim,FieldDim,T<:AbstractFloat} end
 
+"Extract the dimension of the field of this physical property"
+field_dim(p::PhysicalProperties{Dim,FieldDim,T}) where {Dim,FieldDim,T} = FieldDim
+
+"Extract the dimension of the field of this type of physical property"
+field_dim(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T}} = FieldDim
+
+"Extract the dimension of the space that this physical property lives in"
+dim(p::PhysicalProperties{Dim,FieldDim,T}) where {Dim,FieldDim,T} = Dim
+
+"Extract the dimension of the space that this type of physical property lives in"
+dim(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T}} = Dim
+
 """
 Physical properties for a homogenous isotropic acoustic medium. Produces a
 scalar (1D) field in arbitrary dimensions.
