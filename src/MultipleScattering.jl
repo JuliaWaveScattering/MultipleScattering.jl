@@ -8,6 +8,8 @@ export Source, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
 export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation
 export SimulationResult, FrequencySimulationResult, TimeSimulationResult
+export SimulationDistribution, FrequencySimulationDistribution, sample
+
 
 import SpecialFunctions: besselj, hankelh1
 
@@ -22,5 +24,6 @@ include("particle.jl")
 include("source.jl")
 include("simulation.jl")
 include("result.jl")
+include("random.jl")
 
 end # module

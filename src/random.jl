@@ -1,32 +1,40 @@
 
-mutable struct RandomFrequencySimulation{P,T,Dim} <: Simulation{T,Dim} where T <: AbstractFloat, P <: PhysicalProperties{Dim,FieldDim,T}, Dim::Int
-    medium::P
-    source::Source{P,T}
-    shape::Shape
-    volfrac::T
-    radius::T
+"Distribution of multiple scattering simulations"
+abstract type SimulationDistribution{T,Dim} end
+
+"""
+Sample a simulation distribution returning a simultion. If no seed is provided,
+a seed is generated.
+"""
+function sample(dist::SimulationDistribution, seed)
+    error("Function sample is not implemented for this simulation distribution")
 end
 
-function run(sim::RandomFrequencySimulation, ω, x)
+function sample(dist::SimulationDistribution)
     seed = generate_seed()
-    run(sim, ω, x, seed)
+    sample(dist, seed)
 end
 
-function run(sim::RandomFrequencySimulation{P,T,Dim}, ω::T, x::SVector{Dim,T}, seed)
+
+"""
+A distribution of frequency simulations where particles are all identical but
+with random positions, contained within some specified shape with a specified
+density. We can sample this to create a runnable FrequencySimulation.
+"""
+mutable struct FrequencySimulationDistribution{Dim,P,S,PP,PS,T} <: SimulationDistribution{T,Dim}
+    medium::P
+    shape::S
+    volfrac::T
+    source::Source{P,T}
+    particle_medium::PP
+    particle_shape::PS
 end
 
-function run(sim::RandomFrequencySimulation{P,T,Dim}, ω::T, x::Vector{SVector{Dim,T}}, seed)
-end
+function sample(dist::FrequencySimulationDistribution{Dim,P,S,PP,PS,T}, seed)::FrequencySimulation{Dim,P,T} where {Dim,P,S,PP,PS,T}
 
-function run(sim::RandomFrequencySimulation{P,T,Dim}, ω::Vector{T}, x::SVector{Dim,T}, seed)
-end
+    medium = dist.medium
+    particles = generate_particles(dist.shape, dist.volfrac, dist.particle_shape, dist.particle_medium, seed)
+    source = dist.source
 
-function run(sim::RandomFrequencySimulation{P,T,Dim}, ω::Vector{T}, x::Vector{SVector{Dim,T}}, seed)
-end
-
-struct RandomFrequencySimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{Dim,FieldDim,T}, T <: AbstractFloat, Dim::Int
-    field::Matrix{MVector{T,FieldDim}}
-    x::Vector{MVector{T,FieldDim}}
-    ω::RowVector{T}
-    seed::Vector{UInt32}
+    return FrequencySimulation{Dim,P,T}(medium,particles,source)
 end
