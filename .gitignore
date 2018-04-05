@@ -1,3 +1,10 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+
+doc/*.bbl
+doc/*.aux
+doc/*.log
+doc/*.run.xml      
+doc/*.synctex.gz
+doc/*.out
