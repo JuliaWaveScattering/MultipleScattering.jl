@@ -173,13 +173,28 @@ For efficient implementation we need to rewrite~\eqref{eqn:As} as a matrix equat
 \end{align}
 and note that $\Theta_{\ell j} = \Theta_{j \ell } + \pi$. Then
 \begin{equation}
- \sum_{\ell\not = j}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+ \sum_{\ell}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
 \end{equation}
-which leads to one massive square matrix
+which leads to one massive square matrix:
 \begin{equation}
- \sum_{\ell\not = j}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+  \begin{bmatrix}
+    \vec I & \vec T_1 \vec \Psi_{1 2} & \cdots & \vec T_1 \vec \Psi_{1 (N-1)} & \vec T_1 \vec \Psi_{1 N} \\
+    \vec T_2 \vec \Psi_{2 1} & \vec I &  \vec T_2 \vec \Psi_{2 3} & \cdots & \vec T_2 \vec \Psi_{2 N} \\
+     & \vdots & & & \vdots \\
+     \vec T_N \vec \Psi_{N 1}  & \cdots & \cdots & \vec T_N \vec \Psi_{N (N-1)} & \vec I
+  \end{bmatrix}
+  \begin{bmatrix}
+    \vec A_1 \\
+    \vec A_2 \\
+    \vdots \\
+    \vec A_N
+  \end{bmatrix}
+   = \begin{bmatrix}
+     \vec T_1 \vec f_1 \\
+     \vec T_2 \vec f_2 \\
+     \vec T_3 \vec f_3
+   \end{bmatrix}
 \end{equation}
-
 
 \printbibliography
 
