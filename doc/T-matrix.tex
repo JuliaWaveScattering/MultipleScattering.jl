@@ -153,16 +153,34 @@ where
 Using the T-matrix of particle-$j$ we reach $A_j^n = \sum_m T^{nm}_j F^m_j$, which leads to
 \begin{equation}
 A_j^n  = \sum_{m=-\infty}^\infty T^{nm}_j f^m_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty A_\ell^p T^{nm}_j H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}}.
+\label{eqn:As}
 \end{equation}
 As a check, if we use~\eqref{eqn:circular_t-matrix} and swap $A_j^n \to A_j^n Z^n_j$, then we arrive at equation (2.11) in \cite{gower_reflection_2017}.
 % \begin{equation}
 % A_j^n  = -  f^n_j - \sum_{\ell\not = j} \sum_{p=-\infty}^\infty A_\ell^p Z^p_\ell H_{p-n}(k R_{\ell j})\ee^{\ii(p-n)\Theta_{\ell j}}.
 % \end{equation}
 
-For easy implementation we need functions that
+For easy implementation we need the functions:
 \[
-\psi_\inc \mapsto f^m_j \quad \text{and} \quad \text{particle} \mapsto T^{nm}_j. 
+\psi_\inc \mapsto f^m_j \quad \text{and} \quad \text{particle} \mapsto T^{nm}_j.
 \]
+
+For efficient implementation we need to rewrite~\eqref{eqn:As} as a matrix equation. Let
+\begin{align}
+  &(\vec A_j)_n =  A_j^n, \quad (\vec f_j)_n =  f_j^n,
+  \\
+  &(\vec T_j)_{nm} = T^{nm}_j, \quad (\vec \Psi_{j \ell})_{mp} =  H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}},
+\end{align}
+and note that $\Theta_{\ell j} = \Theta_{j \ell } + \pi$. Then
+\begin{equation}
+ \sum_{\ell\not = j}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+\end{equation}
+which leads to one massive square matrix
+\begin{equation}
+ \sum_{\ell\not = j}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+\end{equation}
+
+
 \printbibliography
 
 \end{document}

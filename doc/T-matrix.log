@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2018/dev/Debian) (preloaded format=pdflatex 2018.3.22)  29 MAR 2018 12:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2018/dev/Debian) (preloaded format=pdflatex 2018.3.22)  5 APR 2018 16:41
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1255,11 +1255,11 @@ $
  []
 
 [2 <./capsule.jpg>] [3] [4]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 168.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 168.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 186.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 186.
  (./T-matrix.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 168.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 168.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 186.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 186.
 Package rerunfilecheck Info: File `T-matrix.out' has not changed.
 (rerunfilecheck)             Checksum: 7C343FD8309051383FF8DC1AD3C1D85B;177.
 Package logreq Info: Writing requests to 'T-matrix.run.xml'.
@@ -1267,13 +1267,13 @@ Package logreq Info: Writing requests to 'T-matrix.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 23781 strings out of 492978
- 445441 string characters out of 6134922
- 842022 words of memory out of 5000000
- 26920 multiletter control sequences out of 15000+600000
+ 23786 strings out of 492978
+ 445501 string characters out of 6134922
+ 842069 words of memory out of 5000000
+ 26921 multiletter control sequences out of 15000+600000
  16634 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,11n,54p,1513b,1302s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,12n,54p,1513b,1222s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
@@ -1291,10 +1291,10 @@ e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texli
 ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on T-matrix.pdf (4 pages, 1329937 bytes).
+Output written on T-matrix.pdf (4 pages, 1332725 bytes).
 PDF statistics:
- 150 PDF objects out of 1000 (max. 8388607)
- 123 compressed objects within 2 object streams
- 30 named destinations out of 1000 (max. 500000)
+ 156 PDF objects out of 1000 (max. 8388607)
+ 129 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
  42 words of extra memory for PDF output out of 10000 (max. 10000000)
 

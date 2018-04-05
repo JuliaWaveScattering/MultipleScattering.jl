@@ -13,7 +13,7 @@ using MultipleScattering
     @test volume(rect) == 2.0*3.0
 
     # 2D Acoustic
-    a2 = Acoustic(1.0,1.0 + 0.0im,2)
+    a2 = Acoustic(0.1,0.3 + 0.0im,2)
     @test dim(a2) == 2
     @test field_dim(a2) == 1
 
