@@ -1,11 +1,11 @@
 import Base.Test: @testset, @test, @test_throws
 
-import StaticArrays: MVector
+import StaticArrays: SVector
 
 using MultipleScattering
 
 @testset "Tests" begin
-    x = MVector(1.0,1.0)
+    x = SVector(1.0,1.0)
     circle = Circle(2.0)
     rect = Rectangle(2.0,3.0)
 
@@ -35,7 +35,7 @@ using MultipleScattering
     @test_throws MethodError Particle(x,a3,circle)
 
     # Create two point sources
-    source_position = MVector(0.0,1.0)
+    source_position = SVector(0.0,1.0)
     amplitude = 1.0
     s1 = TwoDimAcousticPointSource(a2, source_position, amplitude)
     s2 = TwoDimAcousticPointSource(a2, 2.*source_position, amplitude)
@@ -49,12 +49,16 @@ using MultipleScattering
     a2_host = Acoustic(1.0,1.0 + 0.0im,2)
 
     t = t_matrix(circle, a2, a2_host, 0.5, 10)
-    @test typeof(t) == Diagonal{Float64}
+    @test typeof(t) == Diagonal{Complex{Float64}}
 
     @test_throws DomainError t_matrix(circle, Acoustic(Inf, 0.0im, 2), Acoustic(1.0, 1.0+0.0im, 2), 0.5, 10)
     @test_throws DomainError t_matrix(circle, Acoustic(1.0, 1.0+0.0im, 2), Acoustic(0.0, Inf*im, 2), 0.5, 10)
     @test_throws DomainError t_matrix(circle, Acoustic(1.0, 0.0im, 2), Acoustic(1.0, 0.0im, 2), 0.5, 10)
     @test_throws DomainError t_matrix(circle, Acoustic(0.0, 1.0im, 2), Acoustic(0.0, 1.0+0.0im, 2), 0.5, 10)
     @test_throws DomainError t_matrix(Circle(0.0), a2, a2_host, 0.5, 10)
+
+    x2 = SVector(5.0,5.0)
+    particles = [Particle(x,a2,circle), Particle(x2,a2,circle)]
+    S = scattering_matrix(a2_host, particles, 0.8,5)
 
 end

@@ -16,22 +16,22 @@ Check that the source functions return the correct types
 function self_test(source::Source{P,T}) where {P,T}
 
     # Example data with correct dimensions and types from P and T
-    x = MVector(ntuple(i->zero(T),dim(P)))
+    x = SVector(ntuple(i->zero(T),dim(P)))
     radius = one(T)
     ω = one(T)
 
     # Check that the result of field has same dimension and type as PhysicalProperty field
     if field_dim(P) == 1
-        source.field(x,ω)::Union{Complex{T},MVector{field_dim(P),Complex{T}}}
+        source.field(x,ω)::Union{Complex{T},SVector{field_dim(P),Complex{T}}}
     else
-        source.field(x,ω)::MVector{field_dim(P),Complex{T}}
+        source.field(x,ω)::SVector{field_dim(P),Complex{T}}
     end
 
     # Check that the result of field has same dimension as field dimension of P
     if field_dim(P) == 1
-        source.coef(1,x,radius,ω)::Union{Complex{T},MVector{field_dim(P),Complex{T}}}
+        source.coef(1,x,radius,ω)::Union{Complex{T},SVector{field_dim(P),Complex{T}}}
     else
-        source.coef(1,x,radius,ω)::MVector{field_dim(P),Complex{T}}
+        source.coef(1,x,radius,ω)::SVector{field_dim(P),Complex{T}}
     end
 
     return true

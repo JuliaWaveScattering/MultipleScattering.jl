@@ -3,14 +3,14 @@
 abstract type SimulationResult{Dim,T} end
 
 struct FrequencySimulationResult{Dim,FieldDim,P<:PhysicalProperties,T<:AbstractFloat} <: SimulationResult{Dim,T}
-    field::Matrix{MVector{FieldDim,T}}
-    x::Vector{MVector{Dim,T}}
+    field::Matrix{SVector{FieldDim,T}}
+    x::Vector{SVector{Dim,T}}
     ω::RowVector{T}
 end
 
 struct TimeSimulationResult{Dim,FieldDim,P<:PhysicalProperties,T<:AbstractFloat} <: SimulationResult{Dim,T}
-    field::Matrix{MVector{FieldDim,T}}
-    x::Vector{MVector{Dim,T}}
+    field::Matrix{SVector{FieldDim,T}}
+    x::Vector{SVector{Dim,T}}
     t::RowVector{T}
 end
 

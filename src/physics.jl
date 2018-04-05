@@ -30,12 +30,12 @@ Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{Dim,T}(ρ,c)
 
 name(a::Acoustic{Dim,T}) where {Dim,T} = "$(Dim)D Acoustic"
 
-function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
-    return function acoustic_basis_function(m::Integer, x::MVector{2,T})
+function get_basis_function(medium::Acoustic{2,T}, ω::T) where {T}
+    return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan2(x[2],x[1])
         k = ω/medium.c
-        hankelh1(k*r,m)*exp(im*θ*m)
+        hankelh1(m,k*r)*exp(im*θ*m)
     end
 end
 
@@ -44,8 +44,8 @@ TwoDimAcoustic{T} = Acoustic{2,T}
 """
 Basis functions in a specific dimension for a specific physics type.
 """
-function basis_function(medium::PhysicalProperties, ω::T) where {T}
-    error("Basis functions not implmented for this physics type.")
+function get_basis_function(medium::PhysicalProperties, ω::T) where {T}
+    error("Get basis function not implmented for this physics type.")
 end
 
 """

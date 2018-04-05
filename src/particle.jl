@@ -2,17 +2,17 @@
 abstract type AbstractParticle{Dim,T} end
 
 type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat} <: AbstractParticle{Dim,T}
-    position::MVector{Dim,T}
+    position::SVector{Dim,T}
     medium::P
     shape::S
     # Enforce that the Dims and Types are all the same
-    function Particle{Dim,P,S,T}(position::MVector{Dim,T},medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T},S<:Shape{Dim,T}}
+    function Particle{Dim,P,S,T}(position::SVector{Dim,T},medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T},S<:Shape{Dim,T}}
         new{Dim,P,S,T}(position,medium,shape)
     end
 end
 
 # Convenience constructor which does not require explicit types/parameters
-function Particle(position::MVector{Dim,T},medium::P,shape::S) where {Dim,T,P,S}
+function Particle(position::SVector{Dim,T},medium::P,shape::S) where {Dim,T,P,S}
     Particle{Dim,P,S,T}(position,medium,shape)
 end
 
