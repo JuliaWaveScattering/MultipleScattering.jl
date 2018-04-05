@@ -200,15 +200,15 @@ For efficient implementation we need to rewrite~\eqref{eqn:As} as a matrix equat
 \end{align}
 and note that $\Theta_{\ell j} = \Theta_{j \ell } + \pi$. Then
 \begin{equation}
- \sum_{\ell}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+ \sum_{\ell}(\delta_{\ell j} +  (\delta_{\ell j}-1) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
 \end{equation}
 which leads to one massive square matrix:
 \begin{equation}
   \begin{bmatrix}
-    \vec I & \vec T_1 \vec \Psi_{1 2} & \cdots & \vec T_1 \vec \Psi_{1 (N-1)} & \vec T_1 \vec \Psi_{1 N} \\
-    \vec T_2 \vec \Psi_{2 1} & \vec I &  \vec T_2 \vec \Psi_{2 3} & \cdots & \vec T_2 \vec \Psi_{2 N} \\
+    \vec I & -\vec T_1 \vec \Psi_{1 2} & \cdots & -\vec T_1 \vec \Psi_{1 (N-1)} & -\vec T_1 \vec \Psi_{1 N} \\
+    -\vec T_2 \vec \Psi_{2 1} & \vec I &  -\vec T_2 \vec \Psi_{2 3} & \cdots & -\vec T_2 \vec \Psi_{2 N} \\
      & \vdots & & & \vdots \\
-     \vec T_N \vec \Psi_{N 1}  & \cdots & \cdots & \vec T_N \vec \Psi_{N (N-1)} & \vec I
+     -\vec T_N \vec \Psi_{N 1}  & \cdots & \cdots & - \vec T_N \vec \Psi_{N (N-1)} & \vec I
   \end{bmatrix}
   \begin{bmatrix}
     \vec A_1 \\
