@@ -21,6 +21,8 @@
 \usepackage{setspace}
 \usepackage{hyperref}
 
+\usepackage{tikz}
+
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
@@ -70,8 +72,33 @@ where $q_j = (\rho_j c_j)/(\rho c)$ and $k_j = \omega/c_j$.
 \subsection{Single circular capsule}
 
 \begin{figure}[t]
-  \centering
-  \includegraphics[width=0.4\linewidth]{capsule}
+\centering
+  \begin{tikzpicture}[scale=0.6]
+  % Outer box
+  \draw (-5,-5) -- (5,-5) -- (5,5) -- (-5,5) -- (-5,-5);
+
+  % Concentric circles
+  \draw (0,0) circle (2);
+  \draw (0,0) circle (3);
+
+  % Line to show a_1
+  \draw (-3.02, 0) -- (-0.02,0);
+  \draw (-3.02, 0.3) -- (-3.02,-0.3);
+  \draw (-0.02, 0.3) -- (-0.02,-0.3);
+  \node at (-1.5,-0.3) { $a_1$ };
+
+  % Line to show a_0
+  \draw (2.02, 0) -- (0,0);
+  \draw (2.02, 0.3) -- (2.02,-0.3);
+  \draw (0.02, 0.3) -- (0.02,-0.3);
+  \node at (1,-0.3) { $a_0$ };
+
+  \node at (-4,4) { $c,\rho$ };
+  \node at (0,1) { $c_0,\rho_0$ };
+  \node at (0,2.5) { $c_1,\rho_1$ };
+
+  \end{tikzpicture}
+
   \label{fig:capsule}
 \end{figure}
 
