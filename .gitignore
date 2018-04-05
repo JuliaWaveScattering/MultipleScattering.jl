@@ -3,10 +3,13 @@
 *.jl.mem
 
 # LaTeX generated files
-*.aux
-*.bcf
-*.out
-*.log
-*.run.xml
-*.blg
-*.bbl
+doc/*.aux
+doc/*.bcf
+doc/*.out
+doc/*.log
+doc/*.run.xml
+doc/*.blg
+doc/*.bbl
+doc/*.fls
+doc/*.fdb_latexmk
+doc/*.synctex.gz
