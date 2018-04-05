@@ -58,7 +58,10 @@ using MultipleScattering
     @test_throws DomainError t_matrix(Circle(0.0), a2, a2_host, 0.5, 10)
 
     x2 = SVector(5.0,5.0)
+    ω = 0.8
+    Nh = 5
     particles = [Particle(x,a2,circle), Particle(x2,a2,circle)]
-    S = scattering_matrix(a2_host, particles, 0.8,5)
+    t_matrices = get_t_matrices(a2_host, particles, ω, Nh)
+    S = scattering_matrix(a2_host, particles, t_matrices, ω, Nh)
 
 end

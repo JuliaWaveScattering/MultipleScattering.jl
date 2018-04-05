@@ -9,7 +9,7 @@ export Source, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
 export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation
 export SimulationResult, FrequencySimulationResult, TimeSimulationResult
 export SimulationDistribution, FrequencySimulationDistribution, sample
-export t_matrix
+export t_matrix, get_t_matrices
 export scattering_matrix
 
 import SpecialFunctions: besselj, hankelh1

@@ -1,5 +1,48 @@
 
+"""
+Returns a 2M+1 by 2M+1 T-matrix for particle with specific shape, physical
+properties in a medium with a specific physical property at a specific angular
+wavenumber.
+"""
+function t_matrix(shape::Shape{T}, inner_medium::PhysicalProperties{Dim,FieldDim,T}, outer_medium::PhysicalProperties{Dim,FieldDim,T}, ω::T, M::Integer)::AbstractMatrix{T} where {Dim,FieldDim,T<:AbstractFloat}
+    # Returns error unless overloaded for specific type
+    error("T-matrix function is not yet written for $(name(inner_medium)) $(name(shape)) in a $(name(outer_medium)) medium")
+end
 
+"""
+Returns vector of T-matrices from a vector of particles in a specific domain.
+Can save computation if multiple of the same kind of particle
+"""
+function get_t_matrices(medium::PhysicalProperties, particles::Vector, ω::AbstractFloat, Nh::Integer)::Vector
+
+    t_matrices = Vector{AbstractMatrix}(length(particles))
+    congruent_particles = Vector{Tuple{PhysicalProperties,Shape}}(0)
+
+    for p_i in eachindex(particles)
+        p = particles[p_i]
+
+        # If we have calculated this T-matrix before, just link to that one
+        found = false
+        for cp_i in eachindex(congruent_particles)
+            cp = particles(cp_i)
+            if p.shape == cp.shape && p.medium == cp.medium
+                t_matrices[p_i] = t_matrices[cp_i]
+                found = true
+                break
+            end
+        end
+
+        # Congruent particle was not found, we must calculate this t-matrix
+        if !found
+            t_matrices[p_i] = t_matrix(p.shape, p.medium, medium, ω, Nh)
+        end
+
+    end
+
+    return t_matrices
+end
+
+# T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
 function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::Acoustic{2,T}, ω::T, M::Integer)::Diagonal{Complex{T}} where T<:AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
@@ -42,13 +85,4 @@ function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::
     Zns = map(Zn,0:M)
 
     return Diagonal(vcat(reverse(Zns), Zns[2:end]))
-end
-
-"""
-Returns a 2M+1 by 2M+1 T-matrix for particle with specific shape, physical
-properties in a medium with a specific physical property at a specific angular
-wavenumber.
-"""
-function t_matrix(shape::Shape{T}, inner_medium::PhysicalProperties{Dim,FieldDim,T}, outer_medium::PhysicalProperties{Dim,FieldDim,T}, ω::T, M::Integer)::AbstractMatrix{T} where {Dim,FieldDim,T<:AbstractFloat}
-    error("T-matrix function is not yet written for $(name(inner_medium)) $(name(shape)) in a $(name(outer_medium)) medium")
 end

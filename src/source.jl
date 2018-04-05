@@ -17,7 +17,6 @@ function self_test(source::Source{P,T}) where {P,T}
 
     # Example data with correct dimensions and types from P and T
     x = SVector(ntuple(i->zero(T),dim(P)))
-    radius = one(T)
     ω = one(T)
 
     # Check that the result of field has same dimension and type as PhysicalProperty field
@@ -29,9 +28,9 @@ function self_test(source::Source{P,T}) where {P,T}
 
     # Check that the result of field has same dimension as field dimension of P
     if field_dim(P) == 1
-        source.coef(1,x,radius,ω)::Union{Complex{T},SVector{field_dim(P),Complex{T}}}
+        source.coef(1,x,ω)::Union{Complex{T},SVector{field_dim(P),Complex{T}}}
     else
-        source.coef(1,x,radius,ω)::SVector{field_dim(P),Complex{T}}
+        source.coef(1,x,ω)::SVector{field_dim(P),Complex{T}}
     end
 
     return true
@@ -39,14 +38,14 @@ end
 
 function TwoDimAcousticPointSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*hankelh1(0,ω/medium.c*norm(x-source_position))
-    coef(n,center,radius,ω) = n*one(Complex{T})
+    coef(n,center,ω) = n*one(Complex{T})
 
     return Source{Acoustic{2,T},T}(field,coef)
 end
 
 function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*exp(ω/medium.c*dot(x-source_position,source_direction))
-    coef(n,center,radius,ω) = (one(T)*im)^n
+    coef(n,center,ω) = exp(im * (ω/medium.c * dot(center.-source_position, source_direction) + n * T(pi) / 2))
 
     return Source{Acoustic{2,T},T}(field,coef)
 end
@@ -54,7 +53,7 @@ end
 import Base.(+)
 function +(s1::Source{P,T},s2::Source{P,T})::Source{P,T} where {P,T}
     field(x,ω) = s1.field(x,ω) + s2.field(x,ω)
-    coef(n,center,radius,ω) = s1.coef(n,center,radius,ω) + s2.coef(n,center,radius,ω)
+    coef(n,center,ω) = s1.coef(n,center,ω) + s2.coef(n,center,ω)
 
     Source{P,T}(field,coef)
 end
@@ -66,7 +65,7 @@ function *(a,s::Source{P,T})::Source{P,T} where {P,T}
     end
 
     field(x,ω) = a*s.field(x,ω)
-    coef(n,center,radius,ω) = a*s.coef(n,center,radius,ω)
+    coef(n,center,ω) = a*s.coef(n,center,ω)
 
     Source{P,T}(field,coef)
 end
