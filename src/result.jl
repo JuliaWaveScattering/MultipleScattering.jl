@@ -1,31 +1,31 @@
 
 "Abstract class for Results of Simulations"
-abstract type Result end
+abstract type SimulationResult{Dim,T} end
 
-struct FrequencySimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{Dim,FieldDim,T}, T <: AbstractFloat, Dim::Int
-    field::Matrix{MVector{T,FieldDim}}
-    x::Vector{MVector{T,FieldDim}}
+struct FrequencySimulationResult{Dim,FieldDim,P<:PhysicalProperties,T<:AbstractFloat} <: SimulationResult{Dim,T}
+    field::Matrix{MVector{FieldDim,T}}
+    x::Vector{MVector{Dim,T}}
     ω::RowVector{T}
 end
 
-struct TimeSimulationResult{P,T,Dim} <: Result where P <: PhysicalProperties{Dim,FieldDim,T}, T <: AbstractFloat, Dim::Int
-    field::Vector{Vector{{MVector{T,FieldDim}}}}
+struct TimeSimulationResult{Dim,FieldDim,P<:PhysicalProperties,T<:AbstractFloat} <: SimulationResult{Dim,T}
+    field::Matrix{MVector{FieldDim,T}}
     x::Vector{MVector{Dim,T}}
     t::RowVector{T}
 end
 
-import Base.union
 
+import Base.union
 """
 Combine two FrequencyResults intelligently, allows user to optionally sort ω
 and x
 """
-function union(r1::FrequencySimulationResult, r2::FrequencySimulationResult; sort::function=identity)
+function union(r1::FrequencySimulationResult, r2::FrequencySimulationResult; sort::Function = identity)
     if r1.x == r2.x
     elseif r1.k == r2.k
     end
 end
 
-function union(r1::R1,r2::R2) where R1, R2 <: Result
-    error("No implementation of union found for Results of type $(typeof(r1)) and $(typeof(r2))")
+function union(r1::SimulationResult,r2::SimulationResult)
+    error("No implementation of union found for Simulation Results of type $(typeof(r1)) and $(typeof(r2))")
 end

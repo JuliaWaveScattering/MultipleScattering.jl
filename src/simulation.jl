@@ -1,32 +1,35 @@
-abstract type Simulation{T,Dim} end
+abstract type Simulation{Dim,T} end
 
-mutable struct FrequencySimulation{P,T,Dim} <: Simulation{T,Dim} where T <: AbstractFloat, P <: PhysicalProperties{Dim,FieldDim,T}, Dim::Int
+mutable struct FrequencySimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <: Simulation{Dim,T}
     medium::P
-    particles::Vector{Particle{P,T,Dim}}
+    particles::Vector{AbstractParticle{Dim,T}}
     source::Source{P,T}
 end
 
-# Type aliases for convenience
-TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{Acoustics{T},T,2}
+TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{2,Acoustic{2,T},T}
 
+import Base.run
 
-function run(sim::FrequencySimulation{P,T,Dim}, ω::T, x::SVector{Dim,T})
+# Main run function, all other run functions use this
+function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{MVector{Dim,T}})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
 end
 
-function run(sim::FrequencySimulation{P,T,Dim}, ω::T, x::Vector{SVector{Dim,T}})
+function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::Vector{MVector{Dim,T}})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    # Compute for each angular frequency, then join up all the results
+    mapreduce(ω->run(sim,ω,x), union, ω)
 end
 
-function run(sim::FrequencySimulation{P,T,Dim}, ω::Vector{T}, x::SVector{Dim,T})
+function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::MVector{Dim,T})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    run(sim,ω,[x])
 end
 
-function run(sim::FrequencySimulation{P,T,Dim}, ω::Vector{T}, x::Vector{SVector{Dim,T}})
+function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::MVector{Dim,T})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    run(sim,[ω],[x])
 end
 
-
-
-mutable struct TimeSimulation{P,T,Dim} <: Simulation{T,Dim} where T <: AbstractFloat, P <: PhysicalProperties{Dim,FieldDim,T}, Dim::Int
+mutable struct TimeSimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <: Simulation{Dim,T}
     medium::P
-    particles::Vector{Particle{P,T,Dim}}
+    particles::Vector{AbstractParticle{Dim,T}}
     source::Source{P,T}
-    impulse::Impulse{P,T}
+    impulse::Function
 end

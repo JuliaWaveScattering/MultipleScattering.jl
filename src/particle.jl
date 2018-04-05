@@ -1,5 +1,7 @@
 
-type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat}
+abstract type AbstractParticle{Dim,T} end
+
+type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat} <: AbstractParticle{Dim,T}
     position::MVector{Dim,T}
     medium::P
     shape::S

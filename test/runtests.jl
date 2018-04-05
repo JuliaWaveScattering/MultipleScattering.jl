@@ -1,52 +1,60 @@
+import Base.Test: @testset, @test, @test_throws
+
+import StaticArrays: MVector
+
 using MultipleScattering
-using Base.Test
-using Plots
 
-@testset "Summary" begin
+@testset "Tests" begin
+    x = MVector(1.0,1.0)
+    circle = Circle(2.0)
+    rect = Rectangle(2.0,3.0)
 
-    include("shapetests.jl")
-    include("particle_tests.jl")
-    include("time_simulation_tests.jl")
-    include("moments_tests.jl")
+    @test volume(circle) == π*2.0^2
+    @test volume(rect) == 2.0*3.0
 
-    # test our discretised Fourier transforms
-    @testset "Fourier tranforms" begin
-      include("fourier_test.jl")
-      @test fourier_test()
-    end
+    # 2D Acoustic
+    a2 = Acoustic(1.0,1.0 + 0.0im,2)
+    @test dim(a2) == 2
+    @test field_dim(a2) == 1
 
-    @testset "Type stability" begin
-        # Define everything as a Float32
-        volfrac = 0.01f0
-        radius = 1.0f0
-        k_arr = collect(linspace(0.01f0,1.0f0,100))
-        simulation = FrequencySimulation(volfrac,radius,k_arr)
-        @test typeof(simulation.response[1]) == Complex{Float32}
-    end
+    # 3D Acoustic
+    a3 = Acoustic(1.0,1.0 + 0.0im,3)
+    @test dim(a3) == 3
+    @test field_dim(a3) == 1
 
-    @testset "Single scatterer" begin
-        include("single_scatter.jl")
-        # Test against analytic solution
-        @test single_scatter_test()
-    end
+    # Construct three particles, with two the same
+    p = Particle(x,a2,circle)
+    p_identical = Particle(x,a2,circle)
+    p_different = Particle(x,a2,rect)
 
-    @testset "Boundary conditions" begin
-        include("boundary_conditions.jl")
-        # Test boundary conditions for 4 particles with random properties and positions.
-        @test boundary_conditions_test()
-    end
+    # Test comparison operators
+    @test p == p_identical
+    @test p != p_different
 
-    @testset "Plot FrequencySimulation" begin
-        # Just run it to see if we have any errors (yes thats a very low bar)
-        volfrac = 0.01
-        radius = 2.0
-        k_arr = collect(linspace(0.2,1.0,5))
-        simulation = FrequencySimulation(volfrac,radius,k_arr)
+    # Cannot combine a 2D vector and shape with 3D physics
+    @test_throws MethodError Particle(x,a3,circle)
 
-        plot(simulation)
-        plot(simulation,0.2)
+    # Create two point sources
+    source_position = MVector(0.0,1.0)
+    amplitude = 1.0
+    s1 = TwoDimAcousticPointSource(a2, source_position, amplitude)
+    s2 = TwoDimAcousticPointSource(a2, 2.*source_position, amplitude)
 
-        @test true
-    end
+    # Create new souce as a linear combination of two other sources
+    s3 = 2*s1 + s2
+
+    # Check that the field is indeed a linear conbination
+    @test s3.field(x,1.0) == 2*s1.field(x,1.0) + s2.field(x,1.0)
+
+    a2_host = Acoustic(1.0,1.0 + 0.0im,2)
+
+    t = t_matrix(circle, a2, a2_host, 0.5, 10)
+    @test typeof(t) == Diagonal{Float64}
+
+    @test_throws DomainError t_matrix(circle, Acoustic(Inf, 0.0im, 2), Acoustic(1.0, 1.0+0.0im, 2), 0.5, 10)
+    @test_throws DomainError t_matrix(circle, Acoustic(1.0, 1.0+0.0im, 2), Acoustic(0.0, Inf*im, 2), 0.5, 10)
+    @test_throws DomainError t_matrix(circle, Acoustic(1.0, 0.0im, 2), Acoustic(1.0, 0.0im, 2), 0.5, 10)
+    @test_throws DomainError t_matrix(circle, Acoustic(0.0, 1.0im, 2), Acoustic(0.0, 1.0+0.0im, 2), 0.5, 10)
+    @test_throws DomainError t_matrix(Circle(0.0), a2, a2_host, 0.5, 10)
 
 end
