@@ -11,7 +11,7 @@ TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{2,Acoustic{2,T},T}
 import Base.run
 
 # Main run function, all other run functions use this
-function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{SVector{Dim,T}})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{SVector{Dim,T}}) where {Dim,P,T}
 
     # Number of Hankel modes
     Nh = 5
@@ -23,7 +23,7 @@ function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{SVector{Dim,T}}
     S = scattering_matrix(sim.medium, sim.particles, t_matrices, ω, Nh)
 
     # Get forcing vector for this source
-    f = forcing(sim.source, sim.partices, t_matrices, ω, Nh)
+    f = forcing(sim.source, sim.particles, t_matrices, ω, Nh)
 
     # Find Hankel coefficients by solving scattering matrix for this forcing
     a = f\S
@@ -46,7 +46,7 @@ function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::SVector{Dim,T})::Frequ
 end
 
 function forcing(source::Source{P,T}, particles::Vector{AbstractParticle{Dim,T}}, t_matrices::Vector{AbstractMatrix}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Dim,P,T}
-    mat = [source.get_coefs(n,p.position,ω) for n in -Nh:Nh, p in particles]
+    mat = [source.coef(n,p.position,ω) for n in -Nh:Nh, p in particles]
     f = Vector{Complex{T}}(prod(size(mat)))
     H = 2Nh + 1
     for i in eachindex(particles)

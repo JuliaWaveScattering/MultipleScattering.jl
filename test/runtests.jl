@@ -64,4 +64,10 @@ using MultipleScattering
     t_matrices = get_t_matrices(a2_host, particles, ω, Nh)
     S = scattering_matrix(a2_host, particles, t_matrices, ω, Nh)
 
+    source = TwoDimAcousticPlanarSource(a2_host, SVector(-10.0,0.0), SVector(1.0,0.0), 1.0)
+    sim = TwoDimAcousticFrequencySimulation{Float64}(a2_host, particles, source)
+
+    listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
+    run(sim, ω, listener_positions)
+
 end

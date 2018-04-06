@@ -6,7 +6,7 @@ export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
 export Particle, (==)
 export Source, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
-export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation
+export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation, forcing
 export SimulationResult, FrequencySimulationResult, TimeSimulationResult
 export SimulationDistribution, FrequencySimulationDistribution, sample
 export t_matrix, get_t_matrices
