@@ -5,9 +5,11 @@ import StaticArrays: SVector
 using MultipleScattering
 
 @testset "Tests" begin
-    x = SVector(1.0,1.0)
-    circle = Circle(2.0)
-    rect = Rectangle(2.0,3.0)
+    x = SVector(1.0, 1.0)
+    x2 = SVector(5.0, 5.0)
+    circle = Circle(x, 2.0)
+    circle_congruent = Circle(x2, 2.0)
+    rect = Rectangle(x, 2.0, 3.0)
 
     @test volume(circle) == π*2.0^2
     @test volume(rect) == 2.0*3.0
@@ -23,16 +25,19 @@ using MultipleScattering
     @test field_dim(a3) == 1
 
     # Construct three particles, with two the same
-    p = Particle(x,a2,circle)
-    p_identical = Particle(x,a2,circle)
-    p_different = Particle(x,a2,rect)
+    p = Particle(a2,circle)
+    p_identical = Particle(a2,circle)
+    p_different = Particle(a2,rect)
+    p_congruent = Particle(a2,circle_congruent)
 
     # Test comparison operators
     @test p == p_identical
     @test p != p_different
+    @test congruent(p, p_congruent)
+    @test !congruent(p, p_different)
 
     # Cannot combine a 2D vector and shape with 3D physics
-    @test_throws MethodError Particle(x,a3,circle)
+    @test_throws MethodError Particle(a3,circle)
 
     # Create two point sources
     source_position = SVector(0.0,1.0)
@@ -55,12 +60,11 @@ using MultipleScattering
     @test_throws DomainError t_matrix(circle, Acoustic(1.0, 1.0+0.0im, 2), Acoustic(0.0, Inf*im, 2), 0.5, 10)
     @test_throws DomainError t_matrix(circle, Acoustic(1.0, 0.0im, 2), Acoustic(1.0, 0.0im, 2), 0.5, 10)
     @test_throws DomainError t_matrix(circle, Acoustic(0.0, 1.0im, 2), Acoustic(0.0, 1.0+0.0im, 2), 0.5, 10)
-    @test_throws DomainError t_matrix(Circle(0.0), a2, a2_host, 0.5, 10)
+    @test_throws DomainError t_matrix(Circle(x, 0.0), a2, a2_host, 0.5, 10)
 
-    x2 = SVector(5.0,5.0)
     ω = 0.8
     Nh = 5
-    particles = [Particle(x,a2,circle), Particle(x2,a2,circle)]
+    particles = [Particle(a2, circle), Particle(a2, circle_congruent)]
     t_matrices = get_t_matrices(a2_host, particles, ω, Nh)
     S = scattering_matrix(a2_host, particles, t_matrices, ω, Nh)
 

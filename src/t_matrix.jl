@@ -17,17 +17,20 @@ vector.
 function get_t_matrices(medium::PhysicalProperties, particles::Vector, ω::AbstractFloat, Nh::Integer)::Vector
 
     t_matrices = Vector{AbstractMatrix}(length(particles))
-    congruent_particles = Vector{Tuple{PhysicalProperties,Shape}}(0)
+
+    # Vector of particles unique up to congruence, and the respective T-matrices
+    unique_particles = Vector{AbstractParticle}(0)
+    unique_t_matrices = Vector{AbstractMatrix}(0)
 
     for p_i in eachindex(particles)
         p = particles[p_i]
 
-        # If we have calculated this T-matrix before, just link to that one
+        # If we have calculated this T-matrix before, just point to that one
         found = false
-        for cp_i in eachindex(congruent_particles)
-            cp = particles(cp_i)
-            if p.shape == cp.shape && p.medium == cp.medium
-                t_matrices[p_i] = t_matrices[cp_i]
+        for cp_i in eachindex(unique_particles)
+            cp = unique_particles[cp_i]
+            if congruent(p, cp)
+                t_matrices[p_i] = unique_t_matrices[cp_i]
                 found = true
                 break
             end
@@ -36,6 +39,8 @@ function get_t_matrices(medium::PhysicalProperties, particles::Vector, ω::Abstr
         # Congruent particle was not found, we must calculate this t-matrix
         if !found
             t_matrices[p_i] = t_matrix(p.shape, p.medium, medium, ω, Nh)
+            push!(unique_particles, particles[p_i])
+            push!(unique_t_matrices, t_matrices[p_i])
         end
 
     end

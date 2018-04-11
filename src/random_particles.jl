@@ -41,7 +41,7 @@ function random_particles!{T}(particles::Vector{Particle{T}}, shape::Shape;
     separation_ratio = 1.05
     # The factor 2.1radius is seen in several papers (therefore ratio of 1.05)
 
-    bounds = bounding_box(shape)
+    bounds = bounding_rectangle(shape)
     topright = bounds.topright
     bottomleft = bounds.bottomleft
 

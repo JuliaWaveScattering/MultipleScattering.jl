@@ -46,7 +46,7 @@ function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::SVector{Dim,T})::Frequ
 end
 
 function forcing(source::Source{P,T}, particles::Vector{AbstractParticle{Dim,T}}, t_matrices::Vector{AbstractMatrix}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Dim,P,T}
-    mat = [source.coef(n,p.position,ω) for n in -Nh:Nh, p in particles]
+    mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
     f = Vector{Complex{T}}(prod(size(mat)))
     H = 2Nh + 1
     for i in eachindex(particles)

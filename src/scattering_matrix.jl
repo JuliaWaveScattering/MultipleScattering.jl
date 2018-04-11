@@ -21,7 +21,7 @@ function scattering_matrix(medium::PhysicalProperties, particles::Vector, t_matr
         if j == l
             return eye(Complex{T}, H, H)
         else
-            x_jl = particles[j].position .- particles[l].position
+            x_jl = origin(particles[j]) .- origin(particles[l])
             # Faire: basis functions could be more efficient if it returned a vector
             basis_vec = OffsetArray(map(m->basis_function(m,x_jl), -2Nh:2Nh),-2Nh:2Nh)
             mat = [basis_vec[p-m] for m in -Nh:Nh, p in -Nh:Nh]

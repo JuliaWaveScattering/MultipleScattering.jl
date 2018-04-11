@@ -1,6 +1,9 @@
 module MultipleScattering
 
-export Shape, Circle, Rectangle, volume, name
+__precompile__()
+
+export Shape, Circle, Rectangle, volume, name, congruent, inside,
+       boundary_functions
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        get_basis_function, dim, field_dim
 export Particle, (==)
@@ -21,7 +24,7 @@ import OffsetArrays: OffsetArray
 using RecipesBase
 using ProgressMeter
 
-include("shape.jl")
+include("shapes/shapes.jl")
 include("physics.jl")
 include("particle.jl")
 include("source.jl")
