@@ -26,7 +26,7 @@ function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{SVector{Dim,T}}
     f = forcing(sim.source, sim.particles, t_matrices, ω, Nh)
 
     # Find Hankel coefficients by solving scattering matrix for this forcing
-    a = f\S
+    a = S\f
 
     # Evaluate Hankel series at the requested x positions
 
