@@ -77,7 +77,7 @@ construct the set of particles, define their positions, radii and give them
 specific material properties. For all examples see [here](example/README.md).
 
 ## Acknowledgements and contributing
-This library was restructured from one written by Artur Gower and Jonathan
+This library was restructured from one written by [Artur L Gower](https://arturgower.github.io/) and Jonathan
 Deakin.
 Please contribute, if nothing else, criticism is welcome.
 We are relatively new to Julia, and this is our first package, if anything is
