@@ -1,6 +1,6 @@
-module MultipleScattering
-
 __precompile__()
+
+module MultipleScattering
 
 export Shape, Circle, Rectangle, volume, name, congruent, inside,
        boundary_functions
@@ -34,5 +34,8 @@ include("random.jl")
 include("diffbessel.jl")
 include("t_matrix.jl")
 include("scattering_matrix.jl")
+
+# Precompile hints
+include("precompile.jl")
 
 end # module
