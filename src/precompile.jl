@@ -1,5 +1,4 @@
-# This doesn't actually change the first run time....
-println("Precompile hints")
+
 # Precompile most objects in Float64, as it will be most commonly used
 circle1 = Circle((1.0,2.0), 0.5)
 circle2 = Circle((0.0,1.0), 0.5)
