@@ -4,6 +4,10 @@ struct Circle{T} <: Shape{2,T}
     radius::T
 end
 
+# Alternate constructors, where type is inferred naturally
+Circle(origin::Tuple{T,T}, radius::T) where {T} = Circle{T}(origin, radius)
+Circle(origin::Vector{T}, radius::T) where {T} = Circle{T}(origin, radius)
+
 name(shape::Circle) = "Circle"
 
 function volume{T}(shape::Circle{T})

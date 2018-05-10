@@ -16,6 +16,9 @@ function Rectangle(bottomleft::SVector{2,T}, topright::SVector{2,T}) where {T}
     Rectangle{T}(origin, width, height)
 end
 
+# Alternate constructors, where type is inferred naturally
+Rectangle(origin::Tuple{T,T}, width::T, height::T) where {T} = Rectangle{T}(origin, width, height)
+Rectangle(origin::Vector{T}, width::T, height::T) where {T} = Rectangle{T}(origin, width, height)
 
 name(shape::Rectangle) = "Rectangle"
 
