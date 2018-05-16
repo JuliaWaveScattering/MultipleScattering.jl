@@ -11,19 +11,19 @@ TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{2,Acoustic{2,T},T}
 import Base.run
 
 # Main run function, all other run functions use this
-function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{SVector{Dim,T}}) where {Dim,P,T}
+function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::Vector{SVector{Dim,T}}; hankel_order::Int = 5) where {Dim,P,T}
 
     # Number of Hankel modes
-    Nh = 5
+    hankel_order;
 
     # Precompute T-matrices for these particles
-    t_matrices = get_t_matrices(sim.medium, sim.particles, ω, Nh)
+    t_matrices = get_t_matrices(sim.medium, sim.particles, ω, hankel_order)
 
-    # Compute scattering matrix
-    S = scattering_matrix(sim.medium, sim.particles, t_matrices, ω, Nh)
+    # Compute scattering matrix for all particles
+    S = scattering_matrix(sim.medium, sim.particles, t_matrices, ω, hankel_order)
 
     # Get forcing vector for this source
-    f = forcing(sim.source, sim.particles, t_matrices, ω, Nh)
+    f = forcing(sim.source, sim.particles, t_matrices, ω, hankel_order)
 
     # Find Hankel coefficients by solving scattering matrix for this forcing
     a = S\f
@@ -50,7 +50,7 @@ function forcing(source::Source{P,T}, particles::Vector{AbstractParticle{Dim,T}}
     f = Vector{Complex{T}}(prod(size(mat)))
     H = 2Nh + 1
     for i in eachindex(particles)
-        f[(i-1)*H+1:i*H] .= t_matrices[i]*mat[:,i]
+        f[((i-1)*H+1):(i*H)] .= t_matrices[i]*mat[:,i]
     end
     return f
 end

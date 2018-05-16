@@ -51,17 +51,7 @@ using MultipleScattering
     # Check that the field is indeed a linear conbination
     @test s3.field(x,1.0) == 2*s1.field(x,1.0) + s2.field(x,1.0)
 
-    # Test the bessel expansions of the source
-    ω = 0.8
-    centre =  SVector(1.0,0.0)
-    s3_besselj = besselj_field(s3, a2, centre; hankel_order = 7)
-    xs = [centre + 0.1.*[cos(τ),sin(τ)] for τ = 0.0:0.3:1.5]
-    @test norm([s3.field(x,ω) - s3_besselj(x,ω) for x in xs]) < 1e-7*norm([s3.field(x,ω) for x in xs])
-
     a2_host = Acoustic(1.0,1.0 + 0.0im,2)
-    source = TwoDimAcousticPlanarSource(a2_host, SVector(-10.0,0.0), SVector(1.0,0.0), 1.0)
-    source_besselj = besselj_field(source, a2_host, centre)
-    @test norm([source.field(x,ω) - source_besselj(x,ω) for x in xs]) < 2e-9*norm([source.field(x,ω) for x in xs])
 
     t = t_matrix(circle, a2, a2_host, 0.5, 10)
     @test typeof(t) == Diagonal{Complex{Float64}}
@@ -72,16 +62,31 @@ using MultipleScattering
     @test_throws DomainError t_matrix(circle, Acoustic(0.0, 1.0im, 2), Acoustic(0.0, 1.0+0.0im, 2), 0.5, 10)
     @test_throws DomainError t_matrix(Circle(x, 0.0), a2, a2_host, 0.5, 10)
 
+    # Test the bessel expansions of the source
+    ω = 0.8
+    centre =  SVector(1.0,0.0)
+    s3_besselj = besselj_field(s3, a2, centre; hankel_order = 7)
+    xs = [centre + 0.1.*[cos(τ),sin(τ)] for τ = 0.0:0.3:1.5]
+    @test norm([s3.field(x,ω) - s3_besselj(x,ω) for x in xs]) < 1e-7*norm([s3.field(x,ω) for x in xs])
+
+    source = TwoDimAcousticPlanarSource(a2_host, SVector(-10.0,0.0), SVector(1.0,0.0), 1.0)
+    source_besselj = besselj_field(source, a2_host, centre)
+    @test norm([source.field(x,ω) - source_besselj(x,ω) for x in xs]) < 2e-9*norm([source.field(x,ω) for x in xs])
+
     ω = 0.8
     Nh = 5
-    particles = [Particle(a2, circle), Particle(a2, circle_congruent)]
+    sound_soft = Acoustic(0.,0.1 + 0.0im,2)
+
+    particles = [Particle(sound_soft, circle), Particle(sound_soft, circle_congruent)]
     t_matrices = get_t_matrices(a2_host, particles, ω, Nh)
     S = scattering_matrix(a2_host, particles, t_matrices, ω, Nh)
 
-    source = TwoDimAcousticPlanarSource(a2_host, SVector(-10.0,0.0), SVector(1.0,0.0), 1.0)
     sim = TwoDimAcousticFrequencySimulation{Float64}(a2_host, particles, source)
 
-    listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
-    run(sim, ω, listener_positions)
+    points = boundary_points.(particles)
+
+    # listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
+    listener_positions = vcat(points...)
+    run(sim, ω, listener_positions; hankel_order =5)
 
 end

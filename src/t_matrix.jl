@@ -2,7 +2,7 @@
 """
 Returns a 2M+1 by 2M+1 T-matrix for particle with specific shape, physical
 properties in a medium with a specific physical property at a specific angular
-wavenumber.
+wavenumber. See doc/T-matrix.pdf for details.
 """
 function t_matrix(shape::Shape{T}, inner_medium::PhysicalProperties{Dim,FieldDim,T}, outer_medium::PhysicalProperties{Dim,FieldDim,T}, ω::T, M::Integer)::AbstractMatrix{T} where {Dim,FieldDim,T<:AbstractFloat}
     # Returns error unless overloaded for specific type
@@ -90,5 +90,5 @@ function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::
     # Get Zns for positive m
     Zns = map(Zn,0:M)
 
-    return Diagonal(vcat(reverse(Zns), Zns[2:end]))
+    return - Diagonal(vcat(reverse(Zns), Zns[2:end]))
 end
