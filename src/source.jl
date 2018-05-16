@@ -39,8 +39,8 @@ end
 function TwoDimAcousticPointSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*Complex{T}(im/4)*hankelh1(0,ω/medium.c*norm(x-source_position))
     # using Graf's addition theorem
-    coef(n,center,ω) = amplitude*Complex{T}(im/4)*hankelh1(-n,ω/medium.c*norm(center - source_position))*
-exp(-Complex{T}(im)*atan2(center[2] - source_position[2], center[1] - source_position[1]))
+    coef(n,centre,ω) = amplitude*Complex{T}(im/4)*hankelh1(-n,ω/medium.c*norm(centre - source_position))*
+exp(-Complex{T}(im)*atan2(centre[2] - source_position[2], centre[1] - source_position[1]))
 
     return Source{Acoustic{2,T},T}(field,coef)
 end
@@ -48,7 +48,7 @@ end
 function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*exp(ω/medium.c*dot(x-source_position,source_direction))
     # Jacobi-Anger expansion
-    coef(n,center,ω) = field(center,ω) * exp(im * n *(T(pi)/2 + atan2(source_direction[2],source_direction[1]) -T(2)*atan2(centre[2],centre[1]) ))
+    coef(n,centre,ω) = field(centre,ω) * exp(im * n *(T(pi)/2 + atan2(source_direction[2],source_direction[1]) -T(2)*atan2(centre[2],centre[1]) ))
 
     return Source{Acoustic{2,T},T}(field,coef)
 end
@@ -56,7 +56,7 @@ end
 import Base.(+)
 function +(s1::Source{P,T},s2::Source{P,T})::Source{P,T} where {P,T}
     field(x,ω) = s1.field(x,ω) + s2.field(x,ω)
-    coef(n,center,ω) = s1.coef(n,center,ω) + s2.coef(n,center,ω)
+    coef(n,centre,ω) = s1.coef(n,centre,ω) + s2.coef(n,centre,ω)
 
     Source{P,T}(field,coef)
 end
@@ -68,7 +68,7 @@ function *(a,s::Source{P,T})::Source{P,T} where {P,T}
     end
 
     field(x,ω) = a*s.field(x,ω)
-    coef(n,center,ω) = a*s.coef(n,center,ω)
+    coef(n,centre,ω) = a*s.coef(n,centre,ω)
 
     Source{P,T}(field,coef)
 end
