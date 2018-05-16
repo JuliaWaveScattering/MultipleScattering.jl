@@ -3,7 +3,7 @@ __precompile__()
 module MultipleScattering
 
 export Shape, Circle, Rectangle, volume, name, congruent, inside,
-       boundary_functions, boundary_points 
+       boundary_functions, boundary_points
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        get_basis_function, dim, field_dim
 export Particle, (==)
@@ -30,7 +30,7 @@ include("particle.jl")
 include("source.jl")
 include("simulation.jl")
 include("result.jl")
-include("random.jl")
+include("random/random.jl")
 include("diffbessel.jl")
 include("t_matrix.jl")
 include("scattering_matrix.jl")

@@ -84,9 +84,8 @@ using MultipleScattering
     sim = TwoDimAcousticFrequencySimulation{Float64}(a2_host, particles, source)
 
     points = boundary_points.(particles)
-
     # listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
-    listener_positions = vcat(points...)
+    listener_positions = SVector{2,Float64}.(vcat(points...))
     run(sim, ω, listener_positions; hankel_order =5)
 
 end
