@@ -48,7 +48,7 @@ end
 function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*exp(ω/medium.c*dot(x-source_position,source_direction))
     # Jacobi-Anger expansion
-    coef(n,center,ω) = field(center,ω) * exp(im * n *(T(pi)/2 + atan(source_direction[2],source_direction[1]) -T(2)*atan(centre[2],centre[1]) ))
+    coef(n,center,ω) = field(center,ω) * exp(im * n *(T(pi)/2 + atan2(source_direction[2],source_direction[1]) -T(2)*atan2(centre[2],centre[1]) ))
 
     return Source{Acoustic{2,T},T}(field,coef)
 end
