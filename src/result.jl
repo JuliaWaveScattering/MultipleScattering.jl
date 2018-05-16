@@ -14,6 +14,31 @@ struct TimeSimulationResult{Dim,FieldDim,P<:PhysicalProperties,T<:AbstractFloat}
     t::RowVector{T}
 end
 
+"""
+Get vector field from result as a matrix
+"""
+field(result::SimulationResult) = result.field
+
+"""
+Get vector field from result, with x-index i and ω-index j
+"""
+function field(result::FrequencySimulationResult, i::Integer, j::Integer)
+    result.field[i,j]
+end
+
+"""
+Get scalar field from result as a matrix
+"""
+function field(result::FrequencySimulationResult{Dim,1,P,T})::Matrix{Complex{T}} where {Dim, T, P<:PhysicalProperties{Dim,1,T}}
+    map(x->x[1], result.field)
+end
+
+"""
+Get scalar field from result, with x-index i and ω-index j
+"""
+function field(result::FrequencySimulationResult{Dim,1,P,T}, i::Integer, j::Integer)::Complex{T} where {Dim, T, P<:PhysicalProperties{Dim,1,T}}
+    result.field[i,j][1]
+end
 
 import Base.union
 """
