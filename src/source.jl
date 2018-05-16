@@ -37,15 +37,18 @@ function self_test(source::Source{P,T}) where {P,T}
 end
 
 function TwoDimAcousticPointSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
-    field(x,ω) = amplitude*hankelh1(0,ω/medium.c*norm(x-source_position))
-    coef(n,center,ω) = n*one(Complex{T})
+    field(x,ω) = amplitude*Complex{T}(im/4)*hankelh1(0,ω/medium.c*norm(x-source_position))
+    # using Graf's addition theorem
+    coef(n,center,ω) = amplitude*Complex{T}(im/4)*hankelh1(-n,ω/medium.c*norm(center - source_position))*
+exp(-Complex{T}(im)*atan2(center[2] - source_position[2], center[1] - source_position[1]))
 
     return Source{Acoustic{2,T},T}(field,coef)
 end
 
 function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T}, amplitude::T)::Source{Acoustic{2,T},T}
     field(x,ω) = amplitude*exp(ω/medium.c*dot(x-source_position,source_direction))
-    coef(n,center,ω) = exp(im * (ω/medium.c * dot(center.-source_position, source_direction) + n * T(pi) / 2))
+    # Jacobi-Anger expansion
+    coef(n,center,ω) = field(center,ω) * exp(im * n *(T(pi)/2 + atan(source_direction[2],source_direction[1]) -T(2)*atan(centre[2],centre[1]) ))
 
     return Source{Acoustic{2,T},T}(field,coef)
 end

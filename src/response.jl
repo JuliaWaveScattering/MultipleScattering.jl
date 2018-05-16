@@ -5,7 +5,9 @@ function response{T}(simulation::FrequencySimulation{T}, k::T)
     # the matrix of scattering coefficient mat is given by mat[m,p] = Zn_vec[m,p]*A_mat[m,p]
     # where mat[m+hankel_order+1,p] is the coefficient for hankelh1[m, kr] of the p-th particle[:,p]
 
-    return [response_at(simulation, k, coefficient_matrix, simulation.listener_positions[:,i]) for i in 1:size(simulation.listener_positions,2)]
+    return [
+        response_at(simulation, k, coefficient_matrix, simulation.listener_positions[:,i]) 
+    for i in 1:size(simulation.listener_positions,2)]
 end
 
 function response_at{T}(simulation::FrequencySimulation{T}, k::T, coefficient_matrix::Matrix{Complex{T}}, x::Vector{T})
