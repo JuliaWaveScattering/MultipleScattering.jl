@@ -20,7 +20,6 @@ origin(p::Particle) = origin(p.shape)
 boundary_points(p::Particle, num_points::Int = 3) = boundary_points(p.shape,num_points)
 
 CircleParticle{P, T} = Particle{2, P, Circle{T}, T}
-AcousticCircleParticle{T} = Particle{2, Acoustic{2, T}, Circle{T}, T}
 
 volume(p::Particle) = volume(p.shape)
 

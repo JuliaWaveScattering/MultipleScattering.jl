@@ -6,7 +6,6 @@ mutable struct FrequencySimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <
     source::Source{P,T}
 end
 
-TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{2,Acoustic{2,T},T}
 
 import Base.run
 

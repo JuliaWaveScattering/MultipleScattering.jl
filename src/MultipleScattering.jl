@@ -24,16 +24,21 @@ import OffsetArrays: OffsetArray
 using RecipesBase
 using ProgressMeter
 
+# Generic machinery common to all physical models
 include("shapes/shapes.jl")
-include("physics.jl")
+include("physics/physical_properties.jl")
 include("particle.jl")
 include("source.jl")
 include("simulation.jl")
 include("result.jl")
 include("random/random.jl")
-include("diffbessel.jl")
 include("t_matrix.jl")
 include("scattering_matrix.jl")
+
+# Specific physical models
+include("physics/diffbessel.jl")
+include("physics/acoustics.jl")
+include("physics/electromagnetism.jl")
 
 # Precompile hints
 include("precompile.jl")
