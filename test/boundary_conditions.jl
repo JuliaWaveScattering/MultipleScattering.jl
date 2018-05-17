@@ -1,5 +1,5 @@
 
-"runs a test for the boundary conditions of penetrable particles nad returns true if passed."
+"runs a test for the boundary conditions of penetrable particles and returns true if passed."
 function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
     srand(seed) # a non-default seed may not pass all tests
     # generate 4 particles with random material properties

@@ -6,7 +6,6 @@ mutable struct FrequencySimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <
     source::Source{P,T}
 end
 
-
 import Base.run
 
 # Main run function, all other run functions use this
