@@ -65,7 +65,7 @@ using MultipleScattering
     # Test the bessel expansions of the source
     ω = 0.8
     centre =  SVector(1.0,0.0)
-    s3_besselj = besselj_field(s3, a2, centre; hankel_order = 7)
+    s3_besselj = besselj_field(s3, a2, centre; basis_order = 7)
     xs = [centre + 0.1.*[cos(τ),sin(τ)] for τ = 0.0:0.3:1.5]
     @test norm([s3.field(x,ω) - s3_besselj(x,ω) for x in xs]) < 1e-7*norm([s3.field(x,ω) for x in xs])
 
@@ -86,6 +86,6 @@ using MultipleScattering
     points = boundary_points.(particles)
     # listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
     listener_positions = SVector{2,Float64}.(vcat(points...))
-    run(sim, ω, listener_positions; hankel_order =5)
+    run(sim, ω, listener_positions; basis_order =5)
 
 end

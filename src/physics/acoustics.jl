@@ -13,7 +13,7 @@ Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{Dim,T}(ρ,c)
 
 name(a::Acoustic{Dim,T}) where {Dim,T} = "$(Dim)D Acoustic"
 
-function get_basis_function(medium::Acoustic{2,T}, ω::T) where {T}
+function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan2(x[2],x[1])
@@ -112,11 +112,11 @@ end
 """
 Returns a function that gives the value of the besselj expansion centred at centre
 """
-function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; hankel_order = 4) where T<:Number
+function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; basis_order = 4) where T<:Number
 
     field(x,ω) = sum(
         source.coef(n,centre,ω)*besselj(n,ω/medium.c*norm(x - centre))*exp(im*n*atan2(x[2] - centre[2],x[1] - centre[1]))
-    for n = -hankel_order:hankel_order)
+    for n = -basis_order:basis_order)
 
    return field
 end

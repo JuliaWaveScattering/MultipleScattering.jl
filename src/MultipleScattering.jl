@@ -5,7 +5,7 @@ module MultipleScattering
 export Shape, Circle, Rectangle, volume, name, congruent, inside,
        boundary_functions, boundary_points
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
-       get_basis_function, dim, field_dim
+       basis_function, dim, field_dim
 export Particle, (==)
 export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)

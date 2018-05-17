@@ -19,6 +19,6 @@ dim(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T}} = D
 """
 Basis functions in a specific dimension for a specific physics type.
 """
-function get_basis_function(medium::PhysicalProperties, ω::T) where {T}
-    error("Get basis function not implmented for this physics type.")
+function basis_function(medium::PhysicalProperties, ω::T) where {T}
+    error("No basis function implmented for this physics type.")
 end
