@@ -63,19 +63,45 @@ function basis_coefficients(sim::FrequencySimulation{Dim,P,T}, ω::T; basis_orde
 
 end
 
-function field(sim, ω, x_vec, a_vec; basis_order::Int=5)
+function field(sim::FrequencySimulation{Dim,P,T}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec; basis_order::Int=5) where {Dim,P,T}
+    Nh = basis_order
     num_particles = length(sim.particles)
-    a = OffsetArray(reshape(a_vec,2basis_order+1,num_particles),-basis_order:basis_order,1:num_particles)
+    a = OffsetArray(reshape(a_vec,2Nh+1,num_particles),-Nh:Nh,1:num_particles)
     basis = basis_function(sim.medium, ω)
-    function sum_hankel_coefficients(x)
+    function sum_basis(x)
         sum(eachindex(sim.particles)) do i
             p = sim.particles[i]
-            sum(-basis_order:basis_order) do m
+            sum(-Nh:Nh) do m
                 a[m,i] * basis(m, x-origin(p))
             end
         end
     end
-    map(sum_hankel_coefficients, x_vec)
+    map(eachindex(x_vec)) do i
+        ind = find(inside(p.shape,x_vec[i]) for p in sim.particles)
+        if isempty(ind)
+            sim.source.field(x_vec[i],ω) + sum_basis(x_vec[i])
+        else
+            j = ind[1]
+            field(sim.particles[j], sim.medium, ω, x_vec[i], collect(a[:,j]); basis_order=Nh)
+        end
+    end
+end
+
+function field(p::Particle, medium::PhysicalProperties, ω::T, x::AbstractVector{T}, a_vec::AbstractVector; basis_order::Int=5) where T<:Number
+    Nh = basis_order
+
+    if inside(p.shape,x)
+        inner_basis = basis_function(p, ω)
+        b_vec = inner_basis_coefficients(p, medium, ω, a_vec; basis_order=basis_order)
+        sum(-Nh:Nh) do m
+            inner_basis(m, x-origin(p)) * b_vec[m+Nh+1]
+        end
+    else
+        basis = basis_function(sim.medium, ω)
+        sum(-Nh:Nh) do m
+            basis(m, x-origin(p)) * a_vec[m+Nh+1]
+        end
+    end
 end
 
 mutable struct TimeSimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <: Simulation{Dim,T}

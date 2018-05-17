@@ -73,8 +73,9 @@ using MultipleScattering
     source_besselj = besselj_field(source, a2_host, centre)
     @test norm([source.field(x,ω) - source_besselj(x,ω) for x in xs]) < 2e-9*norm([source.field(x,ω) for x in xs])
 
-    ω = 0.8
-    Nh = 5
+    ω = 0.1
+    Nh = 10
+    basis_order = Nh
     sound_soft = Acoustic(0.,0.1 + 0.0im,2)
 
     particles = [Particle(sound_soft, circle), Particle(sound_soft, circle_congruent)]
@@ -85,7 +86,16 @@ using MultipleScattering
 
     points = boundary_points.(particles)
     # listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
-    listener_positions = SVector{2,Float64}.(vcat(points...))
-    run(sim, ω, listener_positions; basis_order =5)
+    # listener_positions = SVector{2,Float64}.(vcat(points...))
+
+    # the field should be zero next to the boundar
+    listener_positions = boundary_points(particles[1].shape; dr=-10*eps(Float64))
+    result = run(sim, ω, listener_positions; basis_order = basis_order)
+    result.field # gives zero
+
+    # the field should be zero next to the boundar
+    listener_positions = boundary_points(particles[1].shape; dr=10*eps(Float64))
+    result = run(sim, ω, listener_positions; basis_order = basis_order)
+    result.field # gives zero
 
 end

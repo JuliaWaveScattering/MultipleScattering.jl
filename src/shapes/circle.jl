@@ -10,9 +10,8 @@ Circle(origin::Vector{T}, radius::T) where {T} = Circle{T}(origin, radius)
 
 name(shape::Circle) = "Circle"
 
-function volume{T}(shape::Circle{T})
-    return π * shape.radius^2
-end
+outer_radius(c::Circle) = c.radius
+volume(shape::Circle) = π * shape.radius^2
 
 function inside{T}(outer_circle::Circle{T}, inner_circle::Circle{T})
     norm(origin(outer_circle) - origin(inner_circle)) <= outer_circle.radius - inner_circle.radius

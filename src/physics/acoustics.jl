@@ -22,6 +22,18 @@ function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
     end
 end
 
+"Basis function when inside a particle. Assumes particle is a circle, which approximately works for all shapes."
+function basis_function(p::Particle{2,Acoustic{2,T}}, ω::T) where {T}
+    return function acoustic_basis_function(m::Integer, x::SVector{2,T})
+        r = norm(x)
+        θ = atan2(x[2],x[1])
+        k = ω/p.medium.c
+        besselj(m,k*r)*exp(im*θ*m)
+    end
+end
+
+
+
 # Type aliases for convenience
 TwoDimAcoustic{T} = Acoustic{2,T}
 AcousticCircleParticle{T} = Particle{2, Acoustic{2, T}, Circle{T}, T}
@@ -108,10 +120,18 @@ function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::A
     return Source{Acoustic{2,T},T}(field,coef)
 end
 
+function inner_basis_coefficients(p::Particle{2, Acoustic{2,T}}, medium::Acoustic{2,T}, ω::T, scattering_coefficients::AbstractVector; basis_order::Int=5) where T<:Number
+    r = outer_radius(p)
+    k = ω/medium.c
+    kp = ω/p.medium.c
+    Nh = basis_order
 
-"""
-Returns a function that gives the value of the besselj expansion centred at centre
-"""
+    Z = - t_matrix(p.shape, p.medium, medium, ω, basis_order)
+    return map(-Nh:Nh) do m
+         scattering_coefficients[m+Nh+1] / (Z[m+Nh+1,m+Nh+1]*besselj(m,kp*r)) * (Z[m+Nh+1,m+Nh+1]*hankelh1(m,k*r) - besselj(m,k*r))
+    end
+end
+
 function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; basis_order = 4) where T<:Number
 
     field(x,ω) = sum(

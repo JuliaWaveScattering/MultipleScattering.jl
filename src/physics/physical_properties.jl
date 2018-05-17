@@ -22,3 +22,13 @@ Basis functions in a specific dimension for a specific physics type.
 function basis_function(medium::PhysicalProperties, ω::T) where {T}
     error("No basis function implmented for this physics type.")
 end
+
+"""
+The coefficients that multipled with the inner_basis will return the inner field (only approximate for non-circular scatterers)
+"""
+inner_basis_coefficients
+
+"""
+Returns a function that gives the value of the besselj expansion centred at centre
+"""
+besselj_field
