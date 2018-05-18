@@ -19,7 +19,7 @@ function get_t_matrices(medium::PhysicalProperties, particles::Vector, ω::Abstr
     t_matrices = Vector{AbstractMatrix}(length(particles))
 
     # Vector of particles unique up to congruence, and the respective T-matrices
-    unique_particles = Vector{AbstractParticle}(0)
+    unique_particles = Vector{Particle}(0)
     unique_t_matrices = Vector{AbstractMatrix}(0)
 
     for p_i in eachindex(particles)

@@ -56,7 +56,7 @@ name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 
 
 # T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
-function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::Acoustic{2,T}, ω::T, M::Integer)::Diagonal{Complex{T}} where T<:AbstractFloat
+function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::Acoustic{2,T}, ω::T, M::Integer)::Diagonal{Complex{T}} where T
 
     # Check for material properties that don't make sense or haven't been implemented
     if isnan(abs(inner_medium.c)*inner_medium.ρ)
@@ -120,7 +120,7 @@ function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::A
     return Source{Acoustic{2,T},T}(field,coef)
 end
 
-function inner_basis_coefficients(p::Particle{2, Acoustic{2,T}}, medium::Acoustic{2,T}, ω::T, scattering_coefficients::AbstractVector; basis_order::Int=5) where T<:Number
+function inner_basis_coefficients(p::Particle{2,Acoustic{2,T},Circle{T},T}, medium::Acoustic{2,T}, ω::T, scattering_coefficients::AbstractVector; basis_order::Int=5) where T
     Nh = basis_order
     if iszero(p.medium.c) || isinf(abs(p.medium.c))
         return zeros(Complex{Float64},2Nh+1)
@@ -135,7 +135,7 @@ function inner_basis_coefficients(p::Particle{2, Acoustic{2,T}}, medium::Acousti
     end
 end
 
-function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; basis_order = 4) where T<:Number
+function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; basis_order = 4) where T
 
     field(x,ω) = sum(
         source.coef(n,centre,ω)*besselj(n,ω/medium.c*norm(x - centre))*exp(im*n*atan2(x[2] - centre[2],x[1] - centre[1]))

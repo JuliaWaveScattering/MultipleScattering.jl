@@ -82,7 +82,7 @@ using MultipleScattering
     t_matrices = get_t_matrices(a2_host, particles, ω, Nh)
     S = scattering_matrix(a2_host, particles, t_matrices, ω, Nh)
 
-    sim = TwoDimAcousticFrequencySimulation{Float64}(a2_host, particles, source)
+    sim = FrequencySimulation(a2_host, particles, source)
 
 
     points = boundary_points.(particles)
@@ -125,10 +125,6 @@ source = TwoDimAcousticPlanarSource(medium, SVector(-10.0,0.0), SVector(1.0,0.0)
 # FrequencySimulation(medium,particles,source)
 
 particles = [p_soft, p_hard, p1]
-particles = Array{AbstractParticle{2,Float64},1}([p_soft, p_hard])
-particles = Vector{AbstractParticle{2,Float64}}([p1, p2])
-
-# sim = TwoDimAcousticFrequencySimulation{Float64}(medium, particles, source)
 
 sim = FrequencySimulation(medium, particles, source)
 

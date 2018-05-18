@@ -1,7 +1,5 @@
 
-abstract type AbstractParticle{Dim,T<:AbstractFloat} end
-
-type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat} <: AbstractParticle{Dim,T}
+type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat}
     medium::P
     shape::S
     # Enforce that the Dims and Types are all the same
@@ -24,7 +22,7 @@ CircleParticle{P, T} = Particle{2, P, Circle{T}, T}
 outer_radius(p::Particle) = outer_radius(p.shape)
 volume(p::Particle) = volume(p.shape)
 
-function volume(particles::AbstractVector{P}) where {P<:AbstractParticle}
+function volume(particles::Vector{Pa}) where {Dim,Pa<:Particle{Dim}}
     mapreduce(volume, +, particles)
 end
 
@@ -44,4 +42,4 @@ function congruent(p1::Particle, p2::Particle)
 end
 
 
-inside(shape::Shape, particle::AbstractParticle) = inside(shape, particle.shape)
+inside(shape::Shape, particle::Particle) = inside(shape, particle.shape)

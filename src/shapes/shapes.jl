@@ -26,10 +26,10 @@ include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
 
 "points on the boundary of a shape"
-function boundary_points(shape::Shape, num_points::Int = 4; dr = 0.0)
+function boundary_points(shape::Shape{Dim,T}, num_points::Int = 4; dr = zero(T)) where {Dim,T}
     x, y = boundary_functions(shape)
-    v(τ) = [x(τ),y(τ)] + dr * ([x(τ),y(τ)] - origin(shape))
-    return [ v(τ) for τ in linspace(0.0,1.0,num_points+1)[1:end-1] ]
+    v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape))
+    return [ v(τ) for τ in linspace(zero(T),one(T),num_points+1)[1:end-1] ]
 end
 
 

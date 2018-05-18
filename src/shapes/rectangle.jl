@@ -22,7 +22,7 @@ Rectangle(origin::Vector{T}, width::T, height::T) where {T} = Rectangle{T}(origi
 
 name(shape::Rectangle) = "Rectangle"
 
-outer_radius(r::Rectangle) = sqrt((r.width/2.0)^2.0 + (r.height/2.0)^2.0)
+outer_radius(r::Rectangle) = sqrt((r.width/2)^2 + (r.height/2)^2)
 volume(rectangle::Rectangle) = rectangle.width*rectangle.height
 
 function congruent(r1::Rectangle{T}, r2::Rectangle{T}) where T
