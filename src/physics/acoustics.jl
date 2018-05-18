@@ -10,10 +10,11 @@ end
 
 # Constructor which supplies the dimension without explicitly mentioning type
 Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{Dim,T}(ρ,c)
+Acoustic(ρ::T,c::T,Dim::Integer) where {T} =  Acoustic{Dim,T}(ρ,Complex{T}(c))
 
 name(a::Acoustic{Dim,T}) where {Dim,T} = "$(Dim)D Acoustic"
 
-function get_basis_function(medium::Acoustic{2,T}, ω::T) where {T}
+function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan2(x[2],x[1])
@@ -22,11 +23,20 @@ function get_basis_function(medium::Acoustic{2,T}, ω::T) where {T}
     end
 end
 
+"Basis function when inside a particle. Assumes particle is a circle, which approximately works for all shapes."
+function basis_function(p::Particle{2,Acoustic{2,T}}, ω::T) where {T}
+    return function acoustic_basis_function(m::Integer, x::SVector{2,T})
+        r = norm(x)
+        θ = atan2(x[2],x[1])
+        k = ω/p.medium.c
+        besselj(m,k*r)*exp(im*θ*m)
+    end
+end
+
 # Type aliases for convenience
 TwoDimAcoustic{T} = Acoustic{2,T}
 AcousticCircleParticle{T} = Particle{2, Acoustic{2, T}, Circle{T}, T}
 TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{2,Acoustic{2,T},T}
-
 
 """
 Physical properties for a capsule with the same inner and outer shape, where the
@@ -49,10 +59,10 @@ name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::Acoustic{2,T}, ω::T, M::Integer)::Diagonal{Complex{T}} where T<:AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
-    if isnan(inner_medium.c*inner_medium.ρ)
-        throw(DomainError("Scattering from a particle with zero density or zero phase speed is not defined"))
-    elseif isnan(outer_medium.c*outer_medium.ρ)
-        throw(DomainError("Wave propagation in a medium with zero density or zero phase speed is not defined"))
+    if isnan(abs(inner_medium.c)*inner_medium.ρ)
+        throw(DomainError("Particle's phase speed times density is not a number!"))
+    elseif isnan(abs(outer_medium.c)*outer_medium.ρ)
+        throw(DomainError("The medium's phase speed times density is not a number!"))
     elseif iszero(outer_medium.c)
         throw(DomainError("Wave propagation in a medium with zero phase speed is not defined"))
     elseif iszero(outer_medium.ρ) && iszero(inner_medium.c*inner_medium.ρ)
@@ -71,9 +81,11 @@ function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::
             numer = diffbesselj(m, ak)
             denom = diffhankelh1(m, ak)
         elseif iszero(outer_medium.ρ)
-            γ = outer_medium.c/inner_medium.c #speed ratio
-            numer = diffbesselj(m, ak) * besselj(m, γ * ak)
-            denom = diffhankelh1(m, ak) * besselj(m, γ * ak)
+            numer = diffbesselj(m, ak)
+            denom = diffhankelh1(m, ak)
+        elseif iszero(inner_medium.ρ) || iszero(inner_medium.c)
+            numer = besselj(m, ak)
+            denom = hankelh1(m, ak)
         else
             q = (inner_medium.c*inner_medium.ρ)/(outer_medium.c*outer_medium.ρ) #the impedance
             γ = outer_medium.c/inner_medium.c #speed ratio
@@ -108,15 +120,26 @@ function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::A
     return Source{Acoustic{2,T},T}(field,coef)
 end
 
+function inner_basis_coefficients(p::Particle{2, Acoustic{2,T}}, medium::Acoustic{2,T}, ω::T, scattering_coefficients::AbstractVector; basis_order::Int=5) where T<:Number
+    Nh = basis_order
+    if iszero(p.medium.c) || isinf(abs(p.medium.c))
+        return zeros(Complex{Float64},2Nh+1)
+    else
+        r = outer_radius(p)
+        k = ω/medium.c
+        kp = ω/p.medium.c
+        Z = - t_matrix(p.shape, p.medium, medium, ω, basis_order)
+        return map(-Nh:Nh) do m
+             scattering_coefficients[m+Nh+1] / (Z[m+Nh+1,m+Nh+1]*besselj(m,kp*r)) * (Z[m+Nh+1,m+Nh+1]*hankelh1(m,k*r) - besselj(m,k*r))
+        end
+    end
+end
 
-"""
-Returns a function that gives the value of the besselj expansion centred at centre
-"""
-function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; hankel_order = 4) where T<:Number
+function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; basis_order = 4) where T<:Number
 
     field(x,ω) = sum(
         source.coef(n,centre,ω)*besselj(n,ω/medium.c*norm(x - centre))*exp(im*n*atan2(x[2] - centre[2],x[1] - centre[1]))
-    for n = -hankel_order:hankel_order)
+    for n = -basis_order:basis_order)
 
    return field
 end

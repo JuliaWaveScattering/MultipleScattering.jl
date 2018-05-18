@@ -65,7 +65,7 @@ using MultipleScattering
     # Test the bessel expansions of the source
     ω = 0.8
     centre =  SVector(1.0,0.0)
-    s3_besselj = besselj_field(s3, a2, centre; hankel_order = 7)
+    s3_besselj = besselj_field(s3, a2, centre; basis_order = 7)
     xs = [centre + 0.1.*[cos(τ),sin(τ)] for τ = 0.0:0.3:1.5]
     @test norm([s3.field(x,ω) - s3_besselj(x,ω) for x in xs]) < 1e-7*norm([s3.field(x,ω) for x in xs])
 
@@ -73,8 +73,9 @@ using MultipleScattering
     source_besselj = besselj_field(source, a2_host, centre)
     @test norm([source.field(x,ω) - source_besselj(x,ω) for x in xs]) < 2e-9*norm([source.field(x,ω) for x in xs])
 
-    ω = 0.8
-    Nh = 5
+    ω = 0.1
+    Nh = 10
+    basis_order = Nh
     sound_soft = Acoustic(0.,0.1 + 0.0im,2)
 
     particles = [Particle(sound_soft, circle), Particle(sound_soft, circle_congruent)]
@@ -84,8 +85,58 @@ using MultipleScattering
     sim = TwoDimAcousticFrequencySimulation{Float64}(a2_host, particles, source)
 
     points = boundary_points.(particles)
-    # listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
-    listener_positions = SVector{2,Float64}.(vcat(points...))
-    run(sim, ω, listener_positions; hankel_order =5)
+    listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
+    result = run(sim, ω, listener_positions; basis_order = basis_order)
+end
+
+@testset "boundary conditions" begin
+
+ω = 0.1
+Nh = 10
+basis_order = Nh
+medium = Acoustic(1.,1.,2)
+
+# Choose particles
+sound_soft = Acoustic(0.,0.0 + 0.0im,2)
+p_soft = Particle(sound_soft,Circle([1.0,2.0], 2.0))
+
+sound_hard = Acoustic(Inf,100000. + 0.0im,2)
+p_hard = Particle(sound_hard,Circle([-1.0,-2.0], 0.3))
+
+sound1 = Acoustic(2.,3. + 0.0im,2)
+p1 = Particle(sound1,Circle([-1.0,0.0], 0.5))
+
+# t_matrix(p_hard.shape, p_hard.medium, medium, ω, Nh)
+# t_matrix(p_soft.shape, p_soft.medium, medium, ω, Nh)
+
+# Create two point sources
+source_position = SVector(0.0,0.2)
+amplitude = 1.0
+source1 = TwoDimAcousticPointSource(medium, source_position, amplitude)
+source2 = TwoDimAcousticPointSource(medium, -source_position, amplitude)
+source = source1 + 1.2*source2
+
+source = TwoDimAcousticPlanarSource(medium, SVector(-10.0,0.0), SVector(1.0,0.0), amplitude)
+# This should work:
+# FrequencySimulation(medium,particles,source)
+
+particles = [p_soft, p_hard, p1]
+particles = [p_soft, p_hard]
+
+sim = TwoDimAcousticFrequencySimulation{Float64}(medium, particles, source)
+
+# points just inside particles
+inside_points = [boundary_points(p.shape; dr=-10*eps(Float64)) for p in particles]
+inside_points = SVector{2,Float64}.(vcat(inside_points...))
+
+# points just outside particles
+outside_points = [boundary_points(p.shape; dr=10*eps(Float64)) for p in particles]
+outside_points = SVector{2,Float64}.(vcat(outside_points...))
+
+out_result = run(sim, ω, outside_points; basis_order = basis_order)
+out_result.field
+
+in_result = run(sim, ω, inside_points; basis_order = basis_order)
+in_result.field
 
 end

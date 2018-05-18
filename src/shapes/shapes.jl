@@ -26,15 +26,19 @@ include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
 
 "points on the boundary of a shape"
-function boundary_points(shape::Shape, num_points::Int = 4)
+function boundary_points(shape::Shape, num_points::Int = 4; dr = 0.0)
     x, y = boundary_functions(shape)
-    return [ [x(τ),y(τ)] for τ in linspace(0.0,1.0,num_points+1)[1:end-1] ]
+    v(τ) = [x(τ),y(τ)] + dr * ([x(τ),y(τ)] - origin(shape))
+    return [ v(τ) for τ in linspace(0.0,1.0,num_points+1)[1:end-1] ]
 end
 
 
 # Docstrings
 "Name of a shape"
 name
+
+"The radius of a circle which contains the shape."
+outer_radius
 
 "Volume of a shape"
 volume

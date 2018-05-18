@@ -17,10 +17,11 @@ end
 
 # Shape hold infomation about origin of Particle
 origin(p::Particle) = origin(p.shape)
-boundary_points(p::Particle, num_points::Int = 3) = boundary_points(p.shape,num_points)
+boundary_points(p::Particle, num_points::Int = 3; kws...) = boundary_points(p.shape,num_points; kws...)
 
 CircleParticle{P, T} = Particle{2, P, Circle{T}, T}
 
+outer_radius(p::Particle) = outer_radius(p.shape)
 volume(p::Particle) = volume(p.shape)
 
 function volume(particles::AbstractVector{P}) where {P<:AbstractParticle}

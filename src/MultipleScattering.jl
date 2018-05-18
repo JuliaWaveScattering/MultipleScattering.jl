@@ -1,16 +1,16 @@
-__precompile__()
+# __precompile__()
 
 module MultipleScattering
 
-export Shape, Circle, Rectangle, volume, name, congruent, inside,
+export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside, origin,
        boundary_functions, boundary_points
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
-       get_basis_function, dim, field_dim
+       basis_function, basis_coefficients, dim, field_dim
 export Particle, (==)
 export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
-export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation, forcing
-export SimulationResult, FrequencySimulationResult, TimeSimulationResult
+export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation, forcing, field
+export SimulationResult, FrequencySimulation, FrequencySimulationResult, TimeSimulationResult
 export SimulationDistribution, FrequencySimulationDistribution, sample
 export t_matrix, get_t_matrices
 export scattering_matrix
