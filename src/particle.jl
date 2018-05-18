@@ -1,5 +1,5 @@
 
-abstract type AbstractParticle{Dim,T} end
+abstract type AbstractParticle{Dim,T<:AbstractFloat} end
 
 type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat} <: AbstractParticle{Dim,T}
     medium::P

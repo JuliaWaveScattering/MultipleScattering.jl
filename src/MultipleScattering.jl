@@ -6,7 +6,7 @@ export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside, 
        boundary_functions, boundary_points
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        basis_function, basis_coefficients, dim, field_dim
-export Particle, (==)
+export Particle, AbstractParticle, (==)
 export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
 export Simulation, TwoDimAcousticFrequencySimulation, run, TimeSimulation, forcing, field

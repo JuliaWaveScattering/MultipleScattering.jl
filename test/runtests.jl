@@ -84,6 +84,7 @@ using MultipleScattering
 
     sim = TwoDimAcousticFrequencySimulation{Float64}(a2_host, particles, source)
 
+
     points = boundary_points.(particles)
     listener_positions = [SVector(1.0,1.0), SVector(0.0,0.0)]
     result = run(sim, ω, listener_positions; basis_order = basis_order)
@@ -106,6 +107,9 @@ p_hard = Particle(sound_hard,Circle([-1.0,-2.0], 0.3))
 sound1 = Acoustic(2.,3. + 0.0im,2)
 p1 = Particle(sound1,Circle([-1.0,0.0], 0.5))
 
+sound2 = Acoustic(4.,1.2 + 0.0im,2)
+p2 = Particle(sound2,Circle([2.0,0.0], 0.5))
+
 # t_matrix(p_hard.shape, p_hard.medium, medium, ω, Nh)
 # t_matrix(p_soft.shape, p_soft.medium, medium, ω, Nh)
 
@@ -121,22 +125,40 @@ source = TwoDimAcousticPlanarSource(medium, SVector(-10.0,0.0), SVector(1.0,0.0)
 # FrequencySimulation(medium,particles,source)
 
 particles = [p_soft, p_hard, p1]
-particles = [p_soft, p_hard]
+particles = Array{AbstractParticle{2,Float64},1}([p_soft, p_hard])
+particles = Vector{AbstractParticle{2,Float64}}([p1, p2])
 
-sim = TwoDimAcousticFrequencySimulation{Float64}(medium, particles, source)
+# sim = TwoDimAcousticFrequencySimulation{Float64}(medium, particles, source)
+
+sim = FrequencySimulation(medium, particles, source)
+
+dr = 10000*eps(Float64)
 
 # points just inside particles
-inside_points = [boundary_points(p.shape; dr=-10*eps(Float64)) for p in particles]
-inside_points = SVector{2,Float64}.(vcat(inside_points...))
+inside1_points = [boundary_points(p.shape; dr = - dr - 10*eps(Float64)) for p in particles]
+inside1_points = SVector{2,Float64}.(vcat(inside1_points...))
+inside2_points = [boundary_points(p.shape; dr = - 10*eps(Float64)) for p in particles]
+inside2_points = SVector{2,Float64}.(vcat(inside2_points...))
 
 # points just outside particles
-outside_points = [boundary_points(p.shape; dr=10*eps(Float64)) for p in particles]
-outside_points = SVector{2,Float64}.(vcat(outside_points...))
+outside1_points = [boundary_points(p.shape; dr = 10*eps(Float64)) for p in particles]
+outside1_points = SVector{2,Float64}.(vcat(outside1_points...))
+outside2_points = [boundary_points(p.shape; dr = dr + 10*eps(Float64)) for p in particles]
+outside2_points = SVector{2,Float64}.(vcat(outside2_points...))
 
-out_result = run(sim, ω, outside_points; basis_order = basis_order)
-out_result.field
+out1_result = run(sim, ω, outside1_points; basis_order = basis_order)
+out1_result.field
+out2_result = run(sim, ω, outside2_points; basis_order = basis_order)
+out2_result.field
 
-in_result = run(sim, ω, inside_points; basis_order = basis_order)
-in_result.field
+(out2_result.field - out1_result.field)/(dr * medium.ρ)
+
+in1_result = run(sim, ω, inside1_points; basis_order = basis_order)
+in1_result.field
+in2_result = run(sim, ω, inside2_points; basis_order = basis_order)
+in2_result.field
+
+(in2_result.field - in1_result.field)/(dr * medium.ρ)
+
 
 end
