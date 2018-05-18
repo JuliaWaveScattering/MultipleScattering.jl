@@ -54,6 +54,39 @@ end
 
 name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 
+function boundary_condition(sim::FrequencySimulation{Dim,P,T}, ωs::Vector{T}; dr = 10000*eps(T), kws...) where {Dim, P<:Acoustic, T<:Float64}
+
+    particles = sim.particles[1:numberofparticles]
+
+    # points just inside particles
+    inside1_points = [boundary_points(p.shape; dr = - dr - 10*eps(T)) for p in particles]
+    inside2_points = [boundary_points(p.shape; dr = - 10*eps(T)) for p in particles]
+
+    # points just outside particles
+    outside1_points = [boundary_points(p.shape; dr = 10*eps(T)) for p in particles]
+    outside2_points = [boundary_points(p.shape; dr = dr + 10*eps(T)) for p in particles]
+
+    inside1_points
+    [[source.field(x,ω) for ω in ωs] for x in outside1_points]
+
+
+    in1_results = [run(sim, ω, ps; basis_order = basis_order) for ps in inside1_points]
+    in2_results = [run(sim, ω, ps; basis_order = basis_order) for ps in inside2_points]
+
+    run(sim, ωs, inside1_points[1])
+
+
+    out1_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside1_points]
+    out2_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside2_points]
+
+    # map(eachindex(particles)) do i
+    # if iszero(particles[i].ρ) || iszero(particles[i].c)
+
+
+    # [(in2_results[i].field - in1_results[i].field)/(dr * particles.medium.ρ) for i in ]
+    # (out2_result.field - out1_result.field)/(dr * medium.ρ)
+
+end
 
 # T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
 function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::Acoustic{2,T}, ω::T, M::Integer)::Diagonal{Complex{T}} where T
@@ -104,16 +137,16 @@ end
 
 
 function TwoDimAcousticPointSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, amplitude::T = one(T))::Source{Acoustic{2,T},T}
-    field(x,ω) = amplitude*Complex{T}(im/4)*hankelh1(0,ω/medium.c*norm(x-source_position))
+    field(x::AbstractVector{T},ω) where T = amplitude*Complex{T}(im/4)*hankelh1(0,ω/medium.c*norm(x-source_position))
     # using Graf's addition theorem
     coef(n,centre,ω) = amplitude*Complex{T}(im/4)*hankelh1(-n,ω/medium.c*norm(centre - source_position))*
-exp(-Complex{T}(im)*n*atan2(centre[2] - source_position[2], centre[1] - source_position[1]))
+        exp(-Complex{T}(im)*n*atan2(centre[2] - source_position[2], centre[1] - source_position[1]))
 
     return Source{Acoustic{2,T},T}(field,coef)
 end
 
 function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T} = [one(T),zero(T)], amplitude::T = one(T))::Source{Acoustic{2,T},T}
-    field(x,ω) = amplitude*exp(im*ω/medium.c*dot(x-source_position,source_direction))
+    field(x::AbstractVector{T},ω) where T = amplitude*exp(im*ω/medium.c*dot(x-source_position,source_direction))
     # Jacobi-Anger expansion
     coef(n,centre,ω) = field(centre,ω) * exp(im * n *(T(pi)/2 - atan2(source_direction[2],source_direction[1]) ))
 

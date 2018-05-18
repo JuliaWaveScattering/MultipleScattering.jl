@@ -121,10 +121,9 @@ source2 = TwoDimAcousticPointSource(medium, -source_position, amplitude)
 source = source1 + 1.2*source2
 
 source = TwoDimAcousticPlanarSource(medium, SVector(-10.0,0.0), SVector(1.0,0.0), amplitude)
-# This should work:
-# FrequencySimulation(medium,particles,source)
 
 particles = [p_soft, p_hard, p1]
+particles = [p_soft]
 
 sim = FrequencySimulation(medium, particles, source)
 
@@ -143,9 +142,7 @@ outside2_points = [boundary_points(p.shape; dr = dr + 10*eps(Float64)) for p in 
 outside2_points = SVector{2,Float64}.(vcat(outside2_points...))
 
 out1_result = run(sim, ω, outside1_points; basis_order = basis_order)
-out1_result.field
 out2_result = run(sim, ω, outside2_points; basis_order = basis_order)
-out2_result.field
 
 (out2_result.field - out1_result.field)/(dr * medium.ρ)
 

@@ -25,21 +25,25 @@ function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x_vec::Vector{SVector{Dim
 
     # Construct results object
     field_vec = reshape(map(f->SVector{FieldDim,Complex{T}}(f), field_vec), :, 1)
-    return FrequencySimulationResult{Dim,FieldDim,P,T}(field_vec, x_vec, RowVector([ω]))
+    return FrequencySimulationResult{Dim,FieldDim,T}(field_vec, x_vec, RowVector([ω]))
 
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::Vector{SVector{Dim,T}})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+function run(sim::FrequencySimulation{Dim,P,T}, ωs::AbstractVector{T}, x_vec::Vector{SVector{Dim,T}}; kws...)::FrequencySimulationResult{Dim,T} where {Dim,P,T}
     # Compute for each angular frequency, then join up all the results
-    mapreduce(ω->run(sim,ω,x), union, ω)
+
+    # previously:
+    # mapreduce(ω->run(sim,ω,x_vec; kws...), union, ωs)
+    fields = mapreduce(ω->run(sim,ω,x_vec; kws...).field[:], hcat, ωs)
+    FrequencySimulationResult(fields,x_vec,RowVector(ωs))
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::Vector{T}, x::SVector{Dim,T})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
-    run(sim,ω,[x])
+function run(sim::FrequencySimulation{Dim,P,T}, ω::AbstractVector{T}, x::SVector{Dim,T}; kws...)::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    run(sim,ω,[x]; kws...)
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::SVector{Dim,T})::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
-    run(sim,[ω],[x])
+function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::SVector{Dim,T}; kws...)::FrequencySimulationResult{Dim,P,T} where {Dim,P,T}
+    run(sim,[ω],[x]; kws...)
 end
 
 function forcing(source::Source{Ph,T}, particles::Vector{Pa}, t_matrices::Vector{AbstractMatrix}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T,Pa<:Particle}

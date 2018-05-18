@@ -2,13 +2,17 @@
 "Abstract class for Results of Simulations"
 abstract type SimulationResult{Dim,T} end
 
-struct FrequencySimulationResult{Dim,FieldDim,P<:PhysicalProperties,T<:AbstractFloat} <: SimulationResult{Dim,T}
+struct FrequencySimulationResult{Dim,FieldDim,T<:AbstractFloat} <: SimulationResult{Dim,T}
     field::Matrix{SVector{FieldDim,Complex{T}}}
     x::Vector{SVector{Dim,T}}
     ω::RowVector{T}
 end
 
-struct TimeSimulationResult{Dim,FieldDim,P<:PhysicalProperties,T<:AbstractFloat} <: SimulationResult{Dim,T}
+function FrequencySimulationResult(field::Matrix{SVector{FieldDim,Complex{T}}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T,FieldDim}
+    FrequencySimulation{Dim,FieldDim,T}(field, Vector(x), RowVector(ω))
+end
+
+struct TimeSimulationResult{Dim,FieldDim,T<:AbstractFloat} <: SimulationResult{Dim,T}
     field::Matrix{SVector{FieldDim,Complex{T}}}
     x::Vector{SVector{Dim,T}}
     t::RowVector{T}
@@ -29,14 +33,14 @@ end
 """
 Get scalar field from result as a matrix
 """
-function field(result::FrequencySimulationResult{Dim,1,P,T})::Matrix{Complex{T}} where {Dim, T, P<:PhysicalProperties{Dim,1,T}}
+function field(result::FrequencySimulationResult{Dim,1,T})::Matrix{Complex{T}} where {Dim, T}
     map(x->x[1], result.field)
 end
 
 """
 Get scalar field from result, with x-index i and ω-index j
 """
-function field(result::FrequencySimulationResult{Dim,1,P,T}, i::Integer, j::Integer)::Complex{T} where {Dim, T, P<:PhysicalProperties{Dim,1,T}}
+function field(result::FrequencySimulationResult{Dim,1,T}, i::Integer, j::Integer)::Complex{T} where {Dim, T}
     result.field[i,j][1]
 end
 
@@ -47,7 +51,7 @@ and x
 """
 function union(r1::FrequencySimulationResult, r2::FrequencySimulationResult; sort::Function = identity)
     if r1.x == r2.x
-    elseif r1.k == r2.k
+    elseif r1.ω == r2.ω
     end
 end
 
