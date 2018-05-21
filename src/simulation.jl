@@ -49,12 +49,12 @@ function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::SVector{Dim,T};
     run(sim,[ω],[x]; kws...)
 end
 
-function forcing(source::Source{Ph,T}, particles::Vector{Pa}, t_matrices::Vector{AbstractMatrix}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T,Pa<:Particle}
+function forcing(source::Source{Ph,T}, particles::Vector{Pa}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T,Pa<:Particle}
     mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
     f = Vector{Complex{T}}(prod(size(mat)))
     H = 2Nh + 1
     for i in eachindex(particles)
-        f[((i-1)*H+1):(i*H)] .= t_matrices[i]*mat[:,i]
+        f[((i-1)*H+1):(i*H)] .= mat[:,i]
     end
     return f
 end
@@ -68,17 +68,23 @@ function basis_coefficients(sim::FrequencySimulation{Dim,P,T}, ω::T; basis_orde
     S = scattering_matrix(sim.medium, sim.particles, t_matrices, ω, basis_order)
 
     # Get forcing vector for this source
-    f = forcing(sim.source, sim.particles, t_matrices, ω, basis_order)
+    f = forcing(sim.source, sim.particles, ω, basis_order)
 
     # Find Hankel coefficients by solving scattering matrix for this forcing
     a = S\f
 
+    # reshape and multiply by t-matrix to get the scattering coefficients
+    a = reshape(a,2basis_order+1,length(sim.particles))
+    for i in indices(a,2)
+        a[:,i] = t_matrices[i] * a[:,i]
+    end
+    a
 end
 
 function field(sim::FrequencySimulation{Dim,P,T}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec; basis_order::Int=5) where {Dim,P,T}
     Nh = basis_order
     num_particles = length(sim.particles)
-    a = OffsetArray(reshape(a_vec,2Nh+1,num_particles),-Nh:Nh,1:num_particles)
+    a = OffsetArray(a_vec,-Nh:Nh,1:num_particles)
     basis = basis_function(sim.medium, ω)
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i

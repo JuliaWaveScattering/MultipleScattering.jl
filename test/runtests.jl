@@ -141,7 +141,7 @@ widths = -10.4:0.01:-9.4
 x_vec = [ SVector(x,.0) for x in widths]
 result = run(sim, 0.1, x_vec; basis_order = 7)
 using Plots; pyplot()
-plot(widths, abs.(field(result)[:]), ylim = (0.9,2.))
+plot(widths, abs.(field(result)[:]))
 
 x = SVector(-9.80001,0.0)
 run(sim, 0.1, [x]; basis_order = 8).field
@@ -173,19 +173,6 @@ mean(norm.(traction_results[1].field - traction_results[2].field))/mean(norm.(tr
 
 displacement_results, traction_results =  boundary_data(particles[3], sim, ωs; basis_order = Nh)
 
-
-out1_result = run(sim, ω, outside1_points; basis_order = basis_order)
-out2_result = run(sim, ω, outside2_points; basis_order = basis_order)
-(out2_result.field - out1_result.field)/(dr * medium.ρ)
-
-run(sim_source, ωs, outside_points; basis_order = basis_order)
-
-in1_result = run(sim, ω, inside1_points; basis_order = basis_order)
-in1_result.field
-in2_result = run(sim, ω, inside2_points; basis_order = basis_order)
-in2_result.field
-
-(in2_result.field - in1_result.field)/(dr * medium.ρ)
 
 
 end

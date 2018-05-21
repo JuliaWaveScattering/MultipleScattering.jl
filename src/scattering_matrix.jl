@@ -25,7 +25,7 @@ function scattering_matrix(medium::PhysicalProperties, particles::Vector, t_matr
             # Faire: basis functions could be more efficient if it returned a vector
             basis_vec = OffsetArray(map(m->basis(m,x_lj), -2Nh:2Nh),-2Nh:2Nh)
             mat = [basis_vec[p-m] for m in -Nh:Nh, p in -Nh:Nh]
-            return - t_matrices[j] * mat
+            return -  mat * t_matrices[l]
         end
     end
 

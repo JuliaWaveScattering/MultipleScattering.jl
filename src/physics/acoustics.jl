@@ -58,9 +58,8 @@ name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 function boundary_data(particle::Particle{2,P,S,T}, sim::FrequencySimulation{2,P,T}, ωs::Vector{T};
         dr = 100000*eps(T), kws...) where {P<:Acoustic{2}, S<:Shape{2}, T<:Float64}
 
-
     p = particle;
-p = sim.particles[1]
+
     # points just inside particles
     inside1_points = boundary_points(p.shape; dr = - dr - 10*eps(T))
     inside2_points = boundary_points(p.shape; dr = - 10*eps(T))
