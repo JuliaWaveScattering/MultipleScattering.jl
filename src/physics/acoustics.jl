@@ -54,33 +54,34 @@ end
 
 name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 
-function boundary_condition(sim::FrequencySimulation{Dim,P,T}, ωs::Vector{T}; dr = 10000*eps(T), kws...) where {Dim, P<:Acoustic, T<:Float64}
 
-    particles = sim.particles[1:numberofparticles]
+function boundary_data(particle::Particle{2,P,S,T}, sim::FrequencySimulation{2,P,T}, ωs::Vector{T};
+        dr = 10000*eps(T), kws...) where {P<:Acoustic{2}, S<:Shape{2}, T<:Float64}
+
+    p = particle;
 
     # points just inside particles
-    inside1_points = [boundary_points(p.shape; dr = - dr - 10*eps(T)) for p in particles]
-    inside2_points = [boundary_points(p.shape; dr = - 10*eps(T)) for p in particles]
-
-    # points just outside particles
-    outside1_points = [boundary_points(p.shape; dr = 10*eps(T)) for p in particles]
-    outside2_points = [boundary_points(p.shape; dr = dr + 10*eps(T)) for p in particles]
-
-    inside1_points
-    [[source.field(x,ω) for ω in ωs] for x in outside1_points]
-
-
-    in1_results = [run(sim, ω, ps; basis_order = basis_order) for ps in inside1_points]
-    in2_results = [run(sim, ω, ps; basis_order = basis_order) for ps in inside2_points]
-
-    run(sim, ωs, inside1_points[1])
-
-
-    out1_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside1_points]
-    out2_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside2_points]
+    # inside1_points = boundary_points(p.shape; dr = - dr - 10*eps(T))
+    # inside2_points = boundary_points(p.shape; dr = - 10*eps(T))
+    #
+    # # points just outside particles
+    # outside1_points = boundary_points(p.shape; dr = 10*eps(T))
+    # outside2_points = boundary_points(p.shape; dr = dr + 10*eps(T))
+    #
+    # # strange TypeError: Vararg count
+    # # in1_results = run(sim, ωs, inside1_points; kws...)
+    # fields = mapreduce(ω->run(sim,ω,inside1_points; kws...).field[:], hcat, ωs)
+    # in1_results = FrequencySimulationResult(fields,inside1_points,RowVector(ωs))
+    #
+    # in1_results = run(sim, ωs, inside2_points; kws...)
+    # traction_in = (in2_results.field - in1_results.field)/(dr * p.medium.ρ)
+    #
+    # out1_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside1_points]
+    # out2_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside2_points]
+    # traction_out = (one(T)/(dr * sim.medium.ρ)) * [out2_results[i].field - out1_results[i].field  for i in eachindex(particles)]
 
     # map(eachindex(particles)) do i
-    # if iszero(particles[i].ρ) || iszero(particles[i].c)
+    #     traction_in = (in2_results[i].field - in1_results[i].field)
 
 
     # [(in2_results[i].field - in1_results[i].field)/(dr * particles.medium.ρ) for i in ]

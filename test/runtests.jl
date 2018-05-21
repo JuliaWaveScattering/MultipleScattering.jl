@@ -128,6 +128,21 @@ particles = [p_soft]
 sim = FrequencySimulation(medium, particles, source)
 
 dr = 10000*eps(Float64)
+T = Float64
+particles = sim.particles
+
+
+# points just inside particles
+inside1_points = [boundary_points(p.shape; dr = - dr - 10*eps(T)) for p in particles]
+inside2_points = [boundary_points(p.shape; dr = - 10*eps(T)) for p in particles]
+
+# points just outside particles
+outside1_points = [boundary_points(p.shape; dr = 10*eps(T)) for p in particles]
+outside2_points = [boundary_points(p.shape; dr = dr + 10*eps(T)) for p in particles]
+
+inside1_points
+[[source.field(x,ω) for ω in ωs] for x in outside1_points]
+
 
 # points just inside particles
 inside1_points = [boundary_points(p.shape; dr = - dr - 10*eps(Float64)) for p in particles]
