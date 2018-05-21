@@ -179,47 +179,53 @@ where
 \end{equation}
 Using the T-matrix of particle-$j$ we reach $A_j^n = \sum_m T^{nm}_j F^m_j$, which leads to
 \begin{equation}
-A_j^n  = \sum_{m=-\infty}^\infty T^{nm}_j f^m_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty A_\ell^p T^{nm}_j H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}}.
+A_j^q  = \sum_{m=-\infty}^\infty T^{qm}_j f^m_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty A_\ell^p T^{qm}_j H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}}.
 \label{eqn:As}
 \end{equation}
-As a check, if we use~\eqref{eqn:circular_t-matrix} and swap $A_j^n \to A_j^n Z^n_j$, then we arrive at equation (2.11) in \cite{gower_reflection_2017}.
+The above simplifies if we substitute $A_j^q =  T^{qd}_j \alpha_j^d$, and then multiple across by $\{T^{-1}_j\}^{qn}$ and sum over $q$ to arrive at
+% A_\ell^p = \alpha_\ell^d T^{dp}_\ell
+% A_\ell^p = \alpha_\ell^d T^{dp}_\ell
+\begin{equation}
+\alpha_j^n = f^n_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty  H_{p-n}(k R_{\ell j})\ee^{\ii(p - n)\Theta_{\ell j}} T^{pm}_\ell \alpha_\ell^m.
+\label{eqn:As}
+\end{equation}
+As a check, if we use~\eqref{eqn:circular_t-matrix}, then we arrive at equation (2.11) in \cite{gower_reflection_2017}.
 % \begin{equation}
 % A_j^n  = -  f^n_j - \sum_{\ell\not = j} \sum_{p=-\infty}^\infty A_\ell^p Z^p_\ell H_{p-n}(k R_{\ell j})\ee^{\ii(p-n)\Theta_{\ell j}}.
 % \end{equation}
-
 For easy implementation we need the functions:
 \[
 \psi_\inc \mapsto f^m_j \quad \text{and} \quad \text{particle} \mapsto T^{nm}_j.
 \]
 
-For efficient implementation we need to rewrite~\eqref{eqn:As} as a matrix equation. Let
+For efficient implementation we rewrite~\eqref{eqn:As} as a matrix equation. Let
 \begin{align}
-  &(\vec A_j)_n =  A_j^n, \quad (\vec f_j)_n =  f_j^n,
+  &(\vec \alpha_j)_n =  \alpha_j^n, \quad (\vec f_j)_n =  f_j^n,
   \\
-  &(\vec T_j)_{nm} = T^{nm}_j, \quad (\vec \Psi_{j \ell})_{mp} =  H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}},
+  &(\vec T_j)_{nm} = T^{nm}_j, \quad (\vec \Psi_{j \ell})_{np} =  H_{p-n}(k R_{\ell j})\ee^{\ii(p-n)\Theta_{\ell j}},
 \end{align}
-and note that $\Theta_{\ell j} = \Theta_{j \ell } + \pi$. Then
+and note that changing the order of $\ell$ and $j$, makes $\Theta_{\ell j} = \Theta_{j \ell } + \pi$. Then
 \begin{equation}
- \sum_{\ell}(\delta_{\ell j} +  (\delta_{\ell j}-1) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+ \sum_{\ell}(\delta_{j \ell} +  (\delta_{j \ell}-1) \vec \Psi_{j \ell} \vec T_\ell) \vec \alpha_\ell  =  \vec f_j,
 \end{equation}
 which leads to one massive square matrix:
 \begin{equation}
   \begin{bmatrix}
-    \vec I & -\vec T_1 \vec \Psi_{1 2} & \cdots & -\vec T_1 \vec \Psi_{1 (N-1)} & -\vec T_1 \vec \Psi_{1 N} \\
-    -\vec T_2 \vec \Psi_{2 1} & \vec I &  -\vec T_2 \vec \Psi_{2 3} & \cdots & -\vec T_2 \vec \Psi_{2 N} \\
+    \vec I & - \vec \Psi_{1 2}\vec T_2 & \cdots & - \vec \Psi_{1 (N-1)} \vec T_{N-1} & - \vec \Psi_{1 N} \vec T_N \\
+    - \vec \Psi_{2 1} \vec T_1 & \vec I &  - \vec \Psi_{2 3} \vec T_3 & \cdots & - \vec \Psi_{2 N} \vec T_N \\
      & \vdots & & & \vdots \\
-     -\vec T_N \vec \Psi_{N 1}  & \cdots & \cdots & - \vec T_N \vec \Psi_{N (N-1)} & \vec I
+     - \vec \Psi_{N 1} \vec T_1  & \cdots & \cdots & -  \vec \Psi_{N (N-1)} \vec T_{N-1} & \vec I
   \end{bmatrix}
   \begin{bmatrix}
-    \vec A_1 \\
-    \vec A_2 \\
+    \vec \alpha_1 \\
+    \vec \alpha_2 \\
     \vdots \\
-    \vec A_N
+    \vec \alpha_N
   \end{bmatrix}
    = \begin{bmatrix}
-     \vec T_1 \vec f_1 \\
+     \vec f_1 \\
      \vdots \\
-     \vec T_N \vec f_N
+     \vec f_N
    \end{bmatrix}
 \end{equation}
 

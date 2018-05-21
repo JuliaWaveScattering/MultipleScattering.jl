@@ -135,14 +135,13 @@ particles = [p1, p2]
 
 particles = [p1, p2]
 
-particles = [p1, p2]
 sim = FrequencySimulation(medium, particles, source)
 
 widths = -10.4:0.01:-9.4
 x_vec = [ SVector(x,.0) for x in widths]
 result = run(sim, 0.1, x_vec; basis_order = 7)
 using Plots; pyplot()
-plot(xs, abs.(field(result)[:]), ylim = (0.9,2.))
+plot(widths, abs.(field(result)[:]), ylim = (0.9,2.))
 
 x = SVector(-9.80001,0.0)
 run(sim, 0.1, [x]; basis_order = 8).field
