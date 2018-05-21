@@ -92,25 +92,31 @@ end
 
 @testset "boundary conditions" begin
 
+T = Float64
 ω = 0.1
-Nh = 10
+ωs = [0.1,0.2,0.3]
+ωs = [0.1,0.2]
+
+Nh = 8
 basis_order = Nh
 medium = Acoustic(1.,1.,2)
 
 # Choose particles
 sound_soft = Acoustic(0.,0.0 + 0.0im,2)
-p_soft = Particle(sound_soft,Circle([1.0,2.0], 2.0))
+p_soft = Particle(sound_soft,Circle([1.0,2.0], .5))
+p2_soft = Particle(sound_soft,Circle([3.0,4.0], 0.6))
 
-sound_hard = Acoustic(Inf,100000. + 0.0im,2)
-p_hard = Particle(sound_hard,Circle([-1.0,-2.0], 0.3))
+sound_hard = Acoustic(Inf,Inf + 0.0im,2)
+p_hard = Particle(sound_hard,Circle([-3.0,-2.0], 0.3))
+p2_hard = Particle(sound_hard,Circle([3.0,2.0], 0.4))
 
-sound1 = Acoustic(2.,3. + 0.0im,2)
-p1 = Particle(sound1,Circle([-1.0,0.0], 0.5))
+sound = Acoustic(2.,2. + 0.0im,2)
+sound = Acoustic(medium.ρ, 4. + 0.0im,2)
+p1 = Particle(sound,Circle([-10.0,0.0], .2))
+p2 = Particle(sound,Circle([0.0,0.0], .2))
 
-sound2 = Acoustic(4.,1.2 + 0.0im,2)
-p2 = Particle(sound2,Circle([2.0,0.0], 0.5))
-
-# t_matrix(p_hard.shape, p_hard.medium, medium, ω, Nh)
+# t_matrix(p1.shape, p1.medium, medium, ω, Nh)
+# t_matrix(p2.shape, p2.medium, medium, ω, Nh)
 # t_matrix(p_soft.shape, p_soft.medium, medium, ω, Nh)
 
 # Create two point sources
@@ -120,46 +126,60 @@ source1 = TwoDimAcousticPointSource(medium, source_position, amplitude)
 source2 = TwoDimAcousticPointSource(medium, -source_position, amplitude)
 source = source1 + 1.2*source2
 
-source = TwoDimAcousticPlanarSource(medium, SVector(-10.0,0.0), SVector(1.0,0.0), amplitude)
+source = TwoDimAcousticPlanarSource(medium, SVector(0.0,0.0), SVector(1.0,0.0), amplitude)
 
 particles = [p_soft, p_hard, p1]
-particles = [p_soft]
+particles = [p_soft, p2_soft]
+particles = [p_hard, p2_hard]
+particles = [p1, p2]
 
+particles = [p1, p2]
+
+particles = [p1, p2]
 sim = FrequencySimulation(medium, particles, source)
 
-dr = 10000*eps(Float64)
-T = Float64
-particles = sim.particles
+widths = -10.4:0.01:-9.4
+x_vec = [ SVector(x,.0) for x in widths]
+result = run(sim, 0.1, x_vec; basis_order = 7)
+using Plots; pyplot()
+plot(xs, abs.(field(result)[:]), ylim = (0.9,2.))
 
+x = SVector(-9.80001,0.0)
+run(sim, 0.1, [x]; basis_order = 8).field
 
-# points just inside particles
-inside1_points = [boundary_points(p.shape; dr = - dr - 10*eps(T)) for p in particles]
-inside2_points = [boundary_points(p.shape; dr = - 10*eps(T)) for p in particles]
+sim_source = FrequencySimulation(medium, Particle.([]), source)
+displacement_results, traction_results =  boundary_data(particles[1], sim, ωs; basis_order = 8)
+displacement_source_results, traction_source_results =  boundary_data(particles[1], sim_source, ωs; basis_order = 8)
+mean(norm.(displacement_results[1].field - displacement_results[2].field))/mean(norm.(displacement_source_results[2].field))
+mean(norm.(traction_results[1].field - traction_results[2].field))/mean(norm.(traction_source_results[2].field))
 
-# points just outside particles
-outside1_points = [boundary_points(p.shape; dr = 10*eps(T)) for p in particles]
-outside2_points = [boundary_points(p.shape; dr = dr + 10*eps(T)) for p in particles]
+particles = [p_soft, p2_soft]
+sim = FrequencySimulation(medium, particles, source)
+sim_source = FrequencySimulation(medium, Particle.([]), source)
+displacement_results, traction_results =  boundary_data(particles[1], sim, ωs; basis_order = Nh)
+displacement_source_results, traction_source_results =  boundary_data(particles[1], sim_source, ωs; basis_order = Nh)
+mean(norm.(displacement_results[1].field - displacement_results[2].field))/mean(norm.(displacement_source_results[2].field))
+mean(norm.(traction_results[1].field - traction_results[2].field))/mean(norm.(traction_source_results[2].field))
 
-inside1_points
-[[source.field(x,ω) for ω in ωs] for x in outside1_points]
+particles = [p_hard, p2_hard]
+sim = FrequencySimulation(medium, particles, source)
+sim_source = FrequencySimulation(medium, Particle.([]), source)
+displacement_results, traction_results =  boundary_data(particles[1], sim, ωs; basis_order = Nh)
+displacement_source_results, traction_source_results =  boundary_data(particles[1], sim_source, ωs; basis_order = Nh)
+mean(norm.(displacement_results[1].field - displacement_results[2].field))/mean(norm.(displacement_source_results[2].field))
+mean(norm.(traction_results[1].field - traction_results[2].field))/mean(norm.(traction_source_results[2].field))
 
+@test mean(norm.(displacement_results[1].field)) < 1000*eps(T)
+@test mean(norm.(displacement_results[2].field)) < 5.0e-5
 
-# points just inside particles
-inside1_points = [boundary_points(p.shape; dr = - dr - 10*eps(Float64)) for p in particles]
-inside1_points = SVector{2,Float64}.(vcat(inside1_points...))
-inside2_points = [boundary_points(p.shape; dr = - 10*eps(Float64)) for p in particles]
-inside2_points = SVector{2,Float64}.(vcat(inside2_points...))
+displacement_results, traction_results =  boundary_data(particles[3], sim, ωs; basis_order = Nh)
 
-# points just outside particles
-outside1_points = [boundary_points(p.shape; dr = 10*eps(Float64)) for p in particles]
-outside1_points = SVector{2,Float64}.(vcat(outside1_points...))
-outside2_points = [boundary_points(p.shape; dr = dr + 10*eps(Float64)) for p in particles]
-outside2_points = SVector{2,Float64}.(vcat(outside2_points...))
 
 out1_result = run(sim, ω, outside1_points; basis_order = basis_order)
 out2_result = run(sim, ω, outside2_points; basis_order = basis_order)
-
 (out2_result.field - out1_result.field)/(dr * medium.ρ)
+
+run(sim_source, ωs, outside_points; basis_order = basis_order)
 
 in1_result = run(sim, ω, inside1_points; basis_order = basis_order)
 in1_result.field

@@ -88,30 +88,18 @@ function field(sim::FrequencySimulation{Dim,P,T}, ω::T, x_vec::Vector{SVector{D
             end
         end
     end
-    map(eachindex(x_vec)) do i
-        ind = find(inside(p.shape,x_vec[i]) for p in sim.particles)
+    map(x_vec) do x
+        ind = find(inside(p.shape, x) for p in sim.particles)
         if isempty(ind)
-            sim.source.field(x_vec[i],ω) + sum_basis(x_vec[i])
+            sim.source.field(x,ω) + (isempty(sim.particles) ? zero(Complex{T}) : sum_basis(x))
         else
             j = ind[1]
-            field(sim.particles[j], sim.medium, ω, x_vec[i], collect(a[:,j]); basis_order=Nh)
-        end
-    end
-end
-
-function field(p::Particle, medium::PhysicalProperties, ω::T, x::AbstractVector{T}, a_vec::AbstractVector; basis_order::Int=5) where T<:Number
-    Nh = basis_order
-
-    if inside(p.shape,x)
-        inner_basis = basis_function(p, ω)
-        b_vec = inner_basis_coefficients(p, medium, ω, a_vec; basis_order=basis_order)
-        sum(-Nh:Nh) do m
-            inner_basis(m, x-origin(p)) * b_vec[m+Nh+1]
-        end
-    else
-        basis = basis_function(sim.medium, ω)
-        sum(-Nh:Nh) do m
-            basis(m, x-origin(p)) * a_vec[m+Nh+1]
+            p = sim.particles[j]
+            inner_basis = basis_function(p, ω)
+            b_vec = inner_basis_coefficients(p, sim.medium, ω, collect(a[:,j]); basis_order=Nh)
+            sum(-Nh:Nh) do m
+                inner_basis(m, x-origin(p)) * b_vec[m+Nh+1]
+            end
         end
     end
 end

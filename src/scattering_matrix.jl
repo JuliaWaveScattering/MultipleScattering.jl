@@ -7,7 +7,7 @@ function scattering_matrix(medium::PhysicalProperties, particles::Vector, t_matr
 
     # No particles means no scattering
     if P == 0
-        warning("You have computed the scattering matrix with no particles, are you sure something hasn't gone wrong?")
+        # warn("You have computed the scattering matrix with no particles, are you sure something hasn't gone wrong?")
         return Matrix{Complex{T}}(0,0)
     end
 

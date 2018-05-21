@@ -38,25 +38,28 @@ function build_field_simulation{T}(simulation::FrequencySimulation{T}, bounds::R
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot{T}(simulation::FrequencySimulation{T},k::T;res=10, xres=res, yres=res,
+@recipe function plot(sim::FrequencySimulation,k::Number;res=10, xres=res, yres=res,
                          resp_fnc=real, build_field=true, bounds = :auto,
                          drawparticles=true, drawshape=false, drawlisteners=build_field)
+
+# k=0.1; res = 10; xres=res; yres=res; bounds = :auto
+# drawparticles=true
 
     @series begin
         # find a box which covers everything
         if bounds == :auto
-          shape_bounds = bounding_rectangle(simulation.shape)
+          # shape_bounds = bounding_rectangle(sim.shape)
           listeners_as_particles = map(
-              l -> Particle(simulation.listener_positions[:,l],mean_radius(simulation)/2),
+              l -> Particle(sim.listener_positions[:,l],mean_radius(sim)/2),
               1:size(simulation.listener_positions,2)
           )
-          particle_bounds = bounding_rectangle([simulation.particles; listeners_as_particles])
-          bounds = bounding_rectangle(shape_bounds, particle_bounds)
+          particle_bounds = bounding_rectangle([sim.particles; listeners_as_particles])
+          # bounds = bounding_rectangle(shape_bounds, particle_bounds)
         end
         if build_field
-          field_simulation = build_field_simulation(simulation, bounds, [k]; xres=xres, yres=yres)
+          field_sim = build_field_simulation(sim, bounds, [k]; xres=xres, yres=yres)
         else
-          field_simulation = simulation
+          field_sim = sim
         end
 
         # For this we sample at the centre of each pixel
@@ -64,7 +67,7 @@ end
         y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
 
         # Turn the responses (a big long vector) into a matrix, so that the heatmap will understand us
-        response_mat = transpose(reshape(field_simulation.response, (xres+1, yres+1)))
+        response_mat = transpose(reshape(field_sim.response, (xres+1, yres+1)))
         linetype --> :contour
         fill --> true
         fillcolor --> :pu_or
@@ -74,11 +77,11 @@ end
     end
     if drawshape
       @series begin
-          simulation.shape
+          sim.shape
       end
     end
     if drawparticles # written in strange way due to odd behaviour of @series
-      particles = filter(p -> inside(bounds, p), simulation.particles)
+      particles = filter(p -> inside(bounds, p), sim.particles)
       for i=1:length(particles) @series particles[i] end
     end
     if drawlisteners
@@ -90,9 +93,9 @@ end
           colorbar --> true
           aspect_ratio := 1.0
 
-          r = mean_radius(simulation.particles)/2
-          x(t) = r * cos(t) + simulation.listener_positions[1, 1]
-          y(t) = r * sin(t) + simulation.listener_positions[2, 1]
+          r = mean_radius(sim.particles)/2
+          x(t) = r * cos(t) + sim.listener_positions[1, 1]
+          y(t) = r * sin(t) + sim.listener_positions[2, 1]
 
           (x, y, -2π/3, 2π/3)
       end
