@@ -2,7 +2,7 @@ abstract type Simulation{Dim,T} end
 
 mutable struct FrequencySimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <: Simulation{Dim,T}
     medium::P
-    particles::Vector{Particle{Dim,PP,S,T} where {PP<:PhysicalProperties,S<:Shape}}
+    particles::Vector{Particle{Dim,PP,S,T}} where {PP<:PhysicalProperties,S<:Shape}
     source::Source{P,T}
 end
 
@@ -10,6 +10,11 @@ end
 # don't need to do much type checking as the struct will error is inconsistent
 function FrequencySimulation(medium::P, particles::Vector{Pa}, source::Source{P,T}) where {Pa<:Particle,Dim,T,FieldDim,P<:PhysicalProperties{Dim,FieldDim,T}}
     FrequencySimulation{Dim,P,T}(medium, particles, source)
+end
+
+# A simulation with just sources is perfectly reasonable
+function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,FieldDim,P<:PhysicalProperties{Dim,FieldDim,T}}
+    FrequencySimulation{Dim,P,T}(medium, Vector{Particle{Dim,P,Shape,T}}(0), source)
 end
 
 import Base.run

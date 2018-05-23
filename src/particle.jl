@@ -8,6 +8,9 @@ type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat}
     end
 end
 
+# Shorthand for all Vectors of particles
+Particles = Vector{Particle{D,P,S,T}} where {D,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat}
+
 # Convenience constructor which does not require explicit types/parameters
 function Particle(medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T},S<:Shape{Dim,T}}
     Particle{Dim,P,S,T}(medium,shape)
@@ -21,6 +24,9 @@ CircleParticle{P, T} = Particle{2, P, Circle{T}, T}
 
 outer_radius(p::Particle) = outer_radius(p.shape)
 volume(p::Particle) = volume(p.shape)
+
+bounding_rectangle(p::Particle) = bounding_rectangle(p.shape)
+bounding_rectangle(ps::Particles) = bounding_rectangle([p.shape for p in ps])
 
 function volume(particles::Vector{Pa}) where {Dim,Pa<:Particle{Dim}}
     mapreduce(volume, +, particles)

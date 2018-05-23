@@ -2,8 +2,8 @@ __precompile__()
 
 module MultipleScattering
 
-export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside, origin,
-       boundary_functions, boundary_points, boundary_data
+export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside, origin
+export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        basis_function, basis_coefficients, dim, field_dim
 export Particle, (==)
@@ -39,6 +39,9 @@ include("scattering_matrix.jl")
 include("physics/diffbessel.jl")
 include("physics/acoustics.jl")
 include("physics/electromagnetism.jl")
+
+#Plotting and graphics
+include("plot/plot.jl")
 
 # Precompile hints
 include("precompile.jl")

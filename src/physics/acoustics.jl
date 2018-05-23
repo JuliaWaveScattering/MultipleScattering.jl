@@ -56,7 +56,7 @@ name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 
 
 function boundary_data(particle::Particle{2,P,S,T}, sim::FrequencySimulation{2,P,T}, ωs::Vector{T};
-        dr = 100000*eps(T), kws...) where {P<:Acoustic{2}, S<:Shape{2}, T<:Float64}
+        dr = 1e6 * eps(T), kws...) where {P<:Acoustic{2}, S<:Shape{2}, T<:Float64}
 
     p = particle;
 
@@ -72,19 +72,19 @@ function boundary_data(particle::Particle{2,P,S,T}, sim::FrequencySimulation{2,P
 
     in1_results = run(sim, ωs, inside1_points; kws...)
     in2_results = run(sim, ωs, inside2_points; kws...)
-    in_results  = run(sim, ωs, inside_points; kws...)
+    in_pressure  = run(sim, ωs, inside_points; kws...)
 
     fields = (in2_results.field - in1_results.field)/(dr * p.medium.ρ)
-    in_traction = FrequencySimulationResult(fields, inside_points, RowVector(ωs))
+    in_displace = FrequencySimulationResult(fields, inside_points, RowVector(ωs))
 
     out1_results = run(sim, ωs, outside1_points; kws...)
     out2_results = run(sim, ωs, outside2_points; kws...)
-    out_results  = run(sim, ωs, outside_points; kws...)
+    out_pressure  = run(sim, ωs, outside_points; kws...)
 
-    traction_out = (out2_results.field - out1_results.field)/(dr * sim.medium.ρ)
-    out_traction = FrequencySimulationResult(traction_out, outside_points, RowVector(ωs))
+    fields = (out2_results.field - out1_results.field)/(dr * sim.medium.ρ)
+    out_displace = FrequencySimulationResult(fields, outside_points, RowVector(ωs))
 
-    return ([in_results, out_results], [in_traction, out_traction])
+    return ([in_pressure, out_pressure], [in_displace, out_displace])
 end
 
 # T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
