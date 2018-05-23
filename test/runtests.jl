@@ -131,8 +131,8 @@ end
 end
 
 # @testset "Plot" begin
-#     particles = [Particle(sound,Circle([x,0.0], .5)) for x =0.:2.:10.]
-#     source = TwoDimAcousticPlanarSource(sound, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
-#     sim = FrequencySimulation(sound, particles, source)
-#     plot(sim)
+    # particles = [Particle(sound,Circle([x,0.0], .5)) for x =0.:2.:10.]
+    # source = TwoDimAcousticPlanarSource(sound, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
+    # sim = FrequencySimulation(sound, particles, source)
+    # plot(sim)
 # end

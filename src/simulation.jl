@@ -37,10 +37,7 @@ end
 function run(sim::FrequencySimulation{Dim,P,T}, ωs::AbstractVector{T}, x_vec::Vector{SVector{Dim,T}};
         kws...)::(FrequencySimulationResult{Dim,FieldDim,T} where FieldDim)  where {Dim,P,T}
     # Compute for each angular frequency, then join up all the results
-
-    # previously:
-    # mapreduce(ω->run(sim,ω,x_vec; kws...), union, ωs)
-    fields = mapreduce(ω->run(sim,ω,x_vec; kws...).field[:], hcat, ωs)
+    fields = mapreduce(ω->run(sim,ω,x_vec; kws...).field, hcat, ωs)
     FrequencySimulationResult(fields,x_vec,RowVector(ωs))
 end
 
