@@ -31,26 +31,27 @@ function congruent(r1::Rectangle{T}, r2::Rectangle{T}) where T
 end
 
 # Rectangle bounds itself
-function bounding_rectangle(rect::Rectangle)
-    rect
-end
+bounding_rectangle(rect::Rectangle) = rect
 
 "Return SVector with the coordinates of the bottom left of a rectangle"
-bottomleft(rect::Rectangle) = origin(rect) .- SVector(width/2, height/2)
+bottomleft(rect::Rectangle) = origin(rect) .- SVector(rect.width/2, rect.height/2)
 
 "Return SVector with the coordinates of the top right of a rectangle"
-topright(rect::Rectangle)   = origin(rect) .+ SVector(width/2, height/2)
+topright(rect::Rectangle)   = origin(rect) .+ SVector(rect.width/2, rect.height/2)
 
 # Create a box which bounds two shapes
-function bounding_rectangle(shape1::Shape, shape2::Shape)
-    box1 = bounding_rectangle(shape1)
-    box2 = bounding_rectangle(shape2)
+bounding_rectangle(shape1::Shape, shape2::Shape) = bounding_rectangle([shape1, shape2])
 
-    min_bottomleft = min.(bottomleft(box1), bottomleft(box2))
-    max_topright = max.(topright(box1), topright(box2))
+# Create a box which bounds an array of shapes
+function bounding_rectangle(shapes::Vector{S}) where S<:Shape
+    boxes = bounding_rectangle.(shapes)
+
+    min_bottomleft = min.(bottomleft.(boxes)...)
+    max_topright   = max.(topright.(boxes)...)
 
     return Rectangle(min_bottomleft, max_topright)
 end
+
 
 function boundary_functions(rect::Rectangle)
 

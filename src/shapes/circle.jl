@@ -30,8 +30,8 @@ function congruent(c1::Circle{T}, c2::Circle{T}) where T
     c1.radius == c2.radius
 end
 
-function bounding_rectangle{T}(circle::Circle{T})
-    return Rectangle{T}(origin(circle) .- shape.radius, origin(circle) .+ shape.radius)
+function bounding_rectangle(circle::Circle)
+    return Rectangle(origin(circle), 2*circle.radius, 2*circle.radius)
 end
 
 function boundary_functions{T}(circle::Circle{T})
