@@ -15,7 +15,7 @@ congruent(s1::Shape, s2::Shape) = false
 "Generic helper function which tests if boundary coordinate is between 0 and 1"
 function check_boundary_coord_range(t)
     if t < 0 || t > 1
-        DomainError("Boundary coordinate must be between 0 and 1")
+        throw(DomainError("Boundary coordinate must be between 0 and 1"))
     end
 end
 
@@ -24,6 +24,7 @@ include("rectangle.jl")
 include("circle.jl")
 include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
+include("sphere.jl")
 
 "points on the boundary of a shape"
 function boundary_points(shape::Shape{Dim,T}, num_points::Int = 4; dr = zero(T)) where {Dim,T}

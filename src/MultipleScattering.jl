@@ -2,12 +2,13 @@ __precompile__()
 
 module MultipleScattering
 
-export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside, origin
+export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside,
+       origin, Sphere, TimeOfFlight, TimeOfFlightFromPoint
 export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        basis_function, basis_coefficients, dim, field_dim
-export Particle, (==)
+export Particle, (==), Particles
 export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
 export Simulation, run, TimeSimulation, forcing, field

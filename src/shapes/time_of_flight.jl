@@ -46,7 +46,7 @@ end
 function boundary_functions(shape::TimeOfFlight)
 
     function x(τ)
-        check_boundary_coord_range(t)
+        check_boundary_coord_range(τ)
         if τ <= 1//2
             return zero(τ)
         else
@@ -58,7 +58,7 @@ function boundary_functions(shape::TimeOfFlight)
     end
 
     function y(τ)
-        check_boundary_coord_range(t)
+        check_boundary_coord_range(τ)
         t = shape.time
         l = shape.listener_position
         if τ <= 1//2

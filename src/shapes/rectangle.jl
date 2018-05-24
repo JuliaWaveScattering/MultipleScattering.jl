@@ -9,8 +9,8 @@ struct Rectangle{T} <: Shape{2,T}
 end
 
 # Alternative constructor, where bottomleft and topright corners are specified
-function Rectangle(bottomleft::SVector{2,T}, topright::SVector{2,T}) where {T}
-    origin = (bottomleft .+ topright)/2
+function Rectangle(bottomleft::Union{AbstractVector{T},NTuple{2,T}}, topright::Union{AbstractVector{T},NTuple{2,T}}) where {T}
+    origin = (bottomleft .+ topright)./2
     width = topright[1] - bottomleft[1]
     height = topright[2] - bottomleft[2]
     Rectangle{T}(origin, width, height)

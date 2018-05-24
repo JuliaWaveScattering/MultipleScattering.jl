@@ -74,6 +74,76 @@ using MultipleScattering
 
 end
 
+include("shapetests.jl")
+
+@testset "Types" begin
+
+    @testset "Particle" begin
+        circle1 = Circle((0.0,0.0),1.0)
+        circle2 = Circle((0.0,5.0),2.0)
+        a = Acoustic(1.0,1.0,2)
+        homog_particles = [Particle(a,circle1), Particle(a,circle2)]
+        # Check types comparisons work as user would expect
+        @test typeof(homog_particles) <: Particles
+        @test typeof(homog_particles) <: Particles{2}
+        @test typeof(homog_particles) <: Particles{2,Float64}
+
+        circle = Circle((0.0,0.0),1.0)
+        rect = Rectangle((2.0,2.0),3.0,2.0)
+        diff_shape_particles = [Particle(a,circle), Particle(a,rect)]
+
+        # Check types comparisons work as user would expect
+        @test typeof(diff_shape_particles) <: Particles
+        @test typeof(diff_shape_particles) <: Particles{2}
+        @test typeof(diff_shape_particles) <: Particles{2,Float64}
+
+        a2 = Acoustic(1.0,1.0,2)
+        a3 = Acoustic(1.0,1.0,3)
+        sphere = Sphere((0.0,0.0,0.0),1.0)
+
+        circular_particle = Particle(a2,circle)
+        @test typeof(circular_particle) <: Particle{2}
+
+        spherical_particle = Particle(a3,sphere)
+        @test typeof(spherical_particle) <: Particle{3}
+
+        # Dimension mismatch throws error
+        @test_throws MethodError Particle(a3,circle)
+        @test_throws MethodError Particle(a2,sphere)
+
+        # This is a valid vector of valid particles, but not of type Particles
+        # because the dimensions don't match
+        invalid_particles = [circular_particle, spherical_particle]
+        @test_throws TypeError invalid_particles::Particles
+    end
+
+end
+
+# Run like a user might run it
+@testset "End-to-end" begin
+
+    @testset "Particles with same shape" begin
+        circle1 = Circle((0.0,0.0),1.0)
+        circle2 = Circle((0.0,5.0),2.0)
+        a = Acoustic(1.0,1.0,2)
+        particles = [Particle(a,circle1), Particle(a,circle2)]
+        source = TwoDimAcousticPlanarSource(a,[1.0,0.0],[0.0,0.0])
+        sim = FrequencySimulation(a,particles,source)
+        @test true
+    end
+
+    @testset "Particles with different shape" begin
+        circle = Circle((0.0,0.0),1.0)
+        rect = Rectangle((2.0,2.0),3.0,2.0)
+        a = Acoustic(1.0,1.0,2)
+        particles = [Particle(a,circle), Particle(a,rect)]
+        source = TwoDimAcousticPlanarSource(a,[1.0,0.0],[0.0,0.0])
+        sim = FrequencySimulation(a,particles,source)
+        @test true
+    end
+
+end
+
 @testset "boundary conditions" begin
 
     ωs = [0.1,0.2,0.3]
@@ -122,7 +192,7 @@ end
 
     # Continuous pressure and displacement accross particl boundary
     @test mean(norm.(pressure_results[1].field - pressure_results[2].field)) < 4e-9 * mean(norm.(pressure_source_results[2].field))
-    @test mean(norm.(displace_results[1].field - displace_results[2].field)) < 5e-6 * mean(norm.(displace_source_results[1].field))
+    @test mean(norm.(displace_results[1].field - displace_results[2].field)) < 6e-6 * mean(norm.(displace_source_results[1].field))
 
     # The source pressure should always be continuous accross any interface, however the displacement is only continuous because p1.medium.ρ == medium.ρ
     @test mean(norm.(pressure_source_results[1].field - pressure_source_results[2].field)) < 4e-9 * mean(norm.(pressure_source_results[2].field))
