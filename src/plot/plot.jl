@@ -18,64 +18,55 @@ include("plot_domain.jl")
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot(sim::FrequencySimulation, k::Number;res=10, xres=res, yres=res,
+@recipe function plot(sim::FrequencySimulation, ω::Number;res=10, xres=res, yres=res,
                          field_apply=real, build_field=true, bounds = :auto,
-                         drawparticles=true)
-
-# k=0.1; res = 10; xres=res; yres=res; bounds = :auto
-# drawparticles=true
+                         drawparticles=false)
 
     @series begin
         # find a box which covers everything
-        if bounds == :auto
-          bounds = bounding_rectangle(sim.particles)
-          # particle_bounds = bounding_rectangle([sim.particles; listeners_as_particles])
-          # bounds = bounding_rectangle(shape_bounds, particle_bounds)
-        end
+        if bounds == :auto bounds = bounding_rectangle(sim.particles) end
+
         if build_field
-          field_sim = build_field_simulation(sim, bounds, [k]; xres=xres, yres=yres)
+          field_sim = build_field_simulation(sim, bounds, [ω]; xres=xres, yres=yres)
         else
           field_sim = sim
         end
 
-        # For this we sample at the centre of each pixel
-        x_pixels = bounds.origin[1] + linspace(- bounds.width/2, bounds.width/2, xres+1)
-        y_pixels = bounds.origin[2] + linspace(- bounds.height/2, bounds.height/2, yres+1)
+        xy_mat = reshape(field_sim.x, (xres+1, yres+1))
+
+        x_pixels = [x[1] for x in xy_mat[:,1]]
+        y_pixels = [x[2] for x in xy_mat[1,:]]
 
         # Turn the responses (a big long vector) into a matrix, so that the heatmap will understand us
-        response_mat = transpose(reshape(field_sim.field, (xres+1, yres+1)))
+        response_mat = transpose(reshape(field(field_sim), (xres+1, yres+1)))
         linetype --> :contour
         fill --> true
+        aspect_ratio := 1.0
         fillcolor --> :pu_or
-        title --> "Field at k=$k"
+        title --> "Field at ω=$ω"
 
         (x_pixels, y_pixels, field_apply.(response_mat))
-    end
-    if drawshape
-      @series begin
-          sim.shape
-      end
     end
     if drawparticles # written in strange way due to odd behaviour of @series
       particles = filter(p -> inside(bounds, p), sim.particles)
       for i=1:length(particles) @series particles[i] end
     end
-    if drawlisteners
-      @series begin
-          line --> 0
-          fill --> (0, :lightgreen)
-          legend --> false
-          grid --> false
-          colorbar --> true
-          aspect_ratio := 1.0
-
-          r = mean_radius(sim.particles)/2
-          x(t) = r * cos(t) + sim.listener_positions[1, 1]
-          y(t) = r * sin(t) + sim.listener_positions[2, 1]
-
-          (x, y, -2π/3, 2π/3)
-      end
-    end
+    # if drawsource
+    #   @series begin
+    #       line --> 0
+    #       fill --> (0, :lightgreen)
+    #       legend --> false
+    #       grid --> false
+    #       colorbar --> true
+    #       aspect_ratio := 1.0
+    #
+    #       r = mean_radius(sim.particles)/2
+    #       x(t) = r * cos(t) + sim.listener_positions[1, 1]
+    #       y(t) = r * sin(t) + sim.listener_positions[2, 1]
+    #
+    #       (x, y, -2π/3, 2π/3)
+    #   end
+    # end
 end
 
 """
@@ -83,23 +74,19 @@ Build a 'field simulation' with lots of listeners using the same domain as simul
 you pass in. This 'field simulation' can then be used to plot the whole field for
 this wavenumber.
 """
-function build_field_simulation{T}(sim::FrequencySimulation{T}, bounds::Rectangle{T},
-                              ω_vec::Vector{T}; res=20,xres=res,yres=res, kws...)
-    # Create deep copy of sim so that we can add lots of new listener positions and rerun the sim
-    field_sim = deepcopy(sim)
+function build_field_simulation(sim::FrequencySimulation, bounds::Rectangle,
+                              ω_vec::AbstractVector; res=20,xres=res,yres=res, kws...)
 
     # Build up the pixels and all the framework for the plotting
     num_pixels = (xres+1)*(yres+1)
-    listener_positions = Matrix{T}(2,num_pixels)
 
     #Size of the step in x and y direction
     step_size = [bounds.width / xres, bounds.height / yres]
     x_vec = [SVector(bottomleft(bounds) + step_size.*[i,j]) for i=0:xres, j=0:yres]
+    # should be similar to
+    # x_pixels = bounds.origin[1] + linspace(- bounds.width/2, bounds.width/2, xres+1)
 
-    sim_result = run(sim, ω_vec, x_vec[:]; kws...)
-    sim_result = run(sim, ω, x_vec[:]; kws...)
-
-    return sim_result
+    return run(sim, ω_vec, x_vec[:]; kws...)
 end
 
 # "Plot the response across all wavenumbers"

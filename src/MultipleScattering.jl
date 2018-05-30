@@ -7,7 +7,7 @@ export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside,
 export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
-       basis_function, basis_coefficients, dim, field_dim
+       basis_function, basis_coefficients, inner_basis_coefficients, dim, field_dim
 export Particle, (==), Particles
 export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
@@ -16,6 +16,7 @@ export SimulationResult, FrequencySimulation, FrequencySimulationResult, TimeSim
 export SimulationDistribution, FrequencySimulationDistribution, sample
 export t_matrix, get_t_matrices
 export scattering_matrix
+export build_field_simulation
 
 import SpecialFunctions: besselj, hankelh1
 

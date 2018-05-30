@@ -41,9 +41,9 @@ function run(sim::FrequencySimulation{Dim,P,T}, ωs::AbstractVector{T}, x_vec::V
     FrequencySimulationResult(fields,x_vec,RowVector(ωs))
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::AbstractVector{T}, x::SVector{Dim,T};
+function run(sim::FrequencySimulation{Dim,P,T}, ωs::AbstractVector{T}, x::SVector{Dim,T};
         kws...)::(FrequencySimulationResult{Dim,FieldDim,T} where FieldDim) where {Dim,P,T}
-    run(sim,ω,[x]; kws...)
+    run(sim,ωs,[x]; kws...)
 end
 
 function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::SVector{Dim,T};
