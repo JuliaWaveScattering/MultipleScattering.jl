@@ -12,7 +12,9 @@ export Particle, (==), Particles
 export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
 export Simulation, run, TimeSimulation, forcing, field
-export SimulationResult, FrequencySimulation, FrequencySimulationResult, TimeSimulationResult
+export SimulationResult, FrequencySimulation, FrequencySimulationResult
+export TimeSimulationResult, frequency_to_time
+export ω_to_t, t_to_ω, firstnonzero, get_gaussian_freq_impulse, get_gaussian_time_impulse, delta_freq_impulse
 export SimulationDistribution, FrequencySimulationDistribution, sample
 export t_matrix, get_t_matrices
 export scattering_matrix
@@ -34,6 +36,7 @@ include("particle.jl")
 include("source.jl")
 include("result.jl")
 include("simulation.jl")
+include("time_simulation.jl")
 include("random/random.jl")
 include("t_matrix.jl")
 include("scattering_matrix.jl")

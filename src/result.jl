@@ -13,9 +13,15 @@ function FrequencySimulationResult(field::Matrix{SVector{FieldDim,Complex{T}}}, 
 end
 
 struct TimeSimulationResult{Dim,FieldDim,T<:AbstractFloat} <: SimulationResult{Dim,T}
-    field::Matrix{SVector{FieldDim,Complex{T}}}
+    field::Matrix{SVector{FieldDim,T}}
     x::Vector{SVector{Dim,T}}
     t::RowVector{T}
+end
+
+function TimeSimulationResult(time_field::Union{Matrix{T},Matrix{AbstractVector{T}}}, x::AbstractVector{SVector{Dim,T}}, t::AbstractVector{T}) where {Dim,T}
+    time_field = [SVector(d...) for d in time_field]
+    FieldDim = size(time_field[1],1)
+    TimeSimulationResult{Dim,FieldDim,T}(time_field, Vector(x), RowVector(t))
 end
 
 """
