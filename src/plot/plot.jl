@@ -18,7 +18,7 @@ include("plot_domain.jl")
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot(sim::FrequencySimulation, ω::Number;res=10, xres=res, yres=res,
+@recipe function plot(sim::FrequencySimulation, ω::Number; res=10, xres=res, yres=res,
                          field_apply=real, build_field=true, bounds = :auto,
                          drawparticles=false)
 

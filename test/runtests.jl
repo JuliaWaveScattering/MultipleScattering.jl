@@ -199,28 +199,3 @@ end
     @test mean(norm.(displace_source_results[1].field - displace_source_results[2].field)) < 5e-7 * mean(norm.(displace_source_results[1].field))
 
 end
-
-# @testset "Plot" begin
-    # using Plots #; pyplot()
-    #
-    # sound_p = Acoustic(1., 4. + 0.0im,2)
-    #
-    # particles = [Particle(sound_p,Circle([x,0.0], .5)) for x =0.:2.:10.]
-    #
-    # sound_sim = Acoustic(1., 0.5 + 0.0im,2)
-    # source = TwoDimAcousticPlanarSource(sound_sim, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
-    # sim = FrequencySimulation(sound_sim, particles, source)
-    #
-    # ω = 0.5
-    # plot(sim,ω)sim = FrequencySimulation(sound_sim, particles, source)
-    #
-    #
-    # source_position = SVector(5.0,0.6)
-    # amplitude = 1.0
-    # source = TwoDimAcousticPointSource(sound_sim, source_position, amplitude)
-    # sim = FrequencySimulation(sound_sim, particles, source)
-    #
-    # ω = 1.
-    # plot(sim,ω; drawparticles=false)
-    # plot!(sim)
-# end
