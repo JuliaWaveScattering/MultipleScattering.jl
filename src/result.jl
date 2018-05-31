@@ -1,18 +1,18 @@
 
 "Abstract class for Results of Simulations"
-abstract type SimulationResult{Dim,T} end
+abstract type SimulationResult{T,Dim,FieldDim} end
 
-struct FrequencySimulationResult{Dim,FieldDim,T<:AbstractFloat} <: SimulationResult{Dim,T}
+struct FrequencySimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T,Dim,FieldDim}
     field::Matrix{SVector{FieldDim,Complex{T}}}
     x::Vector{SVector{Dim,T}}
     ω::RowVector{T}
 end
 
 function FrequencySimulationResult(field::Matrix{SVector{FieldDim,Complex{T}}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T,FieldDim}
-    FrequencySimulation{Dim,FieldDim,T}(field, Vector(x), RowVector(ω))
+    FrequencySimulation{T,Dim,FieldDim}(field, Vector(x), RowVector(ω))
 end
 
-struct TimeSimulationResult{Dim,FieldDim,T<:AbstractFloat} <: SimulationResult{Dim,T}
+struct TimeSimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T,Dim,FieldDim}
     field::Matrix{SVector{FieldDim,T}}
     x::Vector{SVector{Dim,T}}
     t::RowVector{T}
@@ -21,7 +21,7 @@ end
 function TimeSimulationResult(time_field::Union{Matrix{T},Matrix{AbstractVector{T}}}, x::AbstractVector{SVector{Dim,T}}, t::AbstractVector{T}) where {Dim,T}
     time_field = [SVector(d...) for d in time_field]
     FieldDim = size(time_field[1],1)
-    TimeSimulationResult{Dim,FieldDim,T}(time_field, Vector(x), RowVector(t))
+    TimeSimulationResult{T,Dim,FieldDim}(time_field, Vector(x), RowVector(t))
 end
 
 """
@@ -39,14 +39,14 @@ end
 """
 Get scalar field from result as a matrix
 """
-function field(result::FrequencySimulationResult{Dim,1,T})::Matrix{Complex{T}} where {Dim, T}
+function field(result::FrequencySimulationResult{T,Dim,1})::Matrix{Complex{T}} where {Dim, T}
     map(x->x[1], result.field)
 end
 
 """
 Get scalar field from result, with x-index i and ω-index j
 """
-function field(result::FrequencySimulationResult{Dim,1,T}, i::Integer, j::Integer)::Complex{T} where {Dim, T}
+function field(result::FrequencySimulationResult{T,Dim,1}, i::Integer, j::Integer)::Complex{T} where {Dim, T}
     result.field[i,j][1]
 end
 

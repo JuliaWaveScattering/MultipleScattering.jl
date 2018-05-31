@@ -2,7 +2,7 @@
 Abstract idea which defines the external boundary of object. Two objects have
 the same shape if they are congruence.
 """
-abstract type Shape{Dim,T<:AbstractFloat} end
+abstract type Shape{T<:AbstractFloat,Dim} end
 
 "Origin of a shape, typically the center"
 origin(shape::Shape) = shape.origin
@@ -27,7 +27,7 @@ include("time_of_flight_from_point.jl")
 include("sphere.jl")
 
 "points on the boundary of a shape"
-function boundary_points(shape::Shape{Dim,T}, num_points::Int = 4; dr = zero(T)) where {Dim,T}
+function boundary_points(shape::Shape{T,Dim}, num_points::Int = 4; dr = zero(T)) where {Dim,T}
     x, y = boundary_functions(shape)
     v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape))
     return [ v(τ) for τ in linspace(zero(T),one(T),num_points+1)[1:end-1] ]

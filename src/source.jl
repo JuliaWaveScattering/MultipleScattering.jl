@@ -3,7 +3,7 @@ type Source{P<:PhysicalProperties,T<:AbstractFloat}
     field::Function
     coef::Function
     # Enforce that the Types are the same
-    function Source{P,T}(field::Function,coef::Function) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T}}
+    function Source{P,T}(field::Function,coef::Function) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
         s = new{P,T}(field,coef)
         self_test(s)
         return s

@@ -1,26 +1,26 @@
 
-type Particle{Dim,P<:PhysicalProperties,S<:Shape,T<:AbstractFloat}
+type Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape}
     medium::P
     shape::S
     # Enforce that the Dims and Types are all the same
-    function Particle{Dim,P,S,T}(medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T},S<:Shape{Dim,T}}
-        new{Dim,P,S,T}(medium,shape)
+    function Particle{T,Dim,P,S}(medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim},S<:Shape{T,Dim}}
+        new{T,Dim,P,S}(medium,shape)
     end
 end
 
 # Shorthand for all Vectors of particles
-Particles{Dim,T<:AbstractFloat} = Vector{Pt} where Pt<:(Particle{Dim,P,S,T} where S<:Shape where P<:PhysicalProperties)
+Particles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:(Particle{T,Dim,P,S} where S<:Shape where P<:PhysicalProperties)
 
 # Convenience constructor which does not require explicit types/parameters
-function Particle(medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T},S<:Shape{Dim,T}}
-    Particle{Dim,P,S,T}(medium,shape)
+function Particle(medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim},S<:Shape{T,Dim}}
+    Particle{T,Dim,P,S}(medium,shape)
 end
 
 # Shape hold infomation about origin of Particle
 origin(p::Particle) = origin(p.shape)
 boundary_points(p::Particle, num_points::Int = 3; kws...) = boundary_points(p.shape,num_points; kws...)
 
-CircleParticle{P, T} = Particle{2, P, Circle{T}, T}
+CircleParticle{T,P} = Particle{T,2,P,Circle{T}}
 
 outer_radius(p::Particle) = outer_radius(p.shape)
 volume(p::Particle) = volume(p.shape)

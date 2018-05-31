@@ -3,18 +3,18 @@
 Physical properties for a homogenous isotropic acoustic medium. Produces a
 scalar (1D) field in arbitrary dimensions.
 """
-type Acoustic{Dim,T} <: PhysicalProperties{Dim,1,T}
+type Acoustic{T,Dim} <: PhysicalProperties{T,Dim,1}
     ρ::T # Density
     c::Complex{T} # Phase velocity
 end
 
 # Constructor which supplies the dimension without explicitly mentioning type
-Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{Dim,T}(ρ,c)
-Acoustic(ρ::T,c::T,Dim::Integer) where {T} =  Acoustic{Dim,T}(ρ,Complex{T}(c))
+Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{T,Dim}(ρ,c)
+Acoustic(ρ::T,c::T,Dim::Integer) where {T} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
 
-name(a::Acoustic{Dim,T}) where {Dim,T} = "$(Dim)D Acoustic"
+name(a::Acoustic{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic"
 
-function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
+function basis_function(medium::Acoustic{T,2}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan2(x[2],x[1])
@@ -24,7 +24,7 @@ function basis_function(medium::Acoustic{2,T}, ω::T) where {T}
 end
 
 "Basis function when inside a particle. Assumes particle is a circle, which approximately works for all shapes."
-function basis_function(p::Particle{2,Acoustic{2,T}}, ω::T) where {T}
+function basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan2(x[2],x[1])
@@ -34,9 +34,8 @@ function basis_function(p::Particle{2,Acoustic{2,T}}, ω::T) where {T}
 end
 
 # Type aliases for convenience
-TwoDimAcoustic{T} = Acoustic{2,T}
-AcousticCircleParticle{T} = Particle{2, Acoustic{2, T}, Circle{T}, T}
-TwoDimAcousticFrequencySimulation{T} = FrequencySimulation{2,Acoustic{2,T},T}
+TwoDimAcoustic{T} = Acoustic{T,2}
+AcousticCircleParticle{T} = Particle{T,2,Acoustic{T,2},Circle{T}}
 
 """
 Physical properties for a capsule with the same inner and outer shape, where the
@@ -44,7 +43,7 @@ characteristic length scale of the two shapes is `size_ratio`. Inner and outer
 are both a homogenous isotropic acoustic medium. Produces a scalar (1D) field in
 arbitrary dimensions.
 """
-type AcousticCapsule{T,Dim} <: PhysicalProperties{Dim,1,T}
+type AcousticCapsule{T,Dim} <: PhysicalProperties{T,Dim,1}
     inner_ρ::T # Density in inner shape
     inner_c::Complex{T} # Phase velocity in inner shape
     outer_ρ::T # Density in outer shape
@@ -55,8 +54,8 @@ end
 name(a::AcousticCapsule{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic Capsule"
 
 
-function boundary_data(particle::Particle{2,P,S,T}, sim::FrequencySimulation{2,P,T}, ωs::Vector{T};
-        dr = 1e6 * eps(T), kws...) where {P<:Acoustic{2}, S<:Shape{2}, T<:Float64}
+function boundary_data(particle::Particle{T,2,P,S}, sim::FrequencySimulation{T,2,P}, ωs::Vector{T};
+        dr = 1e6 * eps(T), kws...) where {T<:AbstractFloat, P<:Acoustic{T,2}, S<:Shape{T,2}}
 
     p = particle;
 
@@ -88,7 +87,7 @@ function boundary_data(particle::Particle{2,P,S,T}, sim::FrequencySimulation{2,P
 end
 
 # T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
-function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::Acoustic{2,T}, ω::T, M::Integer)::Diagonal{Complex{T}} where T
+function t_matrix(circle::Circle{T}, inner_medium::Acoustic{T,2}, outer_medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
     if isnan(abs(inner_medium.c)*inner_medium.ρ)
@@ -135,24 +134,24 @@ function t_matrix(circle::Circle{T}, inner_medium::Acoustic{2,T}, outer_medium::
 end
 
 
-function TwoDimAcousticPointSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, amplitude::T = one(T))::Source{Acoustic{2,T},T}
+function TwoDimAcousticPointSource{T}(medium::Acoustic{T,2}, source_position::AbstractVector{T}, amplitude::T = one(T))::Source{Acoustic{T,2},T}
     field(x::AbstractVector{T},ω) where T = amplitude*Complex{T}(im/4)*hankelh1(0,ω/medium.c*norm(x-source_position))
     # using Graf's addition theorem
     coef(n,centre,ω) = amplitude*Complex{T}(im/4)*hankelh1(-n,ω/medium.c*norm(centre - source_position))*
         exp(-Complex{T}(im)*n*atan2(centre[2] - source_position[2], centre[1] - source_position[1]))
 
-    return Source{Acoustic{2,T},T}(field,coef)
+    return Source{Acoustic{T,2},T}(field,coef)
 end
 
-function TwoDimAcousticPlanarSource{T}(medium::Acoustic{2,T}, source_position::AbstractVector{T}, source_direction::AbstractVector{T} = [one(T),zero(T)], amplitude::T = one(T))::Source{Acoustic{2,T},T}
+function TwoDimAcousticPlanarSource{T}(medium::Acoustic{T,2}, source_position::AbstractVector{T}, source_direction::AbstractVector{T} = [one(T),zero(T)], amplitude::T = one(T))::Source{Acoustic{T,2},T}
     field(x::AbstractVector{T},ω) where T = amplitude*exp(im*ω/medium.c*dot(x-source_position,source_direction))
     # Jacobi-Anger expansion
     coef(n,centre,ω) = field(centre,ω) * exp(im * n *(T(pi)/2 - atan2(source_direction[2],source_direction[1]) ))
 
-    return Source{Acoustic{2,T},T}(field,coef)
+    return Source{Acoustic{T,2},T}(field,coef)
 end
 
-function inner_basis_coefficients(p::Particle{2,Acoustic{2,T},Circle{T},T}, medium::Acoustic{2,T}, ω::T, scattering_coefficients::AbstractVector; basis_order::Int=5) where T
+function inner_basis_coefficients(p::Particle{T,2,Acoustic{T,2},Circle{T}}, medium::Acoustic{T,2}, ω::T, scattering_coefficients::AbstractVector; basis_order::Int=5) where T
     Nh = basis_order
     if iszero(p.medium.c) || isinf(abs(p.medium.c))
         return zeros(Complex{Float64},2Nh+1)
@@ -167,7 +166,7 @@ function inner_basis_coefficients(p::Particle{2,Acoustic{2,T},Circle{T},T}, medi
     end
 end
 
-function besselj_field(source::Source{Acoustic{2,T},T}, medium::Acoustic{2,T}, centre::AbstractVector{T}; basis_order = 4) where T
+function besselj_field(source::Source{Acoustic{T,2},T}, medium::Acoustic{T,2}, centre::AbstractVector{T}; basis_order = 4) where T
 
     field(x,ω) = sum(
         source.coef(n,centre,ω)*besselj(n,ω/medium.c*norm(x - centre))*exp(im*n*atan2(x[2] - centre[2],x[1] - centre[1]))

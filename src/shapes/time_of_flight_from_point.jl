@@ -7,7 +7,7 @@ More precisely, if the listener is at (l_x,l_y) then the interior of the shape
 is defined as
 sqrt((x-l_x)^2+(y-l_y)^2)<time and x>0
 """
-struct TimeOfFlightFromPoint{T <: AbstractFloat} <: Shape{2,T}
+struct TimeOfFlightFromPoint{T <: AbstractFloat} <: Shape{T,2}
     listener_position::Vector{T}
     time::T
 end

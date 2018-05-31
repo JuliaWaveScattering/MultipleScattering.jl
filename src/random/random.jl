@@ -30,11 +30,11 @@ mutable struct FrequencySimulationDistribution{Dim,P,S,PP,PS,T} <: SimulationDis
     particle_shape::PS
 end
 
-function sample(dist::FrequencySimulationDistribution{Dim,P,S,PP,PS,T}, seed)::FrequencySimulation{Dim,P,T} where {Dim,P,S,PP,PS,T}
+function sample(dist::FrequencySimulationDistribution{Dim,P,S,PP,PS,T}, seed)::FrequencySimulation{T,Dim,P} where {Dim,P,S,PP,PS,T}
 
     medium = dist.medium
     particles = generate_particles(dist.shape, dist.volfrac, dist.particle_shape, dist.particle_medium, seed)
     source = dist.source
 
-    return FrequencySimulation{Dim,P,T}(medium,particles,source)
+    return FrequencySimulation{T,Dim,P}(medium,particles,source)
 end

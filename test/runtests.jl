@@ -85,8 +85,8 @@ include("shapetests.jl")
         homog_particles = [Particle(a,circle1), Particle(a,circle2)]
         # Check types comparisons work as user would expect
         @test typeof(homog_particles) <: Particles
-        @test typeof(homog_particles) <: Particles{2}
-        @test typeof(homog_particles) <: Particles{2,Float64}
+        @test typeof(homog_particles) <: Particles{Float64}
+        @test typeof(homog_particles) <: Particles{Float64,2}
 
         circle = Circle((0.0,0.0),1.0)
         rect = Rectangle((2.0,2.0),3.0,2.0)
@@ -94,18 +94,18 @@ include("shapetests.jl")
 
         # Check types comparisons work as user would expect
         @test typeof(diff_shape_particles) <: Particles
-        @test typeof(diff_shape_particles) <: Particles{2}
-        @test typeof(diff_shape_particles) <: Particles{2,Float64}
+        @test typeof(diff_shape_particles) <: Particles{Float64}
+        @test typeof(diff_shape_particles) <: Particles{Float64,2}
 
         a2 = Acoustic(1.0,1.0,2)
         a3 = Acoustic(1.0,1.0,3)
         sphere = Sphere((0.0,0.0,0.0),1.0)
 
         circular_particle = Particle(a2,circle)
-        @test typeof(circular_particle) <: Particle{2}
+        @test typeof(circular_particle) <: Particle{Float64,2}
 
         spherical_particle = Particle(a3,sphere)
-        @test typeof(spherical_particle) <: Particle{3}
+        @test typeof(spherical_particle) <: Particle{Float64,3}
 
         # Dimension mismatch throws error
         @test_throws MethodError Particle(a3,circle)

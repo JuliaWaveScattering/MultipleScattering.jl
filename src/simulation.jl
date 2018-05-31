@@ -1,26 +1,26 @@
-abstract type Simulation{Dim,T} end
+abstract type Simulation{T,Dim} end
 
-mutable struct FrequencySimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <: Simulation{Dim,T}
+mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <: Simulation{T,Dim}
     medium::P
-    particles::Particles{Dim,T}
+    particles::Particles{T,Dim}
     source::Source{P,T}
 end
 
 # Constructor which infers parametric types from input arguments, note that we
 # don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(medium::P, particles::Particles{Dim,T}, source::Source{P,T}) where {Dim,T,FieldDim,P<:PhysicalProperties{Dim,FieldDim,T}}
-    FrequencySimulation{Dim,P,T}(medium, particles, source)
+function FrequencySimulation(medium::P, particles::Particles{T,Dim}, source::Source{P,T}) where {Dim,T,FieldDim,P<:PhysicalProperties{T,Dim,FieldDim}}
+    FrequencySimulation{T,Dim,P}(medium, particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
-function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,FieldDim,P<:PhysicalProperties{Dim,FieldDim,T}}
-    FrequencySimulation{Dim,P,T}(medium, Vector{Particle{Dim,P,Shape,T}}(0), source)
+function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,FieldDim,P<:PhysicalProperties{T,Dim,FieldDim}}
+    FrequencySimulation{T,Dim,P}(medium, Vector{Particle{T,Dim,P,Shape}}(0), source)
 end
 
 import Base.run
 
 # Main run function, all other run functions use this
-function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x_vec::Vector{SVector{Dim,T}}; basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{Dim,FieldDim,T}}
+function run(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim,T}}; basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
 
     # Calculate the Hankel coefficients around each particle, this is where most of the maths happens
     a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
@@ -30,24 +30,24 @@ function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x_vec::Vector{SVector{Dim
 
     # Construct results object
     field_vec = reshape(map(f->SVector{FieldDim,Complex{T}}(f), field_vec), :, 1)
-    return FrequencySimulationResult{Dim,FieldDim,T}(field_vec, x_vec, RowVector([ω]))
+    return FrequencySimulationResult{T,Dim,FieldDim}(field_vec, x_vec, RowVector([ω]))
 
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ωs::AbstractVector{T}, x_vec::Vector{SVector{Dim,T}};
-        kws...)::(FrequencySimulationResult{Dim,FieldDim,T} where FieldDim)  where {Dim,P,T}
+function run(sim::FrequencySimulation{T,Dim,P}, ωs::AbstractVector{T}, x_vec::Vector{SVector{Dim,T}};
+        kws...)::(FrequencySimulationResult{T,Dim,FieldDim} where FieldDim)  where {Dim,P,T}
     # Compute for each angular frequency, then join up all the results
     fields = mapreduce(ω->run(sim,ω,x_vec; kws...).field, hcat, ωs)
     FrequencySimulationResult(fields,x_vec,RowVector(ωs))
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ωs::AbstractVector{T}, x::SVector{Dim,T};
-        kws...)::(FrequencySimulationResult{Dim,FieldDim,T} where FieldDim) where {Dim,P,T}
+function run(sim::FrequencySimulation{T,Dim,P}, ωs::AbstractVector{T}, x::SVector{Dim,T};
+        kws...)::(FrequencySimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
     run(sim,ωs,[x]; kws...)
 end
 
-function run(sim::FrequencySimulation{Dim,P,T}, ω::T, x::SVector{Dim,T};
-        kws...)::(FrequencySimulationResult{Dim,FieldDim,T} where FieldDim) where {Dim,P,T}
+function run(sim::FrequencySimulation{T,Dim,P}, ω::T, x::SVector{Dim,T};
+        kws...)::(FrequencySimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
     run(sim,[ω],[x]; kws...)
 end
 
@@ -61,7 +61,7 @@ function forcing(source::Source{Ph,T}, particles::Particles, ω::T, Nh::Integer)
     return f
 end
 
-function basis_coefficients(sim::FrequencySimulation{Dim,P,T}, ω::T; basis_order::Int = 5) where {Dim,P,T}
+function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_order::Int = 5) where {Dim,P,T}
 
     # Precompute T-matrices for these particles
     t_matrices = get_t_matrices(sim.medium, sim.particles, ω, basis_order)
@@ -83,7 +83,7 @@ function basis_coefficients(sim::FrequencySimulation{Dim,P,T}, ω::T; basis_orde
     a
 end
 
-function field(sim::FrequencySimulation{Dim,P,T}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec; basis_order::Int=5) where {Dim,P,T}
+function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec; basis_order::Int=5) where {Dim,P,T}
     Nh = basis_order
     num_particles = length(sim.particles)
     a = OffsetArray(a_vec,-Nh:Nh,1:num_particles)

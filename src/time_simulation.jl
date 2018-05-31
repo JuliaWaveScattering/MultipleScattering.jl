@@ -1,13 +1,13 @@
 
 # mutable struct TimeSimulation{Dim,P<:PhysicalProperties,T<:AbstractFloat} <: Simulation{Dim,T}
 #     medium::P
-#     particles::Particles{Dim,T}
+#     particles::Particles{T,Dim}
 #     impulse::Function
 #     source::Source{P,T}
 # end
 
 # Main run function, all other run functions use this
-function TimeSimulationResult(simres::FrequencySimulationResult{Dim,FieldDim,T};
+function TimeSimulationResult(simres::FrequencySimulationResult{T,Dim,FieldDim};
         t_vec = ω_to_t(simres.ω),
         impulse = get_gaussian_freq_impulse(maximum(simres.ω)),
         impulse_vec = impulse.(simres.ω),

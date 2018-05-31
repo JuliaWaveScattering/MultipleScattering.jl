@@ -1,5 +1,5 @@
 "Shape where boundary is a fixed distance from the origin"
-struct Circle{T} <: Shape{2,T}
+struct Circle{T} <: Shape{T,2}
     origin::SVector{2,T}
     radius::T
 end

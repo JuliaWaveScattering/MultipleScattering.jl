@@ -2,7 +2,7 @@
 Shape with 4 right-angles and axis aligned sides, defined by width and height.
 Note: the origin is in the center of the rectangle.
 """
-struct Rectangle{T} <: Shape{2,T}
+struct Rectangle{T} <: Shape{T,2}
     origin::SVector{2,T}
     width::T
     height::T
