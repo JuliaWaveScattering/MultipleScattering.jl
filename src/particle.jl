@@ -3,7 +3,7 @@ type Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape}
     medium::P
     shape::S
     # Enforce that the Dims and Types are all the same
-    function Particle{T,Dim,P,S}(medium::P,shape::S) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim},S<:Shape{T,Dim}}
+    function Particle{T,Dim,P,S}(medium::P,shape::S) where {T,Dim,FieldDim,P<:PhysicalProperties{T,Dim,FieldDim},S<:Shape{T,Dim}}
         new{T,Dim,P,S}(medium,shape)
     end
 end

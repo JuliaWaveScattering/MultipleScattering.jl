@@ -8,7 +8,7 @@
 
 # Main run function, all other run functions use this
 function TimeSimulationResult(simres::FrequencySimulationResult{T,Dim,FieldDim};
-        t_vec = ω_to_t(simres.ω),
+        t_vec = RowVector(ω_to_t(simres.ω)),
         impulse = get_gaussian_freq_impulse(maximum(simres.ω)),
         impulse_vec = impulse.(simres.ω),
         method =:dft
@@ -92,18 +92,18 @@ end
 Function which is one everywhere in frequency domain. Represents a delta
 function of unit area in the time domain, centred at t=zero.
 """
-delta_freq_impulse(k::T) where T <: AbstractFloat = one(T)
+delta_freq_impulse(ω::T) where T <: AbstractFloat = one(T)
 
 """
 Returns a gaussian impulse function in the frequency domain. In the time domain
 this impulse is exp(-t^2/(4a))
 """
-get_gaussian_freq_impulse(maxk::T, a::T = T(2.48)/maxk^2) where T <: AbstractFloat = ω -> exp(-a*ω^2)*(2sqrt(a*pi))
+get_gaussian_freq_impulse(maxω::T, a::T = T(2.48)/maxω^2) where T <: AbstractFloat = ω -> exp(-a*ω^2)*(2sqrt(a*pi))
 
 """
 Returns a gaussian impulse function in the time domain.
 """
-get_gaussian_time_impulse(maxk::T, a::T = T(2.48)/maxk^2) where T <: AbstractFloat = t -> exp(-t^2/(4a))
+get_gaussian_time_impulse(maxω::T, a::T = T(2.48)/maxω^2) where T <: AbstractFloat = t -> exp(-t^2/(4a))
 
 
 """
@@ -113,7 +113,7 @@ frequenices k_arr are assumed to be positive (can include zero) and sorted. The
 result is convoluted ωith the user specified impulse, which is a function of the
 frequency.
 """
-function frequency_to_time(field_mat::Matrix{Complex{T}}, ω_vec::Union{AbstractVector{T},RowVector{T}},
+function frequency_to_time(field_mat::Matrix{Complex{T}}, ω_vec::RowVector{T},
         t_vec::Union{AbstractVector{T},RowVector{T}} = ω_to_t(ω_vec);
         impulse::Function = delta_freq_impulse,
         impulse_vec = impulse.(ω_vec),
@@ -124,23 +124,23 @@ function frequency_to_time(field_mat::Matrix{Complex{T}}, ω_vec::Union{Abstract
 
     # if k=0 is not present, then add the response for k=0 by using linear interpolation.
     if addzerofrequency && minimum(ω_vec) > zero(T)
-      zeroresponse = [
-        (ω_vec[2]*field_mat[j,1] - ω_vec[1]*field_mat[j,2])/(ω_vec[2]-ω_vec[1])
-      for j in 1:positions]
+        zeroresponse = [
+            (ω_vec[2]*field_mat[j,1] - ω_vec[1]*field_mat[j,2])/(ω_vec[2]-ω_vec[1])
+        for j in 1:positions]
 
-      field_mat = reshape([zeroresponse; field_mat[:]], (positions, size(field_mat,2)+1) )
+        field_mat = reshape([zeroresponse; field_mat[:]], (positions, size(field_mat,2)+1) )
 
-      if impulse_vec == impulse.(ω_vec)
-        impulse_vec = impulse.([0; ω_vec])
-      else
-        impulse_zero = (ω_vec[2]*impulse_vec[1] - ω_vec[1]*impulse_vec[2])/(ω_vec[2]-ω_vec[1])
-        impulse_vec = impulse.([impulse_zero; impulse_vec])
-      end
-      ω_vec = [0; ω_vec]
+        if impulse_vec == impulse.(ω_vec)
+            impulse_vec = impulse.([zero(T) ω_vec])
+        else
+            impulse_zero = (ω_vec[2]*impulse_vec[1] - ω_vec[1]*impulse_vec[2])/(ω_vec[2]-ω_vec[1])
+            impulse_vec = impulse.([impulse_zero impulse_vec])
+        end
+        ω_vec = [0 ω_vec]
     end
 
     # determine how to approximate  ∫f(ω)exp(-im*ω*t)dω
-    ω_steps = size(field_mat,2)
+    ω_steps = size(ω_vec,2)
     if method == :trapezoidal
       fourier_integral = (t,j) ->
         sum(1:(ω_steps-1)) do ωi

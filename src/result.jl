@@ -32,21 +32,21 @@ field(result::SimulationResult) = result.field
 """
 Get vector field from result, with x-index i and ω-index j
 """
-function field(result::FrequencySimulationResult, i::Integer, j::Integer)
+function field(result::SimulationResult, i::Integer, j::Integer)
     result.field[i,j]
 end
 
 """
 Get scalar field from result as a matrix
 """
-function field(result::FrequencySimulationResult{T,Dim,1})::Matrix{Complex{T}} where {Dim, T}
+function field(result::SimulationResult{T,Dim,1}) where {Dim, T}
     map(x->x[1], result.field)
 end
 
 """
 Get scalar field from result, with x-index i and ω-index j
 """
-function field(result::FrequencySimulationResult{T,Dim,1}, i::Integer, j::Integer)::Complex{T} where {Dim, T}
+function field(result::SimulationResult{T,Dim,1}, i::Integer, j::Integer) where {Dim, T}
     result.field[i,j][1]
 end
 
