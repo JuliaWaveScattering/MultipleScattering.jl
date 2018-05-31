@@ -3,7 +3,7 @@
 Physical properties for a homogenous isotropic acoustic medium. Produces a
 scalar (1D) field in arbitrary dimensions.
 """
-type Acoustic{T,Dim} <: PhysicalProperties{T,Dim,1}
+struct Acoustic{T,Dim} <: PhysicalProperties{T,Dim,1}
     ρ::T # Density
     c::Complex{T} # Phase velocity
 end
@@ -43,7 +43,7 @@ characteristic length scale of the two shapes is `size_ratio`. Inner and outer
 are both a homogenous isotropic acoustic medium. Produces a scalar (1D) field in
 arbitrary dimensions.
 """
-type AcousticCapsule{T,Dim} <: PhysicalProperties{T,Dim,1}
+struct AcousticCapsule{T,Dim} <: PhysicalProperties{T,Dim,1}
     inner_ρ::T # Density in inner shape
     inner_c::Complex{T} # Phase velocity in inner shape
     outer_ρ::T # Density in outer shape

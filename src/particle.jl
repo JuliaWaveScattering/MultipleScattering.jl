@@ -1,5 +1,5 @@
 
-type Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape}
+struct Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape}
     medium::P
     shape::S
     # Enforce that the Dims and Types are all the same
