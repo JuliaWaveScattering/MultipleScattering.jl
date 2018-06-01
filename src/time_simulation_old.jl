@@ -164,11 +164,11 @@ end
 The inverse of the function frequency_to_time (only an exact inverse when using
 :dft integration)
 """
-function time_to_frequency{T}(time_response::Matrix{T},ω_arr::AbstractArray{T},
-  time_arr::AbstractArray{T}=ω_to_t(ω_arr);
-  impulse::Function = delta_freq_impulse,
-  impulse_arr = impulse.(time_arr),
-  method=:dft)
+function time_to_frequency(time_response::AbstractMatrix{T}, t_vec::AbstractVector{T},
+        ω_vec::AbstractArray{T} = t_to_ω(t_vec);
+        impulse::Function = delta_freq_impulse,
+        impulse_vec = impulse.(t_vec),
+        method=:dft) where T <: AbstractFloat
     # we assume the convention: f(ω) =  ∫f(t)exp(im*ω*t)dt
 
     # determine how to approximate  ∫f(t)exp(im*ω*t)dt
@@ -176,29 +176,29 @@ function time_to_frequency{T}(time_response::Matrix{T},ω_arr::AbstractArray{T},
     if method == :trapezoidal
       fourier_integral = (ω,j) ->
         sum(1:(timesteps-1)) do ti
-            dt = time_arr[ti+1] - time_arr[ti]
-            t = time_arr[ti]
+            dt = t_vec[ti+1] - t_vec[ti]
+            t = t_vec[ti]
             u = time_response[ti,j]
-            f1 = impulse_arr[ti]*u*exp(im*ω*t)
-            t = time_arr[ti+1]
+            f1 = impulse_vec[ti]*u*exp(im*ω*t)
+            t = t_vec[ti+1]
             u = time_response[ti+1,j]
-            f2 = impulse_arr[ti+1]*u*exp(im*ω*t)
+            f2 = impulse_vec[ti+1]*u*exp(im*ω*t)
             (f1+f2)*dt/2
         end
     else
       # integral to match exactly standard dft
       fourier_integral = (ω,j) ->
-        impulse(0)*time_response[1,j]*(time_arr[2]-time_arr[1]) +
+        impulse_vec[1]*time_response[1,j]*(t_vec[2]-t_vec[1]) +
         sum(2:timesteps) do ti
-          dt = time_arr[ti]-time_arr[ti-1]
-          t  = time_arr[ti]
-          u  = time_response[ti,j]
-          impulse_arr[ti]*u*exp(im*ω*t)*dt
+            dt = t_vec[ti]-t_vec[ti-1]
+            t  = t_vec[ti]
+            u  = time_response[ti,j]
+            impulse_vec[ti]*u*exp(im*ω*t)*dt
         end
     end
 
     positions = size(time_response,2)
-    uhat = [fourier_integral(ω,j) for ω in ω_arr, j=1:positions]
+    uhat = [fourier_integral(ω,j) for ω in ω_vec, j=1:positions]
 
     return uhat
 end

@@ -13,7 +13,7 @@ export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcoust
        (*), (+)
 export Simulation, run, TimeSimulation, forcing, field
 export SimulationResult, FrequencySimulation, FrequencySimulationResult
-export TimeSimulationResult, frequency_to_time
+export TimeSimulationResult, frequency_to_time, time_to_frequency
 export ω_to_t, t_to_ω, firstnonzero, get_gaussian_freq_impulse, get_gaussian_time_impulse, delta_freq_impulse
 export SimulationDistribution, FrequencySimulationDistribution, sample
 export t_matrix, get_t_matrices
