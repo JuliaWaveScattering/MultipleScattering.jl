@@ -14,4 +14,4 @@ sim = FrequencySimulation(host_medium, particles, source)
 x = [SVector(1.0,1.0), SVector(0.0,0.0)]
 ω = 0.5
 
-run(sim, ω, x)
+run(sim, x, ω)

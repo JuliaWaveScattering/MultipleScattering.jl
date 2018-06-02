@@ -14,7 +14,7 @@ sim = FrequencySimulation(sound_sim, particles, source)
 ω_vec = 0.01:0.01:5.01
 @test ω_vec == t_to_ω(ω_to_t(ω_vec))[2:end] # only exact for length(ω_vec) = odd number
 
-simres = run(sim, ω_vec, SVector(0.0,0.0))
+simres = run(sim, SVector(0.0,0.0), ω_vec)
 
 # timres = TimeSimulationResult(simres; t_vec = 0.0:0.2:50., method=:trapezoidal);
 timres = TimeSimulationResult(simres; impulse = delta_freq_impulse, method=:trapezoidal);

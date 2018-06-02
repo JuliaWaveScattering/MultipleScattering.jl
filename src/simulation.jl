@@ -20,7 +20,8 @@ end
 import Base.run
 
 # Main run function, all other run functions use this
-function run(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim,T}}; basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
+function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, ω::T;
+        basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
 
     # Calculate the Hankel coefficients around each particle, this is where most of the maths happens
     a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
@@ -34,21 +35,36 @@ function run(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim
 
 end
 
-function run(sim::FrequencySimulation{T,Dim,P}, ωs::AbstractVector{T}, x_vec::Vector{SVector{Dim,T}};
+function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, ωs::AbstractVector{T};
         kws...)::(FrequencySimulationResult{T,Dim,FieldDim} where FieldDim)  where {Dim,P,T}
     # Compute for each angular frequency, then join up all the results
-    fields = mapreduce(ω->run(sim,ω,x_vec; kws...).field, hcat, ωs)
+    fields = mapreduce(ω->run(sim,x_vec,ω; kws...).field, hcat, ωs)
+
+
     FrequencySimulationResult(fields,x_vec,RowVector(ωs))
 end
 
-function run(sim::FrequencySimulation{T,Dim,P}, ωs::AbstractVector{T}, x::SVector{Dim,T};
+function run(sim::FrequencySimulation{T,Dim,P}, x::SVector{Dim,T}, ωs::AbstractVector{T};
         kws...)::(FrequencySimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
-    run(sim,ωs,[x]; kws...)
+    run(sim,[x],ωs; kws...)
 end
 
-function run(sim::FrequencySimulation{T,Dim,P}, ω::T, x::SVector{Dim,T};
+function run(sim::FrequencySimulation{T,Dim,P}, x::SVector{Dim,T}, ω::T;
         kws...)::(FrequencySimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
-    run(sim,[ω],[x]; kws...)
+    run(sim,[x],[ω]; kws...)
+end
+
+""
+simulate results over the whole `shape`. This SimulationResult can then be used by plot.
+""
+function run(sim::FrequencySimulation, shape::Rectangle,
+                              ω_vec::AbstractVector; res=20, xres=res, yres=res, kws...)
+
+    #Size of the step in x and y direction
+    step_size = [shape.width / xres, shape.height / yres]
+    x_vec = [SVector(bottomleft(shape) + step_size.*[i,j]) for i=0:xres, j=0:yres]
+
+    return run(sim, x_vec[:], ω_vec; kws...)
 end
 
 function forcing(source::Source{Ph,T}, particles::Particles, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T}

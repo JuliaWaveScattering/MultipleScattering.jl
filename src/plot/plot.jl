@@ -1,7 +1,6 @@
 include("plot_domain.jl")
 # include("plot_moments.jl")
 
-
 "Plot just the particles and source"
 @recipe function plot(sim::FrequencySimulation; bounds = :auto,
                          drawparticles=true, drawsource=true)
@@ -27,7 +26,7 @@ end
         if bounds == :auto bounds = bounding_rectangle(sim.particles) end
 
         if build_field
-          field_sim = build_field_simulation(sim, bounds, [ω]; xres=xres, yres=yres)
+          field_sim = run(sim, bounds, [ω]; xres=xres, yres=yres)
         else
           field_sim = sim
         end
@@ -69,25 +68,6 @@ end
     # end
 end
 
-"""
-Build a 'field simulation' with lots of listeners using the same domain as simulation
-you pass in. This 'field simulation' can then be used to plot the whole field for
-this wavenumber.
-"""
-function build_field_simulation(sim::FrequencySimulation, bounds::Rectangle,
-                              ω_vec::AbstractVector; res=20,xres=res,yres=res, kws...)
-
-    # Build up the pixels and all the framework for the plotting
-    num_pixels = (xres+1)*(yres+1)
-
-    #Size of the step in x and y direction
-    step_size = [bounds.width / xres, bounds.height / yres]
-    x_vec = [SVector(bottomleft(bounds) + step_size.*[i,j]) for i=0:xres, j=0:yres]
-    # should be similar to
-    # x_pixels = bounds.origin[1] + linspace(- bounds.width/2, bounds.width/2, xres+1)
-
-    return run(sim, ω_vec, x_vec[:]; kws...)
-end
 
 # "Plot the response across all wavenumbers"
 # @recipe function plot(simulation::FrequencySimulation)

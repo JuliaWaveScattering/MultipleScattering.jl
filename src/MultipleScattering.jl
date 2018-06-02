@@ -18,7 +18,6 @@ export ω_to_t, t_to_ω, firstnonzero, get_gaussian_freq_impulse, get_gaussian_t
 export SimulationDistribution, FrequencySimulationDistribution, sample
 export t_matrix, get_t_matrices
 export scattering_matrix
-export build_field_simulation
 
 import SpecialFunctions: besselj, hankelh1
 

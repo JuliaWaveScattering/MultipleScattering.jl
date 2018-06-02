@@ -36,16 +36,16 @@ function boundary_fields(sim::FrequencySimulation{T,Dim,P}, ωs::Vector{T};
     # points just outside particles
     outside_points = [boundary_points(p.shape; dr = 10*eps(Float64)) for p in particles]
 
-    in_results = [run(sim, ω, ps; basis_order = basis_order) for ps in inside_points]
+    in_results = [run(sim, ps, ω; basis_order = basis_order) for ps in inside_points]
 
     x = inside1_points[1]
-    map(ω->run(sim,ω,x), ωs)
-    mapreduce(ω->run(sim,ω,x), union, ωs)
+    map(ω->run(sim,x,ω), ωs)
+    mapreduce(ω->run(sim,x,ω), union, ωs)
 
     [(in2_results[i].field - in1_results[i].field)/(dr * particles.medium.ρ) for i in eachindex(particles)]
 
-    out1_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside1_points]
-    out2_results = [run(sim, ω, ps; basis_order = basis_order) for ps in outside2_points]
+    out1_results = [run(sim, ps, ω; basis_order = basis_order) for ps in outside1_points]
+    out2_results = [run(sim, ps, ω; basis_order = basis_order) for ps in outside2_points]
 
     (out2_result.field - out1_result.field)/(dr * medium.ρ)
 

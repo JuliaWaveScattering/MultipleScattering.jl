@@ -37,7 +37,7 @@ end
         bounds = bounding_rectangle(shape_bounds, particle_bounds)
 
         if build_field
-          field_simulation = build_field_simulation(simulation, bounds; xres=xres, yres=yres)
+          field_simulation = run(simulation, bounds; xres=xres, yres=yres)
           field_TimeSimulation = deepcopy(TimeSimulation) # to use all the same options/fields as TimeSimulation
           field_TimeSimulation.frequency_simulation = field_simulation
           generate_responses!(field_TimeSimulation, t_arr)
