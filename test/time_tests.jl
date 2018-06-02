@@ -14,21 +14,27 @@ sim = FrequencySimulation(sound_sim, particles, source)
 ω_vec = 0.0:0.01:5.01
 @test ω_vec == t_to_ω(ω_to_t(ω_vec)) # only exact for length(ω_vec) = even number
 
-x_vec = [SVector(0.0,0.0), SVector(3.0,0.0)]
 x_vec = [SVector(0.0,0.0)]
+x_vec = [SVector(0.0,0.0), SVector(3.0,0.0)]
+ω_vec = 0.0:0.1:1.01
 simres = run(sim, x_vec, ω_vec)
+timres = run(sim, x_vec, ω_vec; result_in_time=true, impulse = delta_freq_impulse, method=:trapezoidal)
 
-# timres = run(sim, x_vec; ts = ω_to_t(ω_vec))
+using Plots; pyplot()
+
+bounds = Rectangle([-2.,2.], [3.,4.])
+timres = run(sim, bounds, ω_vec; result_in_time=true)
+
+plot(timres, linetype=:contour)
 
 # timres = TimeSimulationResult(simres; t_vec = 0.0:0.2:50., method=:trapezoidal);
-timres = TimeSimulationResult(simres; impulse = delta_freq_impulse, method=:trapezoidal);
+timres2 = TimeSimulationResult(simres; impulse = delta_freq_impulse, method=:trapezoidal);
 d1 = transpose(field(timres));
 
 timres = TimeSimulationResult(simres; method=:dft, impulse = delta_freq_impulse);
 d2 = transpose(field(timres));
 norm(d1 - d2)/norm(d1)
 
-# using Plots; pyplot()
 # plot(timres.t', [d1 d2])
 
 simres2 = FrequencySimulationResult(timres; method=:dft, impulse = delta_freq_impulse)

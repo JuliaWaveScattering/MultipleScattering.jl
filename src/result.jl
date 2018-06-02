@@ -22,7 +22,7 @@ struct TimeSimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T
 end
 
 function TimeSimulationResult(time_field::Union{Matrix{T},Matrix{AbstractVector{T}}}, x::AbstractVector{SVector{Dim,T}}, t::AbstractVector{T}) where {Dim,T}
-    
+
     time_field = [SVector(d...) for d in time_field]
     FieldDim = size(time_field[1],1)
     TimeSimulationResult{T,Dim,FieldDim}(time_field, Vector(x), RowVector(t))

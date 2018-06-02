@@ -132,7 +132,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
         fs = impulse_vec[:].*field_mat[:,j].*exp.(-(im*t).*ω_vec)
         if method == :dft && ω_vec[1] == zero(T)
             fs[1] = fs[1]/T(2) # so as to not add ω=0 tωice in the integral of ω over [-inf,inf]
-        end    
+        end
         fs
     end
     inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j); method=method)
