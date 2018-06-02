@@ -59,7 +59,7 @@ end
 
 "The inverse of ω_to_t if ω_vec[1] == 0"
 function t_to_ω(t_arr::AbstractArray{T}) where T <: AbstractFloat
-    N = Int((length(t_arr)-one(T))/T(2))
+    N = Int(round((length(t_arr)-one(T))/T(2)))
     maxt = t_arr[2] - t_arr[1] + t_arr[end]
     maxω = N*2π/maxt
     ω_vec = linspace(zero(T),maxω,N+1)
@@ -113,24 +113,26 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
     if size(field_mat,1) != size(ω_vec,1) error("Vector of frequencies ω_vec expected to be same size as size(field_mat,1)") end
 
     # if ω = 0 is not present, then add the response for ω = 0 by using linear interpolation.
-    if addzerofrequency && minimum(ω_vec) > zero(T)
-        # extrapolate the field at ω = 0
-        zeroresponse = (ω_vec[2].*field_mat[1,:] - ω_vec[1].*field_mat[2,:])./(ω_vec[2]-ω_vec[1])
-        field_mat = [transpose(zeroresponse); field_mat]
-
-        if impulse_vec == impulse.(ω_vec)
-            impulse_vec = impulse.([zero(T); ω_vec])
-        else
-            impulse_zero = (ω_vec[2]*impulse_vec[1] - ω_vec[1]*impulse_vec[2])/(ω_vec[2]-ω_vec[1])
-            impulse_vec = impulse.([impulse_zero; impulse_vec])
-        end
-        ω_vec = [zero(T); ω_vec]
-    end
+    # if addzerofrequency && minimum(ω_vec) > zero(T)
+    #     # extrapolate the field at ω = 0
+    #     zeroresponse = (ω_vec[2].*field_mat[1,:] - ω_vec[1].*field_mat[2,:])./(ω_vec[2]-ω_vec[1])
+    #     field_mat = [transpose(zeroresponse); field_mat]
+    #
+    #     if impulse_vec == impulse.(ω_vec)
+    #         impulse_vec = impulse.([zero(T); ω_vec])
+    #     else
+    #         impulse_zero = (ω_vec[2]*impulse_vec[1] - ω_vec[1]*impulse_vec[2])/(ω_vec[2]-ω_vec[1])
+    #         impulse_vec = impulse.([impulse_zero; impulse_vec])
+    #     end
+    #     ω_vec = [zero(T); ω_vec]
+    # end
 
     # approximate  ∫f(ω)exp(-im*ω*t)dω. The advantage of not using FFT is the ability to easily sample any time.
     function f(t::T,j::Int)
         fs = impulse_vec[:].*field_mat[:,j].*exp.(-(im*t).*ω_vec)
-        if method == :dft fs[1] = fs[1]/T(2) end # so as to not add ω=0 tωice in the integral of ω over [-inf,inf]
+        if method == :dft && ω_vec[1] == zero(T)
+            fs[1] = fs[1]/T(2) # so as to not add ω=0 tωice in the integral of ω over [-inf,inf]
+        end    
         fs
     end
     inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j); method=method)
