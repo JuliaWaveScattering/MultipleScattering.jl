@@ -54,9 +54,9 @@ function run(sim::FrequencySimulation{T,Dim,P}, x::SVector{Dim,T}, ω::T;
     run(sim,[x],[ω]; kws...)
 end
 
-""
+"""
 simulate results over the whole `shape`. This SimulationResult can then be used by plot.
-""
+"""
 function run(sim::FrequencySimulation, shape::Rectangle,
                               ω_vec::AbstractVector; res=20, xres=res, yres=res, kws...)
 
