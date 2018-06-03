@@ -2,7 +2,7 @@ include("plot_domain.jl")
 # include("plot_moments.jl")
 
 "Plot just the particles and source"
-@recipe function plot(simres::SimulationResult, linetype = :line, field_apply = real)
+@recipe function plot(simres::SimulationResult; linetype = :line, field_apply = real)
 
     if linetype == :line
         @series begin
@@ -18,8 +18,8 @@ include("plot_domain.jl")
         @series begin
             ind_ωt = 1 # choose which time or frequency
 
-            x_pixels = union([x[1] for x in field_sim.x])
-            y_pixels = union([x[2] for x in field_sim.x])
+            x_pixels = union([x[1] for x in simres.x])
+            y_pixels = union([x[2] for x in simres.x])
 
             # Make the vector field(field_sim)[:,ind_ωt] into a matrix for heatmap
             field_mat = transpose(

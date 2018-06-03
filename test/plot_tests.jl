@@ -3,7 +3,9 @@ import StaticArrays: SVector
 
 using MultipleScattering
 
-using Plots #; pyplot()
+using Plots ; pyplot()
+
+include("plot_field.jl")
 
 sound_p = Acoustic(1., 4. + 0.0im,2)
 
@@ -17,6 +19,13 @@ sim = FrequencySimulation(sound_sim, particles, source)
 plot(sim,ω)
 plot!(sim)
 
+bounds = Rectangle([-0.,-1.], [10.,1.])
+simres = run(sim, bounds, [ω])
+timres = run(sim, bounds, 0.:0.01:1; ts = [30.], result_in_time=true)
+
+plot_field(simres, linetype=:contour)
+plot_field(timres, linetype=:contour)
+plot!(sim)
 
 amplitude = 1.0
 # Create new souce as a linear combination of two other sources
