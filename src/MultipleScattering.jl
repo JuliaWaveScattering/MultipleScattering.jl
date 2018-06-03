@@ -42,7 +42,7 @@ include("scattering_matrix.jl")
 
 # Specific physical models
 include("physics/diffbessel.jl")
-include("physics/acoustics.jl")
+include("physics/acoustics/acoustics.jl")
 include("physics/electromagnetism.jl")
 
 #Plotting and graphics
