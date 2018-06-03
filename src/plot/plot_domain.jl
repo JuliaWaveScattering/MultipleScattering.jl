@@ -1,7 +1,7 @@
-@recipe function plot(particle::Particle) @series particle.shape end
+@recipe function plot(particle::AbstractParticle) @series shape(particle) end
 
 #Currently plot(Vector{Particle}) does not work
-@recipe function plot(particles::Vector{P}) where P <: Particle
+@recipe function plot(particles::Vector{P}) where P <: AbstractParticle
     # for p in particles @series identity(p) end
     for i=1:length(particles) @series particles[i] end
 

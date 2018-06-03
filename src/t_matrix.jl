@@ -38,7 +38,7 @@ function get_t_matrices(medium::PhysicalProperties, particles::Vector, ω::Abstr
 
         # Congruent particle was not found, we must calculate this t-matrix
         if !found
-            t_matrices[p_i] = t_matrix(p.shape, p.medium, medium, ω, Nh)
+            t_matrices[p_i] = t_matrix(shape(p), p.medium, medium, ω, Nh)
             push!(unique_particles, particles[p_i])
             push!(unique_t_matrices, t_matrices[p_i])
         end

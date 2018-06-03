@@ -31,10 +31,10 @@ function boundary_fields(sim::FrequencySimulation{T,Dim,P}, ωs::Vector{T};
     particles = sim.particles[1:numberofparticles]
 
     # points just inside particles
-    inside_points = [boundary_points(p.shape; dr = - dr - 10*eps(Float64)) for p in particles]
+    inside_points = [boundary_points(shape(p); dr = - dr - 10*eps(Float64)) for p in particles]
 
     # points just outside particles
-    outside_points = [boundary_points(p.shape; dr = 10*eps(Float64)) for p in particles]
+    outside_points = [boundary_points(shape(p); dr = 10*eps(Float64)) for p in particles]
 
     in_results = [run(sim, ps, ω; basis_order = basis_order) for ps in inside_points]
 

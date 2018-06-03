@@ -1,16 +1,16 @@
-function boundary_data(particle::Particle{T,2,P,S}, sim::FrequencySimulation{T,2,P}, ωs::Vector{T};
-        dr = 1e6 * eps(T), kws...) where {T<:AbstractFloat, P<:Acoustic{T,2}, S<:Shape{T,2}}
+function boundary_data(particle::Particle{T,2,P}, sim::FrequencySimulation{T,2,P}, ωs::Vector{T};
+        dr = 1e6 * eps(T), kws...) where {T<:AbstractFloat, P<:Acoustic{T,2}}
 
     p = particle;
 
     # points just inside particles
-    inside1_points = boundary_points(p.shape; dr = - dr - 10*eps(T))
-    inside2_points = boundary_points(p.shape; dr = - 10*eps(T))
+    inside1_points = boundary_points(shape(p); dr = - dr - 10*eps(T))
+    inside2_points = boundary_points(shape(p); dr = - 10*eps(T))
     inside_points = mean([inside1_points,inside2_points])
 
     # points just outside particles
-    outside1_points = boundary_points(p.shape; dr = 10*eps(T))
-    outside2_points = boundary_points(p.shape; dr = dr + 10*eps(T))
+    outside1_points = boundary_points(shape(p); dr = 10*eps(T))
+    outside2_points = boundary_points(shape(p); dr = dr + 10*eps(T))
     outside_points = mean([outside1_points,outside2_points])
 
     in1_results = run(sim, inside1_points, ωs; kws...)

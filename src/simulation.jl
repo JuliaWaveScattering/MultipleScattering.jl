@@ -2,18 +2,18 @@ abstract type Simulation{T,Dim} end
 
 mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <: Simulation{T,Dim}
     medium::P
-    particles::Particles{T,Dim}
+    particles::Vector{Pt} where Pt<:AbstractParticle{T,Dim}
     source::Source{P,T}
 end
 
 # Constructor which infers parametric types from input arguments, note that we
 # don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(medium::P, particles::Particles{T,Dim}, source::Source{P,T}) where {Dim,T,FieldDim,P<:PhysicalProperties{T,Dim,FieldDim}}
+function FrequencySimulation(medium::P, particles::Vector{Pt}, source::Source{P,T}) where {Dim,T,Pt<:AbstractParticle{T,Dim}, P<:PhysicalProperties{T,Dim}}
     FrequencySimulation{T,Dim,P}(medium, particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
-function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,FieldDim,P<:PhysicalProperties{T,Dim,FieldDim}}
+function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
     FrequencySimulation{T,Dim,P}(medium, Vector{Particle{T,Dim,P,Shape}}(0), source)
 end
 
@@ -91,7 +91,7 @@ function run(sim::FrequencySimulation, shape::Rectangle,
     return run(sim, x_vec[:], ω_vec; kws...)
 end
 
-function forcing(source::Source{Ph,T}, particles::Particles, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T}
+function forcing(source::Source{Ph,T}, particles::Vector{Pt}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T,Pt<:AbstractParticle{T}}
     mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
     f = Vector{Complex{T}}(prod(size(mat)))
     H = 2Nh + 1
@@ -137,7 +137,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
         end
     end
     map(x_vec) do x
-        ind = find(inside(p.shape, x) for p in sim.particles)
+        ind = find(inside(shape(p), x) for p in sim.particles)
         if isempty(ind)
             sim.source.field(x,ω) + (isempty(sim.particles) ? zero(Complex{T}) : sum_basis(x))
         else

@@ -52,18 +52,18 @@ end
     a = Acoustic(1.0,1.0,2)
     homog_particles = [Particle(a,circle1), Particle(a,circle2)]
     # Check types comparisons work as user would expect
-    @test typeof(homog_particles) <: Particles
-    @test typeof(homog_particles) <: Particles{Float64}
-    @test typeof(homog_particles) <: Particles{Float64,2}
+    @test typeof(homog_particles) <: Vector{Pt} where Pt<:AbstractParticle
+    @test typeof(homog_particles) <: Vector{Pt} where Pt<:AbstractParticle{Float64}
+    @test typeof(homog_particles) <: Vector{Pt} where Pt<:AbstractParticle{Float64,2}
 
     circle = Circle((0.0,0.0),1.0)
     rect = Rectangle((2.0,2.0),3.0,2.0)
     diff_shape_particles = [Particle(a,circle), Particle(a,rect)]
 
     # Check types comparisons work as user would expect
-    @test typeof(diff_shape_particles) <: Particles
-    @test typeof(diff_shape_particles) <: Particles{Float64}
-    @test typeof(diff_shape_particles) <: Particles{Float64,2}
+    @test typeof(diff_shape_particles) <: Vector{Pt} where Pt<:AbstractParticle
+    @test typeof(diff_shape_particles) <: Vector{Pt} where Pt<:AbstractParticle{Float64}
+    @test typeof(diff_shape_particles) <: Vector{Pt} where Pt<:AbstractParticle{Float64,2}
 
     a2 = Acoustic(1.0,1.0,2)
     a3 = Acoustic(1.0,1.0,3)
@@ -73,7 +73,7 @@ end
     @test typeof(circular_particle) <: Particle{Float64,2}
 
     spherical_particle = Particle(a3,sphere)
-    @test typeof(spherical_particle) <: Particle{Float64,3}
+    @test typeof(spherical_particle) <: AbstractParticle{Float64,3}
 
     # Dimension mismatch throws error
     @test_throws MethodError Particle(a3,circle)
@@ -82,5 +82,10 @@ end
     # This is a valid vector of valid particles, but not of type Particles
     # because the dimensions don't match
     invalid_particles = [circular_particle, spherical_particle]
-    @test_throws TypeError invalid_particles::Particles
+    @test_throws TypeError invalid_particles::(Vector{Pt} where {Dim, Pt <: AbstractParticle{Float64,Dim}})
+
+    # does not throw an error
+    diff_shape_particles::(Vector{Pt} where {Dim, Pt <: AbstractParticle{Float64,Dim}})
+    @test true
+
 end

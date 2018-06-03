@@ -3,19 +3,20 @@ import StaticArrays: SVector
 
 using MultipleScattering
 
-using Plots ; pyplot()
-
-include("plot_field.jl")
-
 sound_p = Acoustic(1., 4. + 0.0im,2)
-
+P=sound_p
 particles = [Particle(sound_p,Circle([x,0.0], .5)) for x =0.:2.:10.]
 
 sound_sim = Acoustic(1., 0.5 + 0.0im,2)
 source = TwoDimAcousticPlanarSource(sound_sim, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
 sim = FrequencySimulation(sound_sim, particles, source)
+sim = FrequencySimulation(sound_sim, source)
 
 ω = 0.5
+
+using Plots ; pyplot()
+include("plot_field.jl")
+
 plot(sim,ω)
 plot!(sim)
 
