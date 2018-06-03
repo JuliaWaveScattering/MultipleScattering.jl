@@ -17,7 +17,7 @@ TwoDimAcoustic{T} = Acoustic{T,2}
 name(a::Acoustic{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic"
 
 include("circle.jl")
-include("capsule.jl")
+include("concentric_capsule.jl")
 include("source.jl")
 include("boundary_data.jl")
 

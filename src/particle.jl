@@ -11,11 +11,17 @@ struct Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: Abstract
 end
 
 """
-A particle within another particle. Produces a scalar (1D) field in arbitrary dimensions.
+A particle within another particle, both with the same type of shape and origin. Produces a scalar (1D) field in arbitrary dimensions.
 """
-struct CapsuleParticle{T<:AbstractFloat,Dim} <: AbstractParticle{T,Dim}
-    outer::Particle{T,Dim}
-    inner::Particle{T,Dim}
+struct CapsuleParticle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: AbstractParticle{T,Dim}
+    outer::Particle{T,Dim,P,S}
+    inner::Particle{T,Dim,P,S}
+    # Enforce that particles are concentric
+    function CapsuleParticle{T,Dim,P,S}(p2::Particle{T,Dim,P,S},p1::Particle{T,Dim,P,S}) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape}
+        if origin(p1) != origin(p2) error("outer and inner particles should share the same origin") end
+        if outer_radius(p1) >= outer_radius(p2) error("inner particle needs to be smaller than outer particle") end
+        new{T,Dim,P,S}(p1,p2)
+    end
 end
 
 # Shorthand for all Vectors of particles
@@ -24,6 +30,10 @@ Particles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:(Particle{T,Dim,P,S} wher
 # Convenience constructor which does not require explicit types/parameters
 function Particle(medium::P,shape::S) where {Dim,T,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
     Particle{T,Dim,P,S}(medium,shape)
+end
+
+function CapsuleParticle(p1::Particle{T,Dim,P,S},p2::Particle{T,Dim,P,S}) where {T,Dim,S<:Shape,P<:PhysicalProperties}
+    CapsuleParticle{T,Dim,P,S}(p1,p2)
 end
 
 shape(p::Particle) = p.shape

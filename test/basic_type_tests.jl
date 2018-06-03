@@ -56,6 +56,15 @@ end
     @test typeof(homog_particles) <: Vector{Pt} where Pt<:AbstractParticle{Float64}
     @test typeof(homog_particles) <: Vector{Pt} where Pt<:AbstractParticle{Float64,2}
 
+    # CapsuleParticle should be two concentric particles
+    @test_throws ErrorException CapsuleParticle(homog_particles...)
+
+    circle_in = Circle((0.0,0.0),1.0)
+    circle_out = Circle((0.0,0.0),2.0)
+    a_out = Acoustic(3.0,3.0,2)
+    concen_particles = [ Particle(a_out,circle_out),Particle(a,circle_in)]
+    @test typeof(CapsuleParticle(concen_particles...)) <: AbstractParticle{Float64,2}
+
     circle = Circle((0.0,0.0),1.0)
     rect = Rectangle((2.0,2.0),3.0,2.0)
     diff_shape_particles = [Particle(a,circle), Particle(a,rect)]

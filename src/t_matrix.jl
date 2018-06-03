@@ -9,6 +9,10 @@ function t_matrix(shape::Shape{T,Dim}, inner_medium::PhysicalProperties{T,Dim,Fi
     error("T-matrix function is not yet written for $(name(inner_medium)) $(name(shape)) in a $(name(outer_medium)) medium")
 end
 
+function t_matrix(p::Particle{T,Dim}, medium::PhysicalProperties{T,Dim}, ω::T, M::Integer)::AbstractMatrix{T} where {T<:AbstractFloat,Dim}
+    t_matrix(shape(p), p.medium, medium, ω, M)
+end
+
 """
 Returns vector of T-matrices from a vector of particles in a specific domain.
 Can save computation if multiple of the same kind of particle are present in the
