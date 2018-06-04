@@ -1,20 +1,21 @@
 AcousticCircleParticle{T} = Particle{T,2,Acoustic{T,2},Circle{T}}
 
-function inner_basis_coefficients(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector;
+function internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}};
         basis_order::Int=5) where T
 
-    medium = sim.medium
-    Nh = basis_order
-
+    Nh = basis_order #shorthand
     if iszero(p.medium.c) || isinf(abs(p.medium.c))
-        return zeros(Complex{Float64},2Nh+1)
+        return zero(Complex{T})
     else
         r = outer_radius(p)
-        k = ω/medium.c
+        k = ω/sim.medium.c
         kp = ω/p.medium.c
-        Z = - t_matrix(p.shape, p.medium, medium, ω, basis_order)
-        return map(-Nh:Nh) do m
-             scattering_coefficients[m+Nh+1] / (Z[m+Nh+1,m+Nh+1]*besselj(m,kp*r)) * (Z[m+Nh+1,m+Nh+1]*hankelh1(m,k*r) - besselj(m,k*r))
+        Z = - t_matrix(p.shape, p.medium, sim.medium, ω, Nh)
+        internal_coef(m::Int) = scattering_coefficients[m+Nh+1] / (Z[m+Nh+1,m+Nh+1]*besselj(m,kp*r)) * (Z[m+Nh+1,m+Nh+1]*hankelh1(m,k*r) - besselj(m,k*r))
+
+        inner_basis = basis_function(p, ω)
+        return sum(-Nh:Nh) do m
+            inner_basis(m, x-origin(p)) * internal_coef(m)
         end
     end
 end

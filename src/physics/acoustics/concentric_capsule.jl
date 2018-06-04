@@ -1,13 +1,13 @@
 # T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
 
-function inner_basis_coefficients(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector;
+function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector;
         basis_order::Int=5) where T
 
     medium = sim.medium
     Nh = basis_order
 
     if iszero(p.medium.c) || isinf(abs(p.medium.c))
-        return zeros(Complex{Float64},2Nh+1)
+        return zero(Complex{T})
     else
         r = outer_radius(p)
         k = ω/medium.c

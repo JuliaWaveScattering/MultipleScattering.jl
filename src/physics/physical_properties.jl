@@ -24,9 +24,9 @@ function basis_function(medium::PhysicalProperties, ω::T) where {T}
 end
 
 """
-The coefficients that multipled with the inner_basis will return the inner field (only approximate for non-circular scatterers)
+the field inside an AbstractParticle a some given point x.  
 """
-inner_basis_coefficients
+internal_field
 
 """
 Returns a function that gives the value of the besselj expansion centred at centre
