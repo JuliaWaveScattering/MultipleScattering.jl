@@ -1,6 +1,23 @@
 # T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
 
-# CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}
+function inner_basis_coefficients(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector;
+        basis_order::Int=5) where T
+
+    medium = sim.medium
+    Nh = basis_order
+
+    if iszero(p.medium.c) || isinf(abs(p.medium.c))
+        return zeros(Complex{Float64},2Nh+1)
+    else
+        r = outer_radius(p)
+        k = ω/medium.c
+        kp = ω/p.medium.c
+        Z = - t_matrix(p.shape, p.medium, medium, ω, basis_order)
+        return map(-Nh:Nh) do m
+             scattering_coefficients[m+Nh+1] / (Z[m+Nh+1,m+Nh+1]*besselj(m,kp*r)) * (Z[m+Nh+1,m+Nh+1]*hankelh1(m,k*r) - besselj(m,k*r))
+        end
+    end
+end
 
 function t_matrix(cap::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
@@ -18,16 +35,15 @@ function t_matrix(cap::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, medium::Aco
     Ydn(n::Integer,x::Complex{T},y::Complex{T}) = hankelh1(n,x)*diffbesselj(n,y) - diffhankelh1(n,y)*besselj(n,x)
 
     function Tn(n::Integer)::Complex{T}
-        numer = - besselj(n,k*a1)/hankelh1(n,k*a1) - (Ydn(n,k*a1,k*a1)/hankelh1(n,k*a1))*
-            (Yn(n)*diffbesselj(n,k0*a0) - q0*besselj(n,k0*a0)*Ydn(n,k1*a1,k1*a0))
+        numer = Ydn(n,k*a1,k*a1) * (q0*besselj(n,k0*a0)*Ydn(n,k1*a1,k1*a0) - Yn(n)*diffbesselj(n,k0*a0))
         denom = diffbesselj(n,k0*a0)*
             (q*hankelh1(n,k*a1)*Ydn(n,k1*a0,k1*a1) + diffhankelh1(n,k*a1)*Yn(n)) +
             q0*besselj(n,k0*a0)*
             (q*hankelh1(n,k*a1)*Yddn(n) - diffhankelh1(n,k*a1)*Ydn(n,k1*a1,k1*a0))
 
-         return numer / denom
+         return (numer - denom*besselj(n,k*a1)) / (denom*hankelh1(n,k*a1))
      end
-#
+
     # Get Tns for positive m
     Tns = map(Tn,0:M)
 

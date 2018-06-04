@@ -62,6 +62,7 @@ end
     circle_in = Circle((0.0,0.0),1.0)
     circle_out = Circle((0.0,0.0),2.0)
     a_out = Acoustic(3.0,3.0,2)
+    a = Acoustic(1.0,1.0,2)
     concen_particles = [ Particle(a_out,circle_out),Particle(a,circle_in)]
     @test typeof(CapsuleParticle(concen_particles...)) <: AbstractParticle{Float64,2}
 

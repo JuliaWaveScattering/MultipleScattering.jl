@@ -144,7 +144,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
             j = ind[1]
             p = sim.particles[j]
             inner_basis = basis_function(p, ω)
-            b_vec = inner_basis_coefficients(p, sim.medium, ω, collect(a[:,j]); basis_order=Nh)
+            b_vec = inner_basis_coefficients(x, p, sim, ω, collect(a[:,j]); basis_order=Nh)
             sum(-Nh:Nh) do m
                 inner_basis(m, x-origin(p)) * b_vec[m+Nh+1]
             end

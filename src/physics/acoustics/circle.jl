@@ -1,8 +1,11 @@
 AcousticCircleParticle{T} = Particle{T,2,Acoustic{T,2},Circle{T}}
 
-function inner_basis_coefficients(p::Particle{T,2,Acoustic{T,2},Circle{T}}, medium::Acoustic{T,2}, ω::T, scattering_coefficients::AbstractVector; basis_order::Int=5) where T
+function inner_basis_coefficients(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector;
+        basis_order::Int=5) where T
 
+    medium = sim.medium
     Nh = basis_order
+
     if iszero(p.medium.c) || isinf(abs(p.medium.c))
         return zeros(Complex{Float64},2Nh+1)
     else
