@@ -1,40 +1,54 @@
 include("plot_domain.jl")
 # include("plot_moments.jl")
 
-"Plot just the particles and source"
-@recipe function plot(simres::SimulationResult; linetype = :line, field_apply = real)
+# Plot the result in space (across all x) for a specific angular frequency
+@recipe function plot(simres::FrequencySimulationResult, x_indices::Union{UnitRange{Int},Colon,AbstractVector{Int}}, ω_index::Int; field_apply = real, seriestype=:surface)
 
-    if linetype == :line
-        @series begin
-            labs = [ "real x=$x" for x in simres.x];
-            labs = [labs ; [ "imag x=$x" for x in simres.x]]
-            ωt = getfield(simres, fieldnames(simres)[end])
+    x = [x[1] for x in simres.x[x_indices]]
+    y = [x[2] for x in simres.x[x_indices]]
 
-            labels --> reshape(labs,1,length(labs))
-            (transpose(ωt), transpose([real.(field(simres)); imag.(field(simres))]))
-        end
+    if seriestype == :contour
 
-    elseif linetype == :contour || linetype == :field
-        @series begin
-            ind_ωt = 1 # choose which time or frequency
+        # We should really check here to see if x and y have the right structure
+        x = unique(x)
+        y = unique(y)
 
-            x_pixels = union([x[1] for x in simres.x])
-            y_pixels = union([x[2] for x in simres.x])
+        n_x = length(x)
+        n_y = length(y)
 
-            # Make the vector field(field_sim)[:,ind_ωt] into a matrix for heatmap
-            field_mat = transpose(
-                reshape(field(simres)[:,ind_ωt], (length(x_pixels), length(y_pixels)))
-            )
-            linetype --> :contour
-            fill --> true
-            aspect_ratio := 1.0
-            fillcolor --> :pu_or
-            # title --> "Field at ω=$ω"
+        fill --> true
+        fillcolor --> :pu_or
 
-            (x_pixels, y_pixels, field_apply.(field_mat))
-        end
-    else error("Unknown linestyle = $linestyle for $res")
+        x, y, field_apply.(reshape(field(simres)[x_indices,ω_index],n_y,n_x))
+
+    else
+
+        seriestype := :surface
+        fillcolor --> :pu_or
+        title --> "Field at ω=$(simres.ω[ω_index])"
+
+        (x, y, field_apply.(field(simres)[x_indices,ω_index]))
+
     end
+
+end
+
+# Plot the result across angular frequency for a specific position (x)
+@recipe function plot(simres::FrequencySimulationResult, x_index::Int, ω_indices::Union{UnitRange{Int},Colon,AbstractVector{Int}}=Colon(); field_apply = real)
+
+    x = simres.x[x_index]
+    complex_field = field(simres)[x_index, ω_indices]
+
+    @series begin
+        label --> "Real x=$x"
+        (transpose(simres.ω[ω_indices]), real.(complex_field))
+    end
+
+    @series begin
+        label --> "Imag x=$x"
+        (transpose(simres.ω[ω_indices]), imag.(complex_field))
+    end
+
 end
 
 "Plot just the particles"
@@ -84,7 +98,7 @@ end
 
         # Turn the responses (a big long vector) into a matrix, so that the heatmap will understand us
         response_mat = transpose(reshape(field(field_sim), (xres+1, yres+1)))
-        linetype --> :contour
+        seriestype --> :contour
         fill --> true
         aspect_ratio := 1.0
         fillcolor --> :pu_or
@@ -98,15 +112,3 @@ end
         end
     end
 end
-
-
-# "Plot the response across all wavenumbers"
-# @recipe function plot(simulation::FrequencySimulation)
-#     label --> ["real" "imaginary"]
-#     xlabel --> "Wavenumber (k)"
-#     ylabel --> "Response"
-#     grid --> false
-#     title --> "Response from particles of radius $(signif(simulation.particles[1].r,2)) contained in a $(lowercase(name(simulation.shape)))\n with volfrac=$(signif(calculate_volfrac(simulation),2)) measured at ($(simulation.listener_positions[1,1]), $(simulation.listener_positions[2,1]))"
-#
-#     (simulation.k_arr, [real(simulation.response) imag(simulation.response)])
-# end
