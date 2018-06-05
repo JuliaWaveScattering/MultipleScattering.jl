@@ -30,7 +30,6 @@
 (*F[f_,g_][x_,y_]:= f[x] g[y]-f[y] g[x]*)
 (*Fd[f_,g_][x_,y_]:= f[x] g'[y]-f'[y] g[x]*)
 (**)
-(**)
 (*Yd[x_,y_]=  Fd[Subscript[H, n],Subscript[J, n]] [x,y];*)
 (*Y[x_,y_]=  F[Subscript[H, n],Subscript[J, n]] [x,y];*)
 (*Ydd[x_,y_]=  F[Subscript[H, n]',Subscript[J, n]'] [x,y];*)
@@ -214,9 +213,32 @@
 (*eqs = {\[Psi][1]  == \[Psi][0]/.r-> a[0],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][0],r]/\[Rho][0]/.r-> a[0], \[Psi][s] + \[Psi]o  == \[Psi][1]/.r-> a[1]};*)
 (*subsol = Solve[eqs,{f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]};*)
 (**)
-(*f[0,n]/.subsol [[1]]//Simplify*)
-(*f[1,n]/.subsol [[1]]//Simplify*)
-(*A[1,n]/.subsol [[1]]//Simplify*)
+(**)
+(**)
+(**)
+
+
+(* ::InheritFromParent:: *)
+(**)
+
+
+(* ::InheritFromParent:: *)
+(*force = Ao[n] Subscript[H, n][ko a[1]]+fo[n] Subscript[J, n][ko a[1]];*)
+(**)
+(*numer = q[0]/q[1]  Yd[a[0] k[1],a[0] k[1]];*)
+(*denom = q[0]/q[1]  Subscript[J, n][a[0] k[0]] Yd[a[1] k[1],a[0] k[1]] -Derivative[1][Subscript[J, n]][a[0] k[0]] Y[a[1] k[1],a[0] k[1]] ;*)
+(*force numer/denom  == f[0,n]/.subsol [[1]]//Simplify*)
+(**)
+(*numer =  q[0]/q[1] Subscript[J, n][a[0] k[0]] Derivative[1][Subscript[H, n]][a[0] k[1]]- Subscript[H, n][a[0] k[1]] Derivative[1][Subscript[J, n]][a[0] k[0]];*)
+(*denom = Y[a[1] k[1],a[0] k[1]] Derivative[1][Subscript[J, n]][a[0] k[0]]-q[0]/q[1] Subscript[J, n][a[0] k[0]] Yd[a[1] k[1],a[0] k[1]];*)
+(*force numer/denom  ==f[1,n]/.subsol [[1]]//Simplify*)
+(**)
+(*numer =  Subscript[J, n][a[0] k[1]] Derivative[1][Subscript[J, n]][a[0] k[0]]-q[0]/q[1] Subscript[J, n][a[0] k[0]] Derivative[1][Subscript[J, n]][a[0] k[1]];*)
+(*denom = Y[a[1] k[1],a[0] k[1]] Derivative[1][Subscript[J, n]][a[0] k[0]]-q[0]/q[1] Subscript[J, n][a[0] k[0]] Yd[a[1] k[1],a[0] k[1]];*)
+(*force  numer/denom== A[1,n]/.subsol [[1]]//Simplify*)
+(**)
+(**)
+(* Y[a[1] k[1],a[0] k[1]]*)
 
 
 (* ::Input:: *)
@@ -347,6 +369,8 @@ u[c,t] - u[0,t] = O[c t] + O[c^2]
 So the two are similar if the material in the tube is similar to 
 the background material.  
     
+
+
 
 
 
