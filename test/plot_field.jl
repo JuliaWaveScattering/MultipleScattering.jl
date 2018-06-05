@@ -1,6 +1,6 @@
 "Plot just the particles and source"
-function plot_field(simres::SimulationResult; linetype = :line, field_apply = real)
-    if linetype == :line
+function plot_field(simres::SimulationResult; seriestype = :line, field_apply = real)
+    if seriestype == :line
         labs = [ "real x=$x" for x in simres.x];
         labs = [labs ; [ "imag x=$x" for x in simres.x]]
         ωt = getfield(simres, fieldnames(simres)[end])
@@ -8,7 +8,7 @@ function plot_field(simres::SimulationResult; linetype = :line, field_apply = re
             , labels = reshape(labs,1,length(labs))
         )
 
-    elseif linetype == :contour || linetype == :field
+    elseif seriestype == :contour || seriestype == :field
         ind_ωt = 1 # choose which time or frequency
 
         x_pixels = union([x[1] for x in simres.x])
@@ -25,7 +25,7 @@ function plot_field(simres::SimulationResult; linetype = :line, field_apply = re
         # title --> "Field at ω=$ω"
 
         plot(x_pixels, y_pixels, field_apply.(field_mat)
-            , fill=true, aspect_ratio = 1.0, fillcolor = :pu_or, linetype = :contour)
+            , fill=true, aspect_ratio = 1.0, fillcolor = :pu_or, seriestype = :contour)
     else error("Unknown linestyle = $linestyle for $res")
     end
 end

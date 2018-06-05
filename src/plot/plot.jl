@@ -2,7 +2,10 @@ include("plot_domain.jl")
 # include("plot_moments.jl")
 
 # Plot the result in space (across all x) for a specific angular frequency
-@recipe function plot(simres::FrequencySimulationResult, x_indices::Union{UnitRange{Int},Colon,AbstractVector{Int}}, ω_index::Int; field_apply = real, seriestype=:surface)
+@recipe function plot(simres::SimulationResult, ω::AbstractFloat;
+        x_indices::Union{UnitRange{Int},Colon,AbstractVector{Int}} = Colon(),
+        ω_index = findmin(abs.(simres.ω .- ω))[2],
+        field_apply = real, seriestype=:surface)
 
     x = [x[1] for x in simres.x[x_indices]]
     y = [x[2] for x in simres.x[x_indices]]
@@ -18,15 +21,16 @@ include("plot_domain.jl")
 
         fill --> true
         fillcolor --> :pu_or
-
-        x, y, field_apply.(reshape(field(simres)[x_indices,ω_index],n_y,n_x))
+        title --> "Field at $(fieldnames(simres)[end])=$ωt"
+        seriestype := :contour
+        x, y, field_apply.(transpose(reshape(field(simres)[x_indices,ω_index],n_y,n_x)))
 
     else
 
+        ω_or_t = getfield(simres, 3)[ω_index]
         seriestype := :surface
         fillcolor --> :pu_or
-        title --> "Field at ω=$(simres.ω[ω_index])"
-
+        title --> "Field at $(fieldnames(simres)[end])=$ω_or_t"
         (x, y, field_apply.(field(simres)[x_indices,ω_index]))
 
     end
@@ -34,21 +38,25 @@ include("plot_domain.jl")
 end
 
 # Plot the result across angular frequency for a specific position (x)
-@recipe function plot(simres::FrequencySimulationResult, x_index::Int, ω_indices::Union{UnitRange{Int},Colon,AbstractVector{Int}}=Colon(); field_apply = real)
+@recipe function plot(simres::SimulationResult;
+        x::Vector{AbstractVector} = simres.x,
+        x_indices::AbstractVector{Int} = [findmin(norm(z - y) for z in simres.x)[2] for y in x],
+        ω_indices::Union{UnitRange{Int},Colon,AbstractVector{Int}}=Colon())
 
-    x = simres.x[x_index]
-    complex_field = field(simres)[x_index, ω_indices]
+    for x_ind in x_indices
 
-    @series begin
-        label --> "Real x=$x"
-        (transpose(simres.ω[ω_indices]), real.(complex_field))
+        complex_field = field(simres)[x_ind, ω_indices]
+
+        @series begin
+            label --> "Real x=$(simres.x[x_ind])"
+            (transpose(getfield(simres, 3)[ω_indices]), real.(complex_field))
+        end
+
+        @series begin
+            label --> "Imag x=$(simres.x[x_ind])"
+            (transpose(getfield(simres, 3)[ω_indices]), imag.(complex_field))
+        end
     end
-
-    @series begin
-        label --> "Imag x=$x"
-        (transpose(simres.ω[ω_indices]), imag.(complex_field))
-    end
-
 end
 
 "Plot just the particles"
