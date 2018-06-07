@@ -12,18 +12,19 @@ sim = FrequencySimulation(sound_sim, particles, source)
 
 ω = 0.5
 
-using Plots ; pyplot()
-
-plot(sim,ω)
-plot!(sim)
-
 bounds = Rectangle([-0.,-1.], [10.,1.])
 ωs = 0.:0.1:1.
 simres = run(sim, bounds, ωs)
 timres = run(sim, bounds, ωs; ts = [30.], result_in_time=true)
 
+using Plots ; pyplot()
+
+plot(sim,ω)
+plot!(sim)
+
+plot(simres; x = [[1,1]])
 plot(simres,0.3)
-plot(simres,0.3, seriestype=:contour)
+plot(simres, 0.3, seriestype=:contour)
 
 # include("plot_field.jl")
 # plot_field(simres, linetype=:contour)
