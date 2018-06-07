@@ -67,6 +67,12 @@ function ==(p1::CapsuleParticle, p2::CapsuleParticle)
     p1.inner == p2.inner
 end
 
+import Base.isequal
+function isequal(p1::Particle, p2::Particle)
+    isequal(p1.medium, p2.medium) &&
+    isequal(p1.shape, p2.shape)
+end
+
 """
 Retuns true if medium and shape of particles are the same, ignoring the origin
 of shape

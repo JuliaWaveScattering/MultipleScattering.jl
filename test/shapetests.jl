@@ -4,6 +4,9 @@
         @test volume(rectangle) ≈ 6.0
         @test name(rectangle) == "Rectangle"
 
+        # Test different ways to construct Rectangle produce same results
+        @test Rectangle((0.0,0.0), 1.0, 2.0) == Rectangle([0.0,0.0], 1.0, 2.0)
+
         @testset "Boundary functions" begin
             x, y = boundary_functions(rectangle)
             @test x.(0:0.1:1) ≈ [0.0, 0.8, 1.6, 2.0, 2.0, 2.0, 1.2, 0.4, 0.0, 0.0, 0.0]
@@ -20,6 +23,9 @@
         circle_bounding_rectangle = bounding_rectangle(circle)
         @test volume(circle)/volume(circle_bounding_rectangle) ≈ 0.7853981633974483
         @test name(circle) == "Circle"
+
+        # Test different ways to construct Rectangle produce same results
+        @test Circle((0.0,0.0), 1.0) == Circle([0.0,0.0], 1.0)
 
         @testset "Boundary functions" begin
             x, y = boundary_functions(Circle([-1.0,2.0],3.0))
@@ -78,13 +84,16 @@
     @testset "Plot Shapes" begin
         # Just try each to see if we have any errors (yes thats a very low bar)
         rectangle = Rectangle([0.0,0.0],[2.0,3.0])
-        # plot(rectangle)
+        plot(rectangle)
 
         circle = Circle([-1.0,2.0],2.0)
-        # plot!(circle)
+        plot!(circle)
 
-        timeofflight = TimeOfFlightFromPoint([-1.0,0.0],3.0)
-        # plot!(timeofflight)
+        timeofflight = TimeOfFlight([-1.0,0.0],3.0)
+        plot!(timeofflight)
+
+        timeofflightfrompoint = TimeOfFlightFromPoint([-1.0,0.0],3.0)
+        plot!(timeofflightfrompoint)
 
         @test true
     end
