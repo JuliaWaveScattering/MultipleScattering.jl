@@ -1,24 +1,30 @@
-@recipe function plot(particle::AbstractParticle) @series shape(particle) end
 
-#Currently plot(Vector{Particle}) does not work
-@recipe function plot(particles::Vector{P}) where P <: AbstractParticle
-    # for p in particles @series identity(p) end
-    for i=1:length(particles) @series particles[i] end
-
-    # @series particles[1]
+# Plot a vector of particles
+@recipe function plot(particles::Particles)
+    for particle in particles
+        @series begin
+            particle
+        end
+    end
 end
 
+# Plot the shape of a particle
+@recipe function plot(particle::AbstractParticle)
+    shape(particle)
+end
+
+
 @recipe function plot(shape::Shape)
+
     grid --> false
-    legend --> nothing
     xlab --> "x"
     ylab --> "y"
     aspect_ratio := 1.0
-    label --> name(shape)
-    fill --> (0, :transparent)
+    label --> ""
     linecolor --> :grey
 
     x, y = boundary_functions(shape)
 
-    (x, y, 0, 1)
+    (x, y, 0.0, 1.0)
+
 end
