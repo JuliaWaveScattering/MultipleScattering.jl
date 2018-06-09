@@ -33,6 +33,18 @@ function boundary_points(shape::Shape{T,Dim}, num_points::Int = 4; dr = zero(T))
     return [ v(τ) for τ in linspace(zero(T),one(T),num_points+1)[1:end-1] ]
 end
 
+"Returns rectangle which completely encloses the shapes"
+bounding_rectangle(shape1::Shape, shape2::Shape) = bounding_rectangle([shape1, shape2])
+
+# Create a box which bounds an array of shapes
+function bounding_rectangle(shapes::Vector{S}) where S<:Shape
+    boxes = bounding_rectangle.(shapes)
+
+    min_bottomleft = min.(bottomleft.(boxes)...)
+    max_topright   = max.(topright.(boxes)...)
+
+    return Rectangle(min_bottomleft, max_topright)
+end
 
 # Docstrings
 "Name of a shape"
@@ -46,9 +58,6 @@ volume
 
 "Returns whether an object (2nd arg) is inside a shape (1st arg)"
 inside
-
-"Returns rectangle which completely encloses the shape"
-bounding_rectangle
 
 """
 Returns Dim functions which accept a boundary coordinate (0<=t<=1)to trace outer

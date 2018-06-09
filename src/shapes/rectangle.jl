@@ -39,19 +39,6 @@ bottomleft(rect::Rectangle) = origin(rect) .- SVector(rect.width/2, rect.height/
 "Return SVector with the coordinates of the top right of a rectangle"
 topright(rect::Rectangle)   = origin(rect) .+ SVector(rect.width/2, rect.height/2)
 
-# Create a box which bounds two shapes
-bounding_rectangle(shape1::Shape, shape2::Shape) = bounding_rectangle([shape1, shape2])
-
-# Create a box which bounds an array of shapes
-function bounding_rectangle(shapes::Vector{S}) where S<:Shape
-    boxes = bounding_rectangle.(shapes)
-
-    min_bottomleft = min.(bottomleft.(boxes)...)
-    max_topright   = max.(topright.(boxes)...)
-
-    return Rectangle(min_bottomleft, max_topright)
-end
-
 
 function boundary_functions(rect::Rectangle)
 

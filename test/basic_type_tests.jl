@@ -35,14 +35,18 @@
 
     a2_host = Acoustic(1.0,1.0 + 0.0im,2)
 
-    t = t_matrix(circle, a2, a2_host, 0.5, 10)
+    t = t_matrix(Particle(a2,circle), a2_host, 0.5, 10)
     @test typeof(t) == Diagonal{Complex{Float64}}
 
-    @test_throws DomainError t_matrix(circle, Acoustic(Inf, 0.0im, 2), Acoustic(1.0, 1.0+0.0im, 2), 0.5, 10)
-    @test_throws DomainError t_matrix(circle, Acoustic(1.0, 1.0+0.0im, 2), Acoustic(0.0, Inf*im, 2), 0.5, 10)
-    @test_throws DomainError t_matrix(circle, Acoustic(1.0, 0.0im, 2), Acoustic(1.0, 0.0im, 2), 0.5, 10)
-    @test_throws DomainError t_matrix(circle, Acoustic(0.0, 1.0im, 2), Acoustic(0.0, 1.0+0.0im, 2), 0.5, 10)
-    @test_throws DomainError t_matrix(Circle(x, 0.0), a2, a2_host, 0.5, 10)
+    p = Particle(Acoustic(Inf, 0.0im, 2),circle)
+    @test_throws DomainError t_matrix(p, Acoustic(1.0, 1.0+0.0im, 2), 0.5, 10)
+    p = Particle(Acoustic(1.0, 1.0+0.0im, 2),circle)
+    @test_throws DomainError t_matrix(p, Acoustic(0.0, Inf*im, 2), 0.5, 10)
+    @test_throws DomainError t_matrix(p, Acoustic(1.0, 0.0im, 2), 0.5, 10)
+    p = Particle(Acoustic(0.0, 1.0im, 2),circle)
+    @test_throws DomainError t_matrix(p, Acoustic(0.0, 1.0+0.0im, 2), 0.5, 10)
+    p = Particle(a2,Circle(x, 0.0))
+    @test_throws DomainError t_matrix(p, a2_host, 0.5, 10)
 
 end
 
@@ -63,7 +67,7 @@ end
     circle_out = Circle((0.0,0.0),2.0)
     a_out = Acoustic(3.0,3.0,2)
     a = Acoustic(1.0,1.0,2)
-    concen_particles = [ Particle(a_out,circle_out),Particle(a,circle_in)]
+    concen_particles = [Particle(a_out,circle_out),Particle(a,circle_in)]
     @test typeof(CapsuleParticle(concen_particles...)) <: AbstractParticle{Float64,2}
 
     circle = Circle((0.0,0.0),1.0)

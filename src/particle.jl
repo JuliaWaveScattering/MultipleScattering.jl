@@ -19,8 +19,11 @@ struct CapsuleParticle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: A
     # Enforce that particles are concentric
     function CapsuleParticle{T,Dim,P,S}(p2::Particle{T,Dim,P,S},p1::Particle{T,Dim,P,S}) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape}
         if origin(p1) != origin(p2) error("outer and inner particles should share the same origin") end
-        if outer_radius(p1) >= outer_radius(p2) error("inner particle needs to be smaller than outer particle") end
-        new{T,Dim,P,S}(p1,p2)
+        if outer_radius(p1) >= outer_radius(p2)
+            new{T,Dim,P,S}(p1,p2)
+        else
+            new{T,Dim,P,S}(p2,p1)
+        end
     end
 end
 
@@ -50,7 +53,7 @@ outer_radius(p::AbstractParticle) = outer_radius(shape(p))
 volume(p::AbstractParticle) = volume(shape(p))
 
 bounding_rectangle(p::AbstractParticle) = bounding_rectangle(shape(p))
-bounding_rectangle(ps::Particles) = bounding_rectangle([shape(p) for p in ps])
+bounding_rectangle(ps::Vector{P}) where P<:AbstractParticle = bounding_rectangle([shape(p) for p in ps])
 
 function volume(particles::Particles)
     mapreduce(volume, +, particles)
@@ -68,12 +71,15 @@ function ==(p1::CapsuleParticle, p2::CapsuleParticle)
 end
 
 """
-Retuns true if medium and shape of particles are the same, ignoring the origin
+Returns true if medium and shape of particles are the same, ignoring the origin
 of shape
 """
 function congruent(p1::Particle, p2::Particle)
     p1.medium == p2.medium &&
     congruent(p1.shape, p2.shape)
 end
+
+congruent(p1::CapsuleParticle, p2::CapsuleParticle) =
+    congruent(p1.inner, p2.inner) && congruent(p1.outer, p2.outer)
 
 inside(shape::Shape, particle::AbstractParticle) = inside(shape, shape(particle))

@@ -48,28 +48,28 @@ end
         n_y = length(y)
 
         fill --> true
-        x, y, field_apply.(transpose(reshape(field(simres)[x_indices,ω_index],n_y,n_x)))
+        x, y, field_apply.(transpose(reshape(field(simres)[x_indices,ω_or_t_index],n_y,n_x)))
 
     else
 
-        (x, y, field_apply.(field(simres)[x_indices,ω_index]))
+        (x, y, field_apply.(field(simres)[x_indices,ω_or_t_index]))
 
     end
 
 end
 
 "Plot just the particles"
-@recipe function plot(sim::FrequencySimulation; bounds = :auto)
+@recipe function plot(sim::FrequencySimulation; bounds = :none)
 
     println("Plotting a simulation on its own")
 
-    if bounds == :auto
-        bounds = bounding_rectangle(sim.particles)
-    end
-
     @series begin
-        xlims --> (bottomleft(bounds)[1], topright(bounds)[1])
-        ylims --> (bottomleft(bounds)[2], topright(bounds)[2])
+        if bounds != :none
+            # bounds = bounding_rectangle(sim.particles)
+            xlims --> (bottomleft(bounds)[1], topright(bounds)[1])
+            ylims --> (bottomleft(bounds)[2], topright(bounds)[2])
+        end
+
         sim.particles
     end
 

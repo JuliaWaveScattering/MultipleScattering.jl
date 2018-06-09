@@ -29,20 +29,20 @@
     sim = FrequencySimulation(medium, particles, source)
     sim_source = FrequencySimulation(medium, source)
 
-    pressure_results, displace_results =  boundary_data(particles[1], sim, ωs; basis_order = 8)
-    pressure_source_results, displace_source_results =  boundary_data(particles[1], sim_source, ωs; basis_order = 8)
+    pressure_results, displace_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim, ωs; basis_order = 8)
+    pressure_source_results, displace_source_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim_source, ωs; basis_order = 8)
 
     # Zero presure (Dirichlet) boundary condition
     @test mean(norm.(pressure_results[1].field - pressure_results[2].field)) < 4e-7 * mean(norm.(pressure_source_results[2].field))
 
-    pressure_results, displace_results =  boundary_data(particles[2], sim, ωs; basis_order = 8)
-    pressure_source_results, displace_source_results =  boundary_data(particles[2], sim_source, ωs; basis_order = 8)
+    pressure_results, displace_results =  boundary_data(shape(particles[2]), particles[2].medium, medium, sim, ωs; basis_order = 8)
+    pressure_source_results, displace_source_results =  boundary_data(shape(particles[2]), particles[2].medium, medium, sim_source, ωs; basis_order = 8)
 
     # Zero displacement (Neuman) boundary condition
     @test mean(norm.(displace_results[1].field - displace_results[2].field)) < 4e-5 * mean(norm.(displace_source_results[2].field))
 
-    pressure_results, displace_results =  boundary_data(particles[3], sim, ωs; basis_order = 8, dr = 1e-7);
-    pressure_source_results, displace_source_results =  boundary_data(particles[3], sim_source, ωs; basis_order = 8, dr = 1e-7);
+    pressure_results, displace_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim, ωs; basis_order = 8, dr = 1e-7);
+    pressure_source_results, displace_source_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim_source, ωs; basis_order = 8, dr = 1e-7);
 
     # Continuous pressure and displacement accross particl boundary
     @test mean(norm.(pressure_results[1].field - pressure_results[2].field)) < 4e-9 * mean(norm.(pressure_source_results[2].field))
