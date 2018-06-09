@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
 (* ::Input:: *)
-(*$Assumptions ={ao>0,a[_]>0,ko>0,k[_]>0,c[_]>0,co>0, n \[Element] Integers};*)
+(*(*$Assumptions ={ao>0,a[_]>0,ko>0,k[_]>0,c[_]>0,co>0, n \[Element] Integers};*)
 (**)
 (*\[Psi]o = fo[n] BesselJ[Abs[n],ko r];*)
 (*\[Psi][s] = Ao[n]HankelH1[Abs[n],ko r];*)
@@ -10,10 +10,12 @@
 (**)
 (*eqs = {\[Psi][1]  == \[Psi][0]/.r-> a[0],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][0],r]/\[Rho][0]/.r-> a[0], \[Psi][s] + \[Psi]o  == \[Psi][1]/.r-> a[1],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][s] + \[Psi]o ,r]/\[Rho]o/.r-> a[1]};*)
 (**)
-(*sol = Ao[n]/.Solve[eqs,{Ao[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]} //Simplify;*)
+(*sol = Ao[n]/.Solve[eqs,{Ao[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]} //Simplify;*)*)
 
 
 (* ::Input:: *)
+(*$Assumptions ={ao>0,a[_]>0,ko>0,k[_]>0,c[_]>0,co>0, n \[Element] Integers};*)
+(**)
 (*ClearAll[\[Psi]o,\[Psi],J,H]*)
 (*\[Psi]o = fo[n] Subscript[J, n][ko r];*)
 (*\[Psi][s] = Ao[n]Subscript[H, n][ko r];*)
@@ -369,6 +371,8 @@ u[c,t] - u[0,t] = O[c t] + O[c^2]
 So the two are similar if the material in the tube is similar to 
 the background material.  
     
+
+
 
 
 
