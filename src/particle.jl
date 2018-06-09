@@ -28,7 +28,7 @@ struct CapsuleParticle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: A
 end
 
 # Shorthand for all Vectors of particles
-Particles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:(Particle{T,Dim,P,S} where S<:Shape where P<:PhysicalProperties)
+Particles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:AbstractParticle{T,Dim} 
 
 # Convenience constructor which does not require explicit types/parameters
 function Particle(medium::P,shape::S) where {Dim,T,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
@@ -68,6 +68,12 @@ end
 function ==(p1::CapsuleParticle, p2::CapsuleParticle)
     p1.outer == p2.outer &&
     p1.inner == p2.inner
+end
+
+import Base.isequal
+function isequal(p1::Particle, p2::Particle)
+    isequal(p1.medium, p2.medium) &&
+    isequal(p1.shape, p2.shape)
 end
 
 """

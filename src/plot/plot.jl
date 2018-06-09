@@ -1,5 +1,4 @@
 include("plot_domain.jl")
-# include("plot_moments.jl")
 
 # Plot the result across angular frequency for a specific position (x)
 @recipe function plot(simres::SimulationResult;
@@ -107,15 +106,18 @@ end
         response_mat = transpose(reshape(field(field_sim), (xres+1, yres+1)))
         seriestype --> :contour
         fill --> true
+        grid --> false
         aspect_ratio := 1.0
         fillcolor --> :pu_or
         title --> "Field at ω=$ω"
 
         (x_pixels, y_pixels, field_apply.(response_mat))
     end
+
     if drawparticles
         @series begin
             sim.particles
         end
     end
+
 end

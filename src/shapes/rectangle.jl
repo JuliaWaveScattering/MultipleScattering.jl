@@ -25,6 +25,20 @@ name(shape::Rectangle) = "Rectangle"
 outer_radius(r::Rectangle) = sqrt((r.width/2)^2 + (r.height/2)^2)
 volume(rectangle::Rectangle) = rectangle.width*rectangle.height
 
+import Base.(==)
+function ==(r1::Rectangle{T}, r2::Rectangle{T}) where T
+    r1.origin == r2.origin &&
+    r1.width  == r2.width  &&
+    r1.height == r2.height
+end
+
+import Base.isequal
+function isequal(r1::Rectangle{T}, r2::Rectangle{T}) where T
+    isequal(r1.origin, r2.origin) &&
+    isequal(r1.width , r2.width ) &&
+    isequal(r1.height, r2.height)
+end
+
 function congruent(r1::Rectangle{T}, r2::Rectangle{T}) where T
     r1.width  == r2.width  &&
     r1.height == r2.height

@@ -2,9 +2,10 @@ import Base.Test: @testset, @test, @test_throws
 import StaticArrays: SVector
 
 using MultipleScattering
+using Plots
 
-include("basic_type_tests.jl")
 include("shapetests.jl")
+include("particle_tests.jl")
 
 include("fourier_tests.jl")
 

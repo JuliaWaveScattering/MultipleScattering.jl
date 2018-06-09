@@ -26,6 +26,18 @@ function inside(rect::Rectangle{T}, circle::Circle{T}) where {T}
     all((origin(circle) .+ circle.radius) .<= topright(rect))
 end
 
+import Base.(==)
+function ==(c1::Circle{T}, c2::Circle{T}) where T
+    c1.origin == c2.origin &&
+    c1.radius == c2.radius
+end
+
+import Base.isequal
+function isequal(c1::Circle{T}, c2::Circle{T}) where T
+    isequal(c1.origin, c2.origin) &&
+    isequal(c1.radius, c2.radius)
+end
+
 function congruent(c1::Circle{T}, c2::Circle{T}) where T
     c1.radius == c2.radius
 end

@@ -9,7 +9,7 @@
         particles = [Particle(a_p,circle1), Particle(a_p,circle2)]
         source = TwoDimAcousticPlanarSource(a,[1.0,0.0],[0.0,0.0])
         sim = FrequencySimulation(a,particles,source)
-        run(sim, SVector(1.0,2.0), 0.1)
+        result = run(sim, SVector(1.0,2.0), 0.1)
         @test true
     end
 

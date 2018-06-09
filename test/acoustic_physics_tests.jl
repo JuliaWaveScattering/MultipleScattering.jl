@@ -1,3 +1,35 @@
+@testset "Constructors" begin
+    # 2D Acoustic
+    a2 = Acoustic(0.1, 0.1+0.0im, 2)
+    @test dim(a2) == 2
+    @test field_dim(a2) == 1
+
+    # 3D Acoustic
+    a3 = Acoustic(1.0, 1.0+0.0im, 3)
+    @test dim(a3) == 3
+    @test field_dim(a3) == 1
+end
+
+@testset "Circle T-matrix" begin
+
+    circle = Circle((0.0,0.0), 2.0)
+    a2 = Acoustic(0.1, 0.1+0.0im, 2)
+    a2_host = Acoustic(1.0, 1.0+0.0im, 2)
+    ω = 0.5
+    N_basis = 10
+
+    # Test return type is satisfied for valid input
+    t = t_matrix(circle, a2, a2_host, ω, N_basis)
+    @test typeof(t) == Diagonal{Complex{Float64}}
+
+    # Test that errors are thrown where T-matrix is undefined
+    @test_throws DomainError t_matrix(circle, Acoustic(Inf, 0.0im, 2), Acoustic(1.0, 1.0+0.0im, 2), ω, N_basis)
+    @test_throws DomainError t_matrix(circle, Acoustic(1.0, 1.0+0.0im, 2), Acoustic(0.0, Inf*im, 2), ω, N_basis)
+    @test_throws DomainError t_matrix(circle, Acoustic(1.0, 0.0im, 2), Acoustic(1.0, 0.0im, 2), ω, N_basis)
+    @test_throws DomainError t_matrix(circle, Acoustic(0.0, 1.0im, 2), Acoustic(0.0, 1.0+0.0im, 2), ω, N_basis)
+    @test_throws DomainError t_matrix(Circle((0.0,0.0), 0.0), a2, a2_host, ω, N_basis)
+
+end
 
 @testset "acoustic sources" begin
     a2 = Acoustic(0.1,0.1 + 0.0im,2)
