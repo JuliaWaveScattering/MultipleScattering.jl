@@ -17,30 +17,14 @@ ps = [CapsuleParticle(concen_particles2...), CapsuleParticle(concen_particles1..
 # plot(ps)
 
 medium = Acoustic(0.8, 0.5 + 0.0im,2)
-source = TwoDimAcousticPlanarSource(medium, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
-sim = FrequencySimulation(medium, ps, source)
 
-ωs = [0.01,0.2,0.3,1.]
-
-Nh = 13
-
-pressure_results, displace_results =  boundary_data(shape(ps[1].outer), ps[1].outer.medium, medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
-
-# Continuous pressure and displacement accross particl boundary
-maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
-maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6
-
-pressure_results, displace_results =  boundary_data(shape(ps[1].inner), ps[1].inner.medium, ps[1].outer.medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
-maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
-maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6
-
-ω  = 1.4
 ps = [CapsuleParticle(concen_particles1...)]
 source = TwoDimAcousticPlanarSource(medium, SVector(-3.0,0.0), SVector(1.0,0.0), 1.)
 sim = FrequencySimulation(medium, ps, source)
 
 using Plots; pyplot()
 
+ω  = 1.4
 bounds = Rectangle([-3.,-2.],[3.,2.]);
 simres = run(sim,bounds,[ω]; res=40, basis_order=8)
 
@@ -49,7 +33,7 @@ plot!(sim)
 
 ωs = 0.:0.01:2.0
 # simres = run(sim,bounds,ωs; res=30, basis_order =8);
-simres = run(sim,bounds,ωs; res=15, basis_order = 4);
+simres = run(sim,bounds,ωs; res=15, basis_order = 26);
 
 ts = 0.:0.4:50.
 timres = TimeSimulationResult(simres; t_vec = ts)
@@ -84,27 +68,38 @@ sim = FrequencySimulation(medium, ps, source)
 sim_source = FrequencySimulation(medium, source)
 
 ω = 0.01
+# checkout: ω = 0.63, strange resonance
 bounds = Rectangle([-5.,-4.5],[5.,5.]);
-simres = run(sim,bounds,[ω]; res=45, basis_order=12)
+simres = run(sim,bounds,[ω]; res=45, basis_order=3)
 
 plot(simres,ω,seriestype=:contour)
 plot!(sim)
 
-ωs = 0.:0.01:3.0
-ωs = 0.:0.01:1.0
-# simres = run(sim,bounds,ωs; res=49, basis_order = 12);
-# simres = run(sim,bounds,ωs; res=15, basis_order = 10);
-simres = run(sim_source,bounds,ωs; res=15, basis_order = 10);
+ωs = 0.:0.0005:3.0
+
+# simres = run(sim,bounds,ωs; res=57, min_basis_order = 4, basis_order = 14);
+simres = run(sim,bounds,ωs; res=57, min_basis_order = 5, basis_order = 14);
 
 ts = 0.:0.4:50.
 timres = TimeSimulationResult(simres; t_vec = ts)
 #timres = run(sim,bounds,0.:0.02:2.0; ts = ts, res=20)
 
-t=10.0
+timres2 = TimeSimulationResult(timres.field .+ 0.008, timres.x, timres.t)
+
+t=0.0
 anim = @animate for t in ts
     # plot(timres,t,seriestype=:contour, clim=(-0.8,0.8), c=:balance)
-    plot(timres,t,seriestype=:contour, clim=(0.0,0.8), c=:balance)
+    plot(timres2,t,seriestype=:contour, clim=(-0.05,0.15), c=:balance)
     plot!(sim)
 end
 
 gif(anim,"capsulse_dance.gif", fps = 4)
+
+ω = 0.65
+anim = @animate for ω in 0.:0.01:2.
+    # plot(timres,t,seriestype=:contour, clim=(-0.8,0.8), c=:balance)
+    plot(simres,ω,seriestype=:contour, clim=(-1.1,1.1), c=:pu_or)
+    plot!(sim)
+end
+
+gif(anim,"capsulse_dance_modes.gif", fps = 4)

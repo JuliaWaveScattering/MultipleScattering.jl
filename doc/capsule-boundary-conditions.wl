@@ -217,19 +217,15 @@
 (*subsol2 = Solve[eqs2,{fo[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]};*)
 (**)
 (**)
-
-
-(* ::Input:: *)
-(*eqs2/.subsol2 //.{ qo-> \[Rho]o /ko ,  q[1]->\[Rho][1]/k[1] ,q[0] -> \[Rho][0]/k[0]}//Simplify*)
+(*Inactive[Yd][a[0] k[1],a[1] k[1]]//Activate*)
+(*Inactive[Yd][a[1] k[1],a[0] k[1]]//Activate*)
 (**)
 
 
 (* ::Input:: *)
-(*D[\[Psi][1],r]*)
-
-
-(* ::Input:: *)
-(*denom = dq0 Subscript[J, n][a[0] k[0]] (dq Inactive[Ydd][a[1] k[1],a[0] k[1]] Subscript[J, n][ko a[1]]-Inactive[Yd][a[1] k[1],a[0] k[1]] Derivative[1][Subscript[J, n]][ko a[1]])+(dq Inactive[Yd][a[0] k[1],a[1] k[1]] Subscript[J, n][ko a[1]]+Inactive[Y][a[1] k[1],a[0] k[1]] Derivative[1][Subscript[J, n]][ko a[1]]) Derivative[1][Subscript[J, n]][a[0] k[0]];*)
+(*eqs2/.subsol2 //.{ qo-> \[Rho]o /ko ,  q[1]->\[Rho][1]/k[1] ,q[0] -> \[Rho][0]/k[0]}//Simplify;*)
+(**)
+(*denom = dq0 Subscript[J, n][a[0] k[0]] (dq Subscript[J, n][ko a[1]] Inactive[Ydd][a[1] k[1],a[0] k[1]] - Derivative[1][Subscript[J, n]][ko a[1]]Inactive[Yd][a[1] k[1],a[0] k[1]] )+Derivative[1][Subscript[J, n]][a[0] k[0]](dq Subscript[J, n][ko a[1]] Inactive[Yd][a[0] k[1],a[1] k[1]]+ Derivative[1][Subscript[J, n]][ko a[1]]Inactive[Y][a[1] k[1],a[0] k[1]]) ;*)
 (*force = Ao[n]  Yd[ko a[1],ko a[1]]/denom;*)
 (**)
 (*numer =- dq0  Yd[k[1] a[0],k[1] a[0]];*)
@@ -241,6 +237,10 @@
 (*numer =  Subscript[J, n][a[0] k[1]] Derivative[1][Subscript[J, n]][a[0] k[0]]-dq0 Subscript[J, n][a[0] k[0]] Derivative[1][Subscript[J, n]][a[0] k[1]];*)
 (*numer force == A[1,n]/.subsol2[[1]]/.{q[0] -> dq0 q[1],qo -> dq q[1] }//Activate//FullSimplify*)
 (**)
+(**)
+(*A[1,n]/.subsol2[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
+(*f[1,n]/.subsol2[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
+(*f[0,n]/.subsol2[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
 
 
 (* ::InheritFromParent:: *)
