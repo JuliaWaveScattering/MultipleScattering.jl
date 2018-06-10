@@ -28,7 +28,7 @@ struct CapsuleParticle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: A
 end
 
 # Shorthand for all Vectors of particles
-Particles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:AbstractParticle{T,Dim} 
+Particles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:AbstractParticle{T,Dim}
 
 # Convenience constructor which does not require explicit types/parameters
 function Particle(medium::P,shape::S) where {Dim,T,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
@@ -80,6 +80,8 @@ end
 Returns true if medium and shape of particles are the same, ignoring the origin
 of shape
 """
+congruent(p1::AbstractParticle, p2::AbstractParticle) = false
+
 function congruent(p1::Particle, p2::Particle)
     p1.medium == p2.medium &&
     congruent(p1.shape, p2.shape)

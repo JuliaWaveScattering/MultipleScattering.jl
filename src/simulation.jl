@@ -27,7 +27,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
     a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
 
     # Evaluate the total field at the requested x positions
-    field_vec = field(sim, ω, x_vec, a_vec; basis_order=basis_order)
+    field_vec = field(sim, ω, x_vec, a_vec)
 
     # Construct results object
     field_vec = reshape(map(f->SVector{FieldDim,Complex{T}}(f), field_vec), :, 1)
@@ -123,11 +123,13 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     a
 end
 
-function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec; basis_order::Int=5) where {Dim,P,T}
-    Nh = basis_order
+function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec) where {Dim,P,T}
+
+    Nh = Int((size(a_vec,1) - one(T)) / T(2.0)) # basis_order
     num_particles = length(sim.particles)
     a = OffsetArray(a_vec,-Nh:Nh,1:num_particles)
     basis = basis_function(sim.medium, ω)
+
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i
             p = sim.particles[i]
@@ -143,7 +145,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
         else
             j = ind[1]
             p = sim.particles[j]
-            internal_field(x, p, sim, ω, collect(a[:,j]); basis_order=Nh)
+            internal_field(x, p, sim, ω, collect(a[:,j]))
         end
     end
 end

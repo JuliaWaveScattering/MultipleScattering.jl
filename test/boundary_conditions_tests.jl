@@ -1,5 +1,7 @@
 @testset "boundary conditions" begin
 
+    @testset "Circle Particle" begin
+
     ωs = [0.1,0.2,0.3]
 
     Nh = 8
@@ -51,5 +53,48 @@
     # The source pressure should always be continuous accross any interface, however the displacement is only continuous because p1.medium.ρ == medium.ρ
     @test mean(norm.(pressure_source_results[1].field - pressure_source_results[2].field)) < 4e-9 * mean(norm.(pressure_source_results[2].field))
     @test mean(norm.(displace_source_results[1].field - displace_source_results[2].field)) < 5e-7 * mean(norm.(displace_source_results[1].field))
+    end
 
+    @testset "CapsuleParticle" begin
+
+    concen_particles1 = [
+        Particle(Acoustic(2.0,2.0,2),Circle((0.0,0.0),1.0)),
+        Particle(Acoustic(1.0,1.,2),Circle((0.0,0.0),2.0))
+    ]
+    concen_particles2 = [
+        Particle(Acoustic(2.0,1.0,2),Circle((6.0,3.0),1.)),
+        Particle(Acoustic(0.4,0.8,2),Circle((6.0,3.0),1.4))
+    ]
+    particle = Particle(Acoustic(1.5,1.5,2),Circle((-6.0,-3.0),0.8))
+
+    ps = [CapsuleParticle(concen_particles2...), CapsuleParticle(concen_particles1...), particle]
+
+    medium = Acoustic(0.8, 0.5 + 0.0im,2)
+    source = TwoDimAcousticPlanarSource(medium, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
+    sim = FrequencySimulation(medium, ps, source)
+
+    ωs = [0.01,0.2,0.3,1.]
+    Nh = 13
+
+    pressure_results, displace_results =  boundary_data(shape(ps[1].outer), ps[1].outer.medium, medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
+
+    # Continuous pressure and displacement accross particl boundary
+    @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
+    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6
+
+    pressure_results, displace_results =  boundary_data(shape(ps[1].inner), ps[1].inner.medium, ps[1].outer.medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
+    @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
+    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6
+
+    pressure_results, displace_results =  boundary_data(shape(ps[2].outer), ps[2].outer.medium, medium, sim, ωs; basis_order = Nh+2, dr = 1e9 * eps(Float64))
+    # Continuous pressure and displacement accross particl boundary
+    @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 5e-6
+    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 1e-5
+
+    pressure_results, displace_results =  boundary_data(shape(ps[3]), ps[3].medium, medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
+    # Continuous pressure and displacement accross particl boundary
+    @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
+    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6
+
+    end
 end

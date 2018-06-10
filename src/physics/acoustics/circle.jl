@@ -48,10 +48,9 @@ function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoust
 end
 
 
-function internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}};
-        basis_order::Int=5) where T
+function internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where T
 
-    Nh = basis_order #shorthand
+    Nh = Int((length(scattering_coefficients) - one(T))/T(2.0)) #shorthand
     if iszero(p.medium.c) || isinf(abs(p.medium.c))
         return zero(Complex{T})
     else

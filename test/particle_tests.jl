@@ -103,6 +103,10 @@
 
         # Vector of particles of different shape
         particles = [
+            CapsuleParticle(
+                Particle(Acoustic(2.0,2.0,2),Circle((5.0,3.0),1.0)),
+                Particle(Acoustic(1.0,1.,2),Circle((5.0,3.0),2.0))
+            ),
             Particle(a, Rectangle((1.0,0.0), 2.0, 3.0)),
             Particle(a, Circle((3.0,-1.0), 1.0))
         ]
