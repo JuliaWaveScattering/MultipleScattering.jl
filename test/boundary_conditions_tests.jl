@@ -31,27 +31,27 @@
     sim = FrequencySimulation(medium, particles, source)
     sim_source = FrequencySimulation(medium, source)
 
-    pressure_results, displace_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim, ωs; basis_order = 8)
-    pressure_source_results, displace_source_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim_source, ωs; basis_order = 8)
+    pressure_results, displace_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim, ωs; basis_order = 18)
+    pressure_source_results, displace_source_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim_source, ωs; basis_order = 10)
 
     # Zero presure (Dirichlet) boundary condition
-    @test mean(norm.(pressure_results[1].field - pressure_results[2].field)) < 4e-7 * mean(norm.(pressure_source_results[2].field))
+    @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) < 1e-6 * mean(norm.(pressure_source_results[2].field))
 
-    pressure_results, displace_results =  boundary_data(shape(particles[2]), particles[2].medium, medium, sim, ωs; basis_order = 8)
+    pressure_results, displace_results =  boundary_data(shape(particles[2]), particles[2].medium, medium, sim, ωs; basis_order = 18)
     pressure_source_results, displace_source_results =  boundary_data(shape(particles[2]), particles[2].medium, medium, sim_source, ωs; basis_order = 8)
 
     # Zero displacement (Neuman) boundary condition
-    @test mean(norm.(displace_results[1].field - displace_results[2].field)) < 4e-5 * mean(norm.(displace_source_results[2].field))
+    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) < 4e-5 * mean(norm.(displace_source_results[2].field))
 
-    pressure_results, displace_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim, ωs; basis_order = 8, dr = 1e-7);
-    pressure_source_results, displace_source_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim_source, ωs; basis_order = 8, dr = 1e-7);
+    pressure_results, displace_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim, ωs; basis_order = 14, dr = 8e-6);
+    pressure_source_results, displace_source_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim_source, ωs; basis_order = 10, dr = 1e-6);
 
     # Continuous pressure and displacement accross particl boundary
-    @test mean(norm.(pressure_results[1].field - pressure_results[2].field)) < 4e-9 * mean(norm.(pressure_source_results[2].field))
-    @test mean(norm.(displace_results[1].field - displace_results[2].field)) < 6e-6 * mean(norm.(displace_source_results[1].field))
+    @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) < 2e-6 * mean(norm.(pressure_source_results[2].field))
+    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) < 6e-5 * mean(norm.(displace_source_results[1].field))
 
     # The source pressure should always be continuous accross any interface, however the displacement is only continuous because p1.medium.ρ == medium.ρ
-    @test mean(norm.(pressure_source_results[1].field - pressure_source_results[2].field)) < 4e-9 * mean(norm.(pressure_source_results[2].field))
+    @test mean(norm.(pressure_source_results[1].field - pressure_source_results[2].field)) < 4e-8 * mean(norm.(pressure_source_results[2].field))
     @test mean(norm.(displace_source_results[1].field - displace_source_results[2].field)) < 5e-7 * mean(norm.(displace_source_results[1].field))
     end
 
@@ -74,24 +74,24 @@
     sim = FrequencySimulation(medium, ps, source)
 
     ωs = [0.01,0.2,0.3,1.]
-    Nh = 13
+    basis_vec = [8,16,16,24]
 
-    pressure_results, displace_results =  boundary_data(shape(ps[1].outer), ps[1].outer.medium, medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
+    pressure_results, displace_results =  boundary_data(shape(ps[1].outer), ps[1].outer.medium, medium, sim, ωs; basis_order_vec = basis_vec, dr = 1e9 * eps(Float64))
 
     # Continuous pressure and displacement accross particl boundary
     @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
     @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6
 
-    pressure_results, displace_results =  boundary_data(shape(ps[1].inner), ps[1].inner.medium, ps[1].outer.medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
+    pressure_results, displace_results =  boundary_data(shape(ps[1].inner), ps[1].inner.medium, ps[1].outer.medium, sim, ωs;  basis_order_vec = basis_vec, dr = 1e9 * eps(Float64))
     @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
     @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6
 
-    pressure_results, displace_results =  boundary_data(shape(ps[2].outer), ps[2].outer.medium, medium, sim, ωs; basis_order = Nh+2, dr = 1e9 * eps(Float64))
+    pressure_results, displace_results =  boundary_data(shape(ps[2].outer), ps[2].outer.medium, medium, sim, ωs; basis_order_vec = basis_vec .+ 2, dr = 1e9 * eps(Float64))
     # Continuous pressure and displacement accross particl boundary
     @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 5e-6
     @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 1e-5
 
-    pressure_results, displace_results =  boundary_data(shape(ps[3]), ps[3].medium, medium, sim, ωs; basis_order = Nh, dr = 1e9 * eps(Float64))
+    pressure_results, displace_results =  boundary_data(shape(ps[3]), ps[3].medium, medium, sim, ωs; basis_order_vec = basis_vec, dr = 1e9 * eps(Float64))
     # Continuous pressure and displacement accross particl boundary
     @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) / mean(norm.(pressure_results[2].field)) < 1e-6
     @test maximum(norm.(displace_results[1].field - displace_results[2].field)) / mean(norm.(displace_results[2].field)) < 5e-6

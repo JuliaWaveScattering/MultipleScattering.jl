@@ -35,27 +35,42 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
 
 end
 
-function run(sim::FrequencySimulation{T,Dim,P},x_vec::Vector{SVector{Dim,T}},ωs::AbstractArray{T}=T[];
+function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, ωs::AbstractArray{T}=T[];
         ts::AbstractArray{T} = T[], result_in_time = !isempty(ts),
+        basis_order::Int = 5,
+        min_basis_order::Int = max(3, Int(round(ωs[1] * basis_order / ωs[end]))),
+        basis_order_vec::AbstractVector{Int} = [-1],
         kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim)  where {Dim,P,T}
 
     if isempty(ωs) ωs = t_to_ω(ts) end
 
+    # Considering basis_order to be the maximum basis order, then to avoid too much truncation error we use smaller basis orders on the smaller frequencies.
+    if basis_order_vec == [-1]
+        max_basis_order = max(basis_order,min_basis_order)
+        basis_order_vec = Int.(round.(
+            linspace(min_basis_order, max_basis_order, length(ωs))
+        ))
+    end
+
     # ugly bit of code to seperate keywords for simulating frequencies
-    ks = [:basis_order]
-    freq_kws = filter(k -> contains(==,ks,k[1]), kws)
+    ks = []
+    freq_kws = Iterators.filter(k -> contains(==,ks,k[1]), kws)
     time_kws = setdiff(kws,freq_kws)
 
     # if user asks for ω = 0, then we provide
     if first(ωs) == zero(T)
         # Compute for each angular frequency, then join up all the results
-        fields = mapreduce(ω->run(sim,x_vec,ω; freq_kws...).field, hcat, ωs[2:end])
+        fields = mapreduce(
+            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], freq_kws...).field,
+        hcat, eachindex(ωs)[2:end])
 
         # extrapolate field at ω = 0, which should be real when the time signal is real
         zeroresponse = (ωs[3].*fields[:,1] - ωs[2].*fields[:,2])./(ωs[3]-ωs[2])
         fields = reshape([real.(zeroresponse); fields[:]], length(zeroresponse), size(fields,2)+1)
     else
-        fields = mapreduce(ω->run(sim,x_vec,ω; freq_kws...).field, hcat, ωs)
+        fields = mapreduce(
+            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], freq_kws...).field,
+        hcat, eachindex(ωs))
     end
 
     if !result_in_time
