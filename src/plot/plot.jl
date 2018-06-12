@@ -80,22 +80,22 @@ end
 
     # If user wants us to, generate bounding rectangle around particles
     if bounds == :auto
-        bounding_rect = bounding_rectangle(sim.particles)
+        bounds = bounding_rectangle(sim.particles)
     end
 
     # If user has not set xlims and ylims, set them to the rectangle
-    xlims --> (bottomleft(bounding_rect)[1], topright(bounding_rect)[1])
-    ylims --> (bottomleft(bounding_rect)[2], topright(bounding_rect)[2])
+    xlims --> (bottomleft(bounds)[1], topright(bounds)[1])
+    ylims --> (bottomleft(bounds)[2], topright(bounds)[2])
 
     # Incase the user did set the xlims and ylims, generate a new bounding
     # rectangle with them
     p_xlims = plotattributes[:xlims]
     p_ylims = plotattributes[:ylims]
-    bounding_rect = Rectangle([p_xlims[1],p_ylims[1]], [p_xlims[2],p_ylims[2]])
+    bounds = Rectangle([p_xlims[1],p_ylims[1]], [p_xlims[2],p_ylims[2]])
 
     @series begin
 
-        field_sim = run(sim, bounding_rect, [ω]; xres=xres, yres=yres)
+        field_sim = run(sim, bounds, [ω]; xres=xres, yres=yres)
 
         xy_mat = reshape(field_sim.x, (xres+1, yres+1))
 
