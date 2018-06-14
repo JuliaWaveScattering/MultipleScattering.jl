@@ -79,7 +79,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
         if isempty(ts) ts = ω_to_t(ωs) end
 
         # better to use the defaults of TimeSimulationResult's Constructor.
-        TimeSimulationResult(FrequencySimulationResult(fields,x_vec,RowVector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
+        frequency_to_time(FrequencySimulationResult(fields,x_vec,RowVector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
     end
 end
 
