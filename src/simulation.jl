@@ -1,8 +1,20 @@
 abstract type Simulation{T,Dim} end
 
+"""
+    FrequencySimulation(medium::PhysicalProperties,
+                        [particles::AbstractParticles=[],]
+                        source::Source)
+
+Build a FrequencySimulation. If particles are not provided, an empty array is used.
+
+After building, you can [`run`](@ref) the simulation to get a [`FrequencySimulationResult`](@ref).
+"""
 mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <: Simulation{T,Dim}
+    "Physical properties of the medium which the whole simulation sits in"
     medium::P
+    "Vector of particles, can be of different types"
     particles::AbstractParticles
+    "Source"
     source::Source{P,T}
 end
 
@@ -93,15 +105,32 @@ function run(sim::FrequencySimulation{T,Dim,P}, x::SVector{Dim,T}, ω::T;
     run(sim,[x],[ω]; kws...)
 end
 
+# Add docstring to run functions
 """
-simulate results over the whole `shape`. This SimulationResult can then be used by plot.
+    run(sim::FrequencySimulation, x, ω; basis_order=5)
+
+Run the simulation `sim` for the position `x` and angular frequency `ω`.
+
+Position can be an SVector or Vector{SVector} and frequency can be a float or
+vector of floats.
 """
-function run(sim::FrequencySimulation, shape::Rectangle,
-                              ω_vec::AbstractVector; res=20, xres=res, yres=res, kws...)
+run
+
+"""
+    run(sim::FrequencySimulation, rectangle;
+        res=20, xres=res, yres=res, basis_order=5)
+
+Run the simulation `sim` for a grid of positions in rectangle and for angular frequency `ω`.
+
+Frequency can be a float or vector of floats. The resolution of the grid points is defined
+by xres and yres.
+"""
+function run(sim::FrequencySimulation, rect::Rectangle, ω_vec::AbstractVector;
+             res=20, xres=res, yres=res, kws...)
 
     #Size of the step in x and y direction
-    step_size = [shape.width / xres, shape.height / yres]
-    x_vec = [SVector(bottomleft(shape) + step_size.*[i,j]) for i=0:xres, j=0:yres]
+    step_size = [rect.width / xres, rect.height / yres]
+    x_vec = [SVector(bottomleft(rect) + step_size.*[i,j]) for i=0:xres, j=0:yres]
 
     return run(sim, x_vec[:], ω_vec; kws...)
 end
