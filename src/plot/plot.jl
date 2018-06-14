@@ -75,8 +75,8 @@ end
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot(sim::FrequencySimulation, ω::Number; res=10, xres=res, yres=res,
-                         field_apply=real, bounds = :auto, drawparticles=false)
+@recipe function plot(sim::FrequencySimulation{T}, ω::T; res=10, xres=res, yres=res,
+                         field_apply=real, bounds = :auto, drawparticles=false) where {T}
 
     # If user wants us to, generate bounding rectangle around particles
     if bounds == :auto
@@ -91,7 +91,7 @@ end
     # rectangle with them
     p_xlims = plotattributes[:xlims]
     p_ylims = plotattributes[:ylims]
-    bounds = Rectangle([p_xlims[1],p_ylims[1]], [p_xlims[2],p_ylims[2]])
+    bounds = Rectangle((T(p_xlims[1]),T(p_ylims[1])), (T(p_xlims[2]),T(p_ylims[2])))
 
     @series begin
 

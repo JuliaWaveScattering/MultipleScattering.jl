@@ -2,19 +2,19 @@ abstract type Simulation{T,Dim} end
 
 mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <: Simulation{T,Dim}
     medium::P
-    particles::Vector{Pt} where Pt<:AbstractParticle{T,Dim}
+    particles::AbstractParticles
     source::Source{P,T}
 end
 
 # Constructor which infers parametric types from input arguments, note that we
 # don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(medium::P, particles::Vector{Pt}, source::Source{P,T}) where {Dim,T,Pt<:AbstractParticle{T,Dim}, P<:PhysicalProperties{T,Dim}}
+function FrequencySimulation(medium::P, particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
     FrequencySimulation{T,Dim,P}(medium, particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
 function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
-    FrequencySimulation{T,Dim,P}(medium, Vector{Particle{T,Dim,P,Shape}}(0), source)
+    FrequencySimulation{T,Dim,P}(medium, Vector{AbstractParticle{T,Dim}}(0), source)
 end
 
 import Base.run
@@ -106,7 +106,7 @@ function run(sim::FrequencySimulation, shape::Rectangle,
     return run(sim, x_vec[:], ω_vec; kws...)
 end
 
-function forcing(source::Source{Ph,T}, particles::Vector{Pt}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T,Pt<:AbstractParticle{T}}
+function forcing(source::Source{P,T}, particles::AbstractParticles, ω::T, Nh::Integer)::Vector{Complex{T}} where {P,T}
     mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
     f = Vector{Complex{T}}(prod(size(mat)))
     H = 2Nh + 1
