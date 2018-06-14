@@ -41,7 +41,7 @@
     pressure_source_results, displace_source_results =  boundary_data(shape(particles[2]), particles[2].medium, medium, sim_source, ωs; basis_order = 8)
 
     # Zero displacement (Neuman) boundary condition
-    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) < 4e-5 * mean(norm.(displace_source_results[2].field))
+    @test maximum(norm.(displace_results[1].field - displace_results[2].field)) < 5e-5 * mean(norm.(displace_source_results[2].field))
 
     pressure_results, displace_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim, ωs; basis_order = 14, dr = 8e-6);
     pressure_source_results, displace_source_results =  boundary_data(shape(particles[3]), particles[3].medium, medium, sim_source, ωs; basis_order = 10, dr = 1e-6);
