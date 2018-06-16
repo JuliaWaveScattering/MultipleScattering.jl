@@ -8,13 +8,14 @@ export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        basis_function, basis_coefficients, internal_field, dim, field_dim
-export AbstractParticle, Particle, CapsuleParticle, Particles
+export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
 export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
        (*), (+)
 export Simulation, run, TimeSimulation, forcing, field
 export SimulationResult, FrequencySimulation, FrequencySimulationResult
+export Impulse, TimeDeltaFunctionImpulse, FreqDeltaFunctionImpulse, GaussianImpulse
 export TimeSimulationResult, frequency_to_time, time_to_frequency
-export ω_to_t, t_to_ω, firstnonzero, get_gaussian_freq_impulse, get_gaussian_time_impulse, delta_freq_impulse
+export ω_to_t, t_to_ω, firstnonzero
 export SimulationDistribution, FrequencySimulationDistribution, sample
 export t_matrix, get_t_matrices
 export scattering_matrix
@@ -35,6 +36,7 @@ include("particle.jl")
 include("source.jl")
 include("result.jl")
 include("simulation.jl")
+include("impulse.jl")
 include("time_simulation.jl")
 include("random/random.jl")
 include("t_matrix.jl")

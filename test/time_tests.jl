@@ -18,7 +18,7 @@ x_vec = [SVector(0.0,0.0)]
 x_vec = [SVector(0.0,0.0), SVector(3.0,0.0)]
 ω_vec = 0.0:0.1:1.01
 simres = run(sim, x_vec, ω_vec)
-timres = run(sim, x_vec, ω_vec; result_in_time=true, impulse = delta_freq_impulse, method=:trapezoidal)
+timres = run(sim, x_vec, ω_vec; result_in_time=true, impulse=TimeDeltaFunctionImpulse(0.0), method=:trapezoidal)
 
 using Plots; pyplot()
 
@@ -28,31 +28,31 @@ timres = run(sim, bounds, ω_vec; result_in_time=true)
 plot(timres, linetype=:contour)
 
 # timres = TimeSimulationResult(simres; t_vec = 0.0:0.2:50., method=:trapezoidal);
-timres2 = TimeSimulationResult(simres; impulse = delta_freq_impulse, method=:trapezoidal);
-d1 = transpose(field(timres));
+timres1 = frequency_to_time(simres; impulse=TimeDeltaFunctionImpulse(0.0), method=:trapezoidal)
+d1 = transpose(field(timres1));
 
-timres = TimeSimulationResult(simres; method=:dft, impulse = delta_freq_impulse);
-d2 = transpose(field(timres));
+timres2 = frequency_to_time(simres; impulse=TimeDeltaFunctionImpulse(0.0), method=:dft)
+d2 = transpose(field(timres2));
 norm(d1 - d2)/norm(d1)
 
 # plot(timres.t', [d1 d2])
 
-simres2 = FrequencySimulationResult(timres; method=:dft, impulse = delta_freq_impulse)
+simres2 = time_to_frequency(timres; method=:dft, impulse=FreqDeltaFunctionImpulse(0.0))
 d1 = transpose(imag.(field(simres)));
 d2 = transpose(imag.(field(simres2)));
 # plot(simres.ω', [d1-d2])
-norm(field(simres2) - field(simres))/norm(field(simres))
+# norm(field(simres2) - field(simres))/norm(field(simres))
 
-timres2 = TimeSimulationResult(simres2; method=:dft, impulse = delta_freq_impulse);
+timres2 = frequency_to_time(simres2; method=:dft, impulse=TimeDeltaFunctionImpulse(0.0));
 norm(field(timres2) - field(timres))/norm(field(timres))
 
-simres3 = FrequencySimulationResult(timres2; method=:dft, impulse = delta_freq_impulse)
+simres3 = time_to_frequency(timres2; method=:dft, impulse=FreqDeltaFunctionImpulse(0.0))
 norm(field(simres3) - field(simres2))/norm(field(simres))
 
 # plot([real.(transpose(field(simres))), real.(transpose(field(simres2)[2:end]))])
 
 freq_field = time_to_frequency(transpose(field(timres)), transpose(timres.t); method = :dft)
-field(simres)[:] - freq_field[2:end]
+# field(simres)[:] - freq_field[2:end]
 
 # plot(ω_vec, [real.(transpose(field(simres))), real.(freq_field)])
 
@@ -67,8 +67,8 @@ plot(transpose(timres.t), real.(transpose(field(timres))))
 field_mat = transpose(field(simres))
 t_vec = ω_to_t(ω_vec)
 
-impulse = delta_freq_impulse
-impulse_vec = impulse.(transpose(ω_vec))
+impulse = TimeDeltaFunctionImpulse(0.0)
+impulse_in_freq_vec = impulse.in_freq.(transpose(ω_vec))
 addzerofrequency=true
 method = :dft
 

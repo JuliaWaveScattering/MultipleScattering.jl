@@ -28,7 +28,7 @@ struct CapsuleParticle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: A
 end
 
 # Shorthand for all Vectors of particles
-Particles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:AbstractParticle{T,Dim}
+AbstractParticles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:AbstractParticle{T,Dim}
 
 # Convenience constructor which does not require explicit types/parameters
 function Particle(medium::P,shape::S) where {Dim,T,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
@@ -53,9 +53,9 @@ outer_radius(p::AbstractParticle) = outer_radius(shape(p))
 volume(p::AbstractParticle) = volume(shape(p))
 
 bounding_rectangle(p::AbstractParticle) = bounding_rectangle(shape(p))
-bounding_rectangle(ps::Vector{P}) where P<:AbstractParticle = bounding_rectangle([shape(p) for p in ps])
+bounding_rectangle(ps::AbstractParticles) = bounding_rectangle([shape(p) for p in ps])
 
-function volume(particles::Particles)
+function volume(particles::AbstractParticles)
     mapreduce(volume, +, particles)
 end
 

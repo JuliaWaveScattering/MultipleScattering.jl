@@ -1,5 +1,5 @@
 
-type Source{P<:PhysicalProperties,T<:AbstractFloat}
+struct Source{P<:PhysicalProperties,T<:AbstractFloat}
     field::Function
     coef::Function
     # Enforce that the Types are the same

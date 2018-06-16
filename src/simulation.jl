@@ -1,20 +1,32 @@
 abstract type Simulation{T,Dim} end
 
+"""
+    FrequencySimulation(medium::PhysicalProperties,
+                        [particles::AbstractParticles=[],]
+                        source::Source)
+
+Build a FrequencySimulation. If particles are not provided, an empty array is used.
+
+After building, you can [`run`](@ref) the simulation to get a [`FrequencySimulationResult`](@ref).
+"""
 mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <: Simulation{T,Dim}
+    "Physical properties of the medium which the whole simulation sits in"
     medium::P
-    particles::Vector{Pt} where Pt<:AbstractParticle{T,Dim}
+    "Vector of particles, can be of different types"
+    particles::AbstractParticles
+    "Source"
     source::Source{P,T}
 end
 
 # Constructor which infers parametric types from input arguments, note that we
 # don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(medium::P, particles::Vector{Pt}, source::Source{P,T}) where {Dim,T,Pt<:AbstractParticle{T,Dim}, P<:PhysicalProperties{T,Dim}}
+function FrequencySimulation(medium::P, particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
     FrequencySimulation{T,Dim,P}(medium, particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
 function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
-    FrequencySimulation{T,Dim,P}(medium, Vector{Particle{T,Dim,P,Shape}}(0), source)
+    FrequencySimulation{T,Dim,P}(medium, Vector{AbstractParticle{T,Dim}}(0), source)
 end
 
 import Base.run
@@ -80,7 +92,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
         if isempty(ts) ts = ω_to_t(ωs) end
 
         # better to use the defaults of TimeSimulationResult's Constructor.
-        TimeSimulationResult(FrequencySimulationResult(fields,x_vec,RowVector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
+        frequency_to_time(FrequencySimulationResult(fields,x_vec,RowVector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
     end
 end
 
@@ -94,20 +106,37 @@ function run(sim::FrequencySimulation{T,Dim,P}, x::SVector{Dim,T}, ω::T;
     run(sim,[x],[ω]; kws...)
 end
 
+# Add docstring to run functions
 """
-simulate results over the whole `shape`. This SimulationResult can then be used by plot.
+    run(sim::FrequencySimulation, x, ω; basis_order=5)
+
+Run the simulation `sim` for the position `x` and angular frequency `ω`.
+
+Position can be an SVector or Vector{SVector} and frequency can be a float or
+vector of floats.
 """
-function run(sim::FrequencySimulation, shape::Rectangle,
-                              ω_vec::AbstractVector; res=20, xres=res, yres=res, kws...)
+run
+
+"""
+    run(sim::FrequencySimulation, rectangle;
+        res=20, xres=res, yres=res, basis_order=5)
+
+Run the simulation `sim` for a grid of positions in rectangle and for angular frequency `ω`.
+
+Frequency can be a float or vector of floats. The resolution of the grid points is defined
+by xres and yres.
+"""
+function run(sim::FrequencySimulation, rect::Rectangle, ω_vec::AbstractVector;
+             res=20, xres=res, yres=res, kws...)
 
     #Size of the step in x and y direction
-    step_size = [shape.width / xres, shape.height / yres]
-    x_vec = [SVector(bottomleft(shape) + step_size.*[i,j]) for i=0:xres, j=0:yres]
+    step_size = [rect.width / xres, rect.height / yres]
+    x_vec = [SVector(bottomleft(rect) + step_size.*[i,j]) for i=0:xres, j=0:yres]
 
     return run(sim, x_vec[:], ω_vec; kws...)
 end
 
-function forcing(source::Source{Ph,T}, particles::Vector{Pt}, ω::T, Nh::Integer)::Vector{Complex{T}} where {Ph,T,Pt<:AbstractParticle{T}}
+function forcing(source::Source{P,T}, particles::AbstractParticles, ω::T, Nh::Integer)::Vector{Complex{T}} where {P,T}
     mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
     f = Vector{Complex{T}}(prod(size(mat)))
     H = 2Nh + 1

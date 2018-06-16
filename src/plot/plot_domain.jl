@@ -4,7 +4,7 @@
 end
 
 # Plot a vector of particles
-@recipe function plot(particles::Particles)
+@recipe function plot(particles::AbstractParticles)
     for particle in particles
         @series begin
             particle
