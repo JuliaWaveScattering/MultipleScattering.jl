@@ -50,6 +50,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
         basis_order_vec = Int.(round.(
             linspace(min_basis_order, max_basis_order, length(ωs))
         ))
+        basis_order_vec = basis_order_vec[sortperm(ωs)]
     end
 
     # ugly bit of code to seperate keywords for simulating frequencies
