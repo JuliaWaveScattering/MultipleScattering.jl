@@ -13,3 +13,4 @@ include("acoustic_physics_tests.jl")
 include("boundary_conditions_tests.jl")
 
 include("end_to_end_tests.jl")
+include("time_tests.jl")
