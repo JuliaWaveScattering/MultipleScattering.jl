@@ -4,15 +4,16 @@ Convert a FrequencySimulationResult into a TimeSimulationResult by using the inv
 Assumes only positive frequencies and a real time signal
 """
 function frequency_to_time(simres::FrequencySimulationResult{T,Dim,FieldDim};
-        t_vec = ω_to_t(simres.ω),
-        impulse = GaussianImpulse(maximum(simres.ω)),
+        t_vec::AbstractVector{T} = ω_to_t(simres.ω),
+        impulse::ContinuousImpulse{T} = GaussianImpulse(maximum(simres.ω)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, transpose(simres.ω)),
         method = :dft
     ) where {Dim,FieldDim,T}
 
     time_field = frequency_to_time(transpose(field(simres)), transpose(simres.ω), t_vec;
-        impulse = impulse, method = method)
+        discrete_impulse = discrete_impulse, method = method)
 
-    return TimeSimulationResult(transpose(time_field), deepcopy(simres.x), t_vec)
+    return TimeSimulationResult(transpose(time_field), simres.x, t_vec)
 end
 
 """
@@ -21,12 +22,13 @@ Assumes only positive frequencies and a real time signal
 """
 function time_to_frequency(timres::TimeSimulationResult{T,Dim,FieldDim};
         ω_vec = t_to_ω(timres.t),
-        impulse = GaussianImpulse(maximum(ω_vec)),
+        impulse::ContinuousImpulse{T} = GaussianImpulse(maximum(ω_vec)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, transpose(timres.t), ω_vec),
         method =:dft
     ) where {Dim,FieldDim,T}
 
     freq_field = time_to_frequency(transpose(field(timres)), transpose(timres.t), ω_vec;
-        impulse = impulse, method = method)
+        discrete_impulse = discrete_impulse, method = method)
 
     return FrequencySimulationResult(transpose(freq_field), deepcopy(timres.x), ω_vec)
 end
@@ -75,19 +77,23 @@ inverse Fourier transform. The time signal is assumed to be real and the
 frequenices ω_vec are assumed to be positive (can include zero) and sorted. The
 result is convoluted ωith the user specified impulse, which is a function of the
 frequency.
+
+We use the Fourier transform convention:
+F(ω) =  ∫ f(t)*exp(im*ω*t) dt
+f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dt
+
+To easily sample any time, the default is not FFT, but a discrete version of the transform above.
 """
 function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::AbstractVector{T},
         t_vec::AbstractArray{T} = ω_to_t(ω_vec);
-        impulse::Impulse{T} = TimeDeltaFunctionImpulse(zero(T)),
-        addzerofrequency=true, method=:dft) where T <: AbstractFloat
-    # we assume the convention: f(t) = 1/(2π) ∫f(ω)exp(-im*ω*t)dω
+        impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
+        method=:dft) where T <: AbstractFloat
 
     if size(field_mat,1) != size(ω_vec,1) error("Vector of frequencies ω_vec expected to be same size as size(field_mat,1)") end
 
-    # approximate  ∫f(ω)exp(-im*ω*t)dω. The advantage of not using FFT is the ability to easily sample any time.
-    impulse_in_freq_vec = map(impulse.in_freq, ω_vec)
     function f(t::T,j::Int)
-        fs = impulse_in_freq_vec.*field_mat[:,j].*exp.(-(im*t).*ω_vec)
+        fs = discrete_impulse.in_freq.*field_mat[:,j].*exp.(-(im*t).*ω_vec)
         if method == :dft && ω_vec[1] == zero(T)
             fs[1] = fs[1]/T(2) # so as to not add ω=0 tωice in the integral of ω over [-inf,inf]
         end
@@ -96,23 +102,24 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
     inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j); method=method)
     u = [inverse_fourier_integral(t,j) for t in t_vec, j in indices(field_mat,2)]
 
-    return real.(u)/pi # constant due to our Fourier convention and because only positive frequencies are used.
+    return real.(u)/pi # constant 1/pi appears due to our Fourier convention and because only positive frequencies are used.
 end
 
 """
 The inverse of the function frequency_to_time (only an exact inverse when using
-:dft integration)
+:dft integration). We use the Fourier transform convention:
+F(ω) =  ∫ f(t)*exp(im*ω*t) dt
 """
-function time_to_frequency(field_mat::AbstractMatrix{T}, t_vec::AbstractVector{T},
+function time_to_frequency(field_mat::AbstractArray{T}, t_vec::AbstractVector{T},
         ω_vec::AbstractArray{T} = t_to_ω(t_vec);
-        impulse::Impulse{T} = FreqDeltaFunctionImpulse(zero(T)),
+        impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
         method=:dft) where T <: AbstractFloat
 
-    # we assume the convention: f(ω) =  ∫f(t)exp(im*ω*t)dt
-    impulse_in_time_vec = map(impulse.in_time, t_vec)
-    f(ω::T, j::Int) = impulse_in_time_vec.*field_mat[:,j].*exp.((im*ω).*t_vec)
+    # to use an impulse below in time we would need to do a discrete convolution, which we decided against.
+    f(ω::T, j::Int) = field_mat[:,j].*exp.((im*ω).*t_vec)
     fourier_integral = (ω,j) -> numerical_integral(t_vec, f(ω,j); method=method)
-    uhat = [fourier_integral(ω,j) for ω in ω_vec, j in indices(field_mat,2)]
+    uhat = [discrete_impulse.in_freq[i]*fourier_integral(ω_vec[i],j) for i in eachindex(ω_vec), j in indices(field_mat,2)]
 
     return uhat
 end
