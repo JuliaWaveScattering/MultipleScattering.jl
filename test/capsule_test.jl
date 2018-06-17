@@ -19,7 +19,7 @@ ps = [CapsuleParticle(concen_particles2...), CapsuleParticle(concen_particles1..
 medium = Acoustic(0.8, 0.5 + 0.0im,2)
 
 ps = [CapsuleParticle(concen_particles1...)]
-source = TwoDimAcousticPlanarSource(medium, SVector(-3.0,0.0), SVector(1.0,0.0), 1.)
+source = plane_source(medium, SVector(-3.0,0.0), SVector(1.0,0.0), 1.)
 sim = FrequencySimulation(medium, ps, source)
 
 using Plots; pyplot()
@@ -63,7 +63,7 @@ plot(ps)
 ω = 1.4
 source_position = SVector(0.0,-3.0)
 amplitude = 1.0
-source = TwoDimAcousticPointSource(medium, source_position, amplitude)
+source = point_source(medium, source_position, amplitude)
 sim = FrequencySimulation(medium, ps, source)
 sim_source = FrequencySimulation(medium, source)
 

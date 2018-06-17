@@ -80,7 +80,12 @@ end
 
     # If user wants us to, generate bounding rectangle around particles
     if bounds == :auto
-        bounds = bounding_rectangle(sim.particles)
+        if isempty(sim.particles)
+            warn("What region to plot? Use keyword bounds = Rectangle")
+            bounds = Rectangle([-one(T),-one(T)],[one(T),one(T)])
+        else
+            bounds = bounding_rectangle(sim.particles)
+        end
     end
 
     # If user has not set xlims and ylims, set them to the rectangle

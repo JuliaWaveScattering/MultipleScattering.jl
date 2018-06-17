@@ -32,9 +32,10 @@ end
 import Base.run
 
 # Main run function, all other run functions use this
-function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, ω::T;
+function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ω::T;
         basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
 
+    x_vec = [SVector{Dim,T}(x...) for x in x_vec]
     # Calculate the Hankel coefficients around each particle, this is where most of the maths happens
     a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
 
@@ -47,7 +48,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
 
 end
 
-function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, ωs::AbstractArray{T}=T[];
+function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ωs::AbstractArray{T}=T[];
         ts::AbstractArray{T} = T[], result_in_time = !isempty(ts),
         basis_order::Int = 5,
         min_basis_order::Int = max(3, Int(round(ωs[1] * basis_order / ωs[end]))),
@@ -55,6 +56,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
         kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim)  where {Dim,P,T}
 
     if isempty(ωs) ωs = t_to_ω(ts) end
+    x_vec = [SVector{Dim,T}(x...) for x in x_vec]
 
     # Considering basis_order to be the maximum basis order, then to avoid too much truncation error we use smaller basis orders on the smaller frequencies.
     if basis_order_vec == [-1]
@@ -96,12 +98,12 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Vector{SVector{Dim,T}}, �
     end
 end
 
-function run(sim::FrequencySimulation{T,Dim,P}, x::SVector{Dim,T}, ωs::AbstractVector{T}=T[];
+function run(sim::FrequencySimulation{T,Dim,P}, x::AbstractVector{T}, ωs::AbstractVector{T}=T[];
         kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
     run(sim,[x],ωs; kws...)
 end
 
-function run(sim::FrequencySimulation{T,Dim,P}, x::SVector{Dim,T}, ω::T;
+function run(sim::FrequencySimulation{T,Dim,P}, x::AbstractVector{T}, ω::T;
         kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
     run(sim,[x],[ω]; kws...)
 end

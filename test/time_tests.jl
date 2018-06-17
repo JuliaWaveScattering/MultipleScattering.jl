@@ -8,14 +8,14 @@ using MultipleScattering
     particles = [Particle(sound_p,Circle([10.5,0.0], .5))]
 
     sound_sim = Acoustic(1., 1. + 0.0im,2)
-    source = TwoDimAcousticPlanarSource(sound_sim, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
+    source = plane_source(sound_sim, [0.0,0.0], [1.0,0.0], 1.)
     sim = FrequencySimulation(sound_sim, particles, source)
 
     ω_vec = 0.0:0.01:5.01
     @test ω_vec == t_to_ω(ω_to_t(ω_vec)) # only exact for length(ω_vec) = even number
 
     # invertability of dft
-        x_vec = [SVector(0.0,0.0), SVector(3.0,0.0)]
+        x_vec = [ [0.0,0.0], [3.0,0.0]]
         ω_vec = 0.0:0.1:1.01
         simres = run(sim, x_vec, ω_vec)
         timres = run(sim, x_vec, ω_vec; result_in_time=true, method=:dft, discrete_impulse = DiscreteTimeDiracImpulse(0.0, ω_to_t(ω_vec), ω_vec))

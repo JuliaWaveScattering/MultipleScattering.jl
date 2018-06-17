@@ -23,9 +23,9 @@
     # Create two point sources
     source_position = SVector(0.0,0.2)
     amplitude = 1.0
-    source1 = TwoDimAcousticPointSource(medium, source_position, amplitude)
-    source2 = TwoDimAcousticPlanarSource(medium, SVector(0.0,0.0), SVector(1.0,0.0), amplitude)
-    # source2 = TwoDimAcousticPointSource(medium, -source_position, amplitude)
+    source1 = point_source(medium, source_position, amplitude)
+    source2 = plane_source(medium, SVector(0.0,0.0), SVector(1.0,0.0), amplitude)
+    # source2 = point_source(medium, -source_position, amplitude)
     source = 0.5*source1 + 0.5*source2
 
     sim = FrequencySimulation(medium, particles, source)
@@ -70,7 +70,7 @@
     ps = [CapsuleParticle(concen_particles2...), CapsuleParticle(concen_particles1...), particle]
 
     medium = Acoustic(0.8, 0.5 + 0.0im,2)
-    source = TwoDimAcousticPlanarSource(medium, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
+    source = plane_source(medium, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
     sim = FrequencySimulation(medium, ps, source)
 
     ωs = [0.01,0.2,0.3,1.]

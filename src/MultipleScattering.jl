@@ -9,7 +9,7 @@ export bottomleft, topright
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
        basis_function, basis_coefficients, internal_field, dim, field_dim
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
-export Source, besselj_field, self_test, TwoDimAcousticPointSource, TwoDimAcousticPlanarSource,
+export Source, besselj_field, self_test, point_source, plane_source,
        (*), (+)
 export Simulation, run, TimeSimulation, forcing, field
 export SimulationResult, FrequencySimulation, FrequencySimulationResult
