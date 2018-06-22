@@ -11,7 +11,7 @@ function Particle{T}(x::Vector{T}, r::T = 1.0; c::Complex{T} = one(Complex{T}), 
 end
 
 function volume{T}(particles::Vector{Particle{T}})
-    mapreduce(volume, +, particles)
+    isempty(particles) ? zero(T) : mapreduce(volume, +, particles)
 end
 
 function volume{T}(p::Particle{T})
@@ -20,7 +20,7 @@ end
 
 function mean_radius{T}(particles::Vector{Particle{T}})
     radius_fnc(particle) = particle.r
-    mapreduce(radius_fnc, +, particles) / length(particles)
+    isempty(particles) ? zero(T) : mapreduce(radius_fnc, +, particles) / length(particles)
 end
 
 function std_radius{T}(particles::Vector{Particle{T}})
