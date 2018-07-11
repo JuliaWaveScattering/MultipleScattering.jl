@@ -10,7 +10,7 @@ function besselj_field(source::Source{Acoustic{T,2},T}, medium::Acoustic{T,2}, c
 
 end
 
-function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::T = one(T))::Source{Acoustic{T,2},T}
+function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T}
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
@@ -28,7 +28,7 @@ function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::T = 
     return Source{Acoustic{T,2},T}(source_field, source_coef)
 end
 
-function plane_source(medium::Acoustic{T,2}, source_position, source_direction = SVector(one(T),zero(T)), amplitude::T = one(T))::Source{Acoustic{T,2},T} where {T}
+function plane_source(medium::Acoustic{T,2}, source_position, source_direction = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where {T}
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
