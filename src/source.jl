@@ -28,7 +28,7 @@ Check that the source functions return the correct types
 function self_test(source::Source{P,T}) where {P,T}
 
     # Example data with correct dimensions and types from P and T
-    x = SVector(ntuple(i->zero(T),dim(P)))
+    x = SVector(ntuple(i->one(T),dim(P)))
     ω = one(T)
 
     # Check that the result of field has same dimension and type as PhysicalProperty field

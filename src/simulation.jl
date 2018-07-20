@@ -81,7 +81,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
 
         # extrapolate field at ω = 0, which should be real when the time signal is real
         zeroresponse = (ωs[3].*fields[:,1] - ωs[2].*fields[:,2])./(ωs[3]-ωs[2])
-        fields = reshape([real.(zeroresponse); fields[:]], length(zeroresponse), size(fields,2)+1)
+        fields = reshape([zeroresponse; fields[:]], length(zeroresponse), size(fields,2)+1)
     else
         fields = mapreduce(
             i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], freq_kws...).field,
