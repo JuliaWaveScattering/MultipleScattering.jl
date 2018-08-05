@@ -18,7 +18,7 @@ using MultipleScattering
         x_vec = [ [0.0,0.0], [3.0,0.0]]
         ω_vec = 0.0:0.1:1.01
         simres = run(sim, x_vec, ω_vec)
-        timres = run(sim, x_vec, ω_vec; result_in_time=true, method=:dft, discrete_impulse = DiscreteTimeDiracImpulse(0.0, ω_to_t(ω_vec), ω_vec))
+        timres = frequency_to_time(simres; method=:dft, discrete_impulse = DiscreteTimeDiracImpulse(0.0, ω_to_t(ω_vec), ω_vec))
         simres2 = time_to_frequency(timres; method=:dft, discrete_impulse = DiscreteTimeDiracImpulse(0.0,transpose(timres.t)))
         @test norm(field(simres) - field(simres2)) / norm(field(simres)) < 1e-14
         timres2 = frequency_to_time(simres2; method=:dft, impulse = TimeDiracImpulse(0.0));
