@@ -75,8 +75,7 @@ end
 Calculates the time response from the frequency response by approximating an
 inverse Fourier transform. The time signal is assumed to be real and the
 frequenices ω_vec are assumed to be positive (can include zero) and sorted. The
-result is convoluted ωith the user specified impulse, which is a function of the
-frequency.
+result is convoluted in time ωith the user specified impulse.
 
 We use the Fourier transform convention:
 F(ω) =  ∫ f(t)*exp(im*ω*t) dt
@@ -102,7 +101,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
     inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j); method=method)
     u = [inverse_fourier_integral(t,j) for t in t_vec, j in indices(field_mat,2)]
 
-    return real.(u)/pi # constant 1/pi appears due to our Fourier convention and because only positive frequencies are used.
+    return real.(u)/pi # a constant 1/(2pi) appears due to our Fourier convention, but because we only use positive frequencies, and assume a real time signal, this becomes 1/pi.
 end
 
 """

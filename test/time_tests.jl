@@ -17,12 +17,24 @@ using MultipleScattering
     # invertability of dft
         x_vec = [ [0.0,0.0], [3.0,0.0]]
         ω_vec = 0.0:0.1:1.01
+        t_vec = 0.0:0.1:1.01
         simres = run(sim, x_vec, ω_vec)
-        timres = frequency_to_time(simres; method=:dft, discrete_impulse = DiscreteTimeDiracImpulse(0.0, ω_to_t(ω_vec), ω_vec))
-        simres2 = time_to_frequency(timres; method=:dft, discrete_impulse = DiscreteTimeDiracImpulse(0.0,transpose(timres.t)))
+        # choose an impulse which does nothing and so can be inverted
+        discrete_impulse = DiscreteTimeDiracImpulse(0.0, t_vec, ω_vec)
+        timres = frequency_to_time(simres; method=:dft, discrete_impulse = discrete_impulse)
+        simres2 = time_to_frequency(timres; method=:dft, discrete_impulse = discrete_impulse)
+
         @test norm(field(simres) - field(simres2)) / norm(field(simres)) < 1e-14
         timres2 = frequency_to_time(simres2; method=:dft, impulse = TimeDiracImpulse(0.0));
         @test norm(field(timres2) - field(timres))/norm(field(timres)) < 1e-14
+
+    # test impulse consistency by seeing if we get the same result when going from freq to time, and when going from time to freq.
+        impulse = GaussianImpulse(maximum(ω_vec))
+        timres2 = frequency_to_time(simres; method=:dft, impulse = impulse)
+        simres2 = time_to_frequency(timres; method=:dft, impulse = impulse)
+        # invert without an impulse
+        timres3 = frequency_to_time(simres2; method=:dft, discrete_impulse = discrete_impulse)
+        @test norm(field(timres2) - field(timres3))/norm(field(timres2)) < 1e-14
 
     # Compare dft and trapezoidal integration
         ω_vec = 0.0:0.1:100.01 # need a high frequency to match a delta impluse function!

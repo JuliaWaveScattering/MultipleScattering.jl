@@ -40,6 +40,12 @@ end
 We use the Fourier transform convention:
 F(ω) =  ∫ f(t)*exp(im*ω*t) dt
 f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dt
+
+An impluse g(t) is convoluted in time with f(t), however we avoid the convlution by working with the fourier transform G(ω) of the impulse g(t), which results in
+frequency to time: output = (2π)^(-1) * ∫ G(ω)*F(ω)*exp(-im*ω*t) dt
+time to frequency:
+F(ω) = ∫ f(t)*exp(im*ω*t) dt
+output = G(ω)*F(ω)
 """
 struct ContinuousImpulse{T<:AbstractFloat}
     in_time::Function
@@ -117,7 +123,7 @@ Dirac Delta function of unit area in the frequency domain, centred at ω=ω0.
 Warning: the representation of this in frequency may lead to unexpected behaviour.
 """
 function FreqDiracImpulse(ω0::T, dω::T = one(T)) where {T<:AbstractFloat}
-    in_time(t::T) = exp(-im*ω0*t) / (T(2)*π)
+    in_time(t::T) = exp(-im*ω0*t) / (T(2)*π) 
     in_freq(ω::T) = (ω==ω0) ? T(Inf) : zero(ω)
     ContinuousImpulse{T}(in_time, in_freq, false)
 end
