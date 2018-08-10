@@ -98,7 +98,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
         end
         fs
     end
-    inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j); method=method)
+    inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j), method)
     u = [inverse_fourier_integral(t,j) for t in t_vec, j in indices(field_mat,2)]
 
     return real.(u)/pi # a constant 1/(2pi) appears due to our Fourier convention, but because we only use positive frequencies, and assume a real time signal, this becomes 1/pi.
@@ -117,21 +117,20 @@ function time_to_frequency(field_mat::AbstractArray{T}, t_vec::AbstractVector{T}
 
     # to use an impulse below in time we would need to do a discrete convolution, which we decided against.
     f(ω::T, j::Int) = field_mat[:,j].*exp.((im*ω).*t_vec)
-    fourier_integral = (ω,j) -> numerical_integral(t_vec, f(ω,j); method=method)
+    fourier_integral = (ω,j) -> numerical_integral(t_vec, f(ω,j), method)
     uhat = [discrete_impulse.in_freq[i]*fourier_integral(ω_vec[i],j) for i in eachindex(ω_vec), j in indices(field_mat,2)]
 
     return uhat
 end
 
-function numerical_integral(xs::AbstractArray{T}, fs::Union{AbstractArray{T},AbstractArray{Complex{T}}};
-        method = :dft) where T <: AbstractFloat
+function numerical_integral(xs::AbstractArray{T}, fs::Union{AbstractArray{T},AbstractArray{Complex{T}}}, method = :dft) where T <: AbstractFloat
 
     if method == :trapezoidal
         sum(1:(length(xs)-1)) do xi
-            (fs[xi]+fs[xi+1])*(xs[xi+1] - xs[xi])/T(2)
+            (fs[xi] + fs[xi+1])*(xs[xi+1] - xs[xi])/T(2)
         end
     elseif method == :dft
-        fs[1]*(xs[2]-xs[1]) +
+        fs[1]*(xs[2] - xs[1]) +
         sum(2:length(xs)) do xi
             fs[xi]*(xs[xi] - xs[xi-1])
         end
