@@ -32,7 +32,7 @@ function plane_source(medium::Acoustic{T,2}, source_position, source_direction =
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
-    source_direction = SVector{2,T}(source_direction)
+    source_direction = SVector{2,T}(source_direction./norm(source_direction)) # unit direction
 
     # This pseudo-constructor is rarely called, so do some checks and conversions
     if iszero(norm(source_direction))

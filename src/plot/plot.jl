@@ -14,10 +14,11 @@ include("plot_domain.jl")
             label --> "Real x=$(simres.x[x_ind])"
             (transpose(getfield(simres, 3)[ω_indices]), real.(complex_field))
         end
-
-        @series begin
-            label --> "Imag x=$(simres.x[x_ind])"
-            (transpose(getfield(simres, 3)[ω_indices]), imag.(complex_field))
+        if typeof(timres) <: FrequencySimulationResult
+            @series begin
+                label --> "Imag x=$(simres.x[x_ind])"
+                (transpose(getfield(simres, 3)[ω_indices]), imag.(complex_field))
+            end
         end
     end
 end

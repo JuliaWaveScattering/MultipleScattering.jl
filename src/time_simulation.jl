@@ -53,7 +53,7 @@ end
 "The inverse of ω_to_t if ω_vec[1] == 0"
 function t_to_ω(t_arr::AbstractArray{T}) where T <: AbstractFloat
     N = Int(round((length(t_arr)-one(T))/T(2)))
-    maxt = t_arr[2] - t_arr[1] + t_arr[end]
+    maxt = t_arr[2] - t_arr[1] + t_arr[end] - t_arr[1] # subtract t_arr[1] in case t_arr[1] != zero(T)
     maxω = N*2π/maxt
     ω_vec = linspace(zero(T),maxω,N+1)
     return ω_vec
