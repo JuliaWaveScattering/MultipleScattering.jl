@@ -16,6 +16,13 @@ TwoDimAcoustic{T} = Acoustic{T,2}
 
 name(a::Acoustic{T,Dim}) where {Dim,T} = "$(Dim)D Acoustic"
 
+"""
+    impedance(medium::Acoustic)
+
+Characteristic specific acoustic impedance (z₀) of medium
+"""
+impedance(medium::Acoustic) = medium.ρ * medium.c
+
 include("circle.jl")
 include("concentric_capsule.jl")
 include("source.jl")
@@ -40,3 +47,69 @@ function basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T}
         besselj(m,k*r)*exp(im*θ*m)
     end
 end
+
+"""
+    sound_hard([T::Type = Float64,] Dim::Integer)
+
+Construct physical properties of a sound hard acoustic object with type T and dimension Dim.
+Also known as [`rigid`](@ref) and equivalent to a [`zero_neumann`](@ref) pressure boundary condition.
+"""
+sound_hard(T::Type, Dim::Integer) = Acoustic{T,Dim}(T(Inf), one(T))
+
+# If no type is given, assume Float64
+sound_hard(Dim::Integer) = sound_hard(Float64, Dim)
+
+"""
+    hard(host_medium::Acoustic)
+
+See [`sound_hard`](@ref).
+"""
+hard(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_hard(T, Dim)
+
+"""
+    rigid(host_medium::Acoustic)
+
+See [`sound_hard`](@ref).
+"""
+rigid(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_hard(T, Dim)
+
+"""
+    zero_neumann(host_medium::Acoustic)
+
+See [`sound_hard`](@ref).
+"""
+zero_neumann(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_hard(T, Dim)
+
+
+"""
+    sound_soft([T::Type = Float64,] Dim::Integer)
+
+Construct physical properties of a sound hard acoustic object with type T and dimension Dim.
+Equivalent to a [`zero_dirichlet`](@ref) pressure boundary condition.
+
+"""
+sound_soft(T::Type, Dim::Integer) = Acoustic{T,Dim}(T(Inf), one(T))
+
+# If no type is given, assume Float64
+sound_soft(Dim::Integer) = sound_soft(Float64, Dim)
+
+"""
+    soft(host_medium::Acoustic)
+
+See [`sound_soft`](@ref).
+"""
+soft(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_soft(T, Dim)
+
+"""
+    pressure_release(host_medium::Acoustic)
+
+See [`sound_soft`](@ref).
+"""
+pressure_release(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_soft(T, Dim)
+
+"""
+    zero_dirichlet(host_medium::Acoustic)
+
+See [`sound_soft`](@ref).
+"""
+zero_dirichlet(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_soft(T, Dim)

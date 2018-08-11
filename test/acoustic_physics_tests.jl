@@ -8,6 +8,16 @@
     a3 = Acoustic(1.0, 1.0+0.0im, 3)
     @test dim(a3) == 3
     @test field_dim(a3) == 1
+
+    # Boundary condition constuctors
+    @test sound_hard(2) == hard(a2)
+    @test sound_hard(2) == rigid(a2)
+    @test sound_hard(2) == zero_neumann(a2)
+
+    @test sound_soft(2) == soft(a2)
+    @test sound_soft(2) == rigid(a2)
+    @test sound_soft(2) == pressure_release(a2)
+    @test sound_soft(2) == zero_dirichlet(a2)
 end
 
 @testset "Circle T-matrix" begin

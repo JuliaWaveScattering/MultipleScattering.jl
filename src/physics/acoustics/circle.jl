@@ -32,7 +32,7 @@ function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoust
             numer = besselj(m, ak)
             denom = hankelh1(m, ak)
         else
-            q = (p.medium.c*p.medium.ρ)/(outer_medium.c*outer_medium.ρ) #the impedance
+            q = impedance(p.medium)/impedance(outer_medium) # Impedance ratio
             γ = outer_medium.c/p.medium.c #speed ratio
             numer = q * diffbesselj(m, ak) * besselj(m, γ * ak) - besselj(m, ak)*diffbesselj(m, γ * ak)
             denom = q * diffhankelh1(m, ak) * besselj(m, γ * ak) - hankelh1(m, ak)*diffbesselj(m, γ * ak)

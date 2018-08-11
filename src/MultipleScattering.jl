@@ -7,7 +7,9 @@ export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside,
 export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
-       basis_function, basis_coefficients, internal_field, dim, field_dim
+       basis_function, basis_coefficients, internal_field, dim, field_dim,
+       sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet,
+       pressure_release, impedance
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
 export Source, besselj_field, self_test, point_source, plane_source,
        (*), (+)
