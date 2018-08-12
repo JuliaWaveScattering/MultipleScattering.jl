@@ -4,21 +4,15 @@ include("plot_domain.jl")
 @recipe function plot(simres::SimulationResult;
         x = simres.x,
         x_indices = [findmin(norm(z - y) for z in simres.x)[2] for y in x],
-        ω_indices = Colon())
+        ω_indices = Colon(), apply = real)
 
     for x_ind in x_indices
 
-        complex_field = field(simres)[x_ind, ω_indices]
+        apply_field = apply.(field(simres)[x_ind, ω_indices])
 
         @series begin
-            label --> "Real x=$(simres.x[x_ind])"
-            (transpose(getfield(simres, 3)[ω_indices]), real.(complex_field))
-        end
-        if typeof(simres) <: FrequencySimulationResult
-            @series begin
-                label --> "Imag x=$(simres.x[x_ind])"
-                (transpose(getfield(simres, 3)[ω_indices]), imag.(complex_field))
-            end
+            label --> "$apply x=$(simres.x[x_ind])"
+            (transpose(getfield(simres, 3)[ω_indices]), apply_field)
         end
     end
 end
