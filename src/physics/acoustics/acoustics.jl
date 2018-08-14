@@ -88,7 +88,7 @@ Construct physical properties of a sound hard acoustic object with type T and di
 Equivalent to a [`zero_dirichlet`](@ref) pressure boundary condition.
 
 """
-sound_soft(T::Type, Dim::Integer) = Acoustic{T,Dim}(T(Inf), one(T))
+sound_soft(T::Type, Dim::Integer) = Acoustic{T,Dim}(zero(T), one(T))
 
 # If no type is given, assume Float64
 sound_soft(Dim::Integer) = sound_soft(Float64, Dim)
