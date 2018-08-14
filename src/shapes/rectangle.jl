@@ -1,6 +1,8 @@
 """
-Shape with 4 right-angles and axis aligned sides, defined by width and height.
-Note: the origin is in the center of the rectangle.
+    Rectangle(origin::AbstractVector{T}, width::T, Height::T)
+    Rectangle(bottomleft::AbstractVector{T}, topright::AbstractVector{T})
+
+2D [`Shape`](@ref) with axis aligned sides, defined by width, height and origin (at the center).
 """
 struct Rectangle{T} <: Shape{T,2}
     origin::SVector{2,T}

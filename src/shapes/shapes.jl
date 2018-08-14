@@ -1,16 +1,21 @@
 """
-Abstract idea which defines the external boundary of object. Two objects have
-the same shape if they are congruence.
+Abstract idea which defines the external boundary of object.
 """
 abstract type Shape{T<:AbstractFloat,Dim} end
 
-"Origin of a shape, typically the center"
+"""
+    origin(shape::Shape)::SVector
+
+Origin of shape, typically the center
+"""
 origin(shape::Shape) = shape.origin
 
-# For two different shapes, the answer is false. For concrete types this
-# function must be overloaded
-"Returns true if two shapes are the same, ignoring their origin."
-congruent(s1::Shape, s2::Shape) = false
+"""
+    congruent(p1::Shape, p2::Shape)::Bool
+
+True if shapes are the same but in different positions (origins), standard mathematical definition.
+"""
+congruent(s1::Shape, s2::Shape) = false # false by default, overload in specific examples
 
 "Generic helper function which tests if boundary coordinate is between 0 and 1"
 function check_boundary_coord_range(t)
@@ -47,20 +52,37 @@ function bounding_rectangle(shapes::Vector{S}) where S<:Shape
 end
 
 # Docstrings
-"Name of a shape"
+"""
+    name(shape::Shape)::String
+
+Name of a shape
+"""
 name
 
-"The radius of a circle which contains the shape."
+"""
+    outer_radius(shape::Shape{T})::T
+
+The radius of a circle which completely contains the shape
+"""
 outer_radius
 
-"Volume of a shape"
+"""
+    volume(shape::Shape{T})::T
+
+Volume of a shape
+"""
 volume
 
-"Returns whether an object (2nd arg) is inside a shape (1st arg)"
+"""
+    volume(shape1::Shape, shape2::Shape)::Bool
+
+True if shape2 is completely contained within shape1
+"""
 inside
 
 """
-Returns Dim functions which accept a boundary coordinate (0<=t<=1)to trace outer
-boundary of shape.
+    volume(shape::Shape)::NTuple{Function,Dim)
+
+Returns Tuple of Dim Functions which define outer boundary of shape when given boundary coordinate t∈[0,1]
 """
 boundary_functions
