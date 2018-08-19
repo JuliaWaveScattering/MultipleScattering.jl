@@ -31,8 +31,8 @@ end
 AbstractParticles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:AbstractParticle{T,Dim}
 
 # Convenience constructor which does not require explicit types/parameters
-function Particle(medium::P,shape::S) where {Dim,T,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
-    Particle{T,Dim,P,S}(medium,shape)
+function Particle(medium::P,s::S) where {Dim,T,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
+    Particle{T,Dim,P,S}(medium,s)
 end
 
 function CapsuleParticle(p1::Particle{T,Dim,P,S},p2::Particle{T,Dim,P,S}) where {T,Dim,S<:Shape,P<:PhysicalProperties}
@@ -90,4 +90,4 @@ end
 congruent(p1::CapsuleParticle, p2::CapsuleParticle) =
     congruent(p1.inner, p2.inner) && congruent(p1.outer, p2.outer)
 
-inside(shape::Shape, particle::AbstractParticle) = inside(shape, shape(particle))
+inside(s::Shape, particle::AbstractParticle) = inside(s, shape(particle))
