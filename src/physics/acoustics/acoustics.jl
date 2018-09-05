@@ -1,6 +1,10 @@
 """
-Physical properties for a homogenous isotropic acoustic medium. Produces a
-scalar (1D) field in arbitrary dimensions.
+    Acoustic{T<:AbstractFloat,Dim}(ρ::T, c::Complex{T})
+    Acoustic(ρ::T, c::Union{T,Complex{AbstractFloat}}, Dim::Integer)
+
+Physical properties for a homogenous isotropic acoustic medium with wavespeed (c) and density (ρ)
+
+Simulations in this medium produce scalar (1D) fields in Dim dimensions.
 """
 struct Acoustic{T,Dim} <: PhysicalProperties{T,Dim,1}
     ρ::T # Density
@@ -88,7 +92,7 @@ Construct physical properties of a sound hard acoustic object with type T and di
 Equivalent to a [`zero_dirichlet`](@ref) pressure boundary condition.
 
 """
-sound_soft(T::Type, Dim::Integer) = Acoustic{T,Dim}(T(Inf), one(T))
+sound_soft(T::Type, Dim::Integer) = Acoustic{T,Dim}(zero(T), one(T))
 
 # If no type is given, assume Float64
 sound_soft(Dim::Integer) = sound_soft(Float64, Dim)

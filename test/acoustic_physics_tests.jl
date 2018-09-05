@@ -15,9 +15,10 @@
     @test sound_hard(2) == zero_neumann(a2)
 
     @test sound_soft(2) == soft(a2)
-    @test sound_soft(2) == rigid(a2)
     @test sound_soft(2) == pressure_release(a2)
     @test sound_soft(2) == zero_dirichlet(a2)
+
+    @test sound_hard(2)  != sound_soft(2)
 end
 
 @testset "Circle T-matrix" begin

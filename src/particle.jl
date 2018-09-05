@@ -1,6 +1,10 @@
 abstract type AbstractParticle{T,Dim} end
 
-"A homogenous particle with any properties and shape"
+"""
+    Particle(medium::PhysicalProperties, shape::Shape)
+
+Create particle with inner medium and shape (types and dimension must agree).
+"""
 struct Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: AbstractParticle{T,Dim}
     medium::P
     shape::S
@@ -11,7 +15,9 @@ struct Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: Abstract
 end
 
 """
-A particle within another particle, both with the same type of shape and origin. Produces a scalar (1D) field in arbitrary dimensions.
+    CapsuleParticle(outer::Particle, inner::Particle)
+
+A particle within another particle, both with the same shape type and origin.
 """
 struct CapsuleParticle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: AbstractParticle{T,Dim}
     outer::Particle{T,Dim,P,S}
@@ -77,10 +83,11 @@ function isequal(p1::Particle, p2::Particle)
 end
 
 """
-Returns true if medium and shape of particles are the same, ignoring the origin
-of shape
+    congruent(p1::AbstractParticle, p2::AbstractParticle)::Bool
+
+Returns true if medium and shape of particles are the same, ignoring origin, false otherwise.
 """
-congruent(p1::AbstractParticle, p2::AbstractParticle) = false
+congruent(p1::AbstractParticle, p2::AbstractParticle) = false # false by default, overload in specific examples
 
 function congruent(p1::Particle, p2::Particle)
     p1.medium == p2.medium &&
