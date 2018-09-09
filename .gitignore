@@ -16,3 +16,6 @@
 
 # Mathematica Notebooks
 *.nb
+
+docs/build
+docs/site
