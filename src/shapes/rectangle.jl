@@ -21,11 +21,24 @@ end
 # Alternate constructors, where type is inferred naturally
 Rectangle(origin::Tuple{T,T}, width::T, height::T) where {T} = Rectangle{T}(origin, width, height)
 Rectangle(origin::Vector{T}, width::T, height::T) where {T} = Rectangle{T}(origin, width, height)
+# If no position is given, assume origin is at zero
+Rectangle(width::T, height::T) where {T} = Rectangle{T}(SVector(zero(T),zero(T)), width, height)
 
 name(shape::Rectangle) = "Rectangle"
 
 outer_radius(r::Rectangle) = sqrt((r.width/2)^2 + (r.height/2)^2)
 volume(rectangle::Rectangle) = rectangle.width*rectangle.height
+
+import Base.issubset
+function issubset{T}(inner_rect::Rectangle{T}, outer_rect::Rectangle{T})
+    all(topright(inner_rect) .<= topright(outer_rect)) &&
+    all(bottomleft(inner_rect) .>= bottomleft(outer_rect))
+end
+
+import Base.in
+function in(x::AbstractVector, r::Rectangle)::Bool
+    all(abs.(x .- r.origin) .<= SVector(r.width, r.height))
+end
 
 import Base.(==)
 function ==(r1::Rectangle{T}, r2::Rectangle{T}) where T

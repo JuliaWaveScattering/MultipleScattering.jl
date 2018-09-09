@@ -29,6 +29,10 @@ function issubset(circle::Circle{T}, rect::Rectangle{T}) where {T}
     all((origin(circle) .+ circle.radius) .<= topright(rect))
 end
 
+function issubset(rect::Rectangle{T}, circle::Circle{T}) where {T}
+    issubset(Circle(origin(rect),outer_radius(rect)), circle)
+end
+
 import Base.in
 function in(x::AbstractVector, circle::Circle)::Bool
     norm(origin(circle) .- x) <= circle.radius

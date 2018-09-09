@@ -10,7 +10,7 @@ Sphere(origin::Vector{T}, radius::T) where {T} = Sphere{T}(origin, radius)
 
 name(shape::Sphere) = "Sphere"
 
-outer_radius(c::Sphere) = c.radius
+outer_radius(sphere::Sphere) = sphere.radius
 volume(shape::Sphere) = 4//3 * π * shape.radius^3
 
 import Base.issubset
@@ -23,10 +23,10 @@ function in(x::AbstractVector, sphere::Sphere)::Bool
     norm(origin(sphere) .- x) <= sphere.radius
 end
 
-function iscongruent(c1::Sphere{T}, c2::Sphere{T}) where T
-    c1.radius == c2.radius
+function iscongruent(s1::Sphere{T}, s2::Sphere{T}) where T
+    s1.radius == s2.radius
 end
 
-function congruent(c::Sphere{T}, x) where T
-    Sphere{T}(x, c.radius)
+function congruent(s::Sphere{T}, x) where T
+    Sphere{T}(x, s.radius)
 end

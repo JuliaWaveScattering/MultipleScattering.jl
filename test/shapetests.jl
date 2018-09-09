@@ -1,11 +1,22 @@
 @testset "Shape" begin
     @testset "Rectangle" begin
-        rectangle = Rectangle((0.0,0.0), (2.0,3.0))
+        rectangle = Rectangle((0.0,0.0), (2.0, 3.0))
+        o = origin(rectangle)
         @test volume(rectangle) ≈ 6.0
         @test name(rectangle) == "Rectangle"
 
+        @test o ∈ rectangle
+        @test (o+[0.0,3.1]) ∉ rectangle
+        @test iscongruent(rectangle, congruent(rectangle, SVector(3.0,4.0)))
+
+        smaller_rectangle = Rectangle(o, 1.0, 2.0)
+        @test smaller_rectangle ⊆ rectangle
+        @test rectangle == bounding_rectangle(rectangle)
+        @test rectangle ⊆ Circle(o, outer_radius(rectangle))
+
         # Test different ways to construct Rectangle produce same results
-        @test Rectangle((0.0,0.0), 1.0, 2.0) == Rectangle([0.0,0.0], 1.0, 2.0)
+        @test Rectangle((0.0,0.0), 1.0, 2.0) == Rectangle([0.0,0.0], 1.0, 2.0) # Tuple or Vector
+        @test Rectangle((0.0,0.0), 1.0, 2.0) == Rectangle(1.0, 2.0) # Assumes origin at zero
 
         @testset "Boundary functions" begin
             x, y = boundary_functions(rectangle)
@@ -19,13 +30,26 @@
     end
 
     @testset "Circle" begin
-        circle = Circle([6.7,8.9],2.0)
+        radius = 2.0
+        o = [6.7,8.9]
+        circle = Circle(o, radius)
         circle_bounding_rectangle = bounding_rectangle(circle)
         @test volume(circle)/volume(circle_bounding_rectangle) ≈ 0.7853981633974483
         @test name(circle) == "Circle"
 
-        # Test different ways to construct Rectangle produce same results
-        @test Circle((0.0,0.0), 1.0) == Circle([0.0,0.0], 1.0)
+        @test outer_radius(circle) == radius
+        @test o ∈ circle
+        @test (o+[0.0,radius+0.1]) ∉ circle
+        @test iscongruent(circle, congruent(circle,SVector(3.0,4.0)))
+        @test volume(circle) ≈ 12.566370614359172
+
+        smaller_circle = Circle(o, radius-2)
+        @test smaller_circle ⊆ circle
+        @test circle ⊆ circle_bounding_rectangle
+
+        # Test different ways to construct Circle produce same results
+        @test Circle((0.0,0.0), 1.0) == Circle([0.0,0.0], 1.0) # Tuple or Vector
+        @test Circle((0.0,0.0), 1.0) == Circle(1.0) # Assumes origin at zero
 
         @testset "Boundary functions" begin
             x, y = boundary_functions(Circle([-1.0,2.0],3.0))
@@ -79,6 +103,24 @@
             @test_throws(DomainError,y(-eps(Float64)))
             @test_throws(DomainError,y(1.0 + eps(Float64)))
         end
+    end
+
+    @testset "Sphere" begin
+        radius = 4.2
+        o = SVector(3.4, -2.1, 2.0)
+        sphere = Sphere(o, radius)
+        @test name(sphere) == "Sphere"
+        @test outer_radius(sphere) == radius
+        @test o ∈ sphere
+        @test (o+[0.0,radius+0.1,0.0]) ∉ sphere
+        @test iscongruent(sphere, congruent(sphere,SVector(3.0,4.0,1.0)))
+        @test volume(sphere) ≈ 310.33908869221415
+
+        smaller_sphere = Sphere(o, radius-2)
+        @test smaller_sphere ⊆ sphere
+
+        # Test different ways to construct Rectangle produce same results
+        @test Sphere((0.0,0.0,0.0), 1.0) == Sphere([0.0,0.0,0.0], 1.0)
     end
 
     @testset "Plot Shapes" begin
