@@ -17,6 +17,13 @@ True if shapes are the same but in different positions (origins), standard mathe
 """
 iscongruent(s1::Shape, s2::Shape) = false # false by default, overload in specific examples
 
+"""
+    congruent(s::Shape, x)::Shape
+
+Create shape congruent to `s` but with origin at `x`
+"""
+function congruent end
+
 "Generic helper function which tests if boundary coordinate is between 0 and 1"
 function check_boundary_coord_range(t)
     if t < 0 || t > 1

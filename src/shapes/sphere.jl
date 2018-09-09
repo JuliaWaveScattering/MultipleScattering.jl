@@ -26,3 +26,7 @@ end
 function iscongruent(c1::Sphere{T}, c2::Sphere{T}) where T
     c1.radius == c2.radius
 end
+
+function congruent(c::Sphere{T}, x) where T
+    Sphere{T}(x, c.radius)
+end

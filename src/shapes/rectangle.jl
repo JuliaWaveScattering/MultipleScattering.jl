@@ -46,6 +46,10 @@ function iscongruent(r1::Rectangle{T}, r2::Rectangle{T}) where T
     r1.height == r2.height
 end
 
+function congruent(r::Rectangle{T}, x) where T
+    Rectangle{T}(x, r.width, r.height)
+end
+
 # Rectangle bounds itself
 bounding_rectangle(rect::Rectangle) = rect
 

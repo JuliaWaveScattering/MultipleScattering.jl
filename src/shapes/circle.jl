@@ -48,6 +48,10 @@ function iscongruent(c1::Circle{T}, c2::Circle{T}) where T
     c1.radius == c2.radius
 end
 
+function congruent(c::Circle{T}, x) where T
+    Circle{T}(x, c.radius)
+end
+
 function bounding_rectangle(circle::Circle)
     return Rectangle(origin(circle), 2*circle.radius, 2*circle.radius)
 end
