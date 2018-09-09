@@ -24,41 +24,57 @@ using MultipleScattering
 
 ## Simple example
 ### Run
-Define two particles, the first centred at [-2.,2.] with radius 2.0 and the second at [-2.,-2.] with radius 0.5,
+Define the properties of your host medium, for example
 ```julia
-p1 = Particle([-2.,2.], 2.0)
-p2 = Particle([-8.,-2.], 0.5)
+host_medium = Acoustic(1.0, 1.0, 2)
+```
+an acoustic medium in 2D with density 1 and wavespeed 1.
+
+Next, define two dense, circular acoustic particles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
+```julia
+particle_medium = Acoustic(10.0, 1.0, 2)
+p1 = Particle(particle_medium, Circle([-2.0,2.0], 2.0))
+p2 = Particle(particle_medium, Circle([-2.0,-2.0], 0.5))
 particles = [p1,p2]
 ```
 
-Specify the angular frequency of the defualt incident plane wave ![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D) and calculate the response
+Lastly we define the source, for example an incident plane wave (![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D)) using a helper function.
 ```julia
-w_arr = collect(0.01:0.01:1.)
-simulation = FrequencySimulation(particles, w_arr; source_direction = [1.0,0.0])
+source = plane_wave(host_medium, [0.0,0.0])
+```
+
+Once we have these three components, we can build our `FrequencySimulation` object
+```julia
+simulation = FrequencySimulation(host_medium, particles, source)
+```
+
+To get numerical results, we run our simulation for specific positions and angular frequencies,
+```julia
+x = [(-10.0,0.0), (0.0,0.0)]
+ω = 0.01:0.01:1.0
+result = run(simulation, x, ω)
 ```
 
 ### Plot
 The package also provides recipes to be used with the `Plots` package for
 plotting simulations after they have been run.
 In our above simulation we ran the simulation for 100 different wavenumbers, and
-measured the response at the default location (-10.,0.).
+measured the response at the location (-10,0).
 We can plot the time-harmonic response across these wavenumbers by typing:
 ```julia
 using Plots
-pyplot()
-plot(simulation)
+plot(result)
 ```
 ![Plot of response against wavenumber](example/intro/plot_simulation.png)
 
-For a better overview you can plot the whole field for a specific k by typing:
+For a better overview you can plot the whole field in space for a specific angular frequency by typing:
 ```julia
 plot(simulation,0.8)
 ```
 ![Plot real part of acoustic field](example/intro/plot_field.png)
 
-This measures the field at lots of points in the domain rather than just at the listener position (the big green ball).
-This way we can get an understanding of what is happening for one particular
-wavenumber.
+This measures the field at lots of points in the domain, so we can get an
+understanding of what is happening for one particular angular frequency.
 
 Note: most things in the package can be plotted by typing `plot(thing)` if you
 need an insight into a specific part of your simulation.
