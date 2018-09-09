@@ -115,26 +115,32 @@
         @test true
     end
 
-    #=
+
     @testset "Random generation" begin
+
         # Make two random seeds, extremely low probability they will be the same
-        seed1 = Base.Random.make_seed()
-        seed2 = Base.Random.make_seed()
+        seed1 = 1
+        seed2 = 2
 
-        volfrac = 0.2
+        box_shape = Circle(20.0)
+
+        volfrac = 0.1
         radius = 0.5
-        shape = Circle(10.0,[0.0,0.0])
-
-        particles1 = random_particles(volfrac, radius, shape; seed = seed1)
-        particles1a = random_particles(volfrac, radius, shape; seed = seed1)
-        particles2 = random_particles(volfrac, radius, shape; seed = seed2)
+        particle_shape = Circle(radius)
+        medium = Acoustic(1.0,1.0,2)
+        particles1  = random_particles(medium, particle_shape, box_shape, volfrac; seed=seed1)
+        particles1a = random_particles(medium, particle_shape, box_shape, volfrac; seed=seed1)
+        particles2  = random_particles(medium, particle_shape, box_shape, volfrac; seed=seed2)
 
         # Particles should be determined solely by the seed
         @test particles1 == particles1a
         @test particles1 != particles2
 
+        @test_throws ErrorException random_particles(medium, particle_shape, box_shape, 0.9)
+        @test_throws ErrorException random_particles(medium, particle_shape, box_shape, 0.5; seed=3)
+
     end
-    =#
+
 
 end
 

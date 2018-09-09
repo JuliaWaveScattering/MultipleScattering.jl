@@ -29,7 +29,7 @@ function random_particles(particle_medium::P, particle_shape::S,
     separation_ratio = 1.05
 
     bounding_rect = bounding_rectangle(box_shape)
-    bounding_rect_size = SVector(2*bounding_rect.width, 2*bounding_rect.height)
+    bounding_rect_size = SVector(bounding_rect.width, bounding_rect.height)
 
     @printf("""\n
         Generating %d randomly positioned %s shaped particles
@@ -52,7 +52,7 @@ function random_particles(particle_medium::P, particle_shape::S,
 
             outside_box = true
             while outside_box
-                x = bounding_rect_size .* rand(randgen,2) .+ origin(bounding_rect)
+                x = bounding_rect_size .* (1 .- 2.*rand(randgen,T,2)) .+ origin(bounding_rect)
                 particles[n] = Particle(particle_medium, congruent(particle_shape, x))
                 outside_box = !(particles[n] ⊆ box_shape)
             end
@@ -67,7 +67,7 @@ function random_particles(particle_medium::P, particle_shape::S,
 
             num_attempts += 1
             if num_attempts > MAX_ATTEMPTS_TO_FIT_PARTICLE
-                error("Tried to place a scatterer $MAX_ATTEMPTS_TO_FIT_PARTICLE times unsuccessfully, just not enough room! You could try increaseing MAX_ATTEMPTS_TO_FIT_PARTICLE")
+                error("Tried to place a scatterer $MAX_ATTEMPTS_TO_FIT_PARTICLE times unsuccessfully. You could try increasing MAX_ATTEMPTS_TO_FIT_PARTICLE")
             end
 
         end
