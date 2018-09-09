@@ -83,18 +83,24 @@ function isequal(p1::Particle, p2::Particle)
 end
 
 """
-    congruent(p1::AbstractParticle, p2::AbstractParticle)::Bool
+    iscongruent(p1::AbstractParticle, p2::AbstractParticle)::Bool
 
 Returns true if medium and shape of particles are the same, ignoring origin, false otherwise.
 """
-congruent(p1::AbstractParticle, p2::AbstractParticle) = false # false by default, overload in specific examples
+iscongruent(p1::AbstractParticle, p2::AbstractParticle) = false # false by default, overload in specific examples
 
-function congruent(p1::Particle, p2::Particle)
+function iscongruent(p1::Particle, p2::Particle)
     p1.medium == p2.medium &&
-    congruent(p1.shape, p2.shape)
+    iscongruent(p1.shape, p2.shape)
 end
 
-congruent(p1::CapsuleParticle, p2::CapsuleParticle) =
-    congruent(p1.inner, p2.inner) && congruent(p1.outer, p2.outer)
+function iscongruent(p1::CapsuleParticle, p2::CapsuleParticle)
+    iscongruent(p1.inner, p2.inner) && iscongruent(p1.outer, p2.outer)
+end
 
-inside(s::Shape, particle::AbstractParticle) = inside(s, shape(particle))
+import Base.in
+in(x::AbstractVector, particle::AbstractParticle) = in(x, shape(particle))
+
+import Base.issubset
+issubset(s::Shape, particle::AbstractParticle) = issubset(s, shape(particle))
+issubset(particle::AbstractParticle, s::Shape) = issubset(shape(particle), s)

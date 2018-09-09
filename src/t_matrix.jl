@@ -28,7 +28,7 @@ function get_t_matrices(medium::PhysicalProperties, particles::AbstractParticles
         found = false
         for cp_i in eachindex(unique_particles)
             cp = unique_particles[cp_i]
-            if congruent(p, cp)
+            if iscongruent(p, cp)
                 t_matrices[p_i] = unique_t_matrices[cp_i]
                 found = true
                 break

@@ -24,12 +24,8 @@ function volume{T}(shape::TimeOfFlight{T})
     return 2/(3*shape.time)*(shape.time^2 + 2*l_x*shape.time)^(3//2)
 end
 
-function inside{T}(shape::TimeOfFlight{T}, circle::Circle{T})
-    l_to_p = origin(circle) - shape.listener_position
-    return (origin(circle)[1] > 0) && (l_to_p[1] + norm(l_to_p) <= shape.time)
-end
-
-function inside(shape::TimeOfFlight, circle::Circle)
+import Base.issubset
+function issubset(circle::Circle, shape::TimeOfFlight)
     l_to_p = origin(circle) - shape.listener_position
     return (origin(circle)[1] > 0) && (l_to_p[1] + norm(l_to_p) <= (shape.time - 2circle.radius))
 end

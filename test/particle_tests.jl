@@ -68,8 +68,8 @@
         @test p == p_identical
         @test p != p_different
         @test !(p == p_different)
-        @test congruent(p, p_congruent)
-        @test !congruent(p, p_different)
+        @test iscongruent(p, p_congruent)
+        @test !iscongruent(p, p_different)
 
         # Check that Julia fallback === works
         @test p === p_reference

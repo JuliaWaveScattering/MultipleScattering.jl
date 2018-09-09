@@ -186,11 +186,10 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
         end
     end
     map(x_vec) do x
-        ind = find(inside(shape(p), x) for p in sim.particles)
-        if isempty(ind)
+        j = findfirst(p->x∈p, sim.particles)
+        if iszero(j)
             sim.source.field(x,ω) + (isempty(sim.particles) ? zero(Complex{T}) : sum_basis(x))
         else
-            j = ind[1]
             p = sim.particles[j]
             internal_field(x, p, sim, ω, collect(a[:,j]))
         end

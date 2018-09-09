@@ -27,7 +27,7 @@ widths = 10.:5.:max_width
 simulations = map(widths)  do w
     shape.topright = [w,w]
     shape.bottomleft = [0,-w]
-    ps = filter(p -> inside(shape,p), particles)
+    ps = filter(p -> p⊆shape, particles)
     FrequencySimulation(ps, k_arr)
 end
 save("simulations.jld", "Array{FrequencySimulation{Float64},1}",simulations)
@@ -72,7 +72,7 @@ savefig("compare_convergence.png")
 times = 40.:15.:80.
 near_surface_simulations = map(times) do t
     shape = TimeOfFlight(listener_position,t) # choose a material with particles only in the near surface region
-    ps = filter(p -> inside(shape,p), particles) # shave off particles
+    ps = filter(p -> p⊆shape, particles) # shave off particles
     FrequencySimulation(ps, k_arr; shape=shape) # calculate backscattering
 end
 save("near_surface_simulations.jld","Array{FrequencySimulation{Float64},1}",near_surface_simulations)

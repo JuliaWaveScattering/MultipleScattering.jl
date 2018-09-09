@@ -19,7 +19,8 @@ function volume(shape::TimeOfFlightFromPoint)
     return shape.time^2 * (θ - sin(θ))/2
 end
 
-function inside(shape::TimeOfFlightFromPoint, circle::Circle)
+import Base.issubset
+function issubset(circle::Circle, shape::TimeOfFlightFromPoint)
     (origin(circle)[1] - circle.radius) > 0 &&
     norm(origin(circle) - shape.listener_position) < (shape.time - 2circle.radius)
 end

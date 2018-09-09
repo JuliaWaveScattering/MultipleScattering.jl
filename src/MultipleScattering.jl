@@ -2,8 +2,9 @@ __precompile__()
 
 module MultipleScattering
 
-export Shape, Circle, Rectangle, outer_radius, volume, name, congruent, inside,
-       origin, shape, Sphere, TimeOfFlight, TimeOfFlightFromPoint, (==), isequal
+export Shape, Circle, Rectangle, outer_radius, volume, name, iscongruent, in,
+       issubset, origin, shape, Sphere, TimeOfFlight, TimeOfFlightFromPoint,
+       (==), isequal
 export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
 export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,

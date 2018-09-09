@@ -11,11 +11,11 @@ Origin of shape, typically the center
 origin(shape::Shape) = shape.origin
 
 """
-    congruent(p1::Shape, p2::Shape)::Bool
+    iscongruent(p1::Shape, p2::Shape)::Bool
 
 True if shapes are the same but in different positions (origins), standard mathematical definition.
 """
-congruent(s1::Shape, s2::Shape) = false # false by default, overload in specific examples
+iscongruent(s1::Shape, s2::Shape) = false # false by default, overload in specific examples
 
 "Generic helper function which tests if boundary coordinate is between 0 and 1"
 function check_boundary_coord_range(t)
@@ -72,13 +72,6 @@ outer_radius
 Volume of a shape
 """
 volume
-
-"""
-    volume(shape1::Shape, shape2::Shape)::Bool
-
-True if shape2 is completely contained within shape1
-"""
-inside
 
 """
     volume(shape::Shape)::NTuple{Function,Dim)

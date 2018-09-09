@@ -39,7 +39,7 @@ k_arr = collect(0.01:0.01:1.) # choose the wavenumbers of the incident wave
 
 simulations = map(widths) do w # this is a for loop over the array widths
     shape.topright[1] = w # choose a material with a smaller width
-    ps = filter(p -> inside(shape,p), particles) # shave off particles
+    ps = filter(p -> p⊆shape, particles) # shave off particles
     FrequencySimulation(ps, k_arr) # calculate backscattering
 end
 
@@ -112,7 +112,7 @@ For time `0<t<80` the backscattering from these particles is the same as an infi
 times = 40.:15.:80.
 near_surface_simulations = map(times) do t
     shape = TimeOfFlight(listener_position,t) # choose a material with particles only in the near surface region
-    ps = filter(p -> inside(shape,p), particles) # shave off particles
+    ps = filter(p -> p⊆shape, particles) # shave off particles
     FrequencySimulation(ps, k_arr; shape=shape) # calculate backscattering
 end
 

@@ -41,7 +41,7 @@ function isequal(r1::Rectangle{T}, r2::Rectangle{T}) where T
     isequal(r1.height, r2.height)
 end
 
-function congruent(r1::Rectangle{T}, r2::Rectangle{T}) where T
+function iscongruent(r1::Rectangle{T}, r2::Rectangle{T}) where T
     r1.width  == r2.width  &&
     r1.height == r2.height
 end

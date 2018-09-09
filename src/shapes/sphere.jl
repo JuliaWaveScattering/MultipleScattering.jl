@@ -13,14 +13,16 @@ name(shape::Sphere) = "Sphere"
 outer_radius(c::Sphere) = c.radius
 volume(shape::Sphere) = 4//3 * π * shape.radius^3
 
-function inside{T}(outer_sphere::Sphere{T}, inner_sphere::Sphere{T})
+import Base.issubset
+function issubset{T}(inner_sphere::Sphere{T}, outer_sphere::Sphere{T})
     norm(origin(outer_sphere) - origin(inner_sphere)) <= outer_sphere.radius - inner_sphere.radius
 end
 
-function inside(sphere::Sphere, x::AbstractVector)
+import Base.in
+function in(x::AbstractVector, sphere::Sphere)::Bool
     norm(origin(sphere) .- x) <= sphere.radius
 end
 
-function congruent(c1::Sphere{T}, c2::Sphere{T}) where T
+function iscongruent(c1::Sphere{T}, c2::Sphere{T}) where T
     c1.radius == c2.radius
 end

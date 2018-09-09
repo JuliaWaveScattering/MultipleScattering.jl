@@ -17,17 +17,19 @@ name(shape::Circle) = "Circle"
 outer_radius(c::Circle) = c.radius
 volume(shape::Circle) = π * shape.radius^2
 
-function inside{T}(outer_circle::Circle{T}, inner_circle::Circle{T})
+import Base.issubset
+function issubset{T}(inner_circle::Circle{T}, outer_circle::Circle{T})
     norm(origin(outer_circle) - origin(inner_circle)) <= outer_circle.radius - inner_circle.radius
 end
 
-function inside(circle::Circle, x::AbstractVector)
-    norm(origin(circle) .- x) <= circle.radius
-end
-
-function inside(rect::Rectangle{T}, circle::Circle{T}) where {T}
+function issubset(circle::Circle{T}, rect::Rectangle{T}) where {T}
     all((origin(circle) .- circle.radius) .>= bottomleft(rect)) &&
     all((origin(circle) .+ circle.radius) .<= topright(rect))
+end
+
+import Base.in
+function in(x::AbstractVector, circle::Circle)::Bool
+    norm(origin(circle) .- x) <= circle.radius
 end
 
 import Base.(==)
@@ -42,7 +44,7 @@ function isequal(c1::Circle{T}, c2::Circle{T}) where T
     isequal(c1.radius, c2.radius)
 end
 
-function congruent(c1::Circle{T}, c2::Circle{T}) where T
+function iscongruent(c1::Circle{T}, c2::Circle{T}) where T
     c1.radius == c2.radius
 end
 
