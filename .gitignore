@@ -3,16 +3,16 @@
 *.jl.mem
 
 # LaTeX generated files
-doc/*.aux
-doc/*.bcf
-doc/*.out
-doc/*.log
-doc/*.run.xml
-doc/*.blg
-doc/*.bbl
-doc/*.fls
-doc/*.fdb_latexmk
-doc/*.synctex.gz
+*.aux
+*.bcf
+*.out
+*.log
+*.run.xml
+*.blg
+*.bbl
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 
 # Mathematica Notebooks
-doc/*.nb
+*.nb
