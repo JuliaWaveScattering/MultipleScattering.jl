@@ -13,7 +13,7 @@ function box_size_convergence(m=4, volfrac = 0.05,
     simulations = map(times) do t
         println("Calculating response with particles at a maximum of $t away")
         shape = TimeOfFlight(listener_position,t)
-        particles = filter(p->inside(shape,p),allparticles)
+        particles = filter(p->p⊆shape, allparticles)
         return FrequencySimulation(particles, k_arr; seed=seed, hankel_order=m)
     end
 

@@ -1,26 +1,19 @@
-@testset "StatisticalMoments" begin
+@testset "Moments" begin
     begin
-        # Test against a problem which can be easily solved
-        simulations = Vector{FrequencySimulation{Float64}}(3)
-        # Fake responses, with mean 4.0, standard deviation 2.0 and skew 0.0
-        responses = [2.0, 4.0, 6.0]
-        particles = [Particle([0.0,0.0])]
-        for i=1:3
-            simulations[i] = FrequencySimulation(particles,[1.0];generate_responses=false)
-            simulations[i].response = reshape([responses[i]+0.0im],1,1)
-        end
-        moments = StatisticalMoments(simulations)
-        @test moments.moments[1][1] ≈ 4.0 &&
-              moments.moments[2][1] ≈ 2.0 &&
-              moments.moments[3][1] ≈ 0.0
-    end
-    begin
-        # Test against a previously computed problem with a known seed
-        include("../example/moments/moments.jl")
-        moments = moments_example()
-        @test moments.moments[1][23] ≈ 0.9323251967911877  &&
-              moments.moments[2][78] ≈ 0.2487558908409563  &&
-              moments.moments[3][91] ≈ 0.15597075451712927 &&
-              moments.moments[4][32] ≈ 0.17865717302214346
+
+        # Fake results, with mean 4.0, standard deviation 2.0 and skew 0.0
+        fields = [2.0, 4.0, 6.0]
+        results_freq = [FrequencySimulationResult(reshape([complex(f)],1,1),[SVector(0.0)],[0.0]) for f in fields]
+        results_time = [TimeSimulationResult(reshape([f],1,1),[SVector(0.0)],[0.0]) for f in fields]
+
+        moments_freq = calculate_moments(results_freq, 3)
+        @test moments_freq[1][1,1] ≈ 4.0 &&
+              moments_freq[2][1,1] ≈ 2.0 &&
+              moments_freq[3][1,1] ≈ 0.0
+
+        moments_time = calculate_moments(results_time, 3)
+        @test moments_time[1][1,1] ≈ 4.0 &&
+              moments_time[2][1,1] ≈ 2.0 &&
+              moments_time[3][1,1] ≈ 0.0
     end
 end

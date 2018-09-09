@@ -1,76 +1,69 @@
-type TimeSimulation{T}
-    frequency_simulation::FrequencySimulation{T}
-    response::Matrix{T}
-    time_arr::Vector{T}
-    impulse_arr::Vector{Complex{T}}
-    method::Symbol
-end
 
 """
-Convert a frequency simulation into a time simulation using the inverse fourier transform.
+Convert a FrequencySimulationResult into a TimeSimulationResult by using the inverse fourier transform.
 Assumes only positive frequencies and a real time signal
 """
-function TimeSimulation{T}(
-        freq_simulation::FrequencySimulation{T};
-        time_arr = ω_to_t(freq_simulation.k_arr),
-        impulse = get_gaussian_freq_impulse(maximum(freq_simulation.k_arr)),
-        impulse_arr = impulse.(freq_simulation.k_arr),
+function frequency_to_time(simres::FrequencySimulationResult{T,Dim,FieldDim};
+        t_vec::AbstractVector{T} = ω_to_t(simres.ω),
+        impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)), #GaussianImpulse(maximum(simres.ω)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, transpose(simres.ω)),
+        method = :dft
+    ) where {Dim,FieldDim,T}
+
+    time_field = frequency_to_time(transpose(field(simres)), transpose(simres.ω), t_vec;
+        discrete_impulse = discrete_impulse, method = method)
+
+    return TimeSimulationResult(transpose(time_field), simres.x, t_vec)
+end
+
+"""
+Convert a TimeSimulationResult into a FrequencySimulationResult by using the fourier transform.
+Assumes only positive frequencies and a real time signal
+"""
+function time_to_frequency(timres::TimeSimulationResult{T,Dim,FieldDim};
+        ω_vec = t_to_ω(timres.t),
+        impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)), #GaussianImpulse(maximum(ω_vec)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, transpose(timres.t), ω_vec),
         method =:dft
-    )
-    response = frequency_to_time(freq_simulation.response,freq_simulation.k_arr,time_arr;
-        impulse = impulse, impulse_arr = impulse_arr, method = method)
-    TimeSimulation{T}(freq_simulation,response,time_arr,impulse_arr,method)
-end
+    ) where {Dim,FieldDim,T}
 
-"Take simulation parameters, run simulation and populate the response array."
-function generate_responses!{T}(TimeSimulation::TimeSimulation{T},t_arr::Vector{T}=TimeSimulation.time_arr)
-    TimeSimulation.time_arr = t_arr
-    TimeSimulation.response = frequency_to_time(
-        TimeSimulation.frequency_simulation.response, TimeSimulation.frequency_simulation.k_arr,
-        TimeSimulation.time_arr; impulse_arr = TimeSimulation.impulse_arr, method = TimeSimulation.method
-    )
+    freq_field = time_to_frequency(transpose(field(timres)), transpose(timres.t), ω_vec;
+        discrete_impulse = discrete_impulse, method = method)
+
+    return FrequencySimulationResult(transpose(freq_field), deepcopy(timres.x), ω_vec)
 end
 
 """
-Calcuate the volume fraction of this simulation from the volume of the particles
-and the bounding shape.
-"""
-function calculate_volfrac(time_simulation::TimeSimulation)
-    volume(time_simulation.frequency_simulation.particles)/volume(time_simulation.frequency_simulation.shape)
-end
-
-
-"""
-returns an array of time from the frequency array ω_arr.
+returns an array of time from the frequency array ω_vec.
 Uses the same convention for sampling the time as the discrete Fourier transfrom.
-Assumes ω_arr is ordered and non-negative.
+Assumes ω_vec is ordered and non-negative.
 """
-function ω_to_t{T}(ω_arr::AbstractArray{T})
-  N = length(ω_arr)
-  if (ω_arr[1] == 0.)
-    N -= 1
-  elseif minimum(ω_arr)<0
-    error("expected only non-negative values for the frequencies")
-  end
-  dω = ω_arr[2]-ω_arr[1]
-  time_arr = linspace(0,2π/dω,2N+2)[1:(2N+1)]
-  return time_arr
+function ω_to_t(ω_arr::AbstractArray{T}) where T <: AbstractFloat
+    N = length(ω_arr)
+    if ω_arr[1] == zero(T)
+        N -= 1
+    elseif minimum(ω_arr) < zero(T)
+        error("expected only non-negative values for the frequencies")
+    end
+    dω = ω_arr[2] - ω_arr[1]
+    t_arr = linspace(zero(T),2π/dω,2N+2)[1:(2N+1)]
+    return t_arr
 end
 
-"The inverse of ω_to_t if ω_arr[1] == 0"
-function t_to_ω{T}(t_arr::AbstractArray{T})
-  N = Int((length(t_arr)-1)/2)
-  maxt = t_arr[2]-t_arr[1] + t_arr[end]
-  maxω = N*2π/maxt
-  ω_arr = linspace(0,maxω,N+1)
-  return ω_arr
+"The inverse of ω_to_t if ω_vec[1] == 0"
+function t_to_ω(t_arr::AbstractArray{T}) where T <: AbstractFloat
+    N = Int(round((length(t_arr)-one(T))/T(2)))
+    maxt = t_arr[2] - t_arr[1] + t_arr[end] - t_arr[1] # subtract t_arr[1] in case t_arr[1] != zero(T)
+    maxω = N*2π/maxt
+    ω_vec = linspace(zero(T),maxω,N+1)
+    return ω_vec
 end
 
 """
 Returns the first element of array which isn't zero (assumes elements are
 increasing and distinct)
 """
-function firstnonzero{T}(arr::AbstractArray{T})
+function firstnonzero(arr::AbstractArray{T}) where T <: AbstractFloat
     if arr[1] != 0
         return arr[1]
     else
@@ -78,127 +71,70 @@ function firstnonzero{T}(arr::AbstractArray{T})
     end
 end
 
-
-"""
-Function which is one everywhere in frequency domain. Represents a delta
-function of unit area in the time domain, centred at t=zero.
-"""
-delta_freq_impulse{T}(k::T) = one(T)
-
-"""
-Returns a gaussian impulse function in the frequency domain. In the time domain
-this impulse is exp(-t^2/(4a))
-"""
-get_gaussian_freq_impulse{T}(maxk::T, a::T = T(2.48)/maxk^2) = ω -> exp(-a*ω^2)*(2sqrt(a*pi))
-
-"""
-Returns a gaussian impulse function in the time domain.
-"""
-get_gaussian_time_impulse{T}(maxk::T, a::T = T(2.48)/maxk^2) = t -> exp(-t^2/(4a))
-
-
 """
 Calculates the time response from the frequency response by approximating an
 inverse Fourier transform. The time signal is assumed to be real and the
-frequenices k_arr are assumed to be positive (can include zero) and sorted. The
-result is convoluted ωith the user specified impulse, which is a function of the
-frequency.
+frequenices ω_vec are assumed to be positive (can include zero) and sorted. The
+result is convoluted in time ωith the user specified impulse.
+
+We use the Fourier transform convention:
+F(ω) =  ∫ f(t)*exp(im*ω*t) dt
+f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dt
+
+To easily sample any time, the default is not FFT, but a discrete version of the transform above.
 """
-function frequency_to_time{T}(freq_response::Matrix{Complex{T}},ω_arr::AbstractArray{T},
-  time_arr::AbstractArray{T}=ω_to_t(ω_arr);
-  impulse::Function = delta_freq_impulse,
-  impulse_arr = impulse.(ω_arr),
-  addzerofrequency=true, method=:dft)
-    # we assume the convention: f(t) = 1/(2π) ∫f(ω)exp(-im*ω*t)dω
+function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::AbstractVector{T},
+        t_vec::AbstractArray{T} = ω_to_t(ω_vec);
+        impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
+        method=:dft) where T <: AbstractFloat
 
-    positions = size(freq_response,2)
+    if size(field_mat,1) != size(ω_vec,1) error("Vector of frequencies ω_vec expected to be same size as size(field_mat,1)") end
 
-    # if k=0 is not present, then add the response for k=0 by using linear interpolation.
-    if addzerofrequency && minimum(ω_arr) > 0.0
-      zeroresponse = [
-        (ω_arr[2]*freq_response[1,j] - ω_arr[1]*freq_response[2,j])/(ω_arr[2]-ω_arr[1])
-      for j in 1:positions]
-      freq_response = [transpose(zeroresponse); freq_response]
-      if impulse_arr == impulse.(ω_arr)
-        impulse_arr = impulse.([0; ω_arr])
-      else
-        impulse_zero = (ω_arr[2]*impulse_arr[1] - ω_arr[1]*impulse_arr[2])/(ω_arr[2]-ω_arr[1])
-        impulse_arr = impulse.([impulse_zero; impulse_arr])
-      end
-      ω_arr = [0; ω_arr]
-    end
-
-    # determine how to approximate  ∫f(ω)exp(-im*ω*t)dω
-    freqsteps = size(freq_response,1)
-    if method == :trapezoidal
-      fourier_integral = (t,j) ->
-        sum(1:(freqsteps-1)) do ωi
-            ω = ω_arr[ωi]
-            uhat = freq_response[ωi,j]
-            f1 = impulse_arr[ωi]*uhat*exp(-im*ω*t)
-            ω = ω_arr[ωi+1]
-            uhat = freq_response[ωi+1,j]
-            f2 = impulse_arr[ωi+1]*uhat*exp(-im*ω*t)
-            dω = ω_arr[ωi+1] - ω_arr[ωi]
-            (f1+f2)*dω/2
+    function f(t::T,j::Int)
+        fs = discrete_impulse.in_freq.*field_mat[:,j].*exp.(-(im*t).*ω_vec)
+        if method == :dft && ω_vec[1] == zero(T)
+            fs[1] = fs[1]/T(2) # so as to not add ω=0 tωice in the integral of ω over [-inf,inf]
         end
-    else
-      # integral to match exactly standard dft, assuming ω_arr[1] == 0
-      fourier_integral = (t,j) ->
-        impulse_arr[1]*freq_response[1,j]*(ω_arr[2]-ω_arr[1])/2 +  # because ω=0 should not be added tωice later
-        sum(2:freqsteps) do ωi
-          dω = ω_arr[ωi]-ω_arr[ωi-1]
-          ω = ω_arr[ωi]
-          uhat = freq_response[ωi,j]
-          impulse_arr[ωi]*uhat*exp(-im*ω*t)*dω
-        end
+        fs
     end
-    # impulse(ω_arr[freqsteps])*freq_response[freqsteps,j]*(ω_arr[freqsteps]-ω_arr[freqsteps-1]) +
+    inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j), method)
+    u = [inverse_fourier_integral(t,j) for t in t_vec, j in indices(field_mat,2)]
 
-    u = [ fourier_integral(t,j) for t in time_arr, j=1:positions]
-
-    return real(u)/pi # constant due to our Fourier convention and because only positive frequencies are used.
+    return real.(u)/pi # a constant 1/(2pi) appears due to our Fourier convention, but because we only use positive frequencies, and assume a real time signal, this becomes 1/pi.
 end
 
 """
 The inverse of the function frequency_to_time (only an exact inverse when using
-:dft integration)
+:dft integration). We use the Fourier transform convention:
+F(ω) =  ∫ f(t)*exp(im*ω*t) dt
 """
-function time_to_frequency{T}(time_response::Matrix{T},ω_arr::AbstractArray{T},
-  time_arr::AbstractArray{T}=ω_to_t(ω_arr);
-  impulse::Function = delta_freq_impulse,
-  impulse_arr = impulse.(time_arr),
-  method=:dft)
-    # we assume the convention: f(ω) =  ∫f(t)exp(im*ω*t)dt
+function time_to_frequency(field_mat::AbstractArray{T}, t_vec::AbstractVector{T},
+        ω_vec::AbstractArray{T} = t_to_ω(t_vec);
+        impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
+        method=:dft) where T <: AbstractFloat
 
-    # determine how to approximate  ∫f(t)exp(im*ω*t)dt
-    timesteps = size(time_response,1)
-    if method == :trapezoidal
-      fourier_integral = (ω,j) ->
-        sum(1:(timesteps-1)) do ti
-            dt = time_arr[ti+1] - time_arr[ti]
-            t = time_arr[ti]
-            u = time_response[ti,j]
-            f1 = impulse_arr[ti]*u*exp(im*ω*t)
-            t = time_arr[ti+1]
-            u = time_response[ti+1,j]
-            f2 = impulse_arr[ti+1]*u*exp(im*ω*t)
-            (f1+f2)*dt/2
-        end
-    else
-      # integral to match exactly standard dft
-      fourier_integral = (ω,j) ->
-        impulse(0)*time_response[1,j]*(time_arr[2]-time_arr[1]) +
-        sum(2:timesteps) do ti
-          dt = time_arr[ti]-time_arr[ti-1]
-          t  = time_arr[ti]
-          u  = time_response[ti,j]
-          impulse_arr[ti]*u*exp(im*ω*t)*dt
-        end
-    end
-
-    positions = size(time_response,2)
-    uhat = [fourier_integral(ω,j) for ω in ω_arr, j=1:positions]
+    # to use an impulse below in time we would need to do a discrete convolution, which we decided against.
+    f(ω::T, j::Int) = field_mat[:,j].*exp.((im*ω).*t_vec)
+    fourier_integral = (ω,j) -> numerical_integral(t_vec, f(ω,j), method)
+    uhat = [discrete_impulse.in_freq[i]*fourier_integral(ω_vec[i],j) for i in eachindex(ω_vec), j in indices(field_mat,2)]
 
     return uhat
+end
+
+function numerical_integral(xs::AbstractArray{T}, fs::Union{AbstractArray{T},AbstractArray{Complex{T}}}, method = :dft) where T <: AbstractFloat
+
+    if method == :trapezoidal
+        sum(1:(length(xs)-1)) do xi
+            (fs[xi] + fs[xi+1])*(xs[xi+1] - xs[xi])/T(2)
+        end
+    elseif method == :dft
+        fs[1]*(xs[2] - xs[1]) +
+        sum(2:length(xs)) do xi
+            fs[xi]*(xs[xi] - xs[xi-1])
+        end
+    else
+        error("The method $method for numerical integration is not known.")
+    end
 end

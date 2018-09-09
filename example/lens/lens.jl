@@ -17,7 +17,7 @@ function run_lens(;
 
     # Filter out particles which are less than innertime away
     innershape = TimeOfFlight(listener_position,innertime)
-    particles = filter(p -> !inside(innershape,p), outerparticles)
+    particles = filter(p -> p⊈innershape, outerparticles)
 
     freqsimulation = FrequencySimulation(particles, k_arr; listener_positions=listener_position)
     time_arr = 0.:0.3:90.

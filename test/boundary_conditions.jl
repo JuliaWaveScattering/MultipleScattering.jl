@@ -1,5 +1,5 @@
 
-"runs a test for the boundary conditions of penetrable particles nad returns true if passed."
+"runs a test for the boundary conditions of penetrable particles and returns true if passed."
 function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
     srand(seed) # a non-default seed may not pass all tests
     # generate 4 particles with random material properties
@@ -26,9 +26,35 @@ function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
 end
 
 
+function boundary_fields(sim::FrequencySimulation{T,Dim,P}, ωs::Vector{T};
+        numberofparticles::Int = min(4, length(sim.particles)), dr = 10000*eps(T)) where {Dim, P<:PhysicalProperties, T<:Float64}
+    particles = sim.particles[1:numberofparticles]
+
+    # points just inside particles
+    inside_points = [boundary_points(shape(p); dr = - dr - 10*eps(Float64)) for p in particles]
+
+    # points just outside particles
+    outside_points = [boundary_points(shape(p); dr = 10*eps(Float64)) for p in particles]
+
+    in_results = [run(sim, ps, ω; basis_order = basis_order) for ps in inside_points]
+
+    x = inside1_points[1]
+    map(ω->run(sim,x,ω), ωs)
+    mapreduce(ω->run(sim,x,ω), union, ωs)
+
+    [(in2_results[i].field - in1_results[i].field)/(dr * particles.medium.ρ) for i in eachindex(particles)]
+
+    out1_results = [run(sim, ps, ω; basis_order = basis_order) for ps in outside1_points]
+    out2_results = [run(sim, ps, ω; basis_order = basis_order) for ps in outside2_points]
+
+    (out2_result.field - out1_result.field)/(dr * medium.ρ)
+
+
+end
+
 "returns (displacement_jump, stress_jump) along the boundaries of numberofparticles with wavenumbers k_arr. NOTE the stress is calculated by numerically approximately the derivative, so can be inaccurate."
-function boundary_conditions{T}(simulation::FrequencySimulation{T}, k_arr::Vector{T};
-        numberofparticles::Int = min(4, length(simulation.particles)), dr = 100000*eps(T))
+function boundary_conditions(simulation::FrequencySimulation{T,Dim,P}, ωs::Vector{T};
+        numberofparticles::Int = min(4, length(simulation.particles)), dr = 10000*eps(T)) where {Dim, P<:PhysicalProperties, T<:Float64}
 
     simulation2 = deepcopy(simulation)
     simulation2.particles = shuffle(simulation2.particles) # randomly shuffle the order

@@ -1,79 +1,126 @@
 @testset "Shape" begin
     @testset "Rectangle" begin
-        rectangle = Rectangle([0.0,0.0],[2.0,3.0])
+        rectangle = Rectangle((0.0,0.0), (2.0, 3.0))
+        o = origin(rectangle)
         @test volume(rectangle) ≈ 6.0
         @test name(rectangle) == "Rectangle"
+
+        @test o ∈ rectangle
+        @test (o+[0.0,3.1]) ∉ rectangle
+        @test iscongruent(rectangle, congruent(rectangle, SVector(3.0,4.0)))
+
+        smaller_rectangle = Rectangle(o, 1.0, 2.0)
+        @test smaller_rectangle ⊆ rectangle
+        @test rectangle == bounding_rectangle(rectangle)
+        @test rectangle ⊆ Circle(o, outer_radius(rectangle))
+
+        # Test different ways to construct Rectangle produce same results
+        @test Rectangle((0.0,0.0), 1.0, 2.0) == Rectangle([0.0,0.0], 1.0, 2.0) # Tuple or Vector
+        @test Rectangle((0.0,0.0), 1.0, 2.0) == Rectangle(1.0, 2.0) # Assumes origin at zero
 
         @testset "Boundary functions" begin
             x, y = boundary_functions(rectangle)
             @test x.(0:0.1:1) ≈ [0.0, 0.8, 1.6, 2.0, 2.0, 2.0, 1.2, 0.4, 0.0, 0.0, 0.0]
             @test y.(0:0.1:1) ≈ [0.0, 0.0, 0.0, 0.6, 1.8, 3.0, 3.0, 3.0, 2.4, 1.2, 0.0]
-            @test_throws(Exception,x(-eps(Float64)))
-            @test_throws(Exception,x(1.0 + eps(Float64)))
-            @test_throws(Exception,y(-eps(Float64)))
-            @test_throws(Exception,y(1.0 + eps(Float64)))
+            @test_throws(DomainError,x(-eps(Float64)))
+            @test_throws(DomainError,x(1.0 + eps(Float64)))
+            @test_throws(DomainError,y(-eps(Float64)))
+            @test_throws(DomainError,y(1.0 + eps(Float64)))
         end
     end
 
     @testset "Circle" begin
-        circle = Circle(2.0,[6.7,8.9])
-        circle_bounding_box = bounding_box(circle)
-        @test volume(circle)/volume(circle_bounding_box) ≈ 0.7853981633974483
+        radius = 2.0
+        o = [6.7,8.9]
+        circle = Circle(o, radius)
+        circle_bounding_rectangle = bounding_rectangle(circle)
+        @test volume(circle)/volume(circle_bounding_rectangle) ≈ 0.7853981633974483
         @test name(circle) == "Circle"
 
+        @test outer_radius(circle) == radius
+        @test o ∈ circle
+        @test (o+[0.0,radius+0.1]) ∉ circle
+        @test iscongruent(circle, congruent(circle,SVector(3.0,4.0)))
+        @test volume(circle) ≈ 12.566370614359172
+
+        smaller_circle = Circle(o, radius-2)
+        @test smaller_circle ⊆ circle
+        @test circle ⊆ circle_bounding_rectangle
+
+        # Test different ways to construct Circle produce same results
+        @test Circle((0.0,0.0), 1.0) == Circle([0.0,0.0], 1.0) # Tuple or Vector
+        @test Circle((0.0,0.0), 1.0) == Circle(1.0) # Assumes origin at zero
+
         @testset "Boundary functions" begin
-            x, y = boundary_functions(Circle(3.0,[-1.0,2.0]))
-            # show(IOContext(STDOUT, :compact=>false), x.(0:0.1:1))
+            x, y = boundary_functions(Circle([-1.0,2.0],3.0))
             @test x.(0:0.1:1) ≈
             [2.0, 1.4270509831248424, -0.07294901687515765, -1.927050983124842, -3.427050983124842, -4.0, -3.4270509831248424, -1.9270509831248428, -0.07294901687515831, 1.427050983124842, 2.0]
             @test y.(0:0.1:1) ≈
             [2.0, 3.763355756877419, 4.853169548885461, 4.853169548885461, 3.7633557568774196, 2.0000000000000004, 0.2366442431225808, -0.8531695488854605, -0.8531695488854609, 0.23664424312257992, 1.9999999999999993]
-            @test_throws(Exception,x(-eps(Float64)))
-            @test_throws(Exception,x(1.0 + eps(Float64)))
-            @test_throws(Exception,y(-eps(Float64)))
-            @test_throws(Exception,y(1.0 + eps(Float64)))
+            @test_throws(DomainError,x(-eps(Float64)))
+            @test_throws(DomainError,x(1.0 + eps(Float64)))
+            @test_throws(DomainError,y(-eps(Float64)))
+            @test_throws(DomainError,y(1.0 + eps(Float64)))
         end
     end
 
     @testset "Time of flight" begin
         time_of_flight = TimeOfFlight([-10.0,0.0],40.0)
-        time_of_flight_bounding_box = bounding_box(time_of_flight)
-        ratio = volume(time_of_flight)/volume(time_of_flight_bounding_box)
+        time_of_flight_bounding_rectangle = bounding_rectangle(time_of_flight)
+        ratio = volume(time_of_flight)/volume(time_of_flight_bounding_rectangle)
         # Geometric arguments dictate that the ratio must be between 0.5 and 1.0
         @test ratio > 0.5
         @test ratio < 1.0
-        @test name(time_of_flight) == "Time of flight"
+        @test name(time_of_flight) == "Time of flight from planar source"
 
         @testset "Boundary functions" begin
             # This a nice shape because the dimensions form a Pythagorean triple
             x, y = boundary_functions(TimeOfFlight([-3.0,0.0],8.0))
             @test x.(0:0.125:1) ≈ [0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 1.0, 0.75, 0.0]
             @test y.(0:0.125:1) ≈ [-4.0, -2.0, 0.0, 2.0, 4.0, 2.0, 0.0, -2.0, -4.0]
-            @test_throws(Exception,x(-eps(Float64)))
-            @test_throws(Exception,x(1.0 + eps(Float64)))
-            @test_throws(Exception,y(-eps(Float64)))
-            @test_throws(Exception,y(1.0 + eps(Float64)))
+            @test_throws(DomainError,x(-eps(Float64)))
+            @test_throws(DomainError,x(1.0 + eps(Float64)))
+            @test_throws(DomainError,y(-eps(Float64)))
+            @test_throws(DomainError,y(1.0 + eps(Float64)))
         end
     end
 
     @testset "Time of flight from point" begin
         time_of_flight = TimeOfFlightFromPoint([-10.0,0.0],40.0)
-        time_of_flight_bounding_box = bounding_box(time_of_flight)
-        ratio = volume(time_of_flight)/volume(time_of_flight_bounding_box)
+        time_of_flight_bounding_rectangle = bounding_rectangle(time_of_flight)
+        ratio = volume(time_of_flight)/volume(time_of_flight_bounding_rectangle)
         # Geometric arguments dictate that the ratio must be between 0.5 and 1.0
         @test ratio > 0.5
         @test ratio < 1.0
-        @test name(time_of_flight) == "Time of flight from point"
+        @test name(time_of_flight) == "Time of flight from point source"
 
         @testset "Boundary functions" begin
             x, y = boundary_functions(TimeOfFlightFromPoint([-1.0,0.0],3.0))
             @test x.(0:0.1:1) ≈ [0.0,1.2182846930812632,1.9095426112571139,1.9095426112571139,1.2182846930812632,0.0,0.0,0.0,0.0,0.0,0.0]
             @test y.(0:0.1:1) ≈ [-2.82842712474619,-2.019706171808505,-0.7311373286046446,0.7311373286046446,2.0197061718085054,2.82842712474619,1.6970562748477145,0.5656854249492386,-0.5656854249492386,-1.6970562748477145,-2.8284271247461903]
-            @test_throws(Exception,x(-eps(Float64)))
-            @test_throws(Exception,x(1.0 + eps(Float64)))
-            @test_throws(Exception,y(-eps(Float64)))
-            @test_throws(Exception,y(1.0 + eps(Float64)))
+            @test_throws(DomainError,x(-eps(Float64)))
+            @test_throws(DomainError,x(1.0 + eps(Float64)))
+            @test_throws(DomainError,y(-eps(Float64)))
+            @test_throws(DomainError,y(1.0 + eps(Float64)))
         end
+    end
+
+    @testset "Sphere" begin
+        radius = 4.2
+        o = SVector(3.4, -2.1, 2.0)
+        sphere = Sphere(o, radius)
+        @test name(sphere) == "Sphere"
+        @test outer_radius(sphere) == radius
+        @test o ∈ sphere
+        @test (o+[0.0,radius+0.1,0.0]) ∉ sphere
+        @test iscongruent(sphere, congruent(sphere,SVector(3.0,4.0,1.0)))
+        @test volume(sphere) ≈ 310.33908869221415
+
+        smaller_sphere = Sphere(o, radius-2)
+        @test smaller_sphere ⊆ sphere
+
+        # Test different ways to construct Rectangle produce same results
+        @test Sphere((0.0,0.0,0.0), 1.0) == Sphere([0.0,0.0,0.0], 1.0)
     end
 
     @testset "Plot Shapes" begin
@@ -81,11 +128,14 @@
         rectangle = Rectangle([0.0,0.0],[2.0,3.0])
         plot(rectangle)
 
-        circle = Circle(3.0,[-1.0,2.0])
+        circle = Circle([-1.0,2.0],2.0)
         plot!(circle)
 
-        timeofflight = TimeOfFlightFromPoint([-1.0,0.0],3.0)
+        timeofflight = TimeOfFlight([-1.0,0.0],3.0)
         plot!(timeofflight)
+
+        timeofflightfrompoint = TimeOfFlightFromPoint([-1.0,0.0],3.0)
+        plot!(timeofflightfrompoint)
 
         @test true
     end

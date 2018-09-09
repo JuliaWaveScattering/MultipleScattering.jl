@@ -21,6 +21,8 @@
 \usepackage{setspace}
 \usepackage{hyperref}
 
+\usepackage{tikz}
+
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
@@ -58,7 +60,7 @@ The T-matrix is an infinite matrix such that
 \begin{equation}
   a_n = \sum_{m=-\infty}^\infty T_{nm} f_m.
 \end{equation}
-Such a matrix $T$ exists when scattering is a linear (elastic scattering).
+Such a matrix $T$ exists when scattering is a linear operation (elastic scattering).
 
 For instance, if $\rho$ and $c$ are the background density and wavespeed, then for a circular scatterer with density $\rho_j$, soundspeed $c_j$ and radius $a_j$, we have that
 \begin{equation}
@@ -70,8 +72,33 @@ where $q_j = (\rho_j c_j)/(\rho c)$ and $k_j = \omega/c_j$.
 \subsection{Single circular capsule}
 
 \begin{figure}[t]
-  \centering
-  \includegraphics[width=0.4\linewidth]{capsule}
+\centering
+  \begin{tikzpicture}[scale=0.6]
+  % Outer box
+  \draw (-5,-5) -- (5,-5) -- (5,5) -- (-5,5) -- (-5,-5);
+
+  % Concentric circles
+  \draw (0,0) circle (2);
+  \draw (0,0) circle (3);
+
+  % Line to show a_1
+  \draw (-3.02, 0) -- (-0.02,0);
+  \draw (-3.02, 0.3) -- (-3.02,-0.3);
+  \draw (-0.02, 0.3) -- (-0.02,-0.3);
+  \node at (-1.5,-0.3) { $a_1$ };
+
+  % Line to show a_0
+  \draw (2.02, 0) -- (0,0);
+  \draw (2.02, 0.3) -- (2.02,-0.3);
+  \draw (0.02, 0.3) -- (0.02,-0.3);
+  \node at (1,-0.3) { $a_0$ };
+
+  \node at (-4,4) { $c,\rho$ };
+  \node at (0,1) { $c_0,\rho_0$ };
+  \node at (0,2.5) { $c_1,\rho_1$ };
+
+  \end{tikzpicture}
+
   \label{fig:capsule}
 \end{figure}
 
@@ -127,7 +154,7 @@ Graf's addition theorem
   \sum_{m=-\infty}^\infty H_{n-m}(k R_{\ell j})\ee^{\ii(n-m)\Theta_{\ell j}} J_{m}(k R_j)\ee^{\ii m \Theta_j}, \;\;\text{for}\;\; R_j < R_{\ell j},
 \label{eqn:Graf}
 \end{align}
-where we can also swap $H_n$ and $H_{n-m}$ for $J_n$ and $J_{n-m}$.
+where $(R_{\ell j},\Theta_{\ell j})$ are the polar coordinates of $\vec x_j - \vec x_\ell$. The above is also valid if we swap $H_n$  for $J_n$, and swap $H_{n-m}$ for $J_{n-m}$.
 
 Particle-$j$ scatters a field
 \begin{equation}
@@ -152,32 +179,54 @@ where
 \end{equation}
 Using the T-matrix of particle-$j$ we reach $A_j^n = \sum_m T^{nm}_j F^m_j$, which leads to
 \begin{equation}
-A_j^n  = \sum_{m=-\infty}^\infty T^{nm}_j f^m_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty A_\ell^p T^{nm}_j H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}}.
+A_j^q  = \sum_{m=-\infty}^\infty T^{qm}_j f^m_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty A_\ell^p T^{qm}_j H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}}.
 \label{eqn:As}
 \end{equation}
-As a check, if we use~\eqref{eqn:circular_t-matrix} and swap $A_j^n \to A_j^n Z^n_j$, then we arrive at equation (2.11) in \cite{gower_reflection_2017}.
+The above simplifies if we substitute $A_j^q =  T^{qd}_j \alpha_j^d$, and then multiple across by $\{T^{-1}_j\}^{qn}$ and sum over $q$ to arrive at
+% A_\ell^p = \alpha_\ell^d T^{dp}_\ell
+% A_\ell^p = \alpha_\ell^d T^{dp}_\ell
+\begin{equation}
+\alpha_j^n = f^n_j + \sum_{\ell\not = j} \sum_{m,p=-\infty}^\infty  H_{p-n}(k R_{\ell j})\ee^{\ii(p - n)\Theta_{\ell j}} T^{pm}_\ell \alpha_\ell^m.
+\label{eqn:As}
+\end{equation}
+As a check, if we use~\eqref{eqn:circular_t-matrix}, then we arrive at equation (2.11) in \cite{gower_reflection_2017}.
 % \begin{equation}
 % A_j^n  = -  f^n_j - \sum_{\ell\not = j} \sum_{p=-\infty}^\infty A_\ell^p Z^p_\ell H_{p-n}(k R_{\ell j})\ee^{\ii(p-n)\Theta_{\ell j}}.
 % \end{equation}
-
 For easy implementation we need the functions:
 \[
 \psi_\inc \mapsto f^m_j \quad \text{and} \quad \text{particle} \mapsto T^{nm}_j.
 \]
 
-For efficient implementation we need to rewrite~\eqref{eqn:As} as a matrix equation. Let
+For efficient implementation we rewrite~\eqref{eqn:As} as a matrix equation. Let
 \begin{align}
-  &(\vec A_j)_n =  A_j^n, \quad (\vec f_j)_n =  f_j^n,
+  &(\vec \alpha_j)_n =  \alpha_j^n, \quad (\vec f_j)_n =  f_j^n,
   \\
-  &(\vec T_j)_{nm} = T^{nm}_j, \quad (\vec \Psi_{j \ell})_{mp} =  H_{p-m}(k R_{\ell j})\ee^{\ii(p-m)\Theta_{\ell j}},
+  &(\vec T_j)_{nm} = T^{nm}_j, \quad (\vec \Psi_{j \ell})_{np} =  H_{p-n}(k R_{\ell j})\ee^{\ii(p-n)\Theta_{\ell j}},
 \end{align}
-and note that $\Theta_{\ell j} = \Theta_{j \ell } + \pi$. Then
+and note that changing the order of $\ell$ and $j$, makes $\Theta_{\ell j} = \Theta_{j \ell } + \pi$. Then
 \begin{equation}
- \sum_{\ell\not = j}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+ \sum_{\ell}(\delta_{j \ell} +  (\delta_{j \ell}-1) \vec \Psi_{j \ell} \vec T_\ell) \vec \alpha_\ell  =  \vec f_j,
 \end{equation}
-which leads to one massive square matrix
+which leads to one massive square matrix:
 \begin{equation}
- \sum_{\ell\not = j}(\delta_{\ell j} -  (1 -\delta_{\ell j}) \vec T_j \vec \Psi_{j \ell}) \vec A_\ell  = \vec T_j \vec f_j,
+  \begin{bmatrix}
+    \vec I & - \vec \Psi_{1 2}\vec T_2 & \cdots & - \vec \Psi_{1 (N-1)} \vec T_{N-1} & - \vec \Psi_{1 N} \vec T_N \\
+    - \vec \Psi_{2 1} \vec T_1 & \vec I &  - \vec \Psi_{2 3} \vec T_3 & \cdots & - \vec \Psi_{2 N} \vec T_N \\
+     & \vdots & & & \vdots \\
+     - \vec \Psi_{N 1} \vec T_1  & \cdots & \cdots & -  \vec \Psi_{N (N-1)} \vec T_{N-1} & \vec I
+  \end{bmatrix}
+  \begin{bmatrix}
+    \vec \alpha_1 \\
+    \vec \alpha_2 \\
+    \vdots \\
+    \vec \alpha_N
+  \end{bmatrix}
+   = \begin{bmatrix}
+     \vec f_1 \\
+     \vdots \\
+     \vec f_N
+   \end{bmatrix}
 \end{equation}
 
 
