@@ -54,6 +54,10 @@ function field(result::SimulationResult{T,Dim,1}, i::Integer, j::Integer) where 
     result.field[i,j][1]
 end
 
+import Base.size
+size(r::FrequencySimulationResult) = (length(r.x),length(r.ω))
+size(r::TimeSimulationResult) = (length(r.x),length(r.t))
+
 import Base.union
 """
 Combine two FrequencyResults intelligently, allows user to optionally sort ω
