@@ -28,22 +28,29 @@ function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::Unio
     return Source{Acoustic{T,2},T}(source_field, source_coef)
 end
 
-function plane_source(medium::Acoustic{T,2}, source_position, source_direction = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where {T}
+function plane_source(medium::Acoustic{T,2}; position = SVector(zero(T),zero(T)),
+        direction = SVector(one(T),zero(T)),
+        amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where {T}
+
+    plane_source(medium, position, direction, amplitude)
+end
+
+function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where {T}
 
     # Convert to SVector for efficiency and consistency
-    source_position = SVector{2,T}(source_position)
-    source_direction = SVector{2,T}(source_direction./norm(source_direction)) # unit direction
+    position = SVector{2,T}(position)
+    direction = SVector{2,T}(direction./norm(direction)) # unit direction
 
     # This pseudo-constructor is rarely called, so do some checks and conversions
-    if iszero(norm(source_direction))
+    if iszero(norm(direction))
         throw(DomainError("Source direction must not have zero magnitude."))
     end
 
-    source_field(x,ω) = amplitude*exp(im*ω/medium.c*dot(x-source_position, source_direction))
+    source_field(x,ω) = amplitude*exp(im*ω/medium.c*dot(x-position, direction))
 
     function source_coef(n,centre,ω)
         # Jacobi-Anger expansion
-        θ = atan2(source_direction[2],source_direction[1])
+        θ = atan2(direction[2],direction[1])
         source_field(centre,ω) * exp(im * n *(T(pi)/2 -  θ))
     end
 

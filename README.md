@@ -40,7 +40,7 @@ particles = [p1,p2]
 
 Lastly we define the source, for example an incident plane wave (![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D)) using a helper function.
 ```julia
-source = plane_source(host_medium, [0.0,0.0])
+source = plane_source(host_medium; direction = [1.0,0.0])
 ```
 
 Once we have these three components, we can build our `FrequencySimulation` object

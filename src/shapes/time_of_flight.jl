@@ -12,6 +12,8 @@ struct TimeOfFlight{T <: AbstractFloat} <: Shape{T,2}
     time::T
 end
 
+TimeOfFlight(pos::AbstractVector{T}, time::T) where T <:AbstractFloat = TimeOfFlight(Vector{T}(pos), time)
+
 name(shape::TimeOfFlight) = "Time of flight from planar source"
 
 # Let T = shape.time, xr = shape.listener_position[1], yr = shape.listener_position[2]

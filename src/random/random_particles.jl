@@ -1,5 +1,12 @@
 const MAX_ATTEMPTS_TO_FIT_PARTICLE = 3000
 
+function random_particles(particle_medium::P, particle_shape::S,
+    box_shape::Shape{T,Dim}, volfrac::Number; seed=Base.Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
+
+    N = Int(round(volume(box_shape) / volume(particle_shape) * volfrac))
+    return random_particles(particle_medium, particle_shape, box_shape, N; seed=seed)
+end
+
 """
     random_particles(particle_medium, particle_shape, box_shape, volume_fraction::Number;
         seed=Base.Random.make_seed())
@@ -74,11 +81,4 @@ function random_particles(particle_medium::P, particle_shape::S,
     end
 
     return particles
-end
-
-function random_particles(particle_medium::P, particle_shape::S,
-    box_shape::Shape{T,Dim}, volfrac::Number; seed=Base.Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
-
-    N = Int(round(volume(box_shape) / volume(particle_shape) * volfrac))
-    return random_particles(particle_medium, particle_shape, box_shape, N; seed=seed)
 end
