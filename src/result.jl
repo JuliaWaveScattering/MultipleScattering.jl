@@ -2,9 +2,15 @@
 "Abstract class for Results of Simulations"
 abstract type SimulationResult{T,Dim,FieldDim} end
 
+"""
+Struct to hold results of a FrequencySimulation
+"""
 struct FrequencySimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T,Dim,FieldDim}
+    "Values of field through space (rows) and angular frequencies (columns)"
     field::Matrix{SVector{FieldDim,Complex{T}}}
+    "Positions"
     x::Vector{SVector{Dim,T}}
+    "Angular frequencies"
     ω::RowVector{T}
 end
 
@@ -15,9 +21,15 @@ function FrequencySimulationResult(field::Union{Matrix{Complex{T}}, Matrix{Abstr
     FrequencySimulationResult{T,Dim,FieldDim}(field, Vector(x), RowVector(ω))
 end
 
+"""
+Struct to hold results of a simulation through time
+"""
 struct TimeSimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T,Dim,FieldDim}
+    "Values of field through space (rows) and time (columns)"
     field::Matrix{SVector{FieldDim,T}}
+    "Positions"
     x::Vector{SVector{Dim,T}}
+    "Times"
     t::RowVector{T}
 end
 
@@ -29,27 +41,22 @@ function TimeSimulationResult(time_field::Union{Matrix{T},Matrix{AbstractVector{
 end
 
 """
-Get vector field from result as a matrix
+    field(result::SimulationResult, [i::Integer, j::Integer])
+
+Get field from result, optionally specifying indices.
+
+Returns single value of/matrix of complex SVectors() if vector field, and complex float if scalar field.
 """
 field(result::SimulationResult) = result.field
 
-"""
-Get vector field from result, with x-index i and ω-index j
-"""
 function field(result::SimulationResult, i::Integer, j::Integer)
     result.field[i,j]
 end
 
-"""
-Get scalar field from result as a matrix
-"""
 function field(result::SimulationResult{T,Dim,1}) where {Dim, T}
     map(x->x[1], result.field)
 end
 
-"""
-Get scalar field from result, with x-index i and ω-index j
-"""
 function field(result::SimulationResult{T,Dim,1}, i::Integer, j::Integer) where {Dim, T}
     result.field[i,j][1]
 end

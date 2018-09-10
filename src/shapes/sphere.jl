@@ -1,4 +1,8 @@
-"Shape where boundary is a fixed distance from the origin"
+"""
+    Sphere([origin=zeros(),] radius)
+
+3D [`Shape`](@ref) where boundary is a fixed distance from the origin.
+"""
 struct Sphere{T} <: Shape{T,3}
     origin::SVector{3,T}
     radius::T
@@ -7,6 +11,8 @@ end
 # Alternate constructors, where type is inferred naturally
 Sphere(origin::NTuple{3,T}, radius::T) where {T} = Sphere{T}(origin, radius)
 Sphere(origin::Vector{T}, radius::T) where {T} = Sphere{T}(origin, radius)
+# If no position is given, assume origin is at zero
+Sphere(radius::T) where {T} = Sphere{T}(SVector(zero(T),zero(T),zero(T)), radius)
 
 name(shape::Sphere) = "Sphere"
 

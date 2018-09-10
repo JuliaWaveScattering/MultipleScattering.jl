@@ -1,5 +1,5 @@
 """
-    Rectangle(origin::AbstractVector{T}, width::T, Height::T)
+    Rectangle([origin::AbstractVector{T}=zeros(),] width::T, Height::T)
     Rectangle(bottomleft::AbstractVector{T}, topright::AbstractVector{T})
 
 2D [`Shape`](@ref) with axis aligned sides, defined by width, height and origin (at the center).

@@ -1,24 +1,32 @@
 # Base
 
+```@meta
+CurrentModule = MultipleScattering
+```
+
+```@contents
+Pages = ["base.md"]
+```
+
 ## Shapes
 
 Shape types and functions.
 
 ```@docs
-MultipleScattering.Shape
-MultipleScattering.origin
-MultipleScattering.iscongruent
-MultipleScattering.congruent
-MultipleScattering.bounding_rectangle
-MultipleScattering.boundary_functions
-MultipleScattering.name
-MultipleScattering.outer_radius
-MultipleScattering.volume
-MultipleScattering.Circle
-MultipleScattering.Rectangle
-MultipleScattering.TimeOfFlightFromPoint
-MultipleScattering.TimeOfFlight
-MultipleScattering.Sphere
+Shape
+origin
+iscongruent(::Shape,::Shape)
+congruent
+bounding_rectangle
+boundary_functions
+name
+outer_radius
+volume
+Circle
+Rectangle
+TimeOfFlightFromPoint
+TimeOfFlight
+Sphere
 ```
 
 ## Physical properties
@@ -26,12 +34,12 @@ MultipleScattering.Sphere
 Physical properties types and functions.
 
 ```@docs
-MultipleScattering.PhysicalProperties
-MultipleScattering.field_dim
-MultipleScattering.dim
-MultipleScattering.basis_function
-MultipleScattering.internal_field
-MultipleScattering.boundary_data
+PhysicalProperties
+field_dim
+dim
+basis_function
+internal_field
+boundary_data
 ```
 
 ## Particles
@@ -39,10 +47,10 @@ MultipleScattering.boundary_data
 Particle types and functions.
 
 ```@docs
-MultipleScattering.AbstractParticle
-MultipleScattering.Particle
-MultipleScattering.CapsuleParticle
-MultipleScattering.iscongruent
+AbstractParticle
+Particle
+CapsuleParticle
+iscongruent(::AbstractParticle,::AbstractParticle)
 ```
 
 ## Source
@@ -50,8 +58,8 @@ MultipleScattering.iscongruent
 Source types and functions.
 
 ```@docs
-MultipleScattering.Source
-MultipleScattering.self_test
+Source
+self_test
 ```
 
 ## Simulation
@@ -59,13 +67,14 @@ MultipleScattering.self_test
 Simulation types and functions.
 
 ```@docs
-MultipleScattering.Simulation
-MultipleScattering.FrequencySimulation
-MultipleScattering.run
-MultipleScattering.forcing
-MultipleScattering.basis_coefficients
-MultipleScattering.field
-MultipleScattering.scattering_matrix
-MultipleScattering.t_matrix
-MultipleScattering.get_t_matrices
+FrequencySimulation
+run(::FrequencySimulation)
+run(::FrequencySimulation, ::Rectangle, ::AbstractVector)
+FrequencySimulationResult
+forcing
+basis_coefficients
+field
+scattering_matrix
+t_matrix
+get_t_matrices
 ```

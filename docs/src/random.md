@@ -1,13 +1,17 @@
 # Random
 
+```@meta
+CurrentModule = MultipleScattering
+```
+
 ## Random particles
 
 ```@docs
-MultipleScattering.random_particles
+random_particles
 ```
 
 ## Moments
 
 ```@docs
-MultipleScattering.calculate_moments
+calculate_moments
 ```
