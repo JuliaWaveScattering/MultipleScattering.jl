@@ -34,4 +34,4 @@ after_success:
   - julia -e 'cd(Pkg.dir("MultipleScattering")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
   # Create and deploy documentation
   - julia -e 'Pkg.add("Documenter")'
-  - julia -e 'cd(Pkg.dir("PACKAGE_NAME")); include(joinpath("docs", "make.jl"))'
+  - julia -e 'cd(Pkg.dir("MultipleScattering")); include(joinpath("docs", "make.jl"))'
