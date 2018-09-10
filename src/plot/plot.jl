@@ -110,7 +110,7 @@ end
         fill --> true
         grid --> false
         aspect_ratio := 1.0
-        fillcolor --> :pu_or
+        color --> :pu_or
         title --> "Field at ω=$ω"
 
         (x_pixels, y_pixels, field_apply.(response_mat))
