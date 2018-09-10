@@ -1,6 +1,6 @@
 # Near-surface backscattering
 
-Near-surface backscattering is a method of accurately calculating the backscattering from an infinite halfspace. For just the code see ![backscattering.jl](backscattering.jl)
+Near-surface backscattering is a method of accurately calculating the backscattering from an infinite halfspace. For just the code see [backscattering.jl](backscattering.jl)
 First, let us see why it is difficult to approximate the scattering from a halfspace filled with particles. That is, let us find out how many particles are required before the backscattering converges.
 
 ## Generate a large material filled with particles.
