@@ -24,7 +24,7 @@ bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
 shape = Rectangle(bottomleft,topright)
 
-particles = random_particles(particle_medium, particle_shape, shape, num_particles)
+particles = random_particles(particle_medium, particle_shape; box_shape = shape, num_particles = num_particles)
 ```
 
 Now choose the receiver position `x`, the host medium, set plane wave as a source wave, and choose the angular frequency range `ωs`

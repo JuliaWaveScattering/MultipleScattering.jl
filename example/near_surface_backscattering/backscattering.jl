@@ -89,6 +89,15 @@ plot(plot_converge)
 plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", ylabel ="error %", label="time convergence")
 savefig("compare_convergence.png")
 
+## Using near surface backscattering
+shape = TimeOfFlight(receiver,80.0)
+scatter([receiver[1]],[receiver[2]]);
+annotate!([(receiver[1], receiver[2] -max_width/10., "Receiver")])
+plot!(particles);
+plot!(shape, linecolor=:red)
+
+savefig("time_of_flight_shape.png")
+
 times = 40.:15.:80.
 near_surface_simulations = map(times) do t
     shape = TimeOfFlight(receiver,t) # choose a material with particles only in the near surface region
