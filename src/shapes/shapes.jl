@@ -17,6 +17,8 @@ True if shapes are the same but in different positions (origins), standard mathe
 """
 iscongruent(s1::Shape, s2::Shape) = false # false by default, overload in specific examples
 
+≅(s1::Shape, s2::Shape) = iscongruent(s1, s2)
+
 """
     congruent(s::Shape, x)::Shape
 

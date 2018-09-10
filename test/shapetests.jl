@@ -8,6 +8,7 @@
         @test o ∈ rectangle
         @test (o+[0.0,3.1]) ∉ rectangle
         @test iscongruent(rectangle, congruent(rectangle, SVector(3.0,4.0)))
+        @test rectangle ≅ congruent(rectangle, SVector(3.0,4.0)) # test infix
 
         smaller_rectangle = Rectangle(o, 1.0, 2.0)
         @test smaller_rectangle ⊆ rectangle
@@ -41,6 +42,7 @@
         @test o ∈ circle
         @test (o+[0.0,radius+0.1]) ∉ circle
         @test iscongruent(circle, congruent(circle,SVector(3.0,4.0)))
+        @test circle ≅ congruent(circle,SVector(3.0,4.0))
         @test volume(circle) ≈ 12.566370614359172
 
         smaller_circle = Circle(o, radius-2)
