@@ -53,7 +53,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "Base",
     "category": "section",
-    "text": ""
+    "text": "CurrentModule = MultipleScatteringPages = [\"base.md\"]"
 },
 
 {
@@ -73,11 +73,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "base.html#MultipleScattering.iscongruent",
+    "location": "base.html#MultipleScattering.iscongruent-Tuple{MultipleScattering.Shape,MultipleScattering.Shape}",
     "page": "Base",
     "title": "MultipleScattering.iscongruent",
-    "category": "function",
-    "text": "iscongruent(p1::Shape, p2::Shape)::Bool\n\nTrue if shapes are the same but in different positions (origins), standard mathematical definition.\n\n\n\niscongruent(p1::AbstractParticle, p2::AbstractParticle)::Bool\n\nReturns true if medium and shape of particles are the same, ignoring origin, false otherwise.\n\n\n\n"
+    "category": "method",
+    "text": "iscongruent(p1::Shape, p2::Shape)::Bool\n≅(p1::Shape, p2::Shape)::Bool\n\nTrue if shapes are the same but in different positions (origins), standard mathematical definition.\n\n\n\n"
 },
 
 {
@@ -133,7 +133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "MultipleScattering.Circle",
     "category": "type",
-    "text": "Circle(origin, radius)\n\n2D Shape where boundary is a fixed distance from the origin\n\n\n\n"
+    "text": "Circle([origin=zeros(),] radius)\n\n2D Shape where boundary is a fixed distance from the origin.\n\n\n\n"
 },
 
 {
@@ -141,7 +141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "MultipleScattering.Rectangle",
     "category": "type",
-    "text": "Rectangle(origin::AbstractVector{T}, width::T, Height::T)\nRectangle(bottomleft::AbstractVector{T}, topright::AbstractVector{T})\n\n2D Shape with axis aligned sides, defined by width, height and origin (at the center).\n\n\n\n"
+    "text": "Rectangle([origin::AbstractVector{T}=zeros(),] width::T, Height::T)\nRectangle(bottomleft::AbstractVector{T}, topright::AbstractVector{T})\n\n2D Shape with axis aligned sides, defined by width, height and origin (at the center).\n\n\n\n"
 },
 
 {
@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "MultipleScattering.Sphere",
     "category": "type",
-    "text": "Shape where boundary is a fixed distance from the origin\n\n\n\n"
+    "text": "Sphere([origin=zeros(),] radius)\n\n3D Shape where boundary is a fixed distance from the origin.\n\n\n\n"
 },
 
 {
@@ -173,7 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "Shapes",
     "category": "section",
-    "text": "Shape types and functions.MultipleScattering.Shape\nMultipleScattering.origin\nMultipleScattering.iscongruent\nMultipleScattering.congruent\nMultipleScattering.bounding_rectangle\nMultipleScattering.boundary_functions\nMultipleScattering.name\nMultipleScattering.outer_radius\nMultipleScattering.volume\nMultipleScattering.Circle\nMultipleScattering.Rectangle\nMultipleScattering.TimeOfFlightFromPoint\nMultipleScattering.TimeOfFlight\nMultipleScattering.Sphere"
+    "text": "Shape types and functions.Shape\norigin\niscongruent(::Shape,::Shape)\ncongruent\nbounding_rectangle\nboundary_functions\nname\nouter_radius\nvolume\nCircle\nRectangle\nTimeOfFlightFromPoint\nTimeOfFlight\nSphere"
 },
 
 {
@@ -229,7 +229,39 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "Physical properties",
     "category": "section",
-    "text": "Physical properties types and functions.MultipleScattering.PhysicalProperties\nMultipleScattering.field_dim\nMultipleScattering.dim\nMultipleScattering.basis_function\nMultipleScattering.internal_field\nMultipleScattering.boundary_data"
+    "text": "Physical properties types and functions.PhysicalProperties\nfield_dim\ndim\nbasis_function\ninternal_field\nboundary_data"
+},
+
+{
+    "location": "base.html#MultipleScattering.AbstractParticle",
+    "page": "Base",
+    "title": "MultipleScattering.AbstractParticle",
+    "category": "type",
+    "text": "Object we can scatter waves off\n\nSubtypes will contain information about shape and material properties. Most crucially, they will implement the t_matrix function\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.Particle",
+    "page": "Base",
+    "title": "MultipleScattering.Particle",
+    "category": "type",
+    "text": "Particle(medium::PhysicalProperties, shape::Shape)\n\nCreate particle with inner medium and shape (types and dimension must agree).\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.CapsuleParticle",
+    "page": "Base",
+    "title": "MultipleScattering.CapsuleParticle",
+    "category": "type",
+    "text": "CapsuleParticle(outer::Particle, inner::Particle)\n\nA particle within another particle, both with the same shape type and origin.\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.iscongruent-Tuple{MultipleScattering.AbstractParticle,MultipleScattering.AbstractParticle}",
+    "page": "Base",
+    "title": "MultipleScattering.iscongruent",
+    "category": "method",
+    "text": "iscongruent(p1::AbstractParticle, p2::AbstractParticle)::Bool\n≅(p1::AbstractParticle, p2::AbstractParticle)::Bool\n\nReturns true if medium and shape of particles are the same, ignoring origin, false otherwise.\n\n\n\n"
 },
 
 {
@@ -237,7 +269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "Particles",
     "category": "section",
-    "text": "Particle types and functions.MultipleScattering.AbstractParticle\nMultipleScattering.Particle\nMultipleScattering.CapsuleParticle\nMultipleScattering.iscongruent"
+    "text": "Particle types and functions.AbstractParticle\nParticle\nCapsuleParticle\niscongruent(::AbstractParticle,::AbstractParticle)"
 },
 
 {
@@ -261,7 +293,87 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "Source",
     "category": "section",
-    "text": "Source types and functions.MultipleScattering.Source\nMultipleScattering.self_test"
+    "text": "Source types and functions.Source\nself_test"
+},
+
+{
+    "location": "base.html#MultipleScattering.FrequencySimulation",
+    "page": "Base",
+    "title": "MultipleScattering.FrequencySimulation",
+    "category": "type",
+    "text": "FrequencySimulation(medium::PhysicalProperties,\n                    [particles::AbstractParticles=[],]\n                    source::Source)\n\nBuild a FrequencySimulation. If particles are not provided, an empty array is used.\n\nAfter building, you can run the simulation to get a FrequencySimulationResult.\n\n\n\n"
+},
+
+{
+    "location": "base.html#Base.run-Tuple{MultipleScattering.FrequencySimulation}",
+    "page": "Base",
+    "title": "Base.run",
+    "category": "method",
+    "text": "run(sim::FrequencySimulation, x, ω; basis_order=5)\n\nRun the simulation sim for the position x and angular frequency ω.\n\nPosition can be an SVector or Vector{SVector} and frequency can be a float or vector of floats.\n\n\n\n"
+},
+
+{
+    "location": "base.html#Base.run-Tuple{MultipleScattering.FrequencySimulation,MultipleScattering.Rectangle,AbstractArray{T,1} where T}",
+    "page": "Base",
+    "title": "Base.run",
+    "category": "method",
+    "text": "run(sim::FrequencySimulation, rectangle;\n    res=20, xres=res, yres=res, basis_order=5)\n\nRun the simulation sim for a grid of positions in rectangle and for angular frequency ω.\n\nFrequency can be a float or vector of floats. The resolution of the grid points is defined by xres and yres.\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.FrequencySimulationResult",
+    "page": "Base",
+    "title": "MultipleScattering.FrequencySimulationResult",
+    "category": "type",
+    "text": "Struct to hold results of a FrequencySimulation\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.forcing",
+    "page": "Base",
+    "title": "MultipleScattering.forcing",
+    "category": "function",
+    "text": "forcing(source::Source, particles::AbstractParticles, ω::AbstractFloat, Nh::Integer)::Vector{Complex}\n\nCreate forcing vector from source, forms the right hand side of matrix equation to find basis_coefficients.\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.basis_coefficients",
+    "page": "Base",
+    "title": "MultipleScattering.basis_coefficients",
+    "category": "function",
+    "text": "basis_coefficients(sim::FrequencySimulation, ω::AbstractFloat; basis_order::Int=5)::Matrix{Complex}\n\nReturn coefficients for bases around each particle for a given simulation and angular frequency (ω).\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.field",
+    "page": "Base",
+    "title": "MultipleScattering.field",
+    "category": "function",
+    "text": "field(result::SimulationResult, [i::Integer, j::Integer])\n\nGet field from result, optionally specifying indices.\n\nReturns single value of/matrix of complex SVectors() if vector field, and complex float if scalar field.\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.scattering_matrix",
+    "page": "Base",
+    "title": "MultipleScattering.scattering_matrix",
+    "category": "function",
+    "text": "Create the matrix S which will be inverted to find the scattering coefficients. Currently assumes 2D.\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.t_matrix",
+    "page": "Base",
+    "title": "MultipleScattering.t_matrix",
+    "category": "function",
+    "text": "Returns a 2M+1 by 2M+1 T-matrix for particle with specific shape, physical properties in a medium with a specific physical property at a specific angular wavenumber. See doc/T-matrix.pdf for details.\n\n\n\n"
+},
+
+{
+    "location": "base.html#MultipleScattering.get_t_matrices",
+    "page": "Base",
+    "title": "MultipleScattering.get_t_matrices",
+    "category": "function",
+    "text": "Returns vector of T-matrices from a vector of particles in a specific domain. Can save computation if multiple of the same kind of particle are present in the vector.\n\n\n\n"
 },
 
 {
@@ -269,7 +381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Base",
     "title": "Simulation",
     "category": "section",
-    "text": "Simulation types and functions.MultipleScattering.Simulation\nMultipleScattering.FrequencySimulation\nMultipleScattering.run\nMultipleScattering.forcing\nMultipleScattering.basis_coefficients\nMultipleScattering.field\nMultipleScattering.scattering_matrix\nMultipleScattering.t_matrix\nMultipleScattering.get_t_matrices"
+    "text": "Simulation types and functions.FrequencySimulation\nrun(::FrequencySimulation)\nrun(::FrequencySimulation, ::Rectangle, ::AbstractVector)\nFrequencySimulationResult\nforcing\nbasis_coefficients\nfield\nscattering_matrix\nt_matrix\nget_t_matrices"
 },
 
 {
@@ -281,11 +393,107 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "acoustics.html#MultipleScattering.Acoustic",
+    "page": "Acoustic",
+    "title": "MultipleScattering.Acoustic",
+    "category": "type",
+    "text": "Acoustic{T<:AbstractFloat,Dim}(ρ::T, c::Complex{T})\nAcoustic(ρ::T, c::Union{T,Complex{AbstractFloat}}, Dim::Integer)\n\nPhysical properties for a homogenous isotropic acoustic medium with wavespeed (c) and density (ρ)\n\nSimulations in this medium produce scalar (1D) fields in Dim dimensions.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.impedance",
+    "page": "Acoustic",
+    "title": "MultipleScattering.impedance",
+    "category": "function",
+    "text": "impedance(medium::Acoustic)\n\nCharacteristic specific acoustic impedance (z₀) of medium\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.sound_hard",
+    "page": "Acoustic",
+    "title": "MultipleScattering.sound_hard",
+    "category": "function",
+    "text": "sound_hard([T::Type = Float64,] Dim::Integer)\n\nConstruct physical properties of a sound hard acoustic object with type T and dimension Dim. Also known as rigid and equivalent to a zero_neumann pressure boundary condition.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.hard",
+    "page": "Acoustic",
+    "title": "MultipleScattering.hard",
+    "category": "function",
+    "text": "hard(host_medium::Acoustic)\n\nSee sound_hard.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.rigid",
+    "page": "Acoustic",
+    "title": "MultipleScattering.rigid",
+    "category": "function",
+    "text": "rigid(host_medium::Acoustic)\n\nSee sound_hard.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.zero_neumann",
+    "page": "Acoustic",
+    "title": "MultipleScattering.zero_neumann",
+    "category": "function",
+    "text": "zero_neumann(host_medium::Acoustic)\n\nSee sound_hard.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.sound_soft",
+    "page": "Acoustic",
+    "title": "MultipleScattering.sound_soft",
+    "category": "function",
+    "text": "sound_soft([T::Type = Float64,] Dim::Integer)\n\nConstruct physical properties of a sound hard acoustic object with type T and dimension Dim. Equivalent to a zero_dirichlet pressure boundary condition.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.soft",
+    "page": "Acoustic",
+    "title": "MultipleScattering.soft",
+    "category": "function",
+    "text": "soft(host_medium::Acoustic)\n\nSee sound_soft.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.pressure_release",
+    "page": "Acoustic",
+    "title": "MultipleScattering.pressure_release",
+    "category": "function",
+    "text": "pressure_release(host_medium::Acoustic)\n\nSee sound_soft.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.zero_dirichlet",
+    "page": "Acoustic",
+    "title": "MultipleScattering.zero_dirichlet",
+    "category": "function",
+    "text": "zero_dirichlet(host_medium::Acoustic)\n\nSee sound_soft.\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.plane_source",
+    "page": "Acoustic",
+    "title": "MultipleScattering.plane_source",
+    "category": "function",
+    "text": "plane_source(medium::Acoustic, source_position, source_direction=[1,0], amplitude=1)::Source{Acoustic}\n\nCreate 2D Acoustic planar wave Source\n\n\n\n"
+},
+
+{
+    "location": "acoustics.html#MultipleScattering.point_source",
+    "page": "Acoustic",
+    "title": "MultipleScattering.point_source",
+    "category": "function",
+    "text": "point_source(medium::Acoustic, source_position, amplitude=1)::Source{Acoustic}\n\nCreate 2D Acoustic point Source (zeroth Hankel function of first type)\n\n\n\n"
+},
+
+{
     "location": "acoustics.html#Acoustic-1",
     "page": "Acoustic",
     "title": "Acoustic",
     "category": "section",
-    "text": "Acoustic type and functions.MultipleScattering.Acoustic\nMultipleScattering.impedance\nMultipleScattering.sound_hard\nMultipleScattering.hard\nMultipleScattering.rigid\nMultipleScattering.zero_neumann\nMultipleScattering.sound_soft\nMultipleScattering.soft\nMultipleScattering.pressure_release\nMultipleScattering.zero_dirichlet\nMultipleScattering.plane_source\nMultipleScattering.point_source"
+    "text": "CurrentModule = MultipleScatteringAcoustic type and functions.Acoustic\nimpedance\nsound_hard\nhard\nrigid\nzero_neumann\nsound_soft\nsoft\npressure_release\nzero_dirichlet\nplane_source\npoint_source"
 },
 
 {
@@ -301,7 +509,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Random",
     "title": "Random",
     "category": "section",
-    "text": ""
+    "text": "CurrentModule = MultipleScattering"
 },
 
 {
@@ -317,7 +525,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Random",
     "title": "Random particles",
     "category": "section",
-    "text": "MultipleScattering.random_particles"
+    "text": "random_particles"
 },
 
 {
@@ -333,7 +541,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Random",
     "title": "Moments",
     "category": "section",
-    "text": "MultipleScattering.calculate_moments"
+    "text": "calculate_moments"
 },
 
 {
