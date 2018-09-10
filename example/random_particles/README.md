@@ -48,7 +48,7 @@ using Plots; pyplot(linewidth=2.0)
     plot(result, apply=real)
     plot!(result, apply=imag)
 ```
-![Plot of response against wavenumber](plot_results.png)
+![Plot of response against wavenumber](plot_result.png)
 
 And plot the whole field inside the shape `bounds` for a specific wavenumber (ω=0.8)
 ```julia
