@@ -51,7 +51,8 @@ simulation = FrequencySimulation(host_medium, particles, source)
 To get numerical results, we run our simulation for specific positions and angular frequencies,
 ```julia
 x = [[-10.0,0.0], [0.0,0.0]]
-ω = 0.01:0.01:1.0
+max_ω = 1.0
+ω = 0.01:0.01:max_ω
 result = run(simulation, x, ω)
 ```
 
@@ -86,6 +87,13 @@ time_result = frequency_to_time(result)
 plot(time_result)
 ```
 ![Plot real part of acoustic field](example/intro/plot_time_result.png)
+Or for a Gaussian impulse in time:
+```julia
+t_vec = linspace(0.,700.,400)
+time_result = frequency_to_time(result; t_vec = t_vec, impulse = GaussianImpulse(max_ω))
+plot(time_result)
+```
+![Plot real part of acoustic field](example/intro/plot_gauss_result.png)
 
 ## More examples
 There are a lot of defaults implicit in this basic example.
