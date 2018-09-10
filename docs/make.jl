@@ -33,7 +33,7 @@ deploydocs(
     branch = "gh-pages",
     latest = "master",
     julia = "0.6",
-    osname = "osx"
+    osname = "linux", 
     target = "build",
     deps = nothing,
     make = nothing,
