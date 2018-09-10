@@ -10,6 +10,11 @@ function besselj_field(source::Source{Acoustic{T,2},T}, medium::Acoustic{T,2}, c
 
 end
 
+"""
+    point_source(medium::Acoustic, source_position, amplitude=1)::Source{Acoustic}
+
+Create 2D [`Acoustic`](@ref) point [`Source`](@ref) (zeroth Hankel function of first type)
+"""
 function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T}
 
     # Convert to SVector for efficiency and consistency
@@ -28,6 +33,11 @@ function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::Unio
     return Source{Acoustic{T,2},T}(source_field, source_coef)
 end
 
+"""
+    plane_source(medium::Acoustic, source_position, source_direction=[1,0], amplitude=1)::Source{Acoustic}
+
+Create 2D [`Acoustic`](@ref) planar wave [`Source`](@ref)
+"""
 function plane_source(medium::Acoustic{T,2}, source_position, source_direction = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where {T}
 
     # Convert to SVector for efficiency and consistency

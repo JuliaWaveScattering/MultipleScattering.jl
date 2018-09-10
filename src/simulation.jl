@@ -117,7 +117,7 @@ Run the simulation `sim` for the position `x` and angular frequency `ω`.
 Position can be an SVector or Vector{SVector} and frequency can be a float or
 vector of floats.
 """
-run
+function run(s::FrequencySimulation) throw(MethodError(run, (s,))) end
 
 """
     run(sim::FrequencySimulation, rectangle;
@@ -138,6 +138,11 @@ function run(sim::FrequencySimulation, rect::Rectangle, ω_vec::AbstractVector;
     return run(sim, x_vec[:], ω_vec; kws...)
 end
 
+"""
+    forcing(source::Source, particles::AbstractParticles, ω::AbstractFloat, Nh::Integer)::Vector{Complex}
+
+Create forcing vector from source, forms the right hand side of matrix equation to find [`basis_coefficients`](@ref).
+"""
 function forcing(source::Source{P,T}, particles::AbstractParticles, ω::T, Nh::Integer)::Vector{Complex{T}} where {P,T}
     mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
     f = Vector{Complex{T}}(prod(size(mat)))
@@ -148,6 +153,11 @@ function forcing(source::Source{P,T}, particles::AbstractParticles, ω::T, Nh::I
     return f
 end
 
+"""
+    basis_coefficients(sim::FrequencySimulation, ω::AbstractFloat; basis_order::Int=5)::Matrix{Complex}
+
+Return coefficients for bases around each particle for a given simulation and angular frequency (ω).
+"""
 function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_order::Int = 5) where {Dim,P,T}
 
     # Precompute T-matrices for these particles

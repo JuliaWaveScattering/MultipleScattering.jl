@@ -1,7 +1,7 @@
 """
-    Circle(origin, radius)
+    Circle([origin=zeros(),] radius)
 
-2D [`Shape`](@ref) where boundary is a fixed distance from the origin
+2D [`Shape`](@ref) where boundary is a fixed distance from the origin.
 """
 struct Circle{T} <: Shape{T,2}
     origin::SVector{2,T}

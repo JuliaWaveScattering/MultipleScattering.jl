@@ -1,3 +1,9 @@
+"""
+Object we can scatter waves off
+
+Subtypes will contain information about shape and material properties. Most
+crucially, they will implement the [`t_matrix`](@ref) function
+"""
 abstract type AbstractParticle{T,Dim} end
 
 """
@@ -84,10 +90,15 @@ end
 
 """
     iscongruent(p1::AbstractParticle, p2::AbstractParticle)::Bool
+    ≅(p1::AbstractParticle, p2::AbstractParticle)::Bool
 
 Returns true if medium and shape of particles are the same, ignoring origin, false otherwise.
 """
 iscongruent(p1::AbstractParticle, p2::AbstractParticle) = false # false by default, overload in specific examples
+
+# Define synonym for iscongruent ≅, and add documentation
+≅(p1::AbstractParticle, p2::AbstractParticle) = iscongruent(p1, p2)
+@doc (@doc iscongruent(::AbstractParticle, ::AbstractParticle)) (≅(::AbstractParticle, ::AbstractParticle))
 
 function iscongruent(p1::Particle, p2::Particle)
     p1.medium == p2.medium &&
@@ -99,8 +110,19 @@ function iscongruent(p1::CapsuleParticle, p2::CapsuleParticle)
 end
 
 import Base.in
+"""
+    in(vector, particle)::Bool
+
+Returns true if vector is in interior of shape of particle, false otherwise.
+"""
 in(x::AbstractVector, particle::AbstractParticle) = in(x, shape(particle))
 
 import Base.issubset
 issubset(s::Shape, particle::AbstractParticle) = issubset(s, shape(particle))
 issubset(particle::AbstractParticle, s::Shape) = issubset(shape(particle), s)
+issubset(particle1::AbstractParticle, particle2::AbstractParticle) = issubset(shape(particle1), shape(particle2))
+
+# Add generic documentation from shape
+@doc (@doc issubset(::Shape, ::Shape)) issubset(::Shape, ::AbstractParticle)
+@doc (@doc issubset(::Shape, ::Shape)) issubset(::AbstractParticle, ::Shape)
+@doc (@doc issubset(::Shape, ::Shape)) issubset(::AbstractParticle, ::AbstractParticle)

@@ -12,12 +12,15 @@ origin(shape::Shape) = shape.origin
 
 """
     iscongruent(p1::Shape, p2::Shape)::Bool
+    ≅(p1::Shape, p2::Shape)::Bool
 
 True if shapes are the same but in different positions (origins), standard mathematical definition.
 """
 iscongruent(s1::Shape, s2::Shape) = false # false by default, overload in specific examples
 
+# Define synonym for iscongruent ≅, and add documentation
 ≅(s1::Shape, s2::Shape) = iscongruent(s1, s2)
+@doc (@doc iscongruent(::Shape, ::Shape)) (≅(::Shape, ::Shape))
 
 """
     congruent(s::Shape, x)::Shape
@@ -66,25 +69,39 @@ end
 
 Name of a shape
 """
-name
+function name end
 
 """
     outer_radius(shape::Shape{T})::T
 
 The radius of a circle which completely contains the shape
 """
-outer_radius
+function outer_radius end
 
 """
     volume(shape::Shape{T})::T
 
 Volume of a shape
 """
-volume
+function volume end
 
 """
     volume(shape::Shape)::NTuple{Function,Dim)
 
 Returns Tuple of Dim Functions which define outer boundary of shape when given boundary coordinate t∈[0,1]
 """
-boundary_functions
+function boundary_functions end
+
+"""
+    issubset(shape1, shape2)::Bool
+
+Returns true if shape1 is entirely contained within shape2, false otherwise (also works with particles).
+"""
+function issubset(s1::Shape,s2::Shape) throw(MethodError(issubset, (s1,s2))) end
+
+"""
+    in(vector, shape)::Bool
+
+Returns true if vector is in interior of shape, false otherwise.
+"""
+function in(::AbstractVector,::Shape) end
