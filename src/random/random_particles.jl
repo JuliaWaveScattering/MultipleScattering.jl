@@ -1,7 +1,22 @@
 const MAX_ATTEMPTS_TO_FIT_PARTICLE = 3000
 
+function random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_shape::Shape{T,Dim};
+        box_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*outer_radius(particle_shape), T(10)*outer_radius(particle_shape)),
+        num_particles::Int = 0, volume_fraction::T = zero(T), kws...) where {T<:AbstractFloat,Dim}
+
+    if volume_fraction == zero(T)
+        if num_particles == 0 num_particles = 5 end
+        random_particles(particle_medium, particle_shape,
+            box_shape, num_particles; kws...)
+    else
+        random_particles(particle_medium, particle_shape,
+            box_shape, volume_fraction; kws...)
+    end
+
+end
+
 function random_particles(particle_medium::P, particle_shape::S,
-    box_shape::Shape{T,Dim}, volfrac::Number; seed=Base.Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
+    box_shape::Shape{T,Dim}, volfrac::AbstractFloat; seed=Base.Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
 
     N = Int(round(volume(box_shape) / volume(particle_shape) * volfrac))
     return random_particles(particle_medium, particle_shape, box_shape, N; seed=seed)

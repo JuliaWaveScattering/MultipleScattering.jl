@@ -19,7 +19,7 @@ bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
 shape = Rectangle(bottomleft,topright)
 
-particles = random_particles(particle_medium, particle_shape, shape, num_particles)
+particles = random_particles(particle_medium, particle_shape; box_shape = shape, num_particles = num_particles)
 
 x = [-10.,0.]
 host_medium = Acoustic(1.0, 1.0, 2)

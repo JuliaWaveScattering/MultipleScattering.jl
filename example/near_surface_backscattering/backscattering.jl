@@ -16,7 +16,7 @@ bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
 
 shape = Rectangle(bottomleft,topright)
-particles = random_particles(particle_medium, particle_shape, shape, volfrac)
+particles = random_particles(particle_medium, particle_shape; box_shape = shape, volume_fraction = volfrac)
 
 x = [-10.,0.]
 source =  plane_source(host_medium; position = x,
