@@ -11,7 +11,7 @@ The library uses the multipole method to solve the Helmholtz equation
 (time-harmonic acoustics) in two dimensions. This method is particularly efficient at solving scattering problems for particles in an infinite domain. Currently the library is configured for circular particles with any radius, density, sound speed and packing fraction. For details on the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
 
 #### Near Surface Backscattering
-If you are here to learn about 
+If you are here to learn about
 [Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490). To see how to take the [moments](example/moments) of the backscattering [click here](example/moments).
 
 ## Get started
@@ -40,7 +40,7 @@ particles = [p1,p2]
 
 Lastly we define the source, for example an incident plane wave (![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D)) using a helper function.
 ```julia
-source = plane_wave(host_medium, [0.0,0.0])
+source = plane_source(host_medium, [0.0,0.0])
 ```
 
 Once we have these three components, we can build our `FrequencySimulation` object
@@ -50,7 +50,7 @@ simulation = FrequencySimulation(host_medium, particles, source)
 
 To get numerical results, we run our simulation for specific positions and angular frequencies,
 ```julia
-x = [(-10.0,0.0), (0.0,0.0)]
+x = [[-10.0,0.0], [0.0,0.0]]
 ω = 0.01:0.01:1.0
 result = run(simulation, x, ω)
 ```
@@ -65,11 +65,12 @@ We can plot the time-harmonic response across these wavenumbers by typing:
 using Plots
 plot(result)
 ```
-![Plot of response against wavenumber](example/intro/plot_simulation.png)
+![Plot of response against wavenumber](example/intro/plot_result.png)
 
 For a better overview you can plot the whole field in space for a specific angular frequency by typing:
 ```julia
-plot(simulation,0.8)
+ω = 0.8
+plot(simulation,ω)
 ```
 ![Plot real part of acoustic field](example/intro/plot_field.png)
 
@@ -81,10 +82,10 @@ need an insight into a specific part of your simulation.
 
 To calculate an incident plane wave pulse in time use:
 ```julia
-time_simulation = TimeSimulation(simulation)
-plot(time_simulation)
+time_result = frequency_to_time(result)
+plot(time_result)
 ```
-![Plot real part of acoustic field](example/intro/plot_time_simulation.png)
+![Plot real part of acoustic field](example/intro/plot_time_result.png)
 
 ## More examples
 There are a lot of defaults implicit in this basic example.

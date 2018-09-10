@@ -9,9 +9,11 @@ include("plot_domain.jl")
     for x_ind in x_indices
 
         apply_field = apply.(field(simres)[x_ind, ω_indices])
+        xlab = ((typeof(simres) <: FrequencySimulationResult) ? "ω" : "t")
 
         @series begin
             label --> "$apply x=$(simres.x[x_ind])"
+            xlabel --> xlab
             (transpose(getfield(simres, 3)[ω_indices]), apply_field)
         end
     end
