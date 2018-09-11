@@ -1,5 +1,6 @@
 # MultipleScattering
 
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://jondea.github.io/MultipleScattering.jl/latest)
 [![DOI](https://zenodo.org/badge/96763392.svg)](https://zenodo.org/badge/latestdoi/96763392)
 [![Build Status](https://travis-ci.org/jondea/MultipleScattering.jl.svg?branch=master)](https://travis-ci.org/jondea/MultipleScattering.jl)
 [![Coverage Status](https://coveralls.io/repos/github/jondea/MultipleScattering.jl/badge.svg?branch=master)](https://coveralls.io/github/jondea/MultipleScattering.jl?branch=master)
@@ -102,8 +103,9 @@ construct the set of particles, define their positions, radii and give them
 specific material properties. For all examples see [here](example/README.md).
 
 ## Acknowledgements and contributing
-This library was restructured from one written by [Artur L Gower](https://arturgower.github.io/) and Jonathan
-Deakin.
+This library was restructured from one written by 
+[Artur L Gower](https://arturgower.github.io/) and
+[Jonathan Deakin](http://jonathan.thedeakin.net).
 Please contribute, if nothing else, criticism is welcome.
 We are relatively new to Julia, and this is our first package, if anything is
 untoward or even non-standard, please let us know.
