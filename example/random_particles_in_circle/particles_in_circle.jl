@@ -51,7 +51,8 @@ plot(
     layout = (2,1)
 )
 
-pyplot(leg=false, size=(1.4*height,height))
+pyplot(leg=false, size=(1.8*height,height))
+
 ωs = collect(linspace(0.1,1.0,10))
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
