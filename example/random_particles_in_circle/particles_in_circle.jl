@@ -35,21 +35,20 @@ big_result = run(big_particle_simulation, x, ωs)
     topright = [big_radius, 2*big_radius]
     box = Rectangle(bottomleft, topright)
 
+using Plots
+height = 300
+pyplot(leg=false, size=(1.4*height,height))
+
 ω = 0.5
 plot(big_particle_simulation, ω; res=20, bounds = box)
 p1 = plot!(big_particle)
 
+savefig("plot_field_big.png")
+
 plot(simulation, ω; res=20, bounds = box)
 p2 = plot!(particles, linecolor = :green)
 
-using Plots
-height = 300
-pyplot(leg=false, size=(height,2.2*height))
-plot(
-    p1,
-    p2,
-    layout = (2,1)
-)
+savefig("plot_field.png")
 
 pyplot(leg=false, size=(1.8*height,height))
 

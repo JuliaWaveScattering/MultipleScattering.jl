@@ -36,19 +36,15 @@ big_particle_simulation = FrequencySimulation(host_medium, [big_particle], sourc
 
 ω = 0.5
 plot(big_particle_simulation, ω; res=20, bounds = box)
-p1 = plot!(big_particle)
+plot!(big_particle)
 
 plot(simulation, ω; res=20, bounds = box)
-p2 = plot!(particles, linecolor = :green)
+plot!(particles, linecolor = :green)
 
-using Plots
-plot(
-    p1,
-    p2,
-    layout = (2,1)
-)
 ```
-![The field comparison](plot_field_compare.png)
+Resulting in the figures:
+![The field with particles](plot_field.png)
+![The field with big particle](plot_field_big.png)
 
 If we compare the response measured at the listener `[-10., 0.]`, they should be very similar:
 ```julia
