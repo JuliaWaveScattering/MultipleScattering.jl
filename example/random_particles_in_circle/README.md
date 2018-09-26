@@ -43,6 +43,7 @@ plot!(particles, linecolor = :green)
 
 ```
 Resulting in the figures:
+
 ![The field with particles](plot_field.png)
 ![The field with big particle](plot_field_big.png)
 

@@ -25,9 +25,9 @@
 ## [Make a gif of harmonic scattering](plot/README.md)
 - Generate random particles in a circle
 
-## [StatisticalMoments](moments/README.md)
+<!-- ## [StatisticalMoments](moments/README.md)
 - How to extract statistical information from a batch of simulations, in this
-  case: mean, standard deviation, skew and kurtosis (also known as moments).
+  case: mean, standard deviation, skew and kurtosis (also known as moments). -->
 
 ## [Near surface backscattering](near_surface_backscattering/README.md)
 - A method to calculate the backscattering from an infinite halfspace.
