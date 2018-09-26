@@ -11,7 +11,7 @@ using MultipleScattering
 num_particles = 4
 radius = 1.0
 
-particle_medium = Acoustic(0.2, 0.1, 2)
+particle_medium = Acoustic(2; ρ=0.2, c=0.1) # 2D particle with density ρ = 0.2 and soundspeed c = 0.1
 particle_shape = Circle(radius)
 
 max_width = 20*radius
@@ -22,7 +22,7 @@ shape = Rectangle(bottomleft,topright)
 particles = random_particles(particle_medium, particle_shape; box_shape = shape, num_particles = num_particles)
 
 x = [-10.,0.]
-host_medium = Acoustic(1.0, 1.0, 2)
+host_medium = Acoustic(2; ρ=1.0, c=1.0)
 source =  plane_source(host_medium; position = x, direction = [1.0,0.])
 
 ωs = linspace(0.01,1.0,100)

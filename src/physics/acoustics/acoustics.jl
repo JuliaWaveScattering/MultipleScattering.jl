@@ -14,6 +14,7 @@ end
 # Constructor which supplies the dimension without explicitly mentioning type
 Acoustic(ρ::T,c::Complex{T},Dim::Integer) where {T} =  Acoustic{T,Dim}(ρ,c)
 Acoustic(ρ::T,c::T,Dim::Integer) where {T} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
+Acoustic(Dim::Integer; ρ::T = 0.0, c::T = 0.0) where {T} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
 
 # Type aliases for convenience
 TwoDimAcoustic{T} = Acoustic{T,2}

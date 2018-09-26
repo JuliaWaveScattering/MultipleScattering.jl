@@ -27,13 +27,13 @@ using MultipleScattering
 ### Run
 Define the properties of your host medium, for example
 ```julia
-host_medium = Acoustic(1.0, 1.0, 2)
+host_medium = Acoustic(2; ρ=1.0, c=1.0) # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
 ```
 an acoustic medium in 2D with density 1 and wavespeed 1.
 
 Next, define two dense, circular acoustic particles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
 ```julia
-particle_medium = Acoustic(10.0, 1.0, 2)
+particle_medium =  Acoustic(2; ρ=10.0, c=2.0) # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
 p1 = Particle(particle_medium, Circle([-2.0,2.0], 2.0))
 p2 = Particle(particle_medium, Circle([-2.0,-2.0], 0.5))
 particles = [p1,p2]
@@ -103,7 +103,7 @@ construct the set of particles, define their positions, radii and give them
 specific material properties. For all examples see [here](example/README.md).
 
 ## Acknowledgements and contributing
-This library was restructured from one written by 
+This library was restructured from one written by
 [Artur L Gower](https://arturgower.github.io/) and
 [Jonathan Deakin](http://jonathan.thedeakin.net).
 Please contribute, if nothing else, criticism is welcome.
