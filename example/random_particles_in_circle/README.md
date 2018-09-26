@@ -54,7 +54,9 @@ If we compare the response measured at the listener `[-10., 0.]`, they should be
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
 
-plot(result)
-plot!(big_result, title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
+plot(result, lab = "scattering from particles")
+plot!(big_result,
+    lab = "scattering from big particle",
+    title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
 ```
 ![The response comparison](plot_response_compare.png)
