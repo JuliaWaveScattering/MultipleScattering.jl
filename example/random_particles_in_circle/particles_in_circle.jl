@@ -43,11 +43,18 @@ plot(simulation, ω; res=20, bounds = box)
 p2 = plot!(particles, linecolor = :green)
 
 using Plots
+height = 300
+pyplot(leg=false, size=(height,2.2*height))
 plot(
     p1,
     p2,
     layout = (2,1)
 )
 
-plot(circle_simulation)
-plot!(big_particle_simulation,title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
+pyplot(leg=false, size=(1.4*height,height))
+ωs = collect(linspace(0.1,1.0,10))
+result = run(simulation, x, ωs)
+big_result = run(big_particle_simulation, x, ωs)
+
+plot(result)
+plot!(big_result, title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
