@@ -20,7 +20,7 @@ outer_radius(c::Circle) = c.radius
 volume(shape::Circle) = π * shape.radius^2
 
 import Base.issubset
-function issubset{T}(inner_circle::Circle{T}, outer_circle::Circle{T})
+function issubset(inner_circle::Circle{T}, outer_circle::Circle{T}) where T
     norm(origin(outer_circle) - origin(inner_circle)) <= outer_circle.radius - inner_circle.radius
 end
 
@@ -62,7 +62,7 @@ function bounding_rectangle(circle::Circle)
     return Rectangle(origin(circle), 2*circle.radius, 2*circle.radius)
 end
 
-function boundary_functions{T}(circle::Circle{T})
+function boundary_functions(circle::Circle{T}) where T
 
     function x(t)
         check_boundary_coord_range(t)

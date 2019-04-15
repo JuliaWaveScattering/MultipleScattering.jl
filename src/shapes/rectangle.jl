@@ -30,7 +30,7 @@ outer_radius(r::Rectangle) = sqrt((r.width/2)^2 + (r.height/2)^2)
 volume(rectangle::Rectangle) = rectangle.width*rectangle.height
 
 import Base.issubset
-function issubset{T}(inner_rect::Rectangle{T}, outer_rect::Rectangle{T})
+function issubset(inner_rect::Rectangle{T}, outer_rect::Rectangle{T}) where T
     all(topright(inner_rect) .<= topright(outer_rect)) &&
     all(bottomleft(inner_rect) .>= bottomleft(outer_rect))
 end

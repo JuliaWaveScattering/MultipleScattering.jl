@@ -21,7 +21,7 @@ name(shape::TimeOfFlight) = "Time of flight from planar source"
 # Let (x,y) be a point on the curved part of the shape, then
 # x - xr + sqrt((x - xr)^2 + (y - yr)^2) == T => x == T/2 + xr - (y - yr)^2/(2T)
 # then the area = 2*Integrate[ T/2 + xr - (y - yr)^2/(2T), {y,yr, yr + sqrt(T^2 + 2xr*T)}]
-function volume{T}(shape::TimeOfFlight{T})
+function volume(shape::TimeOfFlight{T}) where T <: AbstractFloat
     l_x = shape.listener_position[1]
     return 2/(3*shape.time)*(shape.time^2 + 2*l_x*shape.time)^(3//2)
 end
@@ -32,7 +32,7 @@ function issubset(circle::Circle, shape::TimeOfFlight)
     return (origin(circle)[1] > 0) && (l_to_p[1] + norm(l_to_p) <= (shape.time - 2circle.radius))
 end
 
-function bounding_rectangle{T}(shape::TimeOfFlight{T})
+function bounding_rectangle(shape::TimeOfFlight{T}) where T <: AbstractFloat
     t = shape.time
     l = shape.listener_position
     x_max = max(t/2 + l[1], zero(T))

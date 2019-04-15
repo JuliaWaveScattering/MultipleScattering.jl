@@ -20,7 +20,7 @@ outer_radius(sphere::Sphere) = sphere.radius
 volume(shape::Sphere) = 4//3 * π * shape.radius^3
 
 import Base.issubset
-function issubset{T}(inner_sphere::Sphere{T}, outer_sphere::Sphere{T})
+function issubset(inner_sphere::Sphere{T}, outer_sphere::Sphere{T}) where T
     norm(origin(outer_sphere) - origin(inner_sphere)) <= outer_sphere.radius - inner_sphere.radius
 end
 

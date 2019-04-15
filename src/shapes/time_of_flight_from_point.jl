@@ -25,7 +25,7 @@ function issubset(circle::Circle, shape::TimeOfFlightFromPoint)
     norm(origin(circle) - shape.listener_position) < (shape.time - 2circle.radius)
 end
 
-function bounding_rectangle{T}(shape::TimeOfFlightFromPoint{T})
+function bounding_rectangle(shape::TimeOfFlightFromPoint{T}) where T <: AbstractFloat
     box_height = 2sqrt(shape.time^2 - shape.listener_position[1]^2)
     box_width = max(shape.time + shape.listener_position[1], zero(T))
     return Rectangle(SVector(zero(T), -box_height/2), SVector(box_width, box_height/2))
