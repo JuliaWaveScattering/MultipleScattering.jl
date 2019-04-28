@@ -3,7 +3,7 @@ language: julia
 os:
   - linux
 julia:
-  - 0.6
+  - 1.0
   - nightly
 notifications:
   email: false
@@ -29,9 +29,9 @@ matrix:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("MultipleScattering"); Pkg.test("MultipleScattering"; coverage=true)'
 after_success:
   # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("MultipleScattering")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'using Pkg; cd(Pkg.dir("MultipleScattering")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("MultipleScattering")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'using Pkg; cd(Pkg.dir("MultipleScattering")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
   # Create and deploy documentation
-  - julia -e 'Pkg.add("Documenter")'
-  - julia -e 'cd(Pkg.dir("MultipleScattering")); include(joinpath("docs", "make.jl"))'
+  - julia -e 'using Pkg; Pkg.add("Documenter")'
+  - julia -e 'using Pkg; cd(Pkg.dir("MultipleScattering")); include(joinpath("docs", "make.jl"))'
