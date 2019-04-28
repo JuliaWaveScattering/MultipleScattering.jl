@@ -47,7 +47,7 @@ include("sphere.jl")
 function boundary_points(shape::Shape{T,Dim}, num_points::Int = 4; dr = zero(T)) where {Dim,T}
     x, y = boundary_functions(shape)
     v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape))
-    return [ v(τ) for τ in linspace(zero(T),one(T),num_points+1)[1:end-1] ]
+    return [ v(τ) for τ in LinRange(zero(T),one(T),num_points+1)[1:end-1] ]
 end
 
 "Returns rectangle which completely encloses the shapes"

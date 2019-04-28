@@ -8,12 +8,12 @@ function moments_example()
     volfrac = 0.01
     radius = 1.0
     num_particles = 10
-    k_arr = collect(linspace(0.01,1.0,100))
+    k_arr = collect(LinRange(0.01,1.0,100))
 
     # region to place the particles
     shape = Rectangle(volfrac, radius, num_particles)
     # Holder for our simulations
-    simulations = Vector{FrequencySimulation{Float64}}(10)
+    simulations = Vector{FrequencySimulation{Float64}}(undef,10)
     for i=1:10
         simulations[i] = FrequencySimulation(volfrac,radius,k_arr;seed=[0x7f5def91, 0x82255da3, 0xc5e461c7, UInt32(i)])
     end

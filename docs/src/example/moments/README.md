@@ -27,7 +27,7 @@ plot_shape = annotate!([(listener_position[1], listener_position[2] -2., "Receiv
 ## Calculate the moments of the scattered wave
 The code below chooses a random (uniform distribution) configuration of particles inside `shape` and calculates the received signal at `listener` for wavenumbers `k_arr`,
 ```julia
-k_arr = collect(linspace(0.01,1.0,100))
+k_arr = collect(LinRange(0.01,1.0,100))
 simulation = FrequencySimulation(volfrac,radius,k_arr; shape=shape, listener_positions = listener, seed = 1)
 plot(simulation)
 ```

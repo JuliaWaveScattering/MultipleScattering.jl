@@ -10,7 +10,7 @@ using MultipleScattering
 # which wavenumbers (k) to evaluate at
 volfrac = 0.01
 radius = 1.0
-k_arr = collect(linspace(0.01,1.0,100))
+k_arr = collect(LinRange(0.01,1.0,100))
 simulation = FrequencySimulation(volfrac,radius,k_arr)
 
 # We use the `Plots` package to plot both the response at the listener position

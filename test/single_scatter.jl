@@ -5,7 +5,7 @@ function single_scatter_test()
     xp = 10*rand(2);
     a1 = 10*rand();
     a2 = 10*rand();
-    k_arr = linspace(0.01,2.0,200)
+    k_arr = LinRange(0.01,2.0,200)
     M1 = Int(round(a1)); #largest hankelh1 order
     M2 = Int(round(a2)); #largest hankelh1 order
 
@@ -15,7 +15,7 @@ function single_scatter_test()
     # known solution for the scattering coefficients for a single scattering
     function exact_single_scatter(x, k, a, M)
         A(n,k) = -exp(im * k * (xp[1] - listener[1]) + im * n * pi / 2);
-        θ = atan2(x[2] - xp[2], x[1] - xp[1])
+        θ = atan(x[2] - xp[2], x[1] - xp[1])
         r = norm(x - xp)
         u = 0.0im
         for m = -M:M

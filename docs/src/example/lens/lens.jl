@@ -9,7 +9,7 @@ function run_lens(;
         innertime=34.0
     )
 
-    k_arr=collect(linspace(0.01,2.0,100))
+    k_arr=collect(LinRange(0.01,2.0,100))
 
     # Generate particles which are at most outertime away from our listener
     outershape = TimeOfFlight(listener_position,outertime)

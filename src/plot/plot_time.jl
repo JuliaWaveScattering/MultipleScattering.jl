@@ -10,7 +10,7 @@ end
 
 # "Plot the field for an array of time"
 # @recipe function plot{T}(TimeSimulation::TimeSimulation{T}; res=res)
-#     map(indices(TimeSimulation.time_arr)) do i
+#     map(axes(TimeSimulation.time_arr,1)) do i
 #         simulation = deepcopy(TimeSimulation)
 #         simulation.response = reshape(TimeSimulation.response[i,:],1,:)
 #         plot(simulation,TimeSimulation.time_arr[i]; res=res, build_field=false)
@@ -46,8 +46,8 @@ end
         end
 
         # For this we sample at the centre of each pixel
-        x_pixels = linspace(bounds.bottomleft[1], bounds.topright[1], xres+1)
-        y_pixels = linspace(bounds.bottomleft[2], bounds.topright[2], yres+1)
+        x_pixels = LinRange(bounds.bottomleft[1], bounds.topright[1], xres+1)
+        y_pixels = LinRange(bounds.bottomleft[2], bounds.topright[2], yres+1)
 
         # NOTE only plots the first time plot for now...
         response_mat = transpose(reshape(field_TimeSimulation.response[1,:], (xres+1, yres+1)))

@@ -11,7 +11,7 @@ function calculate_moments(results::AbstractVector{SimRes}, num_moments::Int; ap
     # Number of realisations
     R = length(results)
 
-    moments = [Matrix{T}(X,K) for i=1:num_moments]
+    moments = [Matrix{T}(undef,X,K) for i=1:num_moments]
 
     # For each wavenumber or timestep, calculate each moment up to num_moments
     for i = 1:X

@@ -25,12 +25,13 @@ export t_matrix, get_t_matrices
 export scattering_matrix
 
 import SpecialFunctions: besselj, hankelh1
+import Printf: @printf
 
 import StaticArrays: SVector
 
 import OffsetArrays: OffsetArray
 
-using RecipesBase
+using Random, LinearAlgebra, RecipesBase, Statistics
 using ProgressMeter
 
 # Generic machinery common to all physical models

@@ -23,7 +23,7 @@ source =  plane_source(host_medium; position = x, direction = [1.0,0.])
 simulation = FrequencySimulation(host_medium, particles, source)
 
 # define angular frequency range
-ωs = collect(linspace(0.1,1.0,10))
+ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
 
 big_particle = Particle(particle_medium, circle)
@@ -52,7 +52,7 @@ savefig("plot_field.png")
 
 pyplot(leg=false, size=(1.8*height,height))
 
-ωs = collect(linspace(0.1,1.0,10))
+ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
 

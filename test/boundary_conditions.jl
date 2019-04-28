@@ -6,7 +6,7 @@ function boundary_conditions_test(numberofparticles::Int=4, seed = 1 )
     particles = [Particle([0.,0.], rand(0.1:0.1:2.0), rand(0.2:0.1:10)+0.0im, rand(0.2:0.1:10)) for i=1:numberofparticles]
     shape = Rectangle(0.1, mapreduce(p->p.r,max,particles), numberofparticles)
     random_particles!(particles, shape; seed=seed) # choose random positions
-    k_arr = collect(linspace(0.01,1.0,10));
+    k_arr = collect(LinRange(0.01,1.0,10));
     simulation = FrequencySimulation(particles,k_arr);
     boundary_data= map(4:6) do m
       simulation.hankel_order = m
@@ -103,5 +103,5 @@ end
 
 "returns points on along a radial axes from the centre of the particle."
 function points_on_radial_axes{T}(p::Particle{T}, R=T(2)*p.r, θ=zero(T); numberofpoints::Int = 20)
-    return [p.x + r*[cos(θ),sin(θ)] for r in linspace(zero(T),R,numberofpoints+1)[2:end]]
+    return [p.x + r*[cos(θ),sin(θ)] for r in LinRange(zero(T),R,numberofpoints+1)[2:end]]
 end

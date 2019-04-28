@@ -37,7 +37,7 @@ include("boundary_data.jl")
 function basis_function(medium::Acoustic{T,2}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
-        θ = atan2(x[2],x[1])
+        θ = atan(x[2],x[1])
         k = ω/medium.c
         hankelh1(m,k*r)*exp(im*θ*m)
     end
@@ -47,7 +47,7 @@ end
 function basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
-        θ = atan2(x[2],x[1])
+        θ = atan(x[2],x[1])
         k = ω/p.medium.c
         besselj(m,k*r)*exp(im*θ*m)
     end

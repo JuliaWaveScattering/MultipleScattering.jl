@@ -15,7 +15,7 @@ include("plot_field.jl")
         @series begin
             label --> "$apply x=$(simres.x[x_ind])"
             xlabel --> xlab
-            (transpose(getfield(simres, 3)[ω_indices]), apply_field)
+            (getfield(simres, 3)[ω_indices], apply_field)
         end
     end
 end

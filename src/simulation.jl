@@ -26,7 +26,7 @@ end
 
 # A simulation with just sources is perfectly reasonable
 function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
-    FrequencySimulation{T,Dim,P}(medium, Vector{AbstractParticle{T,Dim}}(0), source)
+    FrequencySimulation{T,Dim,P}(medium, Vector{AbstractParticle{T,Dim}}(undef,0), source)
 end
 
 import Base.run
@@ -44,7 +44,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
 
     # Construct results object
     field_vec = reshape(map(f->SVector{FieldDim,Complex{T}}(f), field_vec), :, 1)
-    return FrequencySimulationResult{T,Dim,FieldDim}(field_vec, x_vec, RowVector([ω]))
+    return FrequencySimulationResult{T,Dim,FieldDim}(field_vec, x_vec, Vector([ω]))
 
 end
 
@@ -62,7 +62,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     if basis_order_vec == [-1]
         max_basis_order = max(basis_order,min_basis_order)
         basis_order_vec = Int.(round.(
-            linspace(min_basis_order, max_basis_order, length(ωs))
+            LinRange(min_basis_order, max_basis_order, length(ωs))
         ))
         basis_order_vec = basis_order_vec[sortperm(ωs)]
     end
@@ -89,12 +89,12 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     end
 
     if !result_in_time
-        FrequencySimulationResult(fields,x_vec,RowVector(ωs))
+        FrequencySimulationResult(fields,x_vec,Vector(ωs))
     else
         if isempty(ts) ts = ω_to_t(ωs) end
 
         # better to use the defaults of TimeSimulationResult's Constructor.
-        frequency_to_time(FrequencySimulationResult(fields,x_vec,RowVector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
+        frequency_to_time(FrequencySimulationResult(fields,x_vec,Vector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
     end
 end
 
@@ -145,7 +145,7 @@ Create forcing vector from source, forms the right hand side of matrix equation 
 """
 function forcing(source::Source{P,T}, particles::AbstractParticles, ω::T, Nh::Integer)::Vector{Complex{T}} where {P,T}
     mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
-    f = Vector{Complex{T}}(prod(size(mat)))
+    f = Vector{Complex{T}}(undef,prod(size(mat)))
     H = 2Nh + 1
     for i in eachindex(particles)
         f[((i-1)*H+1):(i*H)] .= mat[:,i]
@@ -174,7 +174,7 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
 
     # reshape and multiply by t-matrix to get the scattering coefficients
     a = reshape(a,2basis_order+1,length(sim.particles))
-    for i in indices(a,2)
+    for i in axes(a,2)
         a[:,i] = t_matrices[i] * a[:,i]
     end
     a
@@ -196,8 +196,8 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
         end
     end
     map(x_vec) do x
-        j = findfirst(p->x∈p, sim.particles)
-        if iszero(j)
+        j = findfirst(p -> x∈p, sim.particles)
+        if typeof(j) === Nothing
             sim.source.field(x,ω) + (isempty(sim.particles) ? zero(Complex{T}) : sum_basis(x))
         else
             p = sim.particles[j]

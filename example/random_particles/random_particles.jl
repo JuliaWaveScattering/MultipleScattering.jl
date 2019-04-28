@@ -25,7 +25,7 @@ x = [-10.,0.]
 host_medium = Acoustic(2; ρ=1.0, c=1.0)
 source =  plane_source(host_medium; position = x, direction = [1.0,0.])
 
-ωs = linspace(0.01,1.0,100)
+ωs = LinRange(0.01,1.0,100)
 
 simulation = FrequencySimulation(host_medium, particles, source)
 result = run(simulation, x, ωs)

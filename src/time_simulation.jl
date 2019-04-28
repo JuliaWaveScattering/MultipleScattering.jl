@@ -6,11 +6,11 @@ Assumes only positive frequencies and a real time signal
 function frequency_to_time(simres::FrequencySimulationResult{T,Dim,FieldDim};
         t_vec::AbstractVector{T} = ω_to_t(simres.ω),
         impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)), #GaussianImpulse(maximum(simres.ω)),
-        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, transpose(simres.ω)),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec,simres.ω),
         method = :dft
     ) where {Dim,FieldDim,T}
 
-    time_field = frequency_to_time(transpose(field(simres)), transpose(simres.ω), t_vec;
+    time_field = frequency_to_time(transpose(field(simres)), simres.ω, t_vec;
         discrete_impulse = discrete_impulse, method = method)
 
     return TimeSimulationResult(transpose(time_field), simres.x, t_vec)
@@ -23,11 +23,11 @@ Assumes only positive frequencies and a real time signal
 function time_to_frequency(timres::TimeSimulationResult{T,Dim,FieldDim};
         ω_vec = t_to_ω(timres.t),
         impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)), #GaussianImpulse(maximum(ω_vec)),
-        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, transpose(timres.t), ω_vec),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse,timres.t, ω_vec),
         method =:dft
     ) where {Dim,FieldDim,T}
 
-    freq_field = time_to_frequency(transpose(field(timres)), transpose(timres.t), ω_vec;
+    freq_field = time_to_frequency(transpose(field(timres)), timres.t, ω_vec;
         discrete_impulse = discrete_impulse, method = method)
 
     return FrequencySimulationResult(transpose(freq_field), deepcopy(timres.x), ω_vec)
@@ -46,7 +46,7 @@ function ω_to_t(ω_arr::AbstractArray{T}) where T <: AbstractFloat
         error("expected only non-negative values for the frequencies")
     end
     dω = ω_arr[2] - ω_arr[1]
-    t_arr = linspace(zero(T),2π/dω,2N+2)[1:(2N+1)]
+    t_arr = LinRange(zero(T),2π/dω,2N+2)[1:(2N+1)]
     return t_arr
 end
 
@@ -55,7 +55,7 @@ function t_to_ω(t_arr::AbstractArray{T}) where T <: AbstractFloat
     N = Int(round((length(t_arr)-one(T))/T(2)))
     maxt = t_arr[2] - t_arr[1] + t_arr[end] - t_arr[1] # subtract t_arr[1] in case t_arr[1] != zero(T)
     maxω = N*2π/maxt
-    ω_vec = linspace(zero(T),maxω,N+1)
+    ω_vec = LinRange(zero(T),maxω,N+1)
     return ω_vec
 end
 
@@ -99,7 +99,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
         fs
     end
     inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j), method)
-    u = [inverse_fourier_integral(t,j) for t in t_vec, j in indices(field_mat,2)]
+    u = [inverse_fourier_integral(t,j) for t in t_vec, j in axes(field_mat,2)]
 
     return real.(u)/pi # a constant 1/(2pi) appears due to our Fourier convention, but because we only use positive frequencies, and assume a real time signal, this becomes 1/pi.
 end
@@ -118,7 +118,7 @@ function time_to_frequency(field_mat::AbstractArray{T}, t_vec::AbstractVector{T}
     # to use an impulse below in time we would need to do a discrete convolution, which we decided against.
     f(ω::T, j::Int) = field_mat[:,j].*exp.((im*ω).*t_vec)
     fourier_integral = (ω,j) -> numerical_integral(t_vec, f(ω,j), method)
-    uhat = [discrete_impulse.in_freq[i]*fourier_integral(ω_vec[i],j) for i in eachindex(ω_vec), j in indices(field_mat,2)]
+    uhat = [discrete_impulse.in_freq[i]*fourier_integral(ω_vec[i],j) for i in eachindex(ω_vec), j in axes(field_mat,2)]
 
     return uhat
 end

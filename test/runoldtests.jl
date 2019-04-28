@@ -19,7 +19,7 @@ using Plots
         # Define everything as a Float32
         volfrac = 0.01f0
         radius = 1.0f0
-        k_arr = collect(linspace(0.01f0,1.0f0,100))
+        k_arr = collect(LinRange(0.01f0,1.0f0,100))
         simulation = FrequencySimulation(volfrac,radius,k_arr)
         @test typeof(simulation.response[1]) == Complex{Float32}
     end
@@ -40,7 +40,7 @@ using Plots
         # Just run it to see if we have any errors (yes thats a very low bar)
         volfrac = 0.01
         radius = 2.0
-        k_arr = collect(linspace(0.2,1.0,5))
+        k_arr = collect(LinRange(0.2,1.0,5))
         simulation = FrequencySimulation(volfrac,radius,k_arr)
 
         plot(simulation)

@@ -8,7 +8,7 @@ function scattering_matrix(medium::PhysicalProperties, particles::AbstractPartic
     # No particles means no scattering
     if P == 0
         # warn("You have computed the scattering matrix with no particles, are you sure something hasn't gone wrong?")
-        return Matrix{Complex{T}}(0,0)
+        return Matrix{Complex{T}}(undef,0,0)
     end
 
     # Number of hankel basis function at each particle
@@ -19,7 +19,7 @@ function scattering_matrix(medium::PhysicalProperties, particles::AbstractPartic
     # Faire: this could potentially return an MMatrix
     function S_block(j,l)
         if j == l
-            return eye(Complex{T}, H, H)
+            return Matrix{Complex{T}}(I, H, H)
         else
             x_lj = origin(particles[j]) .- origin(particles[l])
             # Faire: basis functions could be more efficient if it returned a vector
@@ -33,7 +33,7 @@ function scattering_matrix(medium::PhysicalProperties, particles::AbstractPartic
     S_blocks = [S_block(j,l) for j in 1:P, l in 1:P]
 
     # Reshape S_blocks into big matrix
-    S = Matrix{Complex{T}}(P*H, P*H)
+    S = Matrix{Complex{T}}(undef, P*H, P*H)
     for i in 1:P
         for j in 1:P
             S[((i-1)*H+1):(i*H), ((j-1)*H+1):(j*H)] .= S_blocks[i,j]

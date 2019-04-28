@@ -48,7 +48,7 @@ widths = [round(s.shape.topright[1]) for s in simulations]
 listener_position = simulations[1].listener_positions[:]
 times = 2*(widths .- listener_position[1]) # time if takes for an incident plane wave to reach the furthest particles and then return to the receiver
 
-# [Int.(round.(linspace(1,length(num_particles)-1,5))); length(num_particles)]
+# [Int.(round.(LinRange(1,length(num_particles)-1,5))); length(num_particles)]
 plot()
 for i in [1,3,6,9,12,13]
     plot!(time_simulations[i],label="$(num_particles[i]) particles"

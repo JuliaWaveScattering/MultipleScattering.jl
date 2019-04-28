@@ -56,7 +56,7 @@ concen = CapsuleParticle(
 )
 
 n=12
-ps = [Particle(Acoustic(0.1,0.1,2),Circle((4*cos(θ),4*sin(θ)),0.5)) for θ in linspace(0.,2pi,n+1)[1:n] ]
+ps = [Particle(Acoustic(0.1,0.1,2),Circle((4*cos(θ),4*sin(θ)),0.5)) for θ in LinRange(0.,2pi,n+1)[1:n] ]
 ps = [concen; ps]
 plot(ps)
 

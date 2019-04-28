@@ -16,7 +16,7 @@ function random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_s
 end
 
 function random_particles(particle_medium::P, particle_shape::S,
-    box_shape::Shape{T,Dim}, volfrac::AbstractFloat; seed=Base.Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
+    box_shape::Shape{T,Dim}, volfrac::AbstractFloat; seed = Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
 
     N = Int(round(volume(box_shape) / volume(particle_shape) * volfrac))
     return random_particles(particle_medium, particle_shape, box_shape, N; seed=seed)
@@ -24,9 +24,9 @@ end
 
 """
     random_particles(particle_medium, particle_shape, box_shape, volume_fraction::Number;
-        seed=Base.Random.make_seed())
+        seed=Random.make_seed())
     random_particles(particle_medium, particle_shape, box_shape, N::Integer;
-        seed=Base.Random.make_seed())
+        seed=Random.make_seed())
 
 Generate `N` random particles that fit inside `box_shape` (or fill with `volume_fraction`)
 
@@ -35,7 +35,7 @@ the bounding rectangle of `box_shape` and discards particle if it overlaps (base
 or does not lies completely in box box.
 """
 function random_particles(particle_medium::P, particle_shape::S,
-    box_shape::Shape{T,Dim}, N::Integer; seed=Base.Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
+    box_shape::Shape{T,Dim}, N::Integer; seed=Random.make_seed()) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
 
     # Check volume fraction is not impossible
     volfrac = N * volume(particle_shape) / volume(box_shape)
@@ -64,7 +64,7 @@ function random_particles(particle_medium::P, particle_shape::S,
     )
 
     # Allocate memory for particles
-    particles = Vector{Particle{T,Dim,P,S}}(N)
+    particles = Vector{Particle{T,Dim,P,S}}(undef,N)
 
     for n = 1:N
 
@@ -74,7 +74,7 @@ function random_particles(particle_medium::P, particle_shape::S,
 
             outside_box = true
             while outside_box
-                x = bounding_rect_size .* (1 .- 2.*rand(randgen,T,2)) .+ origin(bounding_rect)
+                x = bounding_rect_size .* (1 .- 2 .* rand(randgen,T,2)) .+ origin(bounding_rect)
                 particles[n] = Particle(particle_medium, congruent(particle_shape, x))
                 outside_box = !(particles[n] ⊆ box_shape)
             end

@@ -27,7 +27,7 @@ bottomleft = [-25.,-max_width]
 bounds = Rectangle(bottomleft,topright)
 result = run(simulation, bounds, [ω]; res=100)
 
-ts = linspace(0.,2pi/ω,30)
+ts = LinRange(0.,2pi/ω,30)
 
 maxc = round(10*maximum(real.(field(result))))/10
 minc = round(10*minimum(real.(field(result))))/10

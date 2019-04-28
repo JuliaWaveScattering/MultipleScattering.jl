@@ -90,7 +90,7 @@ plot(time_result)
 ![Plot real part of acoustic field](example/intro/plot_time_result.png)
 Or for a Gaussian impulse in time:
 ```julia
-t_vec = linspace(0.,700.,400)
+t_vec = LinRange(0.,700.,400)
 time_result = frequency_to_time(result; t_vec = t_vec, impulse = GaussianImpulse(max_ω))
 plot(time_result)
 ```

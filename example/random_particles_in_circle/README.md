@@ -50,7 +50,7 @@ Resulting in the figures:
 If we compare the response measured at the listener `[-10., 0.]`, they should be very similar:
 ```julia
 # define angular frequency range
-ωs = collect(linspace(0.1,1.0,10))
+ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
 

@@ -5,7 +5,7 @@ function besselj_field(source::Source{Acoustic{T,2},T}, medium::Acoustic{T,2}, c
     centre = SVector{2,T}(centre)
 
     return (x,ω) -> sum(
-        source.coef(n,centre,ω)*besselj(n,ω/medium.c*norm(x - centre))*exp(im*n*atan2(x[2] - centre[2],x[1] - centre[1]))
+        source.coef(n,centre,ω)*besselj(n,ω/medium.c*norm(x - centre))*exp(im*n*atan(x[2] - centre[2],x[1] - centre[1]))
     for n = -basis_order:basis_order)
 
 end
@@ -15,7 +15,7 @@ end
 
 Create 2D [`Acoustic`](@ref) point [`Source`](@ref) (zeroth Hankel function of first type)
 """
-function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T}
+function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
@@ -25,7 +25,7 @@ function point_source{T}(medium::Acoustic{T,2}, source_position, amplitude::Unio
     function source_coef(n,centre,ω)
         k = ω/medium.c
         r = norm(centre - source_position)
-        θ = atan2(centre[2]-source_position[2], centre[1]-source_position[1])
+        θ = atan(centre[2]-source_position[2], centre[1]-source_position[1])
         # using Graf's addition theorem
         return (amplitude*im)/4 * hankelh1(-n,k*r) * exp(-im*n*θ)
     end
@@ -61,7 +61,7 @@ function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T
 
     function source_coef(n,centre,ω)
         # Jacobi-Anger expansion
-        θ = atan2(direction[2],direction[1])
+        θ = atan(direction[2],direction[1])
         source_field(centre,ω) * exp(im * n *(T(pi)/2 -  θ))
     end
 

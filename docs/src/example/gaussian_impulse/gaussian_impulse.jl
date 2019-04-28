@@ -3,7 +3,7 @@ using Plots
 pyplot()
 
 # A very sharp sinc function (dicrete delta)
-w_arr = collect(linspace(0.0,1.0,1000))
+w_arr = collect(LinRange(0.0,1.0,1000))
 x0 = 10.;
 t_arr = 4.:0.01:22;
 fs = reshape([exp(im*w*x0) for w in w_arr],length(w_arr),1)

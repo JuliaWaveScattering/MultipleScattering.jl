@@ -1,7 +1,7 @@
 # Plot the result in space (across all x) for a specific angular frequency
 @recipe function plot(simres::FrequencySimulationResult, ω::AbstractFloat;
         time = 0.0, # does not except "t" as name of variable..
-        x_indices = indices(simres.x,1),
+        x_indices = axes(simres.x,1),
         ω_index = findmin(abs.(getfield(simres, 3) .- ω))[2],
         field_apply = real, seriestype = :surface)
 
@@ -35,7 +35,7 @@ end
 
 # Plot the result in space (across all x) for a specific angular frequency
 @recipe function plot(timres::TimeSimulationResult, t::AbstractFloat;
-        x_indices = indices(timres.x,1),
+        x_indices = axes(timres.x,1),
         t_index = findmin(abs.(getfield(timres, 3) .- t))[2],
         field_apply = real, seriestype = :surface)
 

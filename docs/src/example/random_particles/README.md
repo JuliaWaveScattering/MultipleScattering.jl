@@ -15,7 +15,7 @@ which wavenumbers (k) to evaluate at
 ```julia
 volfrac = 0.01
 radius = 1.0
-k_arr = collect(linspace(0.01,1.0,100))
+k_arr = collect(LinRange(0.01,1.0,100))
 simulation = FrequencySimulation(volfrac,radius,k_arr)
 ```
 

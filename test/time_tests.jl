@@ -1,7 +1,4 @@
-import Base.Test: @testset, @test, @test_throws
 import StaticArrays: SVector
-
-using MultipleScattering
 
 @testset "Time Result" begin
     sound_p = Acoustic(.1, 0.1 + 0.0im,2)
@@ -12,7 +9,7 @@ using MultipleScattering
     sim = FrequencySimulation(sound_sim, particles, source)
 
     ω_vec = 0.0:0.01:5.01
-    @test ω_vec == t_to_ω(ω_to_t(ω_vec)) # only exact for length(ω_vec) = even number
+    @test LinRange(ω_vec) == t_to_ω(ω_to_t(ω_vec)) # only exact for length(ω_vec) = even number
 
     # invertability of dft
         x_vec = [ [0.0,0.0], [3.0,0.0]]
@@ -49,7 +46,7 @@ using MultipleScattering
         timres1 = frequency_to_time(simres; t_vec = t_vec, method=:trapezoidal, impulse = GaussianImpulse(maximum(simres.ω)))
         timres2 = frequency_to_time(simres; t_vec = t_vec, method=:dft, impulse = GaussianImpulse(maximum(simres.ω)))
         @test norm(field(timres1) - field(timres2))/norm(field(timres1)) < 2e-5
-        # plot(timres1.t', [field(timres1)[1,:]-field(timres2)[1,:]])
+        # plot(timres1.t, [field(timres1)[1,:]-field(timres2)[1,:]])
 end
 
 @testset "Time shift signal" begin

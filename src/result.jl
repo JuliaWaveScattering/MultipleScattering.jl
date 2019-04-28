@@ -11,14 +11,14 @@ struct FrequencySimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationRes
     "Positions"
     x::Vector{SVector{Dim,T}}
     "Angular frequencies"
-    ω::RowVector{T}
+    ω::Vector{T}
 end
 
 function FrequencySimulationResult(field::Union{Matrix{Complex{T}}, Matrix{AbstractVector{Complex{T}}}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T}
 
     field = [SVector(d...) for d in field]
     FieldDim = size(field[1],1)
-    FrequencySimulationResult{T,Dim,FieldDim}(field, Vector(x), RowVector(ω))
+    FrequencySimulationResult{T,Dim,FieldDim}(field, Vector(x), Vector(ω))
 end
 
 """
@@ -30,14 +30,14 @@ struct TimeSimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T
     "Positions"
     x::Vector{SVector{Dim,T}}
     "Times"
-    t::RowVector{T}
+    t::Vector{T}
 end
 
 function TimeSimulationResult(time_field::Union{Matrix{T},Matrix{AbstractVector{T}}}, x::AbstractVector{SVector{Dim,T}}, t::AbstractVector{T}) where {Dim,T}
 
     time_field = [SVector(d...) for d in time_field]
     FieldDim = size(time_field[1],1)
-    TimeSimulationResult{T,Dim,FieldDim}(time_field, Vector(x), RowVector(t))
+    TimeSimulationResult{T,Dim,FieldDim}(time_field, Vector(x), Vector(t))
 end
 
 """

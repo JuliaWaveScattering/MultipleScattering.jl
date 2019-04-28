@@ -8,7 +8,7 @@ a2_host = Acoustic(1.0,1.0 + 0.0im,2)
 # Create a finite transducer by adding point sources
 n = 100
 amp = 10.0/n
-transducer = sum(point_source(a2_host, [-2.,y], amp) for y in linspace(-2.,2.,n))
+transducer = sum(point_source(a2_host, [-2.,y], amp) for y in LinRange(-2.,2.,n))
 sim = FrequencySimulation(a2_host, transducer)
 
 using Plots; gr()
@@ -22,7 +22,7 @@ timres = frequency_to_time(simres);
 
 plot(timres, 10., seriestype=:contour)
 
-ts = filter(t -> t<16, transpose(timres.t))
+ts = filter(t -> t<16, timres.t)
 anim = @animate for t in ts
     plot(timres,t,seriestype=:contour, clim=(0.,1.25), c=:balance)
 end

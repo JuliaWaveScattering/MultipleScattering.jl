@@ -21,7 +21,7 @@ function boundary_data(shape::Shape{T,2}, inside_medium::Acoustic{T,2}, outside_
     in_pressure = run(sim, inside_points, ωs; kws...)
 
     fields = (in2_results.field - in1_results.field)/(dr * in_m.ρ)
-    in_displace = FrequencySimulationResult(fields, inside_points, RowVector(ωs))
+    in_displace = FrequencySimulationResult(fields, inside_points, Vector(ωs))
 
     # results from just outside particles
     out1_results = run(sim, outside1_points, ωs; kws...)
@@ -29,7 +29,7 @@ function boundary_data(shape::Shape{T,2}, inside_medium::Acoustic{T,2}, outside_
     out_pressure  = run(sim, outside_points, ωs; kws...)
 
     fields = (out2_results.field - out1_results.field)/(dr * out_m.ρ)
-    out_displace = FrequencySimulationResult(fields, outside_points, RowVector(ωs))
+    out_displace = FrequencySimulationResult(fields, outside_points, Vector(ωs))
 
     return ([in_pressure, out_pressure], [in_displace, out_displace])
 end
