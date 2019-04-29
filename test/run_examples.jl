@@ -4,3 +4,9 @@ for str in examplestoconvert
     include(string("../example/",str,"/",str,".jl"))
     @test true
 end
+
+# auto generate their README.md to guarantee the code in these READMEs works.
+
+include("../example/generate-READMEs.jl")
+
+@test true

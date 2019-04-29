@@ -2,18 +2,18 @@
 
 examplestoconvert = ["random_particles", "particles_in_circle"]
 
-pairs = map(examplestoconvert) do str
-    fs = filter(s -> split(s, ".")[end] == "jl", readdir(str))
+ps = map(examplestoconvert) do str
+    fs = filter(s -> split(s, ".")[end] == "jl", readdir(string("../example/",str)))
     if length(fs) > 0
         [str, fs[1]]
     else
         String[]
     end
 end
-filter!(p -> p != String[], pairs)
+filter!(p -> p != String[], ps)
 
 # This code below writes the README.md
-for p in pairs
+for p in ps
     s1 = string("../example/",p[1],"/",p[2])
     str_arr = split(read(open(s1,"r"), String), "\n")
 

@@ -22,9 +22,9 @@ particle_shape = Circle(radius)
 max_width = 20*radius
 bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
-shape = Rectangle(bottomleft,topright)
+box_shape = Rectangle(bottomleft,topright)
 
-particles = random_particles(particle_medium, particle_shape; box_shape = shape, num_particles = num_particles)
+particles = random_particles(particle_medium, particle_shape; box_shape = box_shape, num_particles = num_particles)
 ```
 
 Now choose the receiver position `x`, the host medium, set plane wave as a source wave, and choose the angular frequency range `ωs`
@@ -49,14 +49,14 @@ We use the `Plots` package to plot both the response at the listener position x
 ```
 ![Plot of response against wavenumber](plot_result.png)
 
-And plot the whole field inside the shape `bounds` for a specific wavenumber (`ω=0.8`)
+And plot the whole field inside the box_shape `bounds` for a specific wavenumber (`ω=0.8`)
 ```julia
     bottomleft = [-15.,-max_width]
     topright = [max_width,max_width]
     bounds = Rectangle(bottomleft,topright)
 
     plot(simulation,0.8; res=80, bounds=bounds)
-    plot!(shape, linecolor=:red)
+    plot!(box_shape, linecolor=:red)
     plot!(simulation)
     scatter!([x[1]],[x[2]], lab="receiver")
 
