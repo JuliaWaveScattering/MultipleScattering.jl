@@ -1,6 +1,6 @@
 name = "MultipleScattering"
 uuid = "80a8ab25-5750-5d93-a6d7-4adc97cdd5fb"
-author = ["Artur L. Gower <arturgower@gmail.com>"]
+author = ["Artur L. Gower arturgower.github.io", "Jonathan Deakin"]
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -13,8 +13,12 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
+[compat]
+julia = "^1"
+
 [extras]
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "Plots"]
