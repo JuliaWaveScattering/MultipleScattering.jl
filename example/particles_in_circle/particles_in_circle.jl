@@ -57,7 +57,7 @@ plot!(particles, linecolor = :green)
 
 # If we compare the response measured at the listener `[-10., 0.]`, they should be very similar:
 # ```julia
-pyplot(leg=false, size=(1.8*height,height))
+gr(leg=false, size=(1.8*height,height))
 # define angular frequency range
 ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
