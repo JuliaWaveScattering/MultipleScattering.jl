@@ -17,3 +17,5 @@ include("end_to_end_tests.jl")
 include("time_tests.jl")
 
 include("moments_tests.jl")
+
+include("run_examples.jl")

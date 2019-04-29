@@ -1,6 +1,6 @@
 # find julia files to be converted into README.md
 
-examplestoconvert = ["random_particles", "random_particles_in_circle"]
+examplestoconvert = ["random_particles", "particles_in_circle"]
 
 pairs = map(examplestoconvert) do str
     fs = filter(s -> split(s, ".")[end] == "jl", readdir(str))

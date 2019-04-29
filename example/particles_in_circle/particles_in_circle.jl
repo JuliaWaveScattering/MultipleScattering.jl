@@ -35,7 +35,8 @@ big_particle_simulation = FrequencySimulation(host_medium, [big_particle], sourc
     box = Rectangle(bottomleft, topright)
 
 using Plots
-#height = 300
+height = 300
+gr(size=(1.4*height,height))
 #pyplot(leg=false, size=(1.4*height,height))
 
 ω = 0.5
@@ -56,7 +57,7 @@ plot!(particles, linecolor = :green)
 
 # If we compare the response measured at the listener `[-10., 0.]`, they should be very similar:
 # ```julia
-#pyplot(leg=false, size=(1.8*height,height))
+pyplot(leg=false, size=(1.8*height,height))
 # define angular frequency range
 ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
