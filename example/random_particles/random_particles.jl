@@ -1,13 +1,18 @@
+# # Simple random particles example
+
 # If it isn't installed, clone it from github
+# ```julia
 try using MultipleScattering
 catch
     Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
 end
 
 using MultipleScattering
+# ```
 
-# Define the fraction of the volume the particles will take up, their radius and
-# which wavenumbers (k) to evaluate at
+# ## Define particle properties
+# Define the volume fraction of particles, the region to place the particles, and their radius
+# ```julia
 num_particles = 4
 radius = 1.0
 
@@ -20,7 +25,10 @@ topright = [max_width,max_width]
 shape = Rectangle(bottomleft,topright)
 
 particles = random_particles(particle_medium, particle_shape; box_shape = shape, num_particles = num_particles)
+# ```
 
+# Now choose the receiver position `x`, the host medium, set plane wave as a source wave, and choose the angular frequency range `ωs`
+# ```julia
 x = [-10.,0.]
 host_medium = Acoustic(2; ρ=1.0, c=1.0)
 source =  plane_source(host_medium; position = x, direction = [1.0,0.])
@@ -29,18 +37,20 @@ source =  plane_source(host_medium; position = x, direction = [1.0,0.])
 
 simulation = FrequencySimulation(host_medium, particles, source)
 result = run(simulation, x, ωs)
+# ```
 
-# We use the `Plots` package to plot both the response at the listener position
-# and the whole field for a specific wavenumber (k=0.8)
-using Plots; pyplot(linewidth = 2.0)
+# We use the `Plots` package to plot both the response at the listener position x
 
-# plot result
-    plot(result, apply=real)
+# ```julia
+    using Plots #; pyplot(linewidth = 2.0) # uncoment for slightly nicer plots
+    plot(result, apply=real) # plot result
     plot!(result, apply=imag)
+    #savefig("plot_result.png")
+# ```
+# ![Plot of response against wavenumber](plot_result.png)
 
-savefig("plot_result.png")
-
-# plot whole field for one frequence
+# And plot the whole field inside the shape `bounds` for a specific wavenumber (`ω=0.8`)
+# ```julia
     bottomleft = [-15.,-max_width]
     topright = [max_width,max_width]
     bounds = Rectangle(bottomleft,topright)
@@ -50,6 +60,8 @@ savefig("plot_result.png")
     plot!(simulation)
     scatter!([x[1]],[x[2]], lab="receiver")
 
-savefig("plot_field.png")
+    #savefig("plot_field.png")
+# ```
+# ![Plot real part of acoustic field](plot_field.png)
 # ## Things to try
 # - Try changing the volume fraction, particle radius and ω values we evaluate

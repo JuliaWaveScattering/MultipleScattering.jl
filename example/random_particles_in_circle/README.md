@@ -1,12 +1,12 @@
 # Random particles in a circle
-
+#
 The code [particles_in_circle.jl](particles_in_circle.jl) compares the scattered wave from one big circle, with the scattered wave from a circle filled with small particles.
-
+#
 ```julia
 using MultipleScattering
 
-# You can also pick your own shape, and generate random particles inside it
-# with a certain radius and volume fraction
+#You can also pick your own shape, an generate random particles inside it
+#with a certain radius ands volume fraction
 radius = 0.3
 volfrac = 0.45
 centre = [0.,0.]
@@ -17,7 +17,7 @@ particle_shape = Circle(radius)
 
 circle = Circle(centre, big_radius)
 
-particles = random_particles(particle_medium, particle_shape; box_shape = circle, volume_fraction = volfrac)
+particles = random_particles(particle_medium, particle_shape; box_shape = circle, volume_fraction = volfrac, seed=1)
 
 x = [-10.,0.] # position to receive the reflected wave
 host_medium = Acoustic(2; ρ=1.0, c=1.0)
@@ -29,27 +29,35 @@ The particles chosen are impenetrable, i.e. the wave is 100\% reflected. So this
 big_particle = Particle(particle_medium, circle)
 big_particle_simulation = FrequencySimulation(host_medium, [big_particle], source)
 
-# define a bounding box for plot
+#define a bounding box for plot
     bottomleft = [-10, -2*big_radius]
     topright = [big_radius, 2*big_radius]
     box = Rectangle(bottomleft, topright)
 
+using Plots
+#height = 300
+#pyplot(leg=false, size=(1.4*height,height))
+
 ω = 0.5
-plot(big_particle_simulation, ω; res=20, bounds = box)
+plot(big_particle_simulation, ω; res=15, bounds = box);
 plot!(big_particle)
 
-plot(simulation, ω; res=20, bounds = box)
+#savefig("plot_field_big.png")
+
+plot(simulation, ω; res=15, bounds = box);
 plot!(particles, linecolor = :green)
 
+#savefig("plot_field.png")
 ```
 Resulting in the figures:
-
-![The field with particles](plot_field.png)
+#
 ![The field with big particle](plot_field_big.png)
+![The field with particles](plot_field.png)
 
 If we compare the response measured at the listener `[-10., 0.]`, they should be very similar:
 ```julia
-# define angular frequency range
+#pyplot(leg=false, size=(1.8*height,height))
+define angular frequency range
 ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
@@ -60,3 +68,4 @@ plot!(big_result,
     title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
 ```
 ![The response comparison](plot_response_compare.png)
+

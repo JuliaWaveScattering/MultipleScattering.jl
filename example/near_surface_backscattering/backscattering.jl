@@ -1,5 +1,11 @@
+# # Near-surface backscattering
+#
+# Near-surface backscattering is a method of accurately calculating the backscattering from an infinite halfspace. For just the code see [backscattering.jl](backscattering.jl)
+# First, let us see why it is difficult to approximate the scattering from a halfspace filled with particles. That is, let us find out how many particles are required before the backscattering converges.
+#
+# ## Generate a large material filled with particles.
+#
 using MultipleScattering
-using JLD
 using Plots
 pyplot(linewidth=2)
 
@@ -16,8 +22,9 @@ bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
 
 shape = Rectangle(bottomleft,topright)
-particles = random_particles(particle_medium, particle_shape; box_shape = shape, volume_fraction = volfrac)
+particles = random_particles(particle_medium, particle_shape; box_shape = shape, volume_fraction = volfrac, seed = 1)
 
+# We send an incoming harmonic plane wave and receive the backscattering at `x`:
 x = [-10.,0.]
 source =  plane_source(host_medium; position = x,
         direction = [1.0,0.],
@@ -28,12 +35,13 @@ scatter!([x[1]],[x[2]], lab="")
 annotate!([(x[1], x[2] -max_width/10., "Receiver")])
 plot!(shape, linecolor = :red)
 
-savefig("big_box.png")
-
+# ## Calculate backscattering for different quantity of particles
+# We will shave off particles on the right of this group of particles (above), and then calculate the backscattered waves for a range of angular frequencies `ωs`.
 ωs = collect(0.01:0.01:1.)
 widths = 10.:5.:max_width
 num_particles = zeros(length(widths))
 
+#This part below my take a while!
 results = map(eachindex(widths)) do i
     bottomleft = [0.,-widths[i]]
     topright = [widths[i],widths[i]]
@@ -46,10 +54,10 @@ results = map(eachindex(widths)) do i
     run(simulation, x, ωs)
 end
 
-save("results.jld", "$(typeof(results))",results)
-save("num_particles.jld", "$(typeof(num_particles))",num_particles)
+#save("results.jld", "$(typeof(results))",results)
+#save("num_particles.jld", "$(typeof(num_particles))",num_particles)
 
-# To load results uncomment
+#To load results uncomment
     # results = first(values(load("results.jld")))
     # num_particles = first(values(load("num_particles.jld")))
 
