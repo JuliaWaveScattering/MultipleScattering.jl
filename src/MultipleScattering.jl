@@ -14,13 +14,17 @@ export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule,
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
 export Source, besselj_field, self_test, point_source, plane_source,
        (*), (+)
+
 export Simulation, run, TimeSimulation, forcing, field
 export SimulationResult, FrequencySimulation, FrequencySimulationResult, size
+
 export ContinuousImpulse, TimeDiracImpulse, FreqDiracImpulse, GaussianImpulse
 export DiscreteImpulse, DiscreteTimeDiracImpulse, DiscreteGaussianImpulse
 export TimeSimulationResult, frequency_to_time, time_to_frequency
 export ω_to_t, t_to_ω, firstnonzero
+
 export random_particles, calculate_moments
+
 export t_matrix, get_t_matrices
 export scattering_matrix
 
@@ -28,7 +32,6 @@ import SpecialFunctions: besselj, hankelh1
 import Printf: @printf
 
 import StaticArrays: SVector
-
 import OffsetArrays: OffsetArray
 
 using Random, LinearAlgebra, RecipesBase, Statistics

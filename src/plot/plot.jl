@@ -4,7 +4,7 @@ include("plot_field.jl")
 # Plot the result across angular frequency for a specific position (x)
 @recipe function plot(simres::SimulationResult;
         x = simres.x,
-        x_indices = [findmin(norm(z - y) for z in simres.x)[2] for y in x],
+        x_indices = [findmin([norm(z - y) for z in simres.x])[2] for y in x],
         ω_indices = Colon(), apply = real)
 
     for x_ind in x_indices

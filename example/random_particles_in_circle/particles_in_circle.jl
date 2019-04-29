@@ -12,7 +12,9 @@ particle_shape = Circle(radius)
 
 circle = Circle(centre, big_radius)
 
-particles = random_particles(particle_medium, particle_shape; box_shape = circle, volume_fraction = volfrac)
+particles = random_particles(particle_medium, particle_shape; box_shape = circle, volume_fraction = volfrac, seed=1)
+
+using Plots
 
 plot(particles, linecolor = :green)
 plot!(circle, color=:red)
@@ -27,7 +29,7 @@ simulation = FrequencySimulation(host_medium, particles, source)
 result = run(simulation, x, ωs)
 
 big_particle = Particle(particle_medium, circle)
-big_particle_simulation = FrequencySimulation(host_medium, particles, source)
+big_particle_simulation = FrequencySimulation(host_medium, [big_particle], source)
 big_result = run(big_particle_simulation, x, ωs)
 
 # define a bounding box for plot
