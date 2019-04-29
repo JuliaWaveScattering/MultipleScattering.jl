@@ -55,7 +55,7 @@ end
     # suppose we measure in time the signal
     t = 0.1:0.01:30.
     t0 = 5.
-    impulse_func(t) = exp( -10000.*(t - t0)^4)
+    impulse_func(t) = exp( -10000.0 .* (t - t0)^4)
     measured_response = impulse_func.(t)
     plot(t, measured_response)
 
@@ -65,7 +65,7 @@ end
     # at the point
     source_x = [-3.0,2.0]
     source_direction = [1.0,1.0]
-    x_measure =  source_x + 4.*source_direction
+    x_measure =  source_x + 4.0*source_direction
 
     # then can we reverse-engineer what plane wave source (of the form below) would create this measured_response
     travel_time = norm(x_measure - source_x)/real(sound_sim.c)

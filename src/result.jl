@@ -14,7 +14,7 @@ struct FrequencySimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationRes
     ω::Vector{T}
 end
 
-function FrequencySimulationResult(field::Union{Matrix{Complex{T}}, Matrix{AbstractVector{Complex{T}}}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T}
+function FrequencySimulationResult(field::Union{AbstractArray{Complex{T},2}, AbstractArray{AbstractVector{Complex{T}},2}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T}
 
     field = [SVector(d...) for d in field]
     FieldDim = size(field[1],1)
@@ -33,7 +33,7 @@ struct TimeSimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T
     t::Vector{T}
 end
 
-function TimeSimulationResult(time_field::Union{Matrix{T},Matrix{AbstractVector{T}}}, x::AbstractVector{SVector{Dim,T}}, t::AbstractVector{T}) where {Dim,T}
+function TimeSimulationResult(time_field::Union{AbstractArray{T,2},AbstractArray{AbstractVector{T},2}}, x::AbstractVector{SVector{Dim,T}}, t::AbstractVector{T}) where {Dim,T}
 
     time_field = [SVector(d...) for d in time_field]
     FieldDim = size(time_field[1],1)
