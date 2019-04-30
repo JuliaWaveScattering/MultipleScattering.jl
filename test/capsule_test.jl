@@ -22,7 +22,7 @@ ps = [CapsuleParticle(concen_particles1...)]
 source = plane_source(medium, SVector(-3.0,0.0), SVector(1.0,0.0), 1.)
 sim = FrequencySimulation(medium, ps, source)
 
-using Plots; pyplot()
+using Plots; #pyplot()
 
 ω  = 1.4
 bounds = Rectangle([-3.,-2.],[3.,2.]);

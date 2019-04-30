@@ -17,7 +17,7 @@ bounds = Rectangle([-0.,-1.], [10.,1.])
 simres = run(sim, bounds, ωs)
 timres = run(sim, bounds, ωs; ts = [30.], result_in_time=true)
 
-using Plots ; pyplot()
+using Plots ; #pyplot()
 
 plot(sim,ω)
 plot!(sim)
@@ -41,6 +41,6 @@ sound_sim = Acoustic(1., 0.5 + 0.0im,2)
 sim = FrequencySimulation(sound_sim, particles, source)
 
 ω = 1.
-pyplot()
+# pyplot()
 plot(sim,ω;res=60)
 plot!(sim)
