@@ -15,19 +15,24 @@ end
 
 Create 2D [`Acoustic`](@ref) point [`Source`](@ref) (zeroth Hankel function of first type)
 """
-function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where T <: AbstractFloat
+function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::Source{Acoustic{T,2},T} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
 
-    source_field(x,ω) = (amplitude*im)/4*hankelh1(0,ω/medium.c*norm(x-source_position))
+    if typeof(amplitude) <: Number
+        amp(ω) = amplitude
+    else
+        amp = amplitude
+    end
+    source_field(x,ω) = (amp(ω)*im)/4*hankelh1(0,ω/medium.c*norm(x-source_position))
 
     function source_coef(n,centre,ω)
         k = ω/medium.c
         r = norm(centre - source_position)
         θ = atan(centre[2]-source_position[2], centre[1]-source_position[1])
         # using Graf's addition theorem
-        return (amplitude*im)/4 * hankelh1(-n,k*r) * exp(-im*n*θ)
+        return (amp(ω)*im)/4 * hankelh1(-n,k*r) * exp(-im*n*θ)
     end
 
     return Source{Acoustic{T,2},T}(source_field, source_coef)
@@ -35,7 +40,7 @@ end
 
 function plane_source(medium::Acoustic{T,2}; position = SVector(zero(T),zero(T)),
         direction = SVector(one(T),zero(T)),
-        amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where {T}
+        amplitude::Union{T,Complex{T},Function} = one(T))::Source{Acoustic{T,2},T} where {T}
 
     plane_source(medium, position, direction, amplitude)
 end
@@ -57,7 +62,13 @@ function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T
         throw(DomainError("Source direction must not have zero magnitude."))
     end
 
-    source_field(x,ω) = amplitude*exp(im*ω/medium.c*dot(x-position, direction))
+    if typeof(amplitude) <: Number
+        amp(ω) = amplitude
+    else
+        amp = amplitude
+    end
+
+    source_field(x,ω) = amp(ω)*exp(im*ω/medium.c*dot(x-position, direction))
 
     function source_coef(n,centre,ω)
         # Jacobi-Anger expansion
