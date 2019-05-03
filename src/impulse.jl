@@ -123,7 +123,7 @@ Dirac Delta function of unit area in the frequency domain, centred at ω=ω0.
 Warning: the representation of this in frequency may lead to unexpected behaviour.
 """
 function FreqDiracImpulse(ω0::T, dω::T = one(T)) where {T<:AbstractFloat}
-    in_time(t::T) = exp(-im*ω0*t) / (T(2)*π) 
+    in_time(t::T) = exp(-im*ω0*t) / (T(2)*π)
     in_freq(ω::T) = (ω==ω0) ? T(Inf) : zero(ω)
     ContinuousImpulse{T}(in_time, in_freq, false)
 end
@@ -131,13 +131,14 @@ end
 """
 Returns a gaussian impulse function in the time domain.
 """
-function GaussianImpulse(maxω::T, a::T = T(2.48)/maxω^2) where {T<:AbstractFloat}
-    in_time(t::T) = exp(-t^2/(4a))
-    in_freq(ω::T) = exp(-a*ω^2)*(2sqrt(a*pi))
+function GaussianImpulse(maxω::T, a::T = T(2.48)/maxω^2; time_shift = zero(T)) where {T<:AbstractFloat}
+    in_time(t::T) = exp(-(t-time_shift)^2/(4a))
+    in_freq(ω::T) = exp(-a*ω^2)*exp(im*ω*time_shift)*(2sqrt(a*pi))
     ContinuousImpulse{T}(in_time, in_freq)
 end
 
-function DiscreteGaussianImpulse(t_vec::AbstractArray{T}, ω_vec::AbstractArray{T} = t_to_ω(t_vec); a::T = T(2.48)/maximum(ω_vec)^2) where {T}
+function DiscreteGaussianImpulse(t_vec::AbstractArray{T}, ω_vec::AbstractArray{T} = t_to_ω(t_vec);
+        a::T = T(2.48)/maximum(ω_vec)^2) where {T}
 
     return continuous_to_discrete_impulse(GaussianImpulse(one(T), a), t_vec, ω_vec)
 end
