@@ -79,3 +79,31 @@ end
 function union(r1::SimulationResult,r2::SimulationResult)
     error("No implementation of union found for Simulation Results of type $(typeof(r1)) and $(typeof(r2))")
 end
+
+import Base.(+)
+function +(s1::SimulationResult,s2::SimulationResult)::SimulationResult
+    if typeof(s1) != typeof(s2)
+        error("Can not sum different types $(typeof(s1)) and $(typeof(s2))")
+    end
+
+    return typeof(s1)(s1.field + s2.field, s1.x, getfield(s1,3))
+end
+function +(s::SimulationResult,a)::SimulationResult
+    if typeof(s.field .+ a) != typeof(s.field)
+        error("Summing SimulationResult with $a would cause SimulationResult.field to change its type.")
+    end
+
+    return typeof(s)(s.field .+ a, s.x, getfield(s,3))
+end
++(a,s1::SimulationResult) = +(s1::SimulationResult,a)
+
+import Base.(*)
+function *(a,s::SimulationResult)::SimulationResult
+    if typeof(s.field .* a) != typeof(s.field)
+        error("Multiplying SimulationResult by $a would cause the field of SimulationResult to change type.")
+    end
+
+    return typeof(s)(s.field .* a, s.x, getfield(s,3))
+end
+
+*(s::SimulationResult,a) = *(a,s)
