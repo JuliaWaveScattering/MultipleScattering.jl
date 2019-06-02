@@ -23,7 +23,7 @@ export DiscreteImpulse, DiscreteTimeDiracImpulse, DiscreteGaussianImpulse
 export TimeSimulationResult, frequency_to_time, time_to_frequency
 export ω_to_t, t_to_ω, firstnonzero
 
-export random_particles, calculate_moments
+export random_particles, statistical_moments
 
 export t_matrix, get_t_matrices
 export scattering_matrix

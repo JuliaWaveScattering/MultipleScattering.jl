@@ -8,42 +8,69 @@
 #     # println("well hello mister put me nose in other peoples code")
 # end
 
-@recipe function plot_ribbon{T}(mnts::StatisticalMoments{T};
-      use_moments = [1,2,4], X = mnts.x_arr,
-      labs = ["mean" "std" "skew" "kurt"])
+# # woud have liked a user series plot:
+# """
+#     plot(x, y, seriestype = :moments; kws...)
+#
+# A failed attempt a creating a user defined series plot for the moments `y` with x-axis `x`.
+# """
+@recipe function plot_ribbon(results::AbstractVector{SimRes};
+        applytofield::Function = real,
+        num_moments::Int = 2,
+        use_moments = 1:min(num_moments,length(results)),
+        Y = statistical_moments(results, num_moments; applytofield=applytofield)[use_moments],
+        x = results[1].ω,
+        labs = ["mean" "std" "skew" "kurt"]) where {T,SimRes<:SimulationResult{T}}
+
+    # must include mean
     use_moments = sort(union([1; use_moments]))
-    if labs == [] labs = repeat([""], inner = length(mnts.moments)) end
+    if labs == [] labs = repeat([""], inner = length(y)) end
     colors =[:black, :green, :orange, :red]
 
-    Y = mnts.moments[use_moments]
     m = Y[1]
-    Y_up = zero(T)*m
-    Y_down = zero(T)*m
-    Ys = Array{Tuple}(length(Y)-1)
-    for i = 2:length(Y)
-      begin
-        if iseven(use_moments[i])
-          Y_up = Y_up + Y[i]/(2*one(T))
-          Y_down = Y_down + Y[i]/(2*one(T))
+    Ys = map(2:length(Y)) do i
+        Y_down = if iseven(use_moments[i])
+            Y[i]
+            # Y[i]/T(2)
         else
-          Y_up = Y_up + map(y-> (y> zero(T))? y : zero(T), Y[i])
-          Y_down = Y_down + map(y-> (y< zero(T))? -y : zero(T), Y[i])
+            map(y-> (y< zero(T)) ? -y : zero(T), Y[i])
         end
-        Ys[i-1] = (Y_down, Y_up)
-      end
+        Y_up = if iseven(use_moments[i])
+            Y[i]
+            # Y[i]/T(2)
+        else
+            map(y-> (y> zero(T)) ? y : zero(T), Y[i])
+        end
+        (Y_down, Y_up)
     end
+    for i = 1:(length(Ys)-1)
+        Ys[i+1] = (Ys[i+1][1] + Ys[i][1], Ys[i+1][2] + Ys[i][2])
+    end
+
     for i in reverse(1:length(Ys))
       @series begin
+        seriestype := :line
         ribbon := Ys[i]
         lab --> labs[use_moments[i+1]]
         c --> colors[use_moments[i+1]]
-        (X, m)
+        (x, m[:])
       end
     end
+
+    for i in 1:min(15,length(results))
+      @series begin
+        linealpha --> 0.2
+        lab --> ""
+        c --> :grey
+        results[i]
+      end
+    end
+
     @series begin
+      seriestype := :line
       c --> :black
       linewidth --> 2
       lab --> labs[1]
-      (X, m)
+      (x, m[:])
     end
 end

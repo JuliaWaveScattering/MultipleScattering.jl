@@ -13,5 +13,5 @@ random_particles
 ## Moments
 
 ```@docs
-calculate_moments
+statistical_moments
 ```

@@ -1,9 +1,9 @@
 """
-    calculate_moments(results, n; applytofield=real)::Vector{Matrix}
+    statistical_moments(results, n; applytofield=real)::Vector{Matrix}
 
 Calculate moments up to `n` of results at each position and wavenumber/time, after applying `applytofield`.
 """
-function calculate_moments(results::AbstractVector{SimRes}, num_moments::Int; applytofield=real) where {T,SimRes<:SimulationResult{T}}
+function statistical_moments(results::AbstractVector{SimRes}, num_moments::Int; applytofield=real) where {T,SimRes<:SimulationResult{T}}
 
     # Number of positions and wavenumbers/time points sampled
     X, K = size(results[1])

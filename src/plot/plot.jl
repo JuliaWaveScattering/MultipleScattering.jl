@@ -1,5 +1,6 @@
 include("plot_domain.jl")
 include("plot_field.jl")
+include("plot_moments.jl")
 
 # Plot the result across angular frequency for a specific position (x)
 @recipe function plot(simres::SimulationResult;
