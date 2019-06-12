@@ -19,7 +19,7 @@
 - Use the shape functions to create particles in a new geometry
 - See time response from a semi-circular wall -->
 
-## [Random particles in a circle](random_particles_in_circle/README.md)
+## [Random particles in a circle](particles_in_circle/README.md)
 - Generate random particles in a circle
 
 ## [Make a gif of harmonic scattering](plot/README.md)
