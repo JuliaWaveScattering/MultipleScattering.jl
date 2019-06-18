@@ -1,6 +1,6 @@
 # Plot the result in space (across all x) for a specific angular frequency
 @recipe function plot(simres::FrequencySimulationResult, ω::AbstractFloat;
-        time = 0.0, # does not except "t" as name of variable..
+        phase_time = 0.0, # does not except "t" as name of variable..
         x_indices = axes(simres.x,1),
         ω_index = findmin(abs.(getfield(simres, 3) .- ω))[2],
         field_apply = real, seriestype = :surface)
@@ -9,7 +9,7 @@
     y = [x[2] for x in simres.x[x_indices]]
     ω = getfield(simres, 3)[ω_index]
 
-    phase = exp(-im*ω*time)
+    phase = exp(-im*ω*phase_time)
 
     color --> :pu_or
     title --> "Field for ω = $ω"
@@ -17,7 +17,7 @@
     aspect_ratio --> 1.0
 
     if seriestype == :contour
-        # We should really check here to see if x and y have the right structure
+        # We could check here to see if x and y have the right structure
         x = unique(x)
         y = unique(y)
 
@@ -25,7 +25,7 @@
         n_y = length(y)
 
         fill --> true
-        x, y, field_apply.(phase.*transpose(reshape(field(simres)[x_indices,ω_index],n_y,n_x)))
+        x, y, field_apply.(phase.*transpose(reshape(field(simres)[x_indices,ω_index],n_x,n_y)))
 
     else
         (x, y, field_apply.(phase.*field(simres)[x_indices,ω_index]))
