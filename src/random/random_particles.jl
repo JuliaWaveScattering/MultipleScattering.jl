@@ -68,7 +68,7 @@ function random_particles(particle_medium::P, particle_shape::S,
     box_shape::Shape{T,Dim}, volfrac::AbstractFloat; kws...
 ) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
 
-    N = Int(round(volume(box_shape) / volume(particle_shape) * volfrac))
+    N = Int(round(volfrac * volume(box_shape) / volume(particle_shape)))
     return random_particles(particle_medium, particle_shape, box_shape, N; kws...)
 end
 
