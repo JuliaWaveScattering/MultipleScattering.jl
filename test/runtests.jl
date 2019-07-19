@@ -8,6 +8,8 @@ using Plots
 include("shapetests.jl")
 include("particle_tests.jl")
 
+include("print_tests.jl")
+
 include("fourier_tests.jl")
 
 include("acoustic_physics_tests.jl")

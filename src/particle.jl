@@ -20,6 +20,17 @@ struct Particle{T<:AbstractFloat,Dim,P<:PhysicalProperties,S<:Shape} <: Abstract
     end
 end
 
+import Base.show
+function show(io::IO, p::Particle)
+    # Particle paramaters can be determined entirely from the medium and shape so we do not need to print them
+    write(io, "Particle(")
+    show(io, p.medium)
+    write(io, ", ")
+    show(io, p.shape)
+    write(io, ")")
+    return
+end
+
 """
     CapsuleParticle(outer::Particle, inner::Particle)
 

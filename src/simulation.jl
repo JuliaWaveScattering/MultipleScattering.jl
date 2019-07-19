@@ -29,6 +29,21 @@ function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,P<:Phy
     FrequencySimulation{T,Dim,P}(medium, Vector{AbstractParticle{T,Dim}}(undef,0), source)
 end
 
+import Base.show
+function show(io::IO, mime::MIME"text/plain", s::FrequencySimulation{T}) where {T}
+    # text/plain is repl type
+    # FrequencySimulation paramaters can be determined entirely from the medium and shape so we do not need to print them
+    println(io, "FrequencySimulation{$T}")
+    print(io,   "medium    = ")
+    show(io, s.medium)
+    println(io)
+    println(io, "particles = ")
+    for particle in s.particles
+        show(io, particle)
+    end
+    return
+end
+
 import Base.run
 
 # Main run function, all other run functions use this
