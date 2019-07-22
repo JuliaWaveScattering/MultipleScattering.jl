@@ -1,7 +1,7 @@
 using Documenter, MultipleScattering
 
 makedocs(
-    format=:html,
+    format=Documenter.HTML(),
     sitename="MultipleScattering.jl",
     authors = "Artur Gower and Jonathan Deakin",
     source= "src",
@@ -32,8 +32,8 @@ makedocs(
 deploydocs(
     branch = "gh-pages",
     latest = "master",
-    julia = "0.6",
-    osname = "linux", 
+    julia = "1.1",
+    osname = "linux",
     target = "build",
     deps = nothing,
     make = nothing,
