@@ -18,8 +18,7 @@ mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <
     source::Source{P,T}
 end
 
-# Constructor which infers parametric types from input arguments, note that we
-# don't need to do much type checking as the struct will error is inconsistent
+# Constructor which infers parametric types from input arguments, note that we  don't need to do much type checking as the struct will error is inconsistent
 function FrequencySimulation(medium::P, particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
     FrequencySimulation{T,Dim,P}(medium, particles, source)
 end

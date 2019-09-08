@@ -33,6 +33,17 @@ after_success:
   - julia -e 'using Pkg; cd(Pkg.dir("MultipleScattering")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
   - julia -e 'using Pkg; cd(Pkg.dir("MultipleScattering")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
-  # Create and deploy documentation
-  - julia -e 'using Pkg; Pkg.add("Documenter")'
-  - julia -e 'using Pkg; cd(Pkg.dir("MultipleScattering")); include(joinpath("docs", "make.jl"))'
+
+# add seperate job for creating and deploying documentation
+jobs:
+  include:
+    - stage: "Documentation"
+      os: linux
+      env:
+        - DOCUMENTER_DEBUG=true
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
+                                               Pkg.instantiate()'
+        - julia --project=docs/ docs/make.jl
+      name: "HTML"
+      after_success: skip

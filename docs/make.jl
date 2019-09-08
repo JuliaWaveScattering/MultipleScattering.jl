@@ -1,9 +1,11 @@
 using Documenter, MultipleScattering
 
 makedocs(
-    format=Documenter.HTML(),
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true"
+    ), # changes urls if built locally
     sitename="MultipleScattering.jl",
-    authors = "Artur Gower and Jonathan Deakin",
+    authors = "Artur L. Gower and Jonathan Deakin",
     source= "src",
     modules=[MultipleScattering],
     pages=[
@@ -32,10 +34,6 @@ makedocs(
 deploydocs(
     branch = "gh-pages",
     latest = "master",
-    julia = "1.1",
-    osname = "linux",
     target = "build",
-    deps = nothing,
-    make = nothing,
     repo = "github.com/jondea/MultipleScattering.jl.git"
 )
