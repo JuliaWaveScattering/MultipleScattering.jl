@@ -1,7 +1,7 @@
 
 """
 Physical properties for a homogenous isotropic electromagnetic medium. Produces
-a vector (??) field in arbitrary dimensions.
+a three dimensional vector field.
 """
 struct Electromagnetic{Dim,T} <: PhysicalProperties{T,Dim,3}
     μ::Complex{T} # Permeability

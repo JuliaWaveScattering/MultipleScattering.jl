@@ -1,4 +1,4 @@
-# Shapes
+# Shapes and particles
 
 ## Existing shapes
 The package provides 3 built in basic shapes to put your random particles in,
@@ -6,15 +6,17 @@ you can plot them using:
 ```julia
 using MultipleScattering
 
-rectangle = Rectangle([0.0,0.0],[2.0,3.0])
-plot(rectangle)
+rectangle = Rectangle([0.0,-1.0],[1.0,2.0])
+circle = Circle([-1.0,0.0],1.0)
+timeofflight = TimeOfFlight([1.0,0.0],3.0)
 
-circle = Circle(3.0,[-1.0,2.0])
-plot!(circle)
-
-timeofflight = TimeOfFlight([-1.0,0.0],3.0)
-plot!(timeofflight)
+using Plots; pyplot()
+plot(rectangle, linecolor = :red)
+plot!(circle, linecolor = :green)
+plot!(timeofflight, linecolor = :blue)
 ```
+![Plot the three shapes](../assets/shapes.png)
+
 Time of flight is a shape which contains shapes from a half space which take at
 most `t` time to reach from the listener.
 
@@ -39,7 +41,3 @@ MultipleScattering.bounding_box(shape::MyShape) = MultipleScattering.Rectangle()
 ```
 
 When you have this, you can make use of your shape to generate particles in it
-
-
-
-

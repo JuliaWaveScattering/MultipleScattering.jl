@@ -11,11 +11,19 @@ makedocs(
     pages=[
         "Home" =>"index.md",
         "Manual" => [
-            "base.md",
-            "acoustics.md",
-            "random.md"
+            "manual/intro.md",
+            "manual/shapes.md",
+            "manual/time_response.md",
+            "manual/plot.md"
         ],
-        "Examples" => [
+        "Library" => [
+            "library/base.md",
+            "library/acoustics.md",
+            "library/random.md"
+        ],
+        "Examples" =>
+        [
+            "example/README.md",
             "example/box_size/README.md",
             "example/hankel_convergence/README.md",
             "example/intro/README.md",
@@ -24,7 +32,6 @@ makedocs(
             "example/near_surface_backscattering/README.md",
             "example/random_particles/README.md",
             "example/random_particles_in_circle/README.md",
-            "example/shapes/README.md",
             "example/time_response_single_particle/README.md",
             "example/two_particles/README.md",
         ]

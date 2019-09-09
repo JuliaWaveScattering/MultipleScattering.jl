@@ -1,27 +1,28 @@
 # MultipleScattering
 
-[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://jondea.github.io/MultipleScattering.jl/latest)
-[![DOI](https://zenodo.org/badge/96763392.svg)](https://zenodo.org/badge/latestdoi/96763392)
-[![Build Status](https://travis-ci.org/jondea/MultipleScattering.jl.svg?branch=master)](https://travis-ci.org/jondea/MultipleScattering.jl)
-[![Coverage Status](https://coveralls.io/repos/github/jondea/MultipleScattering.jl/badge.svg?branch=master)](https://coveralls.io/github/jondea/MultipleScattering.jl?branch=master)
-[![codecov.io](http://codecov.io/github/jondea/MultipleScattering.jl/coverage.svg?branch=master)](http://codecov.io/github/jondea/MultipleScattering.jl?branch=master)
+<!-- [![][docs-stable-img]][docs-stable-url]  -->
+[![][docs-dev-img]][docs-dev-url] [![DOI](doi-img)](doi-url) [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] [![][coveralls-img]][coveralls-url]
 
-A Julia library for simulating, processing, and plotting multiple scattering of acoustic waves.
+*A Julia library for simulating, processing, and plotting multiple scattering of waves.*
 
 The library uses the multipole method to solve the Helmholtz equation
-(time-harmonic acoustics) in two dimensions. This method is particularly efficient at solving scattering problems for particles in an infinite domain. The library is configured to use T-matrices to represent scattering from particles with any shape and properities. Currently, T-matrices are provided for circular and capsule particles with any radius, density, sound speed and packing fraction. For details on the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
+(time-harmonic waves). The multipole method is particularly efficient at solving scattering problems for particles in an infinite domain. This library is configured to use T-matrices to represent scattering from particles with any shape and properties (currently implemented for acoustics). The package is setup to deal with different spatial dimensions and types of waves which satisfy Helmholtz equation's, e.g. acoustics, electromagnetism, elasticity. For details on some of the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
 
-#### Near Surface Backscattering
-If you are here to learn about
-[Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490). To see how to take the [moments](example/moments) of the backscattering [click here](example/moments).
+<!-- If you are here to learn about
+[Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490). To see how to take the [moments](example/moments) of the backscattering [click here](example/moments). -->
 
-## Get started
+## Installation
 This package is tested and works for Julia 0.6.
 To get started, download and include the library
 ```julia
 Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
 using MultipleScattering
 ```
+
+## Documentation
+
+- [**STABLE**][docs-stable-url] &mdash; **documentation of the most recently tagged version.**
+- [**DEVEL**][docs-dev-url] &mdash; *documentation of the in-development version.*
 
 ## Simple example
 ### Run
@@ -109,3 +110,23 @@ This library was restructured from one written by
 Please contribute, if nothing else, criticism is welcome.
 We are relatively new to Julia, and this is our first package, if anything is
 untoward or even non-standard, please let us know.
+
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-dev-url]: https://jondea.github.io/MultipleScattering.jl/dev
+
+[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
+[docs-stable-url]: https://jondea.github.io/MultipleScattering.jl/stable
+
+[doi-img]: https://zenodo.org/badge/96763392.svg
+[doi-url]: https://zenodo.org/badge/latestdoi/96763392
+
+[travis-img]: https://travis-ci.org/jondea/MultipleScattering.jl.svg?branch=master
+[travis-url]: https://travis-ci.org/jondea/MultipleScattering.jl
+
+[codecov-img]: http://codecov.io/github/jondea/MultipleScattering.jl/coverage.svg?branch=master
+[codecov-url]: http://codecov.io/github/jondea/MultipleScattering.jl?branch=master
+
+[coveralls-img]: https://coveralls.io/repos/github/jondea/MultipleScattering.jl/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/jondea/MultipleScattering.jl?branch=master
+
+[issues-url]: https://github.com/jondea/MultipleScattering.jl/issues

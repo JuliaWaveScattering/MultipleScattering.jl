@@ -1,6 +1,6 @@
 name = "MultipleScattering"
 uuid = "80a8ab25-5750-5d93-a6d7-4adc97cdd5fb"
-author = ["Artur L. Gower arturgower.github.io", "Jonathan Deakin"]
+author = ["Artur L. Gower", "Jonathan Deakin"]
 version = "0.1.2"
 
 [deps]

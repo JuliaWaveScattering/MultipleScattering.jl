@@ -8,7 +8,7 @@ CurrentModule = MultipleScattering
 Pages = ["base.md"]
 ```
 
-## Shapes
+## [Shapes](@id base_shapes)
 
 Shape types and functions.
 
