@@ -1,7 +1,7 @@
 # # Random particles in a circle
-#
+
 # The code [particles_in_circle.jl](particles_in_circle.jl) compares the scattered wave from one big circle, with the scattered wave from a circle filled with small particles.
-#
+
 # ```julia
 using MultipleScattering
 
@@ -36,8 +36,8 @@ big_particle_simulation = FrequencySimulation(host_medium, [big_particle], sourc
 
 using Plots
 height = 300
-gr(size=(1.4*height,height))
-#pyplot(leg=false, size=(1.4*height,height))
+#gr(size=(1.4*height,height))
+pyplot(leg=false, size=(1.4*height,height))
 
 ω = 0.5
 plot(big_particle_simulation, ω; res=15, bounds = box);
@@ -51,14 +51,13 @@ plot!(particles, linecolor = :green)
 #savefig("plot_field.png")
 # ```
 # Resulting in the figures:
-#
+
 # ![The field with big particle](plot_field_big.png)
 # ![The field with particles](plot_field.png)
 
 # If we compare the response measured at the listener `[-10., 0.]`, they should be very similar:
 # ```julia
-gr(leg=false, size=(1.8*height,height))
-# define angular frequency range
+#define angular frequency range
 ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
