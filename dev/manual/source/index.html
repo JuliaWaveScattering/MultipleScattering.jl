@@ -7,7 +7,7 @@ julia&gt; n = [1.0,1.0];
 
 julia&gt; x0 = [1.0,0.0];
 
-julia&gt; source = plane_source(medium; amplitude = A, direction = n, position = x0);</code></pre><p>We can plot this source wave field for one frequency ω by using</p><pre><code class="language-julia">julia&gt; simulation = FrequencySimulation(medium, source);
+julia&gt; source = plane_source(medium; amplitude = A, direction = n, position = x0);</code></pre><p>We can plot this source wave field for one frequency ω by using</p><pre><code class="language-julia">julia&gt; simulation = FrequencySimulation(source);
 
 julia&gt; A = 1.0;
 

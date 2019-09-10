@@ -28,14 +28,14 @@ source =  plane_source(host_medium; position = x, direction = [1.0,0.])
 
 ωs = LinRange(0.01,1.0,100)
 
-simulation = FrequencySimulation(host_medium, particles, source)
+simulation = FrequencySimulation(particles, source)
 result = run(simulation, x, ωs)
 # ```
 
 # We use the `Plots` package to plot both the response at the listener position x
 
 # ```julia
-    using Plots; #pyplot(linewidth = 2.0) 
+    using Plots; #pyplot(linewidth = 2.0)
     plot(result, apply=real) # plot result
     plot!(result, apply=imag)
     #savefig("plot_result.png")

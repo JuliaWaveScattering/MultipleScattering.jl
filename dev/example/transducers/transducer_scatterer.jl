@@ -9,7 +9,7 @@ a2_host = Acoustic(1.0,1.0 + 0.0im,2)
 n = 100
 amp = 10.0/n
 transducer = sum(point_source(a2_host, [-2.,y], amp) for y in LinRange(-2.,2.,n))
-sim = FrequencySimulation(a2_host, transducer)
+sim = FrequencySimulation(transducer)
 
 using Plots; gr()
 

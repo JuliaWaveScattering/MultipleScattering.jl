@@ -22,12 +22,12 @@ particles = random_particles(particle_medium, particle_shape; box_shape = circle
 x = [-10.,0.] # position to receive the reflected wave
 host_medium = Acoustic(2; ρ=1.0, c=1.0)
 source =  plane_source(host_medium; position = x, direction = [1.0,0.])
-simulation = FrequencySimulation(host_medium, particles, source)
+simulation = FrequencySimulation(particles, source)
 # ```
 # The particles chosen are impenetrable, i.e. the wave is 100\% reflected. So this circle filled with scatterers should act like one big particle.
 # ```julia
 big_particle = Particle(particle_medium, circle)
-big_particle_simulation = FrequencySimulation(host_medium, [big_particle], source)
+big_particle_simulation = FrequencySimulation([big_particle], source)
 
 #define a bounding box for plot
     bottomleft = [-10, -2*big_radius]
