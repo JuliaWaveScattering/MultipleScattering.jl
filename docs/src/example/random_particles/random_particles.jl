@@ -1,18 +1,11 @@
 # # Simple random particles example
 
-# If it isn't installed, clone it from github
-# ```julia
-try using MultipleScattering
-catch
-    Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
-end
-
-using MultipleScattering
 # ```
 
 # ## Define particle properties
 # Define the volume fraction of particles, the region to place the particles, and their radius
 # ```julia
+using MultipleScattering
 num_particles = 4
 radius = 1.0
 
@@ -42,7 +35,7 @@ result = run(simulation, x, ωs)
 # We use the `Plots` package to plot both the response at the listener position x
 
 # ```julia
-    using Plots; pyplot(linewidth = 2.0) 
+    using Plots; #pyplot(linewidth = 2.0) 
     plot(result, apply=real) # plot result
     plot!(result, apply=imag)
     #savefig("plot_result.png")
