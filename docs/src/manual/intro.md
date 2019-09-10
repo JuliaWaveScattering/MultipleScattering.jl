@@ -7,24 +7,27 @@ First define the host medium, for example for an acoustic medium in 2D
 
 ```@meta
 DocTestSetup = quote
-    using MultipleScattering
+    using MultipleScattering, Plots
 end
 ```
 
 ```jldoctest intro
-julia> host_medium = Acoustic(2; ρ=1.0, c=1.0) # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
+julia> host_medium = Acoustic(2; ρ=1.0, c=1.0) # density ρ = 1.0 and soundspeed c = 1.0
 Acoustic(1.0, 1.0 + 0.0im, 2)
 ```
-At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y) + k^2 u(x,y) = 0$, where $k = \omega/c$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
-
+At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y,\omega) + k^2 u(x,y,\omega) = 0$, where $k = \omega/c$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
 
 ### Source wave
 
-The host medium will determine the types of waves that can propagate. For example an incident plane wave $\mathrm e^{ \mathrm i k x - \mathrm i \omega t}$ there is a convenient constructor
+The host medium will determine the types of waves that can propagate. For example an incident plane wave $\mathrm e^{ \mathrm i k x}$ there is a convenient constructor
 ```jldoctest intro
 julia> source = plane_source(host_medium; direction = [1.0,0.0])
 Source{Acoustic{Float64,2},Float64}(getfield(MultipleScattering, Symbol("#source_field#134")){Acoustic{Float64,2}}(Acoustic(1.0, 1.0 + 0.0im, 2), Core.Box([0.0, 0.0]), Core.Box([1.0, 0.0]), Core.Box(getfield(MultipleScattering, Symbol("#amp#133")){Float64}(1.0))), getfield(MultipleScattering, Symbol("#source_coef#135")){Float64,getfield(MultipleScattering, Symbol("#source_field#134")){Acoustic{Float64,2}}}(Core.Box([1.0, 0.0]), getfield(MultipleScattering, Symbol("#source_field#134")){Acoustic{Float64,2}}(Acoustic(1.0, 1.0 + 0.0im, 2), Core.Box([0.0, 0.0]), Core.Box([1.0, 0.0]), Core.Box(getfield(MultipleScattering, Symbol("#amp#133")){Float64}(1.0)))))
 ```
+!!! note
+    Often $\mathrm e^{ \mathrm i k x - \mathrm i \omega t}$ is considered to be a harmonic plane-wave travelling along the $x-$axis. We omit the part $ - \mathrm i \omega t$ as is common in frequency space.  
+
+
 We generally call the incident wave a source. See ... for more details on sources, and see [Acoustic](@ref) for some user functions for the `Acoustic` medium.
 
 ### Particles
@@ -44,15 +47,17 @@ julia> particles = [p1,p2];
 See [Shapes and particles](@ref) for details on different shapes and particles.
 
 If you have the package `Plots` installed you can plot the particles. Note that although they appear hollow, we consider them to filled with the same homogenous material.
-```julia
-using Plots; pyplot()
-plot(particles)
-```
-![Plot of response against wavenumber](../example/intro/two_particles.png)
+```jldoctest intro
+julia> using Plots; pyplot();
 
+julia> plot(particles);
+```
 !!! note
 
     Most things in this package can be plotted just by typing `plot(thing)`. However you need to have `Plots` installed, and you may need to use the backend `pyplot()`. See [Plotting](@ref) for details on plotting.
+![Plot of response against wavenumber](../example/intro/two_particles.png)
+
+
 
 ### Simulation and results
 
@@ -81,8 +86,10 @@ julia> plot(result)
 
 For a better overview you can calculate the response for lots of points `x` in the domain and then plot the whole field for one frequency `ω` by typing:
 ```julia
-julia> ω = 0.8
-julia> plot(simulation, ω)
+julia> ω = 0.8;
+
+julia> plot(simulation, ω);
+
 julia> plot!(particles)
 ```
 ![Plot real part of acoustic field](../example/intro/plot_field.png)
@@ -91,22 +98,25 @@ For details on plot fields and videos see [Plotting](@ref).
 
 ### Results in time
 
-If we have calculated a response over a range of frequencies, then we can use a Discrete Fourier transform to calculate the response in time. For example, taking a Discrete Fourier transform of the previous response leads to  To calculate an incident plane wave pulse in time use:
+If we have calculated a response $u(\omega)$ over a range of frequencies $\omega$, then we can use a Discrete Fourier transform to calculate the response in time $U(t)$. That is, we can calculate $U(t)$ by approximating the Fourier transform:
+
+$U(t) = \frac{1}{2\pi} \int_{-\infty}^\infty u(\omega)\mathrm e^{-\mathrm i \omega t} d\omega.$
+
+For details see the section on [Time response](@ref). For example, taking a Discrete Fourier transform of the previous response leads to an incident plane wave pulse in time:
 
 ```julia
-julia> time_result = frequency_to_time(result)
+julia> time_result = frequency_to_time(result);
+
 julia> plot(time_result)
 ```
 ![Plot real part of acoustic field](../example/intro/plot_time_result.png)
 
 In the image above the first peak on the left is due to the incident wave (the source), and the second peak is the wave scattered by the`particles`. Note how both peaks are quite jagged. This is due to [Gibb's phenomena](https://en.wikipedia.org/wiki/Gibbs_phenomenon). To resolve this we can use a Gaussian impulse function shown below. See [Time response](@ref) for more details.
 ```julia
-julia> t_vec = LinRange(0.,700.,400)
-julia> gauss_time_result =
-           frequency_to_time(result;
-                t_vec = t_vec,
-                impulse = GaussianImpulse(max_ω)
-           )
+julia> t_vec = LinRange(0.,700.,400);
+
+julia> gauss_time_result = frequency_to_time(result; t_vec = t_vec, impulse = GaussianImpulse(max_ω));
+
 julia> plot(gauss_time_result)
 ```
 ![Plot real part of acoustic field](../example/intro/plot_gauss_result.png)

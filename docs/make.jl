@@ -12,6 +12,7 @@ makedocs(
         "Home" =>"index.md",
         "Manual" => [
             "manual/intro.md",
+            "manual/source.md",
             "manual/shapes.md",
             "manual/time_response.md",
             "manual/plot.md"

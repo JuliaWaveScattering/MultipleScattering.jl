@@ -39,7 +39,7 @@ end
 """
 We use the Fourier transform convention:
 F(ω) =  ∫ f(t)*exp(im*ω*t) dt
-f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dt
+f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dω
 
 An impluse g(t) is convoluted in time with f(t), however we avoid the convlution by working with the fourier transform G(ω) of the impulse g(t), which results in
 frequency to time: output = (2π)^(-1) * ∫ G(ω)*F(ω)*exp(-im*ω*t) dt
