@@ -11,7 +11,7 @@
     acoustic = Acoustic(1.89, 1.5, 2)
     circle = Circle(2.0)
     particle = Particle(acoustic, circle)
-    simulation = FrequencySimulation(acoustic, [particle], plane_source(acoustic))
+    simulation = FrequencySimulation([particle], plane_source(acoustic))
 
     @test acoustic == show_and_eval(acoustic)
     @test circle == show_and_eval(circle)

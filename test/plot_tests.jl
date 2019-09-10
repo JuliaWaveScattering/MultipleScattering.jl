@@ -8,7 +8,7 @@ particles = [Particle(sound_p,Circle([x,0.0], .5)) for x =0.:2.:10.]
 
 sound_sim = Acoustic(1., 0.5 + 0.0im,2)
 source = plane_source(sound_sim, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
-sim = FrequencySimulation(sound_sim, particles, source)
+sim = FrequencySimulation(particles, source)
 
 ω = 0.5
 
@@ -38,7 +38,7 @@ s2 = point_source(sound_sim, SVector(2.0,-0.6), amplitude)
 source = s1 + s2
 
 sound_sim = Acoustic(1., 0.5 + 0.0im,2)
-sim = FrequencySimulation(sound_sim, particles, source)
+sim = FrequencySimulation(particles, source)
 
 ω = 1.
 # pyplot()

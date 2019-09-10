@@ -9,7 +9,7 @@ host_medium = Acoustic(1.0, 1.0+0.0im, 2)
 particles = [Particle(particle_medium, circle1), Particle(particle_medium, circle2)]
 
 source = plane_source(host_medium, SVector(-10.0,0.0), SVector(1.0,0.0), 1.0)
-sim = FrequencySimulation(host_medium, particles, source)
+sim = FrequencySimulation(particles, source)
 
 x = [SVector(1.0,1.0), SVector(0.0,0.0)]
 ω = 0.5

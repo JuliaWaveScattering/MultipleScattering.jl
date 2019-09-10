@@ -43,13 +43,13 @@ function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Ci
         return zero(Complex{T})
     end
 
-    k = ω / sim.medium.c
+    k = ω / sim.source.medium.c
     k0 = ω / p.inner.medium.c
     k1 = ω / p.outer.medium.c
     a0 = outer_radius(p.inner)
     a1 = outer_radius(p.outer)
     q0 = (p.inner.medium.ρ*p.inner.medium.c)/(p.outer.medium.ρ*p.outer.medium.c)
-    q = (sim.medium.ρ*sim.medium.c)/(p.outer.medium.ρ*p.outer.medium.c)
+    q = (sim.source.medium.ρ*sim.source.medium.c)/(p.outer.medium.ρ*p.outer.medium.c)
 
     Yn(n::Integer) = hankelh1(n,k1*a1)*besselj(n,k1*a0) - hankelh1(n,k1*a0)*besselj(n,k1*a1)
     Yddn(n::Integer) = diffhankelh1(n,k1*a1)*diffbesselj(n,k1*a0) - diffhankelh1(n,k1*a0)*diffbesselj(n,k1*a1)

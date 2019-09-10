@@ -27,7 +27,7 @@ julia> source = plane_source(medium; amplitude = A, direction = n, position = x0
 
 We can plot this source wave field for one frequency ω by using
 ```julia
-julia> simulation = FrequencySimulation(medium, source);
+julia> simulation = FrequencySimulation(source);
 
 julia> A = 1.0;
 
@@ -37,8 +37,6 @@ julia> x0 = [1.0,0.0];
 
 julia> s = plane_source(medium; amplitude = A, direction = n, position = x0);
 ```
-
-
 
 plot(sim::FrequencySimulation{T}, ω::T;
 

@@ -1,8 +1,7 @@
 abstract type Simulation{T,Dim} end
 
 """
-    FrequencySimulation(medium::PhysicalProperties,
-                        [particles::AbstractParticles=[],]
+    FrequencySimulation([particles::AbstractParticles=[],]
                         source::Source)
 
 Build a FrequencySimulation. If particles are not provided, an empty array is used.
@@ -10,22 +9,20 @@ Build a FrequencySimulation. If particles are not provided, an empty array is us
 After building, you can [`run`](@ref) the simulation to get a [`FrequencySimulationResult`](@ref).
 """
 mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <: Simulation{T,Dim}
-    "Physical properties of the medium which the whole simulation sits in"
-    medium::P
-    "Vector of particles, can be of different types"
+    "Vector of particles, can be of different types."
     particles::AbstractParticles
-    "Source"
+    "Source wave, where source.medium is the background medium of the simulation."
     source::Source{P,T}
 end
 
 # Constructor which infers parametric types from input arguments, note that we  don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(medium::P, particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
-    FrequencySimulation{T,Dim,P}(medium, particles, source)
+function FrequencySimulation(particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
+    FrequencySimulation{T,Dim,P}(particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
-function FrequencySimulation(medium::P, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
-    FrequencySimulation{T,Dim,P}(medium, Vector{AbstractParticle{T,Dim}}(undef,0), source)
+function FrequencySimulation(source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
+    FrequencySimulation{T,Dim,P}(Vector{AbstractParticle{T,Dim}}(undef,0), source)
 end
 
 import Base.show
@@ -34,7 +31,7 @@ function show(io::IO, mime::MIME"text/plain", s::FrequencySimulation{T}) where {
     # FrequencySimulation paramaters can be determined entirely from the medium and shape so we do not need to print them
     println(io, "FrequencySimulation{$T}")
     print(io,   "medium    = ")
-    show(io, s.medium)
+    show(io, s.source.medium)
     println(io)
     println(io, "particles = ")
     for particle in s.particles
@@ -175,10 +172,10 @@ Return coefficients for bases around each particle for a given simulation and an
 function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_order::Int = 5) where {Dim,P,T}
 
     # Precompute T-matrices for these particles
-    t_matrices = get_t_matrices(sim.medium, sim.particles, ω, basis_order)
+    t_matrices = get_t_matrices(sim.source.medium, sim.particles, ω, basis_order)
 
     # Compute scattering matrix for all particles
-    S = scattering_matrix(sim.medium, sim.particles, t_matrices, ω, basis_order)
+    S = scattering_matrix(sim.source.medium, sim.particles, t_matrices, ω, basis_order)
 
     # Get forcing vector for this source
     f = forcing(sim.source, sim.particles, ω, basis_order)
@@ -199,7 +196,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
     Nh = Int((size(a_vec,1) - one(T)) / T(2.0)) # basis_order
     num_particles = length(sim.particles)
     a = OffsetArray(a_vec,-Nh:Nh,1:num_particles)
-    basis = basis_function(sim.medium, ω)
+    basis = basis_function(sim.source.medium, ω)
 
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i

@@ -6,7 +6,7 @@ import StaticArrays: SVector
 
     sound_sim = Acoustic(1., 1. + 0.0im,2)
     source = plane_source(sound_sim, [0.0,0.0], [1.0,0.0], 1.)
-    sim = FrequencySimulation(sound_sim, particles, source)
+    sim = FrequencySimulation(particles, source)
 
     ω_vec = 0.0:0.01:5.01
     @test LinRange(ω_vec) == t_to_ω(ω_to_t(ω_vec)) # only exact for length(ω_vec) = even number
@@ -74,7 +74,7 @@ end
 
     amp0 = 1.0
     source = plane_source(sound_sim, source_x, source_direction, amp0)
-    sim = FrequencySimulation(sound_sim, source)
+    sim = FrequencySimulation(source)
     simres = run(sim, [x_measure, x_measure + source_direction], ω)
     short_time = 1.:0.00005:1.5
     timres = frequency_to_time(simres; t_vec = short_time)

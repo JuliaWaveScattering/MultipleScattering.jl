@@ -35,7 +35,7 @@ function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T
         return (amp(ω)*im)/4 * hankelh1(-n,k*r) * exp(-im*n*θ)
     end
 
-    return Source{Acoustic{T,2},T}(source_field, source_coef)
+    return Source{Acoustic{T,2},T}(medium, source_field, source_coef)
 end
 
 function plane_source(medium::Acoustic{T,2}; position = SVector(zero(T),zero(T)),
@@ -76,5 +76,5 @@ function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T
         source_field(centre,ω) * exp(im * n *(T(pi)/2 -  θ))
     end
 
-    return Source{Acoustic{T,2},T}(source_field, source_coef)
+    return Source{Acoustic{T,2},T}(medium, source_field, source_coef)
 end

@@ -63,7 +63,7 @@ julia> plot(particles);
 
 Once we know the medium, the particles, and the have these three components, we can build our `FrequencySimulation` object
 ```jldoctest intro
-julia> simulation = FrequencySimulation(host_medium, particles, source);
+julia> simulation = FrequencySimulation(particles, source);
 ```
 
 To get numerical results, we run our simulation for specific positions and angular frequencies,

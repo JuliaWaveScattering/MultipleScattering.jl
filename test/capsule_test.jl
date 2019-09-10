@@ -20,7 +20,7 @@ medium = Acoustic(0.8, 0.5 + 0.0im,2)
 
 ps = [CapsuleParticle(concen_particles1...)]
 source = plane_source(medium, SVector(-3.0,0.0), SVector(1.0,0.0), 1.)
-sim = FrequencySimulation(medium, ps, source)
+sim = FrequencySimulation(ps, source)
 
 using Plots; #pyplot()
 
@@ -64,8 +64,8 @@ plot(ps)
 source_position = SVector(0.0,-3.0)
 amplitude = 1.0
 source = point_source(medium, source_position, amplitude)
-sim = FrequencySimulation(medium, ps, source)
-sim_source = FrequencySimulation(medium, source)
+sim = FrequencySimulation(ps, source)
+sim_source = FrequencySimulation(source)
 
 ω = 0.01
 # checkout: ω = 0.63, strange resonance

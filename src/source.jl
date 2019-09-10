@@ -1,6 +1,6 @@
 
 """
-    Source{P,T}(field::Function,coef::Function) where P<:PhysicalProperties{T,Dim,FieldDim}
+    Source{P,T}((medium::P, field::Function, coef::Function) where P<:PhysicalProperties{T,Dim,FieldDim}
 
 A struct which describes the source that drives/forces the whole system. It is also described as an incident wave.
 
@@ -12,11 +12,12 @@ Source.field(x,ω)
 should return the wave field at position 'x' and angular frequency 'ω'
 """
 struct Source{P<:PhysicalProperties,T<:AbstractFloat}
+    medium::P
     field::Function
     coef::Function
     # Enforce that the Types are the same
-    function Source{P,T}(field::Function,coef::Function) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
-        s = new{P,T}(field,coef)
+    function Source{P,T}(medium::P,field::Function,coef::Function) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
+        s = new{P,T}(medium,field,coef)
         self_test(s)
         return s
     end
@@ -50,10 +51,13 @@ end
 
 import Base.(+)
 function +(s1::Source{P,T},s2::Source{P,T})::Source{P,T} where {P,T}
+    if s1.medium != s2.medium
+        error("Can not add sources from different physical mediums.")
+    end
     field(x,ω) = s1.field(x,ω) + s2.field(x,ω)
     coef(n,centre,ω) = s1.coef(n,centre,ω) + s2.coef(n,centre,ω)
 
-    Source{P,T}(field,coef)
+    Source{P,T}(s1.medium,field,coef)
 end
 
 import Base.(*)
@@ -65,7 +69,7 @@ function *(a,s::Source{P,T})::Source{P,T} where {P,T}
     field(x,ω) = a*s.field(x,ω)
     coef(n,centre,ω) = a*s.coef(n,centre,ω)
 
-    Source{P,T}(field,coef)
+    Source{P,T}(s.medium,field,coef)
 end
 
 *(s::Source,a) = *(a,s)

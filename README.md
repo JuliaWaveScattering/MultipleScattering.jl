@@ -47,7 +47,7 @@ source = plane_source(host_medium; direction = [1.0,0.0])
 
 Once we have these three components, we can build our `FrequencySimulation` object
 ```julia
-simulation = FrequencySimulation(host_medium, particles, source)
+simulation = FrequencySimulation(particles, source)
 ```
 
 To get numerical results, we run our simulation for specific positions and angular frequencies,

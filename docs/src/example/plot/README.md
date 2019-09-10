@@ -21,7 +21,7 @@ particles = random_particles(particle_medium, particle_shape; box_shape = shape,
 
 source =  plane_source(host_medium; direction = [1.0,0.5])
 
-simulation = FrequencySimulation(host_medium, particles, source)
+simulation = FrequencySimulation(particles, source)
 
 bottomleft = [-25.,-max_width]
 bounds = Rectangle(bottomleft,topright)

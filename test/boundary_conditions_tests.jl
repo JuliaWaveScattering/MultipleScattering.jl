@@ -28,8 +28,8 @@
     # source2 = point_source(medium, -source_position, amplitude)
     source = 0.5*source1 + 0.5*source2
 
-    sim = FrequencySimulation(medium, particles, source)
-    sim_source = FrequencySimulation(medium, source)
+    sim = FrequencySimulation(particles, source)
+    sim_source = FrequencySimulation(source)
 
     pressure_results, displace_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim, ωs; basis_order = 18)
     pressure_source_results, displace_source_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim_source, ωs; basis_order = 10)
@@ -71,7 +71,7 @@
 
     medium = Acoustic(0.8, 0.5 + 0.0im,2)
     source = plane_source(medium, SVector(0.0,0.0), SVector(1.0,0.0), 1.)
-    sim = FrequencySimulation(medium, ps, source)
+    sim = FrequencySimulation(ps, source)
 
     ωs = [0.01,0.2,0.3,1.]
     basis_vec = [8,16,16,24]

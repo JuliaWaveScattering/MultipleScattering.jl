@@ -55,9 +55,9 @@ function internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}
         return zero(Complex{T})
     else
         r = outer_radius(p)
-        k = ω/sim.medium.c
+        k = ω/sim.source.medium.c
         kp = ω/p.medium.c
-        Z = - t_matrix(p, sim.medium, ω, Nh)
+        Z = - t_matrix(p, sim.source.medium, ω, Nh)
         internal_coef(m::Int) = scattering_coefficients[m+Nh+1] / (Z[m+Nh+1,m+Nh+1]*besselj(m,kp*r)) * (Z[m+Nh+1,m+Nh+1]*hankelh1(m,k*r) - besselj(m,k*r))
 
         inner_basis = basis_function(p, ω)

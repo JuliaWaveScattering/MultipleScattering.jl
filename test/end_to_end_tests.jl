@@ -8,7 +8,7 @@
         a = Acoustic(0.3,0.2,2)
         particles = [Particle(a_p,circle1), Particle(a_p,circle2)]
         source = plane_source(a,[0.0,0.0],[1.0,0.0])
-        sim = FrequencySimulation(a,particles,source)
+        sim = FrequencySimulation(particles,source)
         result = run(sim, SVector(1.0,2.0), 0.1)
         result = 3.2*result + result*4.0im + 0.3+4.0im # changes result.field
         @test true
@@ -21,7 +21,7 @@
         a = Acoustic(0.3,0.2,2)
         particles = [Particle(a_p,circle), Particle(a_p,rect)]
         source = plane_source(a,[0.0,0.0],[1.0,0.0])
-        sim = FrequencySimulation(a,particles,source)
+        sim = FrequencySimulation(particles,source)
         @test true
     end
 

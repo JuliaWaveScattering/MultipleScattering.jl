@@ -56,7 +56,7 @@ results = map(eachindex(widths)) do i
     ps = filter(p -> p ⊆ shape, particles) # select particles that are inside shape
     num_particles[i] = Int(length(ps))
 
-    simulation = FrequencySimulation(host_medium, ps, source)
+    simulation = FrequencySimulation(ps, source)
     run(simulation, x, ωs)
 end
 
@@ -132,7 +132,7 @@ times = 40.:15.:80.
 near_surface_simulations = map(times) do t
     shape = TimeOfFlight(receiver,t) # choose a material with particles only in the near surface region
     ps = filter(p -> p ⊆ shape, particles) # select particles that are inside shape
-    run(FrequencySimulation(host_medium, ps, source), x, ωs) # calculate backscattering
+    run(FrequencySimulation(ps, source), x, ωs) # calculate backscattering
 end
 
 time_near_simulations = frequency_to_time.(near_surface_simulations; impulse = GaussianImpulse(maximum(ωs)))
