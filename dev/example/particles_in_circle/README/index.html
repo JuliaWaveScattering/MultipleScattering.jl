@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Random particles in a circle · MultipleScattering.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link href="../../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>MultipleScattering.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../../manual/intro/">Introduction</a></li><li><a class="toctext" href="../../../manual/source/">Source wave</a></li><li><a class="toctext" href="../../../manual/shapes/">Shapes and particles</a></li><li><a class="toctext" href="../../../manual/time_response/">Time response</a></li><li><a class="toctext" href="../../../manual/plot/">Plotting</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../../../library/base/">Base</a></li><li><a class="toctext" href="../../../library/acoustics/">Acoustic</a></li><li><a class="toctext" href="../../../library/random/">Random</a></li></ul></li><li><span class="toctext">Examples</span><ul><li><a class="toctext" href="../../README/">Examples</a></li><li><a class="toctext" href="../../box_size/README/">Box size</a></li><li><a class="toctext" href="../../hankel_convergence/README/">Convergence when increasing the number of Hankel functions</a></li><li><a class="toctext" href="../../intro/README/">Go to introductory example.</a></li><li><a class="toctext" href="../../lens/README/">Lens</a></li><li><a class="toctext" href="../../moments/README/">StatisticalMoments</a></li><li><a class="toctext" href="../../near_surface_backscattering/README/">Near-surface backscattering</a></li><li><a class="toctext" href="../../random_particles/README/">Simple random particles example</a></li><li><a class="toctext" href="../../random_particles_in_circle/README/">Random particles in a circle</a></li><li><a class="toctext" href="../../time_response_single_particle/README/">Time response from single particle</a></li><li><a class="toctext" href="../../two_particles/README/">Two particles</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Random particles in a circle</a></li></ul><a class="edit-page" href="https://github.com/jondea/MultipleScattering.jl/blob/master/docs/src/example/particles_in_circle/README.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Random particles in a circle</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Random-particles-in-a-circle-1" href="#Random-particles-in-a-circle-1">Random particles in a circle</a></h1><p>The code <a href="../particles_in_circle.jl">particles<em>in</em>circle.jl</a> compares the scattered wave from one big circle, with the scattered wave from a circle filled with small particles.</p><pre><code class="language-julia">using MultipleScattering
+
+#You can also pick your own shape, an generate random particles inside it
+#with a certain radius ands volume fraction
+radius = 0.3
+volfrac = 0.45
+centre = [0.,0.]
+big_radius = 3.0
+
+particle_medium = Acoustic(2; ρ=0.0, c=0.0) # 2D particle with density ρ = 0.0 and soundspeed c = 0.0
+particle_shape = Circle(radius)
+
+circle = Circle(centre, big_radius)
+
+particles = random_particles(particle_medium, particle_shape; box_shape = circle, volume_fraction = volfrac, seed=1)
+
+x = [-10.,0.] # position to receive the reflected wave
+host_medium = Acoustic(2; ρ=1.0, c=1.0)
+source =  plane_source(host_medium; position = x, direction = [1.0,0.])
+simulation = FrequencySimulation(host_medium, particles, source)</code></pre><p>The particles chosen are impenetrable, i.e. the wave is 100\% reflected. So this circle filled with scatterers should act like one big particle.</p><pre><code class="language-julia">big_particle = Particle(particle_medium, circle)
+big_particle_simulation = FrequencySimulation(host_medium, [big_particle], source)
+
+#define a bounding box for plot
+    bottomleft = [-10, -2*big_radius]
+    topright = [big_radius, 2*big_radius]
+    box = Rectangle(bottomleft, topright)
+
+using Plots
+height = 300
+#gr(size=(1.4*height,height))
+pyplot(leg=false, size=(1.4*height,height))
+
+ω = 0.5
+plot(big_particle_simulation, ω; res=15, bounds = box);
+plot!(big_particle)
+
+#savefig(&quot;plot_field_big.png&quot;)
+
+plot(simulation, ω; res=15, bounds = box);
+plot!(particles, linecolor = :green)
+
+#savefig(&quot;plot_field.png&quot;)</code></pre><p>Resulting in the figures:</p><p><img src="../plot_field_big.png" alt="The field with big particle"/> <img src="../plot_field.png" alt="The field with particles"/></p><p>If we compare the response measured at the listener <code>[-10., 0.]</code>, they should be very similar:</p><pre><code class="language-julia">#define angular frequency range
+ωs = collect(LinRange(0.1,1.0,10))
+result = run(simulation, x, ωs)
+big_result = run(big_particle_simulation, x, ωs)
+
+plot(result, lab = &quot;scattering from particles&quot;)
+plot!(big_result,
+    lab = &quot;scattering from big particle&quot;,
+    title=&quot;Compare scattered wave from one big particle, \n and a circle filled with small particles&quot;)</code></pre><p><img src="../plot_response_compare.png" alt="The response comparison"/></p><footer><hr/></footer></article></body></html>

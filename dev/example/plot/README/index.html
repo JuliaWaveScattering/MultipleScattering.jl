@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Make a gif of a time-harmonic wave · MultipleScattering.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link href="../../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>MultipleScattering.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../../manual/intro/">Introduction</a></li><li><a class="toctext" href="../../../manual/source/">Source wave</a></li><li><a class="toctext" href="../../../manual/shapes/">Shapes and particles</a></li><li><a class="toctext" href="../../../manual/time_response/">Time response</a></li><li><a class="toctext" href="../../../manual/plot/">Plotting</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../../../library/base/">Base</a></li><li><a class="toctext" href="../../../library/acoustics/">Acoustic</a></li><li><a class="toctext" href="../../../library/random/">Random</a></li></ul></li><li><span class="toctext">Examples</span><ul><li><a class="toctext" href="../../README/">Examples</a></li><li><a class="toctext" href="../../box_size/README/">Box size</a></li><li><a class="toctext" href="../../hankel_convergence/README/">Convergence when increasing the number of Hankel functions</a></li><li><a class="toctext" href="../../intro/README/">Go to introductory example.</a></li><li><a class="toctext" href="../../lens/README/">Lens</a></li><li><a class="toctext" href="../../moments/README/">StatisticalMoments</a></li><li><a class="toctext" href="../../near_surface_backscattering/README/">Near-surface backscattering</a></li><li><a class="toctext" href="../../random_particles/README/">Simple random particles example</a></li><li><a class="toctext" href="../../random_particles_in_circle/README/">Random particles in a circle</a></li><li><a class="toctext" href="../../time_response_single_particle/README/">Time response from single particle</a></li><li><a class="toctext" href="../../two_particles/README/">Two particles</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Make a gif of a time-harmonic wave</a></li></ul><a class="edit-page" href="https://github.com/jondea/MultipleScattering.jl/blob/master/docs/src/example/plot/README.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Make a gif of a time-harmonic wave</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Make-a-gif-of-a-time-harmonic-wave-1" href="#Make-a-gif-of-a-time-harmonic-wave-1">Make a gif of a time-harmonic wave</a></h1><pre><code class="language-julia">using MultipleScattering
+using Plots; pyplot(linewidth=2.0)
+
+num_particles = 70
+radius = 1.0
+ω = 1.0
+
+host_medium = Acoustic(1.0, 1.0, 2)
+particle_medium = Acoustic(0.2, 0.3, 2)
+particle_shape = Circle(radius)
+
+max_width = 50*radius
+bottomleft = [0.,-max_width]
+topright = [max_width,max_width]
+shape = Rectangle(bottomleft,topright)
+
+particles = random_particles(particle_medium, particle_shape; box_shape = shape, num_particles = num_particles)
+
+source =  plane_source(host_medium; direction = [1.0,0.5])
+
+simulation = FrequencySimulation(host_medium, particles, source)
+
+bottomleft = [-25.,-max_width]
+bounds = Rectangle(bottomleft,topright)
+result = run(simulation, bounds, [ω]; res=100)
+
+ts = LinRange(0.,2pi/ω,30)
+
+maxc = round(10*maximum(real.(field(result))))/10
+minc = round(10*minimum(real.(field(result))))/10
+
+anim = @animate for t in ts
+    plot(result,ω; seriestype = :contour, time=t, clim=(minc,maxc), c=:balance)
+    plot!(simulation)
+    plot!(colorbar=false, title=&quot;&quot;,axis=false, xlab=&quot;&quot;,ylab=&quot;&quot;)
+end
+#
+gif(anim,&quot;backscatter_harmonic.gif&quot;, fps = 7)</code></pre><p><img src="../backscatter_harmonic.gif" alt="backscattering from harmonic wave"/></p><footer><hr/></footer></article></body></html>
