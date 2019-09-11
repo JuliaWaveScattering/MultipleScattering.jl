@@ -43,21 +43,21 @@ include("boundary_data.jl")
 
 
 function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
-    return function acoustic_basis_function(m::Integer, x::SVector{2,T})
+    return function acoustic_basis_function(order::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan(x[2],x[1])
         k = ω/medium.c
-        hankelh1(m,k*r)*exp(im*θ*m)
+        [hankelh1(m,k*r)*exp(im*θ*m) for m = -order:order]
     end
 end
 
 "Basis function when inside a particle. Assumes particle is a circle, which approximately works for all shapes."
 function regular_basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T}
-    return function acoustic_basis_function(m::Integer, x::SVector{2,T})
+    return function acoustic_basis_function(order::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan(x[2],x[1])
         k = ω/p.medium.c
-        besselj(m,k*r)*exp(im*θ*m)
+        [besselj(m,k*r)*exp(im*θ*m) for m = -order:order]
     end
 end
 

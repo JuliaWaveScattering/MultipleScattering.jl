@@ -48,8 +48,8 @@ function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Ci
     k1 = ω / p.outer.medium.c
     a0 = outer_radius(p.inner)
     a1 = outer_radius(p.outer)
-    q0 = (p.inner.medium.ρ*p.inner.medium.c)/(p.outer.medium.ρ*p.outer.medium.c)
-    q = (sim.source.medium.ρ*sim.source.medium.c)/(p.outer.medium.ρ*p.outer.medium.c)
+    q0 = (p.inner.medium.ρ*p.inner.medium.c) / (p.outer.medium.ρ*p.outer.medium.c)
+    q = (sim.source.medium.ρ*sim.source.medium.c) / (p.outer.medium.ρ*p.outer.medium.c)
 
     Yn(n::Integer) = hankelh1(n,k1*a1)*besselj(n,k1*a0) - hankelh1(n,k1*a0)*besselj(n,k1*a1)
     Yddn(n::Integer) = diffhankelh1(n,k1*a1)*diffbesselj(n,k1*a0) - diffhankelh1(n,k1*a0)*diffbesselj(n,k1*a1)
@@ -57,31 +57,26 @@ function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Ci
 
     denom(n::Integer) = q0 * besselj(n,a0*k0) *
             (q*besselj(n,a1*k)*Yddn(n) - diffbesselj(n,a1*k)*Ydn(n,a1*k1,a0*k1)) + diffbesselj(n,a0*k0) * (q*besselj(n,k*a1)*Ydn(n,a0*k1,a1*k1) + diffbesselj(n,k*a1)*Yn(n))
-    force(n::Integer) = scattering_coefficients[n+Nh+1] * Ydn(n,k*a1,k*a1) / denom(n);
+    forces = scattering_coefficients .* [Ydn(n,k*a1,k*a1)/denom(n) for n = -Nh:Nh];
 
     if norm(x - origin(p)) <= outer_radius(p.inner)
-        function coef(n::Int)
-            numer = - q0*Ydn(n, a0*k1, a0*k1)
-            return force(n) * numer
-        end
+        coefs = - q0 * forces .* Ydn.(-Nh:Nh, a0*k1, a0*k1)
         basis = regular_basis_function(p.inner, ω)
-        return sum(-Nh:Nh) do m
-             basis(m,x-origin(p)) * coef(m)
-        end
+
+        return sum(basis(Nh,x-origin(p)) .* coefs)
     else # calculate field in the mid region
-        function J_coef(n::Int)
-            numer = q0*besselj(n, a0*k0)*diffhankelh1(n, a0*k1) - hankelh1(n, a0*k1)*diffbesselj(n, a0*k0)
-            return force(n) * numer
-        end
-        function H_coef(n::Int)
-            numer = besselj(n, a0*k1)*diffbesselj(n,a0*k0) - q0*besselj(n, a0*k0)*diffbesselj(n,a0*k1)
-            return force(n) * numer
-        end
+        J_coefs = forces .* [
+            q0*besselj(n, a0*k0)*diffhankelh1(n, a0*k1) - hankelh1(n, a0*k1)*diffbesselj(n, a0*k0)
+        for n = -Nh:Nh]
+
+        H_coefs = forces .* [
+            besselj(n, a0*k1)*diffbesselj(n,a0*k0) - q0*besselj(n, a0*k0)*diffbesselj(n,a0*k1)
+        for n = -Nh:Nh]
 
         J_basis = regular_basis_function(p.outer, ω)
         H_basis = outgoing_basis_function(p.outer.medium, ω)
-        return sum(-Nh:Nh) do m
-            J_basis(m,x-origin(p)) * J_coef(m) + H_basis(m,x-origin(p)) * H_coef(m)
-        end
+        return sum(
+            J_basis(Nh,x-origin(p)) .* J_coefs .+ H_basis(Nh,x-origin(p)) .* H_coefs
+        )
     end
 end

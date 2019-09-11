@@ -13,7 +13,6 @@ function scattering_matrix(medium::PhysicalProperties, particles::AbstractPartic
 
     # Number of hankel basis function at each particle
     H = 2Nh + 1
-
     basis = outgoing_basis_function(medium, ω)
 
     # Faire: this could potentially return an MMatrix
@@ -23,8 +22,8 @@ function scattering_matrix(medium::PhysicalProperties, particles::AbstractPartic
         else
             x_lj = origin(particles[j]) .- origin(particles[l])
             # Faire: basis functions could be more efficient if it returned a vector
-            basis_vec = OffsetArray(map(m->basis(m,x_lj), -2Nh:2Nh),-2Nh:2Nh)
-            mat = [basis_vec[p-m] for m in -Nh:Nh, p in -Nh:Nh]
+            basis_vec = basis(2Nh,x_lj)
+            mat = [basis_vec[p-m+H] for m in -Nh:Nh, p in -Nh:Nh]
             return -  mat * t_matrices[l]
         end
     end

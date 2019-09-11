@@ -188,22 +188,19 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     for i in axes(a,2)
         a[:,i] = t_matrices[i] * a[:,i]
     end
-    a
+    return a
 end
 
 function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec) where {Dim,P,T}
 
     Nh = Int((size(a_vec,1) - one(T)) / T(2.0)) # basis_order
     num_particles = length(sim.particles)
-    a = OffsetArray(a_vec,-Nh:Nh,1:num_particles)
     basis = outgoing_basis_function(sim.source.medium, ω)
 
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i
             p = sim.particles[i]
-            sum(-Nh:Nh) do m
-                a[m,i] * basis(m, x-origin(p))
-            end
+            sum(a_vec[:,i] .* basis(Nh, x-origin(p)))
         end
     end
     map(x_vec) do x
@@ -212,7 +209,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
             sim.source.field(x,ω) + (isempty(sim.particles) ? zero(Complex{T}) : sum_basis(x))
         else
             p = sim.particles[j]
-            internal_field(x, p, sim, ω, collect(a[:,j]))
+            internal_field(x, p, sim, ω, collect(a_vec[:,j]))
         end
     end
 end

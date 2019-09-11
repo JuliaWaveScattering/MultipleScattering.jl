@@ -15,8 +15,8 @@
 # A failed attempt a creating a user defined series plot for the moments `y` with x-axis `x`.
 # """
 @recipe function plot_ribbon(results::AbstractVector{SimRes};
-        applytofield::Function = real,
-        num_moments::Int = 2,
+        applytofield = real,
+        num_moments = 2,
         use_moments = 1:min(num_moments,length(results)),
         Y = statistical_moments(results, num_moments; applytofield=applytofield)[use_moments],
         x = results[1].ω,
