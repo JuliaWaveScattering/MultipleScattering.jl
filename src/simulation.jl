@@ -196,7 +196,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
     Nh = Int((size(a_vec,1) - one(T)) / T(2.0)) # basis_order
     num_particles = length(sim.particles)
     a = OffsetArray(a_vec,-Nh:Nh,1:num_particles)
-    basis = basis_function(sim.source.medium, ω)
+    basis = outgoing_basis_function(sim.source.medium, ω)
 
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i

@@ -17,9 +17,16 @@ dim(p::PhysicalProperties{T,Dim,FieldDim}) where {Dim,FieldDim,T} = Dim
 dim(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}} = Dim
 
 """
-Basis functions in a specific dimension for a specific physics type.
+Basis functions in a specific dimension for specific physcial properties..
 """
-function basis_function(medium::PhysicalProperties, ω::T) where {T}
+function regular_basis_function(medium::P, ω::T) where {P<:PhysicalProperties,T}
+    error("No basis function implmented for this physics type.")
+end
+
+"""
+Basis of outgoing wave functions in a specific dimension for specific physcial properties..
+"""
+function outgoing_basis_function(medium::P, ω::T) where {P<:PhysicalProperties,T}
     error("No basis function implmented for this physics type.")
 end
 

@@ -5,8 +5,7 @@ DocTestSetup = quote
     using MultipleScattering
 end
 ```
-
-For acoustics, any wave field $u(x,y)$ that satisfies $\nabla^2 u(x,y) + k^2 u(x,y) = 0$, with $k = \omega/c$, can be a source wave, also called an incident wave.
+[`Source`](@ref) is a `struct` a For acoustics, any wave field $u(x,y)$ that satisfies $\nabla^2 u(x,y) + k^2 u(x,y) = 0$, with $k = \omega/c$, can be a source wave, also called an incident wave. See [Source](@ref) for a list of types and functions.
 
 ## 2D Acoustics
 
@@ -27,15 +26,9 @@ julia> source = plane_source(medium; amplitude = A, direction = n, position = x0
 
 We can plot this source wave field for one frequency ω by using
 ```julia
-julia> simulation = FrequencySimulation(source);
+julia> ω = 1.0;
 
-julia> A = 1.0;
-
-julia> n = [1.0,1.0];
-
-julia> x0 = [1.0,0.0];
-
-julia> s = plane_source(medium; amplitude = A, direction = n, position = x0);
+julia> plot(sim, ω; bounds = Rectangle([-1.0,-1.0],[1.0,1.0]))
 ```
 
 plot(sim::FrequencySimulation{T}, ω::T;

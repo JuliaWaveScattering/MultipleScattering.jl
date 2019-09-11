@@ -6,17 +6,8 @@ CurrentModule = MultipleScattering
 
 Acoustic type and functions.
 
-```@docs
-Acoustic
-impedance
-sound_hard
-hard
-rigid
-zero_neumann
-sound_soft
-soft
-pressure_release
-zero_dirichlet
-plane_source
-point_source
+```@autodocs
+Modules = [MultipleScattering]
+Order   = [:type, :function]
+Pages   = ["acoustics/acoustics.jl","acoustics/circle.jl","acoustics/concentric_capsule.jl","acoustics/source.jl"]
 ```

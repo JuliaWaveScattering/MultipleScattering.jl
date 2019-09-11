@@ -39,7 +39,7 @@ function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Ci
     if iszero(p.outer.medium.c) || isinf(abs((p.outer.medium.c)))
         return zero(Complex{T})
     elseif norm(x - origin(p)) > outer_radius(p)
-        warn("point $x not insider particle $p. Returning zero.")
+        @warn "point $x not insider particle $p. Returning zero."
         return zero(Complex{T})
     end
 
@@ -64,7 +64,7 @@ function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Ci
             numer = - q0*Ydn(n, a0*k1, a0*k1)
             return force(n) * numer
         end
-        basis = basis_function(p.inner, ω)
+        basis = regular_basis_function(p.inner, ω)
         return sum(-Nh:Nh) do m
              basis(m,x-origin(p)) * coef(m)
         end
@@ -78,8 +78,8 @@ function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Ci
             return force(n) * numer
         end
 
-        J_basis = basis_function(p.outer, ω)
-        H_basis = basis_function(p.outer.medium, ω)
+        J_basis = regular_basis_function(p.outer, ω)
+        H_basis = outgoing_basis_function(p.outer.medium, ω)
         return sum(-Nh:Nh) do m
             J_basis(m,x-origin(p)) * J_coef(m) + H_basis(m,x-origin(p)) * H_coef(m)
         end

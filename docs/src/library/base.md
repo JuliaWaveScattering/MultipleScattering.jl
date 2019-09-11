@@ -37,7 +37,8 @@ Physical properties types and functions.
 PhysicalProperties
 field_dim
 dim
-basis_function
+outgoing_basis_function
+regular_basis_function
 internal_field
 boundary_data
 ```
@@ -57,10 +58,22 @@ iscongruent(::AbstractParticle,::AbstractParticle)
 
 Source types and functions.
 
-```@docs
-Source
-self_test
+```@autodocs
+Modules = [MultipleScattering]
+Order   = [:type, :function]
+Pages   = ["src/source.jl"]
 ```
+
+## Impulse
+
+Impulse types and functions.
+
+```@autodocs
+Modules = [MultipleScattering]
+Order   = [:type, :function]
+Pages   = ["src/impulse.jl"]
+```
+
 
 ## Simulation
 

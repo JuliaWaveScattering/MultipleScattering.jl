@@ -1,15 +1,19 @@
 
 """
-    Source{P,T}((medium::P, field::Function, coef::Function) where P<:PhysicalProperties{T,Dim,FieldDim}
+    Source(medium::P, field::Function, coef::Function)
 
-A struct which describes the source that drives/forces the whole system. It is also described as an incident wave.
+Is a struct type which describes the source field that drives/forces the whole system. It is also described as an incident wave. It has three fields `Source.medium`, `Source.field`, and `Source.coef`.
 
+The source field at the position 'x' and angular frequency 'ω' is given by
 ```julia-repl
 x = [1.0,0.0]
 ω = 1.0
 Source.field(x,ω)
 ```
-should return the wave field at position 'x' and angular frequency 'ω'
+
+The field `Source.coef`
+regular_basis_function(medium::Acoustic{T,2}, ω::T)
+
 """
 struct Source{P<:PhysicalProperties,T<:AbstractFloat}
     medium::P

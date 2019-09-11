@@ -7,14 +7,14 @@ function scattering_matrix(medium::PhysicalProperties, particles::AbstractPartic
 
     # No particles means no scattering
     if P == 0
-        # warn("You have computed the scattering matrix with no particles, are you sure something hasn't gone wrong?")
+        #@warn "You have computed the scattering matrix with no particles, are you sure something hasn't gone wrong?"
         return Matrix{Complex{T}}(undef,0,0)
     end
 
     # Number of hankel basis function at each particle
     H = 2Nh + 1
 
-    basis = basis_function(medium, ω)
+    basis = outgoing_basis_function(medium, ω)
 
     # Faire: this could potentially return an MMatrix
     function S_block(j,l)

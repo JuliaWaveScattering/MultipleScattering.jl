@@ -45,14 +45,13 @@ end
             drawparticles=false) where {T}
 
     # If user wants us to, generate bounding rectangle around particles
-    if bounds == :auto
+    bounds = (bounds != :auto) ? bounds :
         if isempty(sim.particles)
-            warn("What region to plot? Use keyword bounds = Rectangle")
+            @warn "What region to plot? For example, use keyword bounds = Rectangle([-1.0,-1.0],[1.0,1.0])"
             bounds = Rectangle([-one(T),-one(T)],[one(T),one(T)])
         else
             bounds = bounding_rectangle(sim.particles)
         end
-    end
 
     # If user has not set xlims and ylims, set them to the rectangle
     xlims --> (bottomleft(bounds)[1], topright(bounds)[1])
@@ -89,4 +88,9 @@ end
         end
     end
 
+end
+
+"Plot the source field for a particular wavenumber"
+@recipe function plot(s::Source, ω)
+    (FrequencySimulation(s), ω)
 end

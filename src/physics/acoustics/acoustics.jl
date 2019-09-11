@@ -42,7 +42,7 @@ include("source.jl")
 include("boundary_data.jl")
 
 
-function basis_function(medium::Acoustic{T,2}, ω::T) where {T}
+function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan(x[2],x[1])
@@ -52,7 +52,7 @@ function basis_function(medium::Acoustic{T,2}, ω::T) where {T}
 end
 
 "Basis function when inside a particle. Assumes particle is a circle, which approximately works for all shapes."
-function basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T}
+function regular_basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T}
     return function acoustic_basis_function(m::Integer, x::SVector{2,T})
         r = norm(x)
         θ = atan(x[2],x[1])
