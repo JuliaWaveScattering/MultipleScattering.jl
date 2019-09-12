@@ -68,14 +68,14 @@ We can plot the time-harmonic response across these wavenumbers by typing:
 using Plots
 plot(result)
 ```
-![Plot of response against wavenumber](example/intro/plot_result.png)
+![Plot of response against wavenumber](docs/src/example/intro/plot_result.png)
 
 For a better overview you can plot the whole field in space for a specific angular frequency by typing:
 ```julia
 ω = 0.8
 plot(simulation,ω)
 ```
-![Plot real part of acoustic field](example/intro/plot_field.png)
+![Plot real part of acoustic field](docs/src/example/intro/plot_field.png)
 
 This measures the field at lots of points in the domain, so we can get an
 understanding of what is happening for one particular angular frequency.
@@ -88,20 +88,20 @@ To calculate an incident plane wave pulse in time use:
 time_result = frequency_to_time(result)
 plot(time_result)
 ```
-![Plot real part of acoustic field](example/intro/plot_time_result.png)
+![Plot real part of acoustic field](docs/src/example/intro/plot_time_result.png)
 Or for a Gaussian impulse in time:
 ```julia
 t_vec = LinRange(0.,700.,400)
 time_result = frequency_to_time(result; t_vec = t_vec, impulse = GaussianImpulse(max_ω))
 plot(time_result)
 ```
-![Plot real part of acoustic field](example/intro/plot_gauss_result.png)
+![Plot real part of acoustic field](docs/src/example/intro/plot_gauss_result.png)
 
 ## More examples
 There are a lot of defaults implicit in this basic example.
 Almost every part of the problem can be controlled, for example we can manually
 construct the set of particles, define their positions, radii and give them
-specific material properties. For all examples see [here](example/README.md).
+specific material properties. For all examples see [here](docs/src/example/README.md).
 
 ## Acknowledgements and contributing
 This library was restructured from one written by

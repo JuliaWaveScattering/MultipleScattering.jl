@@ -45,12 +45,28 @@ function self_test(source::Source{P,T}) where {P,T}
 
     # Check that the result of field has same dimension as field dimension of P
     if field_dim(P) == 1
-        source.coef(1,x,ω)::Union{Complex{T},SVector{field_dim(P),Complex{T}}}
-    else
-        source.coef(1,x,ω)::SVector{field_dim(P),Complex{T}}
+        source.coef(1,x,ω)::Union{Vector{Complex{T}},Vector{SVector{field_dim(P),Complex{T}}}}
+    # else # this else is not necessarily correct..
+    #     source.coef(1,x,ω)::SVector{field_dim(P),Complex{T}}
     end
 
     return true
+end
+
+"""
+    source_expand(Source, centre; basis_order = 4)
+
+Returns a function of `(x,ω)` which approximates the value of the source at `(x,ω)`. That is, the source is written in terms of a regular basis expansion centred at `centre`.
+"""
+function source_expand(source::Source{P,T}, centre::AbstractVector{T}; basis_order::Int = 4) where {P,T}
+
+    # Convert to SVector for efficiency and consistency
+    centre = SVector(centre...)
+
+    return function (x::AbstractVector{T}, ω::T)
+        vs = regular_basis_function(source.medium, ω)
+        sum(source.coef(basis_order,centre,ω) .* vs(basis_order, x - centre))
+    end
 end
 
 import Base.(+)
@@ -70,8 +86,8 @@ function *(a,s::Source{P,T})::Source{P,T} where {P,T}
         error("Multiplying source by $a would cause source type to change, please explicitly cast $a to same type as Source ($T)")
     end
 
-    field(x,ω) = a*s.field(x,ω)
-    coef(n,centre,ω) = a*s.coef(n,centre,ω)
+    field(x,ω) = a * s.field(x,ω)
+    coef(n,centre,ω) = a .* s.coef(n,centre,ω)
 
     Source{P,T}(s.medium,field,coef)
 end

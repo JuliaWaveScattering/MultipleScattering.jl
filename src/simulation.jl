@@ -47,11 +47,17 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
         basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
 
     x_vec = [SVector{Dim,T}(x...) for x in x_vec]
-    # Calculate the Hankel coefficients around each particle, this is where most of the maths happens
-    a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
 
-    # Evaluate the total field at the requested x positions
-    field_vec = field(sim, ω, x_vec, a_vec)
+    # return just the source if there are no particles
+    if isempty(sim.particles)
+        field_vec = sim.source.field.(x_vec,ω)
+    else
+        # Calculate the outgoing basis coefficients around each particle, this is where most of the maths happens
+        a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
+
+        # Evaluate the total field at the requested x positions
+        field_vec = field(sim, ω, x_vec, a_vec)
+    end
 
     # Construct results object
     field_vec = reshape(map(f->SVector{FieldDim,Complex{T}}(f), field_vec), :, 1)
@@ -155,13 +161,9 @@ end
 Create forcing vector from source, forms the right hand side of matrix equation to find [`basis_coefficients`](@ref).
 """
 function forcing(source::Source{P,T}, particles::AbstractParticles, ω::T, Nh::Integer)::Vector{Complex{T}} where {P,T}
-    mat = [source.coef(n,origin(p),ω) for n in -Nh:Nh, p in particles]
-    f = Vector{Complex{T}}(undef,prod(size(mat)))
-    H = 2Nh + 1
-    for i in eachindex(particles)
-        f[((i-1)*H+1):(i*H)] .= mat[:,i]
-    end
-    return f
+    # julia Base plan to make this function very efficient
+    return reduce(vcat, [source.coef(Nh,origin(p),ω) for p in particles])
+
 end
 
 """
@@ -206,7 +208,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{D
     map(x_vec) do x
         j = findfirst(p -> x∈p, sim.particles)
         if typeof(j) === Nothing
-            sim.source.field(x,ω) + (isempty(sim.particles) ? zero(Complex{T}) : sum_basis(x))
+            sim.source.field(x,ω) + sum_basis(x)
         else
             p = sim.particles[j]
             internal_field(x, p, sim, ω, collect(a_vec[:,j]))

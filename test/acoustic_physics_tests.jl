@@ -64,12 +64,15 @@ end
 
     # Test the bessel expansions of the source
     ω = 0.8
+    basis_order = 7
     centre =  SVector(1.0,0.0)
-    s3_besselj = besselj_field(s3, a2, centre; basis_order = 7)
+
+    s3_expand = source_expand(s3, centre; basis_order = 7)
+
     xs = [centre + 0.1 .* [cos(τ),sin(τ)] for τ = 0.0:0.3:1.5]
-    @test norm([s3.field(x,ω) - s3_besselj(x,ω) for x in xs]) < 1e-7*norm([s3.field(x,ω) for x in xs])
+    @test norm([s3.field(x,ω) - s3_expand(x,ω) for x in xs]) < 1e-7*norm([s3.field(x,ω) for x in xs])
 
     source = plane_source(a2_host, SVector(-10.0,0.0), SVector(1.0,0.0), 1.0)
-    source_besselj = besselj_field(source, a2_host, centre)
-    @test norm([source.field(x,ω) - source_besselj(x,ω) for x in xs]) < 2e-9*norm([source.field(x,ω) for x in xs])
+    s_expand = source_expand(source, centre; basis_order = 4)
+    @test norm([source.field(x,ω) - s_expand(x,ω) for x in xs]) < 2e-9*norm([source.field(x,ω) for x in xs])
 end

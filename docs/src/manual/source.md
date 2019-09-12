@@ -21,15 +21,23 @@ julia> n = [1.0,1.0];
 
 julia> x0 = [1.0,0.0];
 
-julia> source = plane_source(medium; amplitude = A, direction = n, position = x0);
+julia> plane_wave = plane_source(medium; amplitude = A, direction = n, position = x0);
 ```
 
-We can plot this source wave field for one frequency ω by using
+We can plot this source wave one frequency ω by using
 ```julia
 julia> ω = 1.0;
 
-julia> plot(sim, ω; bounds = Rectangle([-1.0,-1.0],[1.0,1.0]))
+julia> domain = Rectangle([-1.0,-1.0],[1.0,1.0]);
+
+julia> plot(plane_wave, ω; bounds = domain)
 ```
+
+![Plot plane wave](../media/plane-wave.png)
+
+Another useful source is the point source $u(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$
+
+
 
 plot(sim::FrequencySimulation{T}, ω::T;
 
@@ -42,3 +50,5 @@ s1 = point_source(a2, source_position, amplitude)
 s2 = point_source(a2, 2.0*source_position, amplitude)
 
 source = plane_source(host_medium; direction = [1.0,0.0])
+
+## Source internals

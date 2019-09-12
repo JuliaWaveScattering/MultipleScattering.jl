@@ -31,6 +31,8 @@
     sim = FrequencySimulation(particles, source)
     sim_source = FrequencySimulation(source)
 
+    result = run(sim_source, SVector(1.0,2.0), 0.1)
+
     pressure_results, displace_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim, ωs; basis_order = 18)
     pressure_source_results, displace_source_results =  boundary_data(shape(particles[1]), particles[1].medium, medium, sim_source, ωs; basis_order = 10)
 

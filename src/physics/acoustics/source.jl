@@ -1,15 +1,3 @@
-
-function besselj_field(source::Source{Acoustic{T,2},T}, medium::Acoustic{T,2}, centre; basis_order = 4) where T
-
-    # Convert to SVector for efficiency and consistency
-    centre = SVector{2,T}(centre)
-
-    return (x,ω) -> sum(
-        source.coef(n,centre,ω)*besselj(n,ω/medium.c*norm(x - centre))*exp(im*n*atan(x[2] - centre[2],x[1] - centre[1]))
-    for n = -basis_order:basis_order)
-
-end
-
 """
     point_source(medium::Acoustic, source_position, amplitude=1)::Source{Acoustic}
 
@@ -27,12 +15,12 @@ function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T
     end
     source_field(x,ω) = (amp(ω)*im)/4*hankelh1(0,ω/medium.c*norm(x-source_position))
 
-    function source_coef(n,centre,ω)
+    function source_coef(order,centre,ω)
         k = ω/medium.c
         r = norm(centre - source_position)
         θ = atan(centre[2]-source_position[2], centre[1]-source_position[1])
         # using Graf's addition theorem
-        return (amp(ω)*im)/4 * hankelh1(-n,k*r) * exp(-im*n*θ)
+        return (amp(ω)*im)/4 * [hankelh1(-n,k*r) * exp(-im*n*θ) for n = -order:order]
     end
 
     return Source{Acoustic{T,2},T}(medium, source_field, source_coef)
@@ -70,10 +58,10 @@ function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T
 
     source_field(x,ω) = amp(ω)*exp(im*ω/medium.c*dot(x-position, direction))
 
-    function source_coef(n,centre,ω)
+    function source_coef(order,centre,ω)
         # Jacobi-Anger expansion
         θ = atan(direction[2],direction[1])
-        source_field(centre,ω) * exp(im * n *(T(pi)/2 -  θ))
+        source_field(centre,ω) * [exp(im * n *(T(pi)/2 -  θ)) for n = -order:order]
     end
 
     return Source{Acoustic{T,2},T}(medium, source_field, source_coef)

@@ -36,11 +36,6 @@ the field inside an AbstractParticle a some given point x.
 internal_field
 
 """
-Returns a function that gives the value of the besselj expansion centred at centre
-"""
-besselj_field
-
-"""
 A tuples of vectors of the field close to the boundary of the shape. The field is calculated from sim::FrequencySimulation, but the PhysicalProperties inside and outside of the shape are assumed to be given by inside_medium and outside_medium.
 """
 boundary_data

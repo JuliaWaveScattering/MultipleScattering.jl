@@ -15,7 +15,7 @@ plot(rectangle, linecolor = :red)
 plot!(circle, linecolor = :green)
 plot!(timeofflight, linecolor = :blue)
 ```
-![Plot the three shapes](../assets/shapes.png)
+![Plot the three shapes](../media/shapes.png)
 
 Time of flight is a shape which contains shapes from a half space which take at
 most `t` time to reach from the listener.
