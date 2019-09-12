@@ -84,7 +84,6 @@ FrequencySimulation
 run(::FrequencySimulation)
 run(::FrequencySimulation, ::Rectangle, ::AbstractVector)
 FrequencySimulationResult
-forcing
 basis_coefficients
 field
 scattering_matrix

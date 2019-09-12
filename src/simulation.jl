@@ -156,17 +156,6 @@ function run(sim::FrequencySimulation, rect::Rectangle, ω_vec::AbstractVector;
 end
 
 """
-    forcing(source::Source, particles::AbstractParticles, ω::AbstractFloat, Nh::Integer)::Vector{Complex}
-
-Create forcing vector from source, forms the right hand side of matrix equation to find [`basis_coefficients`](@ref).
-"""
-function forcing(source::Source{P,T}, particles::AbstractParticles, ω::T, Nh::Integer)::Vector{Complex{T}} where {P,T}
-    # julia Base plan to make this function very efficient
-    return reduce(vcat, [source.coef(Nh,origin(p),ω) for p in particles])
-
-end
-
-"""
     basis_coefficients(sim::FrequencySimulation, ω::AbstractFloat; basis_order::Int=5)::Matrix{Complex}
 
 Return coefficients for bases around each particle for a given simulation and angular frequency (ω).
@@ -179,11 +168,11 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     # Compute scattering matrix for all particles
     S = scattering_matrix(sim.source.medium, sim.particles, t_matrices, ω, basis_order)
 
-    # Get forcing vector for this source
-    f = forcing(sim.source, sim.particles, ω, basis_order)
+    # Get forcing vector from source, forms the right hand side of matrix equation to find basis_coefficients
+    forcing = reduce(vcat, [sim.source.coef(basis_order,origin(p),ω) for p in sim.particles])
 
     # Find Hankel coefficients by solving scattering matrix for this forcing
-    a = S\f
+    a = S\forcing
 
     # reshape and multiply by t-matrix to get the scattering coefficients
     a = reshape(a,2basis_order+1,length(sim.particles))
