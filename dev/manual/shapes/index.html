@@ -8,7 +8,7 @@ timeofflight = TimeOfFlight([1.0,0.0],3.0)
 using Plots; pyplot()
 plot(rectangle, linecolor = :red)
 plot!(circle, linecolor = :green)
-plot!(timeofflight, linecolor = :blue)</code></pre><p><img src="../../assets/shapes.png" alt="Plot the three shapes"/></p><p>Time of flight is a shape which contains shapes from a half space which take at most <code>t</code> time to reach from the listener.</p><h2><a class="nav-anchor" id="New-shape-1" href="#New-shape-1">New shape</a></h2><p>If you are feeling very adventurous, you can define your own shape First you must import the package in order to add to existing functions</p><pre><code class="language-julia">import MultipleScattering
+plot!(timeofflight, linecolor = :blue)</code></pre><p><img src="../../media/shapes.png" alt="Plot the three shapes"/></p><p>Time of flight is a shape which contains shapes from a half space which take at most <code>t</code> time to reach from the listener.</p><h2><a class="nav-anchor" id="New-shape-1" href="#New-shape-1">New shape</a></h2><p>If you are feeling very adventurous, you can define your own shape First you must import the package in order to add to existing functions</p><pre><code class="language-julia">import MultipleScattering
 
 type MyShape &lt;: MultipleScattering.Shape
 end</code></pre><p>To describe the characteristics and behaviour of the function you must define the following functions:</p><pre><code class="language-julia">MultipleScattering.volume(shape::MyShape) = 0.0
