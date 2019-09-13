@@ -1,7 +1,7 @@
 # Introduction
 
 
-### Physical properties
+### [Physical properties wave](@id into_physical_properties)
 
 First define the host medium, for example for an acoustic medium in 2D
 
@@ -17,7 +17,7 @@ Acoustic(1.0, 1.0 + 0.0im, 2)
 ```
 At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y,\omega) + k^2 u(x,y,\omega) = 0$, where $k = \omega/c$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
 
-### Source wave
+### [Source wave](@id into_source)
 
 The host medium will determine the types of waves that can propagate. For example an incident plane wave $\mathrm e^{ \mathrm i k x}$ there is a convenient constructor
 ```jldoctest intro
@@ -29,7 +29,7 @@ julia> source = plane_source(host_medium; direction = [1.0,0.0]);
 
 We generally call the incident wave a source. See ... for more details on sources, and see [Acoustic](@ref) for some user functions for the `Acoustic` medium.
 
-### Particles
+### [Particles](@id into_particles)
 
 Next, we define some particles to scatter an acoustic wave. We choose two filled circles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
 ```jldoctest intro
@@ -43,7 +43,7 @@ Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Circle((-2.0, -2.0), 0.5))
 
 julia> particles = [p1,p2];
 ```
-See [Shapes and particles](@ref) for details on different shapes and particles.
+See [Shapes](@ref) and [Particles](@ref) for details on different shapes and particles.
 
 If you have the package `Plots` installed you can plot the particles. Note that although they appear hollow, we consider them to filled with the same homogenous material.
 ```jldoctest intro

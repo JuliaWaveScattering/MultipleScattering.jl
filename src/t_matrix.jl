@@ -1,9 +1,9 @@
 """
-Returns a 2M+1 by 2M+1 T-matrix for particle with specific shape, physical
-properties in a medium with a specific physical property at a specific angular
-wavenumber. See doc/T-matrix.pdf for details.
+    t_matrix(particle, medium, ω, order)
+
+Returns a finite T-matrix, with size depending on `order`, for a specific `particle` within a `medium` with specific physical properties.
 """
-function t_matrix(p::AbstractParticle{T,Dim}, medium::PhysicalProperties{T,Dim}, ω::T, M::Integer)::AbstractMatrix{T} where {T<:AbstractFloat,Dim}
+function t_matrix(p::AbstractParticle{T,Dim}, medium::PhysicalProperties{T,Dim}, ω::T, order::Integer)::AbstractMatrix{T} where {T<:AbstractFloat,Dim}
 
     error("T-matrix function is not yet written for $(name(p.medium)) $(name(p.shape)) in a $(name(medium)) medium")
 end

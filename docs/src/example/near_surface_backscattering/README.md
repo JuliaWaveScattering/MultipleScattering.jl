@@ -21,7 +21,7 @@ bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
 
 shape = Rectangle(bottomleft,topright)
-particles = random_particles(particle_medium, particle_shape; box_shape = shape, volume_fraction = volfrac)
+particles = random_particles(particle_medium, particle_shape; region_shape = shape, volume_fraction = volfrac)
 ```
 
 We send an incoming harmonic plane wave and receive the backscattering at `x`:

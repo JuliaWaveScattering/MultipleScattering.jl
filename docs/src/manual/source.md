@@ -1,11 +1,11 @@
-# Source wave
+# Sources
 
 ```@meta
 DocTestSetup = quote
     using MultipleScattering
 end
 ```
-[`Source`](@ref) is a `struct` which represents any source, also called an incident wave. For acoustics, any wave field $u_{\text{in}}(x,y)$ that satisfies $\nabla^2 u_{\text{in}}(x,y) + k^2 u_{\text{in}}(x,y) = 0$, with $k = \omega/c$, can be a source. See [Source](@ref) for a list of relevant types and functions.
+[`Source`](@ref) is a `struct` which represents any source, also called an incident wave. For acoustics, any wave field $u_{\text{in}}(x,y)$ that satisfies $\nabla^2 u_{\text{in}}(x,y) + k^2 u_{\text{in}}(x,y) = 0$, with $k = \omega/c$, can be a source. See [Source](@ref source_base) for a list of relevant types and functions.
 
 ## 2D Acoustics
 

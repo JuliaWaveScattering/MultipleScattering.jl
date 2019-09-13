@@ -14,6 +14,7 @@ makedocs(
             "manual/intro.md",
             "manual/source.md",
             "manual/shapes.md",
+            "manual/particles.md",
             "manual/time_response.md",
             "manual/plot.md"
         ],
@@ -32,7 +33,6 @@ makedocs(
             "example/moments/README.md",
             "example/near_surface_backscattering/README.md",
             "example/random_particles/README.md",
-            "example/random_particles_in_circle/README.md",
             "example/time_response_single_particle/README.md",
             "example/two_particles/README.md",
         ]

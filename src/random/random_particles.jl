@@ -6,7 +6,7 @@ random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_shape::Sha
 
 function random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_shapes::Vector{S};
         num_particles::Int = length(particle_shapes), volume_fraction::T = zero(T),
-        box_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*sum(outer_radius.(particle_shapes)), T(10)*sum(outer_radius.(particle_shapes))),
+        region_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*sum(outer_radius.(particle_shapes)), T(10)*sum(outer_radius.(particle_shapes))),
         current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[],
         kws...
 ) where {T<:AbstractFloat,Dim, S<:Shape{T,Dim}}
@@ -14,14 +14,14 @@ function random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_s
     particles = if volume_fraction == zero(T)
         num_each = Int(round(num_particles / length(particle_shapes)))
         for s in particle_shapes
-            add_particles = random_particles(particle_medium, s, box_shape, num_each; current_particles = current_particles, kws...)
+            add_particles = random_particles(particle_medium, s, region_shape, num_each; current_particles = current_particles, kws...)
             current_particles = [current_particles; add_particles]
         end
         current_particles
     else
         vol_each = volume_fraction / length(particle_shapes)
         for s in particle_shapes
-            add_particles = random_particles(particle_medium, s, box_shape, vol_each; current_particles = current_particles, kws...)
+            add_particles = random_particles(particle_medium, s, region_shape, vol_each; current_particles = current_particles, kws...)
             current_particles = [current_particles; add_particles]
         end
         current_particles
@@ -50,54 +50,54 @@ end
 # a
 
 # function random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_shape::Shape{T,Dim};
-#         box_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*outer_radius(particle_shape), T(10)*outer_radius(particle_shape)),
+#         region_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*outer_radius(particle_shape), T(10)*outer_radius(particle_shape)),
 #         num_particles::Int = 0, volume_fraction::T = zero(T), kws...) where {T<:AbstractFloat,Dim}
 #
 #     if volume_fraction == zero(T)
 #         if num_particles == 0 num_particles = 5 end
 #         random_particles(particle_medium, particle_shape,
-#             box_shape, num_particles; kws...)
+#             region_shape, num_particles; kws...)
 #     else
 #         random_particles(particle_medium, particle_shape,
-#             box_shape, volume_fraction; kws...)
+#             region_shape, volume_fraction; kws...)
 #     end
 #
 # end
 
 function random_particles(particle_medium::P, particle_shape::S,
-    box_shape::Shape{T,Dim}, volfrac::AbstractFloat; kws...
+    region_shape::Shape{T,Dim}, volfrac::AbstractFloat; kws...
 ) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
 
-    N = Int(round(volfrac * volume(box_shape) / volume(particle_shape)))
-    return random_particles(particle_medium, particle_shape, box_shape, N; kws...)
+    N = Int(round(volfrac * volume(region_shape) / volume(particle_shape)))
+    return random_particles(particle_medium, particle_shape, region_shape, N; kws...)
 end
 
 """
-    random_particles(particle_medium, particle_shapes::Vector{Shape}, box_shape, volume_fraction::Number;
+    random_particles(particle_medium, particle_shapes::Vector{Shape}, region_shape, volume_fraction::Number;
         seed=Random.make_seed())
-    random_particles(particle_medium, particle_shape::Shape, box_shape, volume_fraction::Number;
+    random_particles(particle_medium, particle_shape::Shape, region_shape, volume_fraction::Number;
         seed=Random.make_seed())
-    random_particles(particle_medium, particle_shape::Shape, box_shape, N::Integer;
+    random_particles(particle_medium, particle_shape::Shape, region_shape, N::Integer;
         seed=Random.make_seed())
 
-Generate `N` random particles that fit inside `box_shape` (or fill with `volume_fraction`)
+Generate `N` random particles that fit inside `region_shape` (or fill with `volume_fraction`)
 
 Specify seed to make output deterministic. Algorithm places particles unifomly randomly inside
-the bounding rectangle of `box_shape` and discards particle if it overlaps (based on outer radius)
+the bounding rectangle of `region_shape` and discards particle if it overlaps (based on outer radius)
 or does not lies completely in box box.
 
 When passing particle_shapes::Vector{Shape} we assume each element is equally likely to occur. Repeating the same shape will lead to it being placed more often.
 """
-function random_particles(particle_medium::P, particle_shape::S, box_shape::Shape{T,Dim}, N::Integer;
+function random_particles(particle_medium::P, particle_shape::S, region_shape::Shape{T,Dim}, N::Integer;
         seed=Random.make_seed(),
         separation_ratio::T = T(1.005), # Min distance between particle centres relative to their outer radiuses.
         current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[] # Particles already present.
 ) where {T<:AbstractFloat,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
 
     # Check volume fraction is not impossible
-    volfrac = N * volume(particle_shape) / volume(box_shape)
+    volfrac = N * volume(particle_shape) / volume(region_shape)
     max_packing = if length(current_particles) > 0
-        0.7854 - sum(volume.(current_particles))/volume(box_shape)
+        0.7854 - sum(volume.(current_particles))/volume(region_shape)
     else 0.7854
     end
     if volfrac  > max_packing
@@ -107,7 +107,7 @@ function random_particles(particle_medium::P, particle_shape::S, box_shape::Shap
     # Create pseudorandom device with specified seed
     randgen = MersenneTwister(seed)
 
-    bounding_rect = bounding_rectangle(box_shape)
+    bounding_rect = bounding_rectangle(region_shape)
     bounding_rect_size = SVector(bounding_rect.width, bounding_rect.height)
 
     @printf("""\n
@@ -116,8 +116,8 @@ function random_particles(particle_medium::P, particle_shape::S, box_shape::Shap
         Inside %s of volume: %0.5g
         Particle volume fraction: %0.5g
         Bounding box volume: %0.5g
-        """, N, name(particle_shape), N*volume(particle_shape), name(box_shape),
-        volume(box_shape), volfrac, volume(bounding_rect)
+        """, N, name(particle_shape), N*volume(particle_shape), name(region_shape),
+        volume(region_shape), volfrac, volume(bounding_rect)
     )
 
     # Allocate memory for particles
@@ -135,7 +135,7 @@ function random_particles(particle_medium::P, particle_shape::S, box_shape::Shap
             while outside_box
                 x = bounding_rect_size .* (1 .- 2 .* rand(randgen,T,2)) .+ origin(bounding_rect)
                 particles[n] = Particle(particle_medium, congruent(particle_shape, x))
-                outside_box = !(particles[n] ⊆ box_shape)
+                outside_box = !(particles[n] ⊆ region_shape)
             end
 
             overlapping = false

@@ -1,6 +1,9 @@
 
-# T-matrix for a 2D circlular acoustic capsule in a 2D acoustic medium
+"""
+    t_matrix(CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, Acoustic{T,2}, ω, order)
 
+The T-matrix for a 2D circlular capsule particle in an acoustic medium.
+"""
 function t_matrix(cap::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     k = ω / medium.c

@@ -1,6 +1,10 @@
 AcousticCircleParticle{T} = Particle{T,2,Acoustic{T,2},Circle{T}}
 
-# T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium
+"""
+    t_matrix(Particle{T,2,Acoustic{T,2},Circle{T}}, Acoustic{T,2}, ω, order)
+
+The T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium.
+"""
 function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
@@ -47,7 +51,11 @@ function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoust
     return - Diagonal(vcat(reverse(Zns), Zns[2:end]))
 end
 
+"""
+    internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
 
+The internal field for a 2D circlular acoustic particle in a 2D acoustic medium.
+"""
 function internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where T
 
     Nh = Int((length(scattering_coefficients) - one(T))/T(2.0)) #shorthand

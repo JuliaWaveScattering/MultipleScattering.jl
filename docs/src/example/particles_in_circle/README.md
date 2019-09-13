@@ -17,7 +17,7 @@ particle_shape = Circle(radius)
 
 circle = Circle(centre, big_radius)
 
-particles = random_particles(particle_medium, particle_shape; box_shape = circle, volume_fraction = volfrac, seed=1)
+particles = random_particles(particle_medium, particle_shape; region_shape = circle, volume_fraction = volfrac, seed=1)
 
 x = [-10.,0.] # position to receive the reflected wave
 host_medium = Acoustic(2; ρ=1.0, c=1.0)

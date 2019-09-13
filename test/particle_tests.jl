@@ -122,22 +122,22 @@
         seed1 = 1
         seed2 = 2
 
-        box_shape = Circle(20.0)
+        region_shape = Circle(20.0)
 
         volfrac = 0.1
         radius = 0.5
         particle_shape = Circle(radius)
         medium = Acoustic(1.0,1.0,2)
-        particles1  = random_particles(medium, particle_shape, box_shape, volfrac; seed=seed1)
-        particles1a = random_particles(medium, particle_shape, box_shape, volfrac; seed=seed1)
-        particles2  = random_particles(medium, particle_shape, box_shape, volfrac; seed=seed2)
+        particles1  = random_particles(medium, particle_shape, region_shape, volfrac; seed=seed1)
+        particles1a = random_particles(medium, particle_shape, region_shape, volfrac; seed=seed1)
+        particles2  = random_particles(medium, particle_shape, region_shape, volfrac; seed=seed2)
 
         # Particles should be determined solely by the seed
         @test particles1 == particles1a
         @test particles1 != particles2
 
-        @test_throws ErrorException random_particles(medium, particle_shape, box_shape, 0.9)
-        @test_throws ErrorException random_particles(medium, particle_shape, box_shape, 0.5; seed=3)
+        @test_throws ErrorException random_particles(medium, particle_shape, region_shape, 0.9)
+        @test_throws ErrorException random_particles(medium, particle_shape, region_shape, 0.5; seed=3)
 
     end
 

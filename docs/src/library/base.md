@@ -8,7 +8,7 @@ CurrentModule = MultipleScattering
 Pages = ["base.md"]
 ```
 
-## [Shapes](@id base_shapes)
+## [Shape](@id base_shape)
 
 Shape types and functions.
 
@@ -29,7 +29,7 @@ TimeOfFlight
 Sphere
 ```
 
-## Physical properties
+## [Physical property](@id base_physical_property)
 
 Physical properties types and functions.
 
@@ -43,7 +43,7 @@ internal_field
 boundary_data
 ```
 
-## Particles
+## [Particle](@id base_particle)
 
 Particle types and functions.
 
@@ -54,7 +54,7 @@ CapsuleParticle
 iscongruent(::AbstractParticle,::AbstractParticle)
 ```
 
-## Source
+## [Source](@id source_base)
 
 Source types and functions.
 
@@ -64,7 +64,7 @@ Order   = [:type, :function]
 Pages   = ["src/source.jl"]
 ```
 
-## Impulse
+## [Impulse](@id impulse_base)
 
 Impulse types and functions.
 
@@ -75,14 +75,14 @@ Pages   = ["src/impulse.jl"]
 ```
 
 
-## Simulation
+## [Simulation](@id simulation_base)
 
 Simulation types and functions.
 
 ```@docs
 FrequencySimulation
 run(::FrequencySimulation)
-run(::FrequencySimulation, ::Rectangle, ::AbstractVector)
+run(::FrequencySimulation, ::Shape, ::AbstractVector)
 FrequencySimulationResult
 basis_coefficients
 field
