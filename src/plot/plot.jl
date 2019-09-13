@@ -39,20 +39,27 @@ end
 end
 
 "Plot the field for a particular wavenumber"
-@recipe function plot(sim::FrequencySimulation{T}, ω::T;
+@recipe function plot(sim::FrequencySimulation{T,Dim}, ω::T;
             res=10, xres=res, yres=res,
-            field_apply=real, bounds = :auto,
-            drawparticles=false) where {T}
+            field_apply=real,
+            region_shape = :auto,
+            bounds = :auto,
+            exclude_region = EmptyShape{T,Dim}(),
+            drawparticles=false) where {T,Dim}
 
     # If user wants us to, generate bounding rectangle around particles
-    bounds = (bounds != :auto) ? bounds :
+    region_shape = (region_shape != :auto) ? region_shape :
         if isempty(sim.particles)
-            @warn "What region to plot? For example, use keyword bounds = Rectangle([-1.0,-1.0],[1.0,1.0])"
-            bounds = Rectangle([-one(T),-one(T)],[one(T),one(T)])
+            if bounds == :auto
+                @warn "What region to plot? For example, use keyword bounds = Rectangle([-1.0,-1.0],[1.0,1.0])"
+                Rectangle([-one(T),-one(T)],[one(T),one(T)])
+            else bounds
+            end
         else
-            bounds = bounding_rectangle(sim.particles)
+            region_shape = bounding_rectangle(sim.particles)
         end
 
+    bounds = bounding_rectangle(region_shape)
     # If user has not set xlims and ylims, set them to the rectangle
     xlims --> (bottomleft(bounds)[1], topright(bounds)[1])
     ylims --> (bottomleft(bounds)[2], topright(bounds)[2])
@@ -63,7 +70,9 @@ end
     p_ylims = plotattributes[:ylims]
     bounds = Rectangle((T(p_xlims[1]),T(p_ylims[1])), (T(p_xlims[2]),T(p_ylims[2])))
 
-    field_sim = run(sim, bounds, [ω]; xres=xres, yres=yres)
+    region_shape = (bounds ⊆ region_shape) ? bounds : region_shape
+
+    field_sim = run(sim, region_shape, [ω]; xres=xres, yres=yres, exclude_region=exclude_region)
     xy_mat = reshape(field_sim.x, (xres+1, yres+1))
     x_pixels = [x[1] for x in xy_mat[:,1]]
     y_pixels = [x[2] for x in xy_mat[1,:]]

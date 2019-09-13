@@ -145,14 +145,26 @@ Run the simulation `sim` for a grid of positions in rectangle and for angular fr
 Frequency can be a float or vector of floats. The resolution of the grid points is defined
 by xres and yres.
 """
-function run(sim::FrequencySimulation, rect::Rectangle, ω_vec::AbstractVector;
-             res=20, xres=res, yres=res, kws...)
+function run(sim::FrequencySimulation, region::Shape, ω_vec::AbstractVector;
+             res::Number = 20, xres::Number = res, yres::Number = res,
+             exclude_region::Shape = EmptyShape(region),
+             kws...)
+
+    rect = bounding_rectangle(region)
 
     #Size of the step in x and y direction
     step_size = [rect.width / xres, rect.height / yres]
-    x_vec = [SVector(bottomleft(rect) + step_size.*[i,j]) for i=0:xres, j=0:yres]
+    x_vec = [SVector(bottomleft(rect) + step_size.*[i,j]) for i=0:xres, j=0:yres][:]
 
-    return run(sim, x_vec[:], ω_vec; kws...)
+    inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
+    x2_vec = filter(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
+
+    result = run(sim, x2_vec, ω_vec; kws...)
+
+    field_mat = zeros(typeof(result.field[1]), length(x_vec), length(ω_vec))
+    field_mat[inds,:] = result.field
+
+    return FrequencySimulationResult(field_mat, x_vec, ω_vec)
 end
 
 """

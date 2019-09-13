@@ -42,6 +42,7 @@ include("circle.jl")
 include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
 include("sphere.jl")
+include("empty_shape.jl")
 
 "points on the boundary of a shape"
 function boundary_points(shape::Shape{T,Dim}, num_points::Int = 4; dr = zero(T)) where {Dim,T}
