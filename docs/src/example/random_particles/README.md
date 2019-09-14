@@ -36,8 +36,8 @@ We use the `Plots` package to plot both the response at the listener position x
 
 ```julia
     using Plots; #pyplot(linewidth = 2.0)
-    plot(result, apply=real) # plot result
-    plot!(result, apply=imag)
+    plot(result, field_apply=real) # plot result
+    plot!(result, field_apply=imag)
     #savefig("plot_result.png")
 ```
 ![Plot of response against wavenumber](plot_result.png)
@@ -58,4 +58,3 @@ And plot the whole field inside the region_shape `bounds` for a specific wavenum
 ![Plot real part of acoustic field](plot_field.png)
 ## Things to try
 - Try changing the volume fraction, particle radius and ω values we evaluate
-

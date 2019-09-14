@@ -38,8 +38,8 @@ end
 
 """
 We use the Fourier transform convention:
-F(ω) =  ∫ f(t)*exp(im*ω*t) dt
-f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dω
+F(ω) =  ∫ f(t)*exp(im*ω*t) dt,
+f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dω.
 
 An impluse g(t) is convoluted in time with f(t), however we avoid the convlution by working with the fourier transform G(ω) of the impulse g(t), which results in
 frequency to time: output = (2π)^(-1) * ∫ G(ω)*F(ω)*exp(-im*ω*t) dt
@@ -104,7 +104,7 @@ end
 """
 Dirac Delta function of unit area in the time domain, centred at t=t0.
 
-Warning: the representation of this in time may lead to unexpected behaviour.
+Warning: in the time domain this is a singuarity and so may lead to unexpected behaviour.
 """
 function TimeDiracImpulse(t0::T) where {T<:AbstractFloat}
     in_time(t::T) = (t==t0) ? T(Inf) : zero(T)
@@ -118,9 +118,9 @@ function DiscreteTimeDiracImpulse(t0::T, t_vec::AbstractArray{T}, ω_vec::Abstra
 end
 
 """
-Dirac Delta function of unit area in the frequency domain, centred at ω=ω0.
+Dirac Delta function of unit area in the frequency domain centred at ω=ω0.
 
-Warning: the representation of this in frequency may lead to unexpected behaviour.
+Warning: in frequency space this is a singuarity and so may lead to unexpected behaviour.
 """
 function FreqDiracImpulse(ω0::T, dω::T = one(T)) where {T<:AbstractFloat}
     in_time(t::T) = exp(-im*ω0*t) / (T(2)*π)

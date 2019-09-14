@@ -16,7 +16,8 @@ makedocs(
             "manual/shapes.md",
             "manual/particles.md",
             "manual/time_response.md",
-            "manual/plot.md"
+            "manual/plot.md",
+            "manual/new_types.md"
         ],
         "Library" => [
             "library/base.md",
@@ -28,7 +29,6 @@ makedocs(
             "example/README.md",
             "example/box_size/README.md",
             "example/hankel_convergence/README.md",
-            "example/intro/README.md",
             "example/lens/README.md",
             "example/moments/README.md",
             "example/near_surface_backscattering/README.md",

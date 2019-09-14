@@ -19,7 +19,7 @@ export Simulation, run, TimeSimulation, forcing, field
 export SimulationResult, FrequencySimulation, FrequencySimulationResult, size
 
 export ContinuousImpulse, TimeDiracImpulse, FreqDiracImpulse, GaussianImpulse
-export DiscreteImpulse, DiscreteTimeDiracImpulse, DiscreteGaussianImpulse
+export DiscreteImpulse, continuous_to_discrete_impulse, DiscreteTimeDiracImpulse, DiscreteGaussianImpulse
 export TimeSimulationResult, frequency_to_time, time_to_frequency
 export ω_to_t, t_to_ω, firstnonzero
 

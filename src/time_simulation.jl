@@ -6,7 +6,7 @@ Assumes only positive frequencies and a real time signal
 function frequency_to_time(simres::FrequencySimulationResult{T,Dim,FieldDim};
         t_vec::AbstractVector{T} = ω_to_t(simres.ω),
         impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)), #GaussianImpulse(maximum(simres.ω)),
-        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec,simres.ω),
+        discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, simres.ω),
         method = :dft
     ) where {Dim,FieldDim,T}
 

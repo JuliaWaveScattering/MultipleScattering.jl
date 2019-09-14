@@ -6,17 +6,17 @@ include("plot_moments.jl")
 @recipe function plot(simres::SimulationResult;
         x = simres.x,
         x_indices = [findmin([norm(z - y) for z in simres.x])[2] for y in x],
-        ω_indices = Colon(), apply = real)
+        ω_indices = Colon(), field_apply = real)
 
     for x_ind in x_indices
 
-        apply_field = apply.(field(simres)[x_ind, ω_indices])
+        fs = field_apply.(field(simres)[x_ind, ω_indices])
         xlab = ((typeof(simres) <: FrequencySimulationResult) ? "ω" : "t")
 
         @series begin
-            label --> "$apply x=$(simres.x[x_ind])"
+            label --> "$field_apply x=$(simres.x[x_ind])"
             xlabel --> xlab
-            (getfield(simres, 3)[ω_indices], apply_field)
+            (getfield(simres, 3)[ω_indices], fs)
         end
     end
 end

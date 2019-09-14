@@ -42,6 +42,8 @@ end
 
 import Base.run
 
+run(sim::Source, x_vec::Vector, ω; kws...) = run(FrequencySimulation(sim), x_vec, ω; kws...)
+
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ω::T;
         basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}

@@ -27,7 +27,7 @@ julia> source = plane_source(host_medium; direction = [1.0,0.0]);
     Often $\mathrm e^{ \mathrm i k x - \mathrm i \omega t}$ is considered to be a harmonic plane-wave travelling along the $x-$axis. We omit the part $ - \mathrm i \omega t$ as is common in frequency space.  
 
 
-We generally call the incident wave a source. See ... for more details on sources, and see [Acoustic](@ref) for some user functions for the `Acoustic` medium.
+We generally call the incident wave a source. See [Sources](@ref) for details, and see [Acoustic](@ref) for some functions for the `Acoustic` medium.
 
 ### [Particles](@id into_particles)
 
@@ -96,9 +96,9 @@ For details on plot fields and videos see [Plotting](@ref).
 
 ### Results in time
 
-If we have calculated a response $u(\omega)$ over a range of frequencies $\omega$, then we can use a Discrete Fourier transform to calculate the response in time $U(t)$. That is, we can calculate $U(t)$ by approximating the Fourier transform:
+If we have calculated a frequency response $\hat u(\omega)$ over a range of frequencies $\omega$, then we can use a Fourier transform to calculate the response in time $u(t)$. That is, we can calculate $u(t)$ by approximating the Fourier transform:
 
-$U(t) = \frac{1}{2\pi} \int_{-\infty}^\infty u(\omega)\mathrm e^{-\mathrm i \omega t} d\omega.$
+$u(t) = \frac{1}{2\pi} \int_{-\infty}^\infty \hat u(\omega)\mathrm e^{-\mathrm i \omega t} d\omega.$
 
 For details see the section on [Time response](@ref). For example, taking a Discrete Fourier transform of the previous response leads to an incident plane wave pulse in time:
 

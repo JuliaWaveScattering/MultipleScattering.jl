@@ -1,9 +1,9 @@
 """
-    statistical_moments(results, n; applytofield=real)::Vector{Matrix}
+    statistical_moments(results, n; field_apply=real)::Vector{Matrix}
 
-Calculate moments up to `n` of results at each position and wavenumber/time, after applying `applytofield`.
+Calculate moments up to `n` of results at each position and wavenumber/time, after applying `field_apply`.
 """
-function statistical_moments(results::AbstractVector{SimRes}, num_moments::Int; applytofield=real) where {T,SimRes<:SimulationResult{T}}
+function statistical_moments(results::AbstractVector{SimRes}, num_moments::Int; field_apply=real) where {T,SimRes<:SimulationResult{T}}
 
     # Number of positions and wavenumbers/time points sampled
     X, K = size(results[1])
@@ -16,7 +16,7 @@ function statistical_moments(results::AbstractVector{SimRes}, num_moments::Int; 
     # For each wavenumber or timestep, calculate each moment up to num_moments
     for i = 1:X
         for j = 1:K
-            responses = [applytofield(field(results[r],i,j)) for r=1:R]
+            responses = [field_apply(field(results[r],i,j)) for r=1:R]
             μ = mean(responses)
             moments[1][i,j] = μ
             for m=2:num_moments
