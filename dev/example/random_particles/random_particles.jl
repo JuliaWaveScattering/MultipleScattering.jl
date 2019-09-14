@@ -36,8 +36,8 @@ result = run(simulation, x, ωs)
 
 # ```julia
     using Plots; #pyplot(linewidth = 2.0)
-    plot(result, apply=real) # plot result
-    plot!(result, apply=imag)
+    plot(result, field_apply=real) # plot result
+    plot!(result, field_apply=imag)
     #savefig("plot_result.png")
 # ```
 # ![Plot of response against wavenumber](plot_result.png)
