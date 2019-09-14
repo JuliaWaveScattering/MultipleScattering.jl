@@ -1,7 +1,8 @@
 # MultipleScattering
 
 <!-- [![][docs-stable-img]][docs-stable-url]  -->
-[![][docs-dev-img]][docs-dev-url] [![DOI](doi-img)](doi-url) [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] [![][coveralls-img]][coveralls-url]
+[![][docs-dev-img]][docs-dev-url] [![][doi-img]][doi-url] [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] [![][coveralls-img]][coveralls-url]
+
 
 *A Julia library for simulating, processing, and plotting multiple scattering of waves.*
 
@@ -21,7 +22,6 @@ using MultipleScattering
 
 ## Documentation
 
-- [**STABLE**][docs-stable-url] &mdash; **documentation of the most recently tagged version.**
 - [**DEVEL**][docs-dev-url] &mdash; *documentation of the in-development version.*
 
 ## Simple example
