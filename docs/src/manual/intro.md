@@ -46,7 +46,7 @@ julia> particles = [p1,p2];
 See [Shapes](@ref) and [Particles](@ref) for details on different shapes and particles.
 
 If you have the package `Plots` installed you can plot the particles. Note that although they appear hollow, we consider them to filled with the same homogenous material.
-```jldoctest intro
+```julia
 julia> using Plots; pyplot();
 
 julia> plot(particles);
