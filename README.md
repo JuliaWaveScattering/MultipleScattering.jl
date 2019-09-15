@@ -25,44 +25,42 @@ using MultipleScattering
 - [**master**][docs-dev-url] &mdash; *documentation of the in-development version.*
 
 ## Simple example
-```@meta
-DocTestSetup = quote
-    using MultipleScattering
-end
-```
 Define the properties of your host medium, for example
-```jldoctest intro
+```julia
 julia> host_medium = Acoustic(2; ρ=1.0, c=1.0); # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
 ```
 an acoustic medium in 2D with density 1 and wavespeed 1.
 
 Next, define two dense, circular acoustic particles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
-```jldoctest intro
-julia> particle_medium =  Acoustic(2; ρ=10.0, c=2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
+```julia
+julia> particle_medium =  Acoustic(2; ρ=10.0, c=2.0) # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
 
-julia> p1 = Particle(particle_medium, Circle([-2.0,2.0], 2.0));
+julia> p1 = Particle(particle_medium, Circle([-2.0,2.0], 2.0))
 
-julia> p2 = Particle(particle_medium, Circle([-2.0,-2.0], 0.5));
+julia> p2 = Particle(particle_medium, Circle([-2.0,-2.0], 0.5))
 
-julia> particles = [p1,p2];
+julia> particles = [p1,p2]
 ```
 
 Lastly we define the source, for example an incident plane wave (![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D)) using a helper function.
 ```julia
-source = plane_source(host_medium; direction = [1.0,0.0])
+julia> source = plane_source(host_medium; direction = [1.0,0.0])
 ```
 
 Once we have these three components, we can build our `FrequencySimulation` object
 ```julia
-simulation = FrequencySimulation(particles, source)
+julia> simulation = FrequencySimulation(particles, source)
 ```
 
 To get numerical results, we run our simulation for specific positions and angular frequencies,
 ```julia
-x = [[-10.0,0.0], [0.0,0.0]]
-max_ω = 1.0
-ω = 0.01:0.01:max_ω
-result = run(simulation, x, ω)
+julia>  x = [[-10.0,0.0], [0.0,0.0]]
+
+julia>  max_ω = 1.0
+
+julia>  ω = 0.01:0.01:max_ω
+
+julia>  result = run(simulation, x, ω)
 ```
 
 ### Plot
@@ -72,15 +70,17 @@ In our above simulation we ran the simulation for 100 different wavenumbers, and
 measured the response at the location (-10,0).
 We can plot the time-harmonic response across these wavenumbers by typing:
 ```julia
-using Plots
-plot(result)
+julia> using Plots
+
+julia> plot(result)
 ```
 ![Plot of response against wavenumber](docs/src/example/intro/plot_result.png)
 
 For a better overview you can plot the whole field in space for a specific angular frequency by typing:
 ```julia
-ω = 0.8
-plot(simulation,ω)
+julia> ω = 0.8
+
+julia> plot(simulation,ω)
 ```
 ![Plot real part of acoustic field](docs/src/example/intro/plot_field.png)
 
@@ -92,15 +92,18 @@ need an insight into a specific part of your simulation.
 
 To calculate an incident plane wave pulse in time use:
 ```julia
-time_result = frequency_to_time(result)
-plot(time_result)
+julia> time_result = frequency_to_time(result)
+
+julia> plot(time_result)
 ```
 ![Plot real part of acoustic field](docs/src/example/intro/plot_time_result.png)
 Or for a Gaussian impulse in time:
 ```julia
-t_vec = LinRange(0.,700.,400)
-time_result = frequency_to_time(result; t_vec = t_vec, impulse = GaussianImpulse(max_ω))
-plot(time_result)
+julia> t_vec = LinRange(0.,700.,400)
+
+julia> time_result = frequency_to_time(result; t_vec = t_vec, impulse = GaussianImpulse(max_ω))
+
+julia> plot(time_result)
 ```
 ![Plot real part of acoustic field](docs/src/example/intro/plot_gauss_result.png)
 
