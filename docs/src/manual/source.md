@@ -32,7 +32,7 @@ julia> domain = Rectangle([-1.0,-1.0],[1.0,1.0]);
 
 julia> plot(plane_wave, ω; bounds = domain)
 ```
-![Plot plane wave](../media/plane-wave.png)
+![Plot plane wave](../assets/plane-wave.png)
 
 Another useful source is the point source $u_{\text{in}}(x,y) = \frac{\mathrm i A}{4} \mathrm H_0^{(1)}(k \|(x-x_0,y-y_0)\|)$ where $A$ is the amplitude,  $\mathbf x_0 = (x_0,y_0)$ is the origin of the point source, and $\mathrm H_0^{(1)}$ is the Hankel function of the first kind.
 
@@ -46,7 +46,7 @@ julia> point_wave = point_source(medium, x0, A);
 ```julia
 julia> plot(point_wave, ω; bounds = domain)
 ```
-![Plot point wave](../media/point-wave.png)
+![Plot point wave](../assets/point-wave.png)
 
 !!! note
     Because the point source has a singularity at $x_0$ it is best to avoid plotting, and evaluating the field, close to $x_0$.
@@ -60,7 +60,7 @@ julia> source = (3.0 + 1.0im) * point_wave + plane_wave;
 
 julia> plot(source, ω; bounds = domain)
 ```
-![Plot point wave](../media/combined-source.png)
+![Plot point wave](../assets/combined-source.png)
 
 For example, to create a finite emitter/transducer source we can use:
 ```julia
@@ -70,7 +70,7 @@ julia> source = sum(ys) do y point_source(medium, [-1.1, y]) end;
 
 julia> plot(source, 4.0; bounds = domain, field_apply = abs, res = 40)
 ```
-![Plot point wave](../media/transducer-source.png)
+![Plot point wave](../assets/transducer-source.png)
 
 where `field_apply` is applied to the wave field at every point, the default is `field_apply = real`, and `res` is the resolution along both the $x$ and $y$ axis.
 

@@ -46,7 +46,7 @@ using Plots
 plot(particles)
 plot!(circle, linecolor = :red)
 ```
-![Particles in circle](../media/particles-in-circle.png)
+![Particles in circle](../assets/particles-in-circle.png)
 
 ## Placing polydisperse particles in a region
 
@@ -73,7 +73,7 @@ plot(polydisperse_particles, linecolor = :green)
 plot!(particles, linewidth = 2.0)
 plot!(circle, linecolor = :red)
 ```
-![Particles in circle](../media/poly-particles-in-circle.png)
+![Particles in circle](../assets/poly-particles-in-circle.png)
 
 ## Removing particles
 
@@ -86,7 +86,7 @@ filter!(p -> !(p ⊆ small_circle), polydisperse_particles)
 plot(polydisperse_particles, linecolor = :green)
 plot!(circle, linecolor = :red)
 ```
-![Particles in circle](../media/poly-particles-in-circle2.png)
+![Particles in circle](../assets/poly-particles-in-circle2.png)
 
 next we place a point source in the centre and plot the result, while excluding a small region `Circle(0.1)` to avoid the singularity caused by a point source:
 ```julia
@@ -98,7 +98,7 @@ plot(sim, ω; res=20,
        drawparticles=true
 )
 ```
-![Particles in circle](../media/poly-particles-sim.png)
+![Particles in circle](../assets/poly-particles-sim.png)
 
 ## Particle internals
 

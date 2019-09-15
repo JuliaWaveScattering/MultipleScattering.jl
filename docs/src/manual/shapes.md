@@ -23,6 +23,6 @@ plot(rectangle, linecolor = :red)
 plot!(circle, linecolor = :green)
 plot!(timeofflight, linecolor = :blue)
 ```
-![Plot the three shapes](../media/shapes.png)
+![Plot the three shapes](../assets/shapes.png)
 
 The `Rectangle` and `TimeOfFlight` are usually region where particles are placed. Time of flight is a shape which contains shapes from a half space which take at most `t` time to reach from the listener. The `Circle` is also used to define circular particles.

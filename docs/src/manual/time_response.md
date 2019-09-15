@@ -36,7 +36,7 @@ p1 = plot(freq_response, xlims = (0,2), ylims = (0.,1.5), field_apply = real);
 p2 = plot(time_response);
 plot(p1,p2)
 ```
-![A discrete delta impulse](../media/sinc_impulse.png)
+![A discrete delta impulse](../assets/sinc_impulse.png)
 
 Note how the time response has lobes after and before the largest signal. This is often undesirable, as we usually want signal which are compact in the time domain, i.e. zero before and after the largest signal. These lobes are called Gibbs Phenomena. They are caused by only calculating the frequency response $\hat u(\mathbf x,\omega)$ up to $\omega \leq 1$, and then (usually), taking $\hat u(\mathbf x,\omega) = 0$ for $\omega > 1$ when calculating the Fourier transform.   
 
@@ -61,7 +61,7 @@ p1 = plot(ω -> real(gauss_impulse.in_freq(ω)), ωs_all, title="Gaussian in fre
 p2 = plot(gauss_impulse.in_time, t_vec, title="Gaussian in time")
 plot(p1,p2)
 ```
-![A Gaussian impulse](../media/gauss_impulse.png)
+![A Gaussian impulse](../assets/gauss_impulse.png)
 
 The analytic expression for these functions are $\hat f(\omega) = 2 \sqrt{3 \pi / \Omega^2} \mathrm e^{-3 (\omega/\Omega)^2}$ and $f(t) = \mathrm e^{-(t \Omega)^2 / 12}$, where we used $\Omega =  \mathrm{max}\,\omega$.
 
@@ -72,14 +72,14 @@ p1 = plot(time_response);
 p2 = plot(gauss_time_response);
 plot(p1,p2)
 ```
-![Compare the Gaussian impulse](../media/compare_gauss_impulse.png)
+![Compare the Gaussian impulse](../assets/compare_gauss_impulse.png)
 
 There are still some lobes present because again `freq_response` only calculates `ω<=1.0`,  but this time the drop is much less pronounced, which we can demonstrate with a plot of $\hat \phi(\mathbf 0, \omega)$:  
 ```julia
 φs = field(freq_response)[:] .* gauss_impulse.in_freq.(ωs)
 plot(ωs, real.(φs), title="Frequency response φ")
 ```
-![Compare the Gaussian impulse](../media/freq_gauss.png)
+![Compare the Gaussian impulse](../assets/freq_gauss.png)
 
 ## Discrete impulse
 
@@ -107,7 +107,7 @@ TimeSimulationResult{Float64,2,1}
 ```julia
 plot(time_response)
 ```
-![](../media/triangle_freq_response.png)
+![](../assets/triangle_freq_response.png)
 
 Alternatively, we can attempt to produce a triangle wave in the time domain, for which there is a convenient constructor:
 ```julia
@@ -120,7 +120,7 @@ discrete_impulse = DiscreteImpulse(t_vec, in_time, ωs)
 
 time_response = frequency_to_time(freq_response; t_vec = t_vec, discrete_impulse = discrete_impulse);
 ```
-![](../media/triangle_time_response.png)
+![](../assets/triangle_time_response.png)
 
 
 ## [Technical details](@id impulse_details)
