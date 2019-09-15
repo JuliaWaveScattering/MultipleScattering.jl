@@ -72,6 +72,8 @@ function firstnonzero(arr::AbstractArray{T}) where T <: AbstractFloat
 end
 
 """
+See also: [`DiscreteImpulse`](@ref), [`ContinuousImpulse`](@ref)
+
 Calculates the time response from the frequency response by approximating an
 inverse Fourier transform. The time signal is assumed to be real and the
 frequenices ω_vec are assumed to be positive (can include zero) and sorted. The

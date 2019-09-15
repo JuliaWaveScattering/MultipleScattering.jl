@@ -16,7 +16,7 @@ using MultipleScattering
 
 ## Manual
 
-You can learn to use this package through examples or through our manual.
+You can learn to use this package through [examples](example/README.md) or through our manual, which starts with a simple [Introduction](@ref).
 
 
 ## Contents

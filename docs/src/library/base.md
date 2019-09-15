@@ -71,7 +71,7 @@ Impulse types and functions.
 ```@autodocs
 Modules = [MultipleScattering]
 Order   = [:type, :function]
-Pages   = ["src/impulse.jl"]
+Pages   = ["src/impulse.jl", "src/time_simulation.jl"]
 ```
 
 
