@@ -22,22 +22,29 @@ using MultipleScattering
 
 ## Documentation
 
-- [**DEVEL**][docs-dev-url] &mdash; *documentation of the in-development version.*
+- [**master**][docs-dev-url] &mdash; *documentation of the in-development version.*
 
 ## Simple example
-### Run
+```@meta
+DocTestSetup = quote
+    using MultipleScattering
+end
+```
 Define the properties of your host medium, for example
-```julia
-host_medium = Acoustic(2; ρ=1.0, c=1.0) # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
+```jldoctest intro
+julia> host_medium = Acoustic(2; ρ=1.0, c=1.0); # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
 ```
 an acoustic medium in 2D with density 1 and wavespeed 1.
 
 Next, define two dense, circular acoustic particles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
-```julia
-particle_medium =  Acoustic(2; ρ=10.0, c=2.0) # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
-p1 = Particle(particle_medium, Circle([-2.0,2.0], 2.0))
-p2 = Particle(particle_medium, Circle([-2.0,-2.0], 0.5))
-particles = [p1,p2]
+```jldoctest intro
+julia> particle_medium =  Acoustic(2; ρ=10.0, c=2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
+
+julia> p1 = Particle(particle_medium, Circle([-2.0,2.0], 2.0));
+
+julia> p2 = Particle(particle_medium, Circle([-2.0,-2.0], 0.5));
+
+julia> particles = [p1,p2];
 ```
 
 Lastly we define the source, for example an incident plane wave (![incident plane wave](https://latex.codecogs.com/gif.latex?%5Cdpi%7B120%7D%20e%5E%7Bi%20%28k%20x%20-%20%5Comega%20t%29%7D)) using a helper function.
