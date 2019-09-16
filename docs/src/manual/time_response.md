@@ -144,5 +144,5 @@ where $\omega_M = \Omega$ and $\Delta \omega_m$ depends on the scheme used, with
 
 To learn more see the notes [Discrete Fourier Transform](../maths/DiscreteFourier.pdf) or the tests in the folder test of the source code.
 
-!!! note
-    Let $\phi(\mathbf x, \omega) = f(\omega) u(\mathbf x, \omega)$. Instead of assuming: $|\hat \phi(\mathbf x, \omega)| \to 0$ as $|\omega| \to 0$, we could alternatively assume that $\hat \phi(\mathbf x, \omega)$ is periodic in $\omega$, with $ \hat \phi(\mathbf x, \omega + \Omega) = \hat \phi(\mathbf x, \omega)$ for every $\omega$ and some constant $\Omega$. This would allow us to replace the Fourier integrals with a finite integral.
+!!! tip
+    The most standard way to sample the frequencies is to take $\omega_m = m \Delta \omega$ and $\Delta \omega_m = \Delta \omega$, for some fixed $\Delta \omega$. If we substitute this sampling into $\phi(\mathbf x, t)$ we find that $\phi$ becomes periodic in time with period $T = \frac{2\pi n}{\Delta \omega}$, that is $\phi(\mathbf x, t + T) = \phi(\mathbf x, t)$ for every $t$. Suppose you wanted to calculate a scattered wave that arrives at time $t = T + \tau$, what would happen? The answer is you would see this scattered wave arrive at time $t = \tau$ if $\tau < T$. Note, this occurs often in this package because it is easy to get trapped waves when there is strong multiple scattering.
