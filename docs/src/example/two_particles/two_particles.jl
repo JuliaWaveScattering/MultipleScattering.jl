@@ -24,7 +24,7 @@ simulation = FrequencySimulation(particles, w_arr;
 
 # to plot the frequency response over a region that includes the particles
 w = 3.2
-plot(simulation,w; res=80, resp_fnc=abs)
+plot(simulation,w; res=80, field_apply=abs)
 # the green circle in the plot is the reciever position
 
 TimeSimulation = TimeSimulation(simulation)

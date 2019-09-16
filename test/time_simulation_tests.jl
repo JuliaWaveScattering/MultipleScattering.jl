@@ -18,8 +18,4 @@
     @test norm(time_simulation.response[1:200:4000,1] - [0.9851765, -0.000428854, -0.000539422, -0.000406505, -0.000293326, -0.000361058, -0.000460193, -0.000505064, -0.000468762, -0.000440977, -0.00045894, -0.000452734, -0.000389118, -0.000326885, -0.000315177, -0.000312953, -0.000261332, -0.000161864, 0.0636417, 0.000384649]
           ) < 1e-7 # could not find how to print/showall enough digits to use ≈
 
-    include("../example/lens/lens.jl")
-    freq_simulation, time_simulation = run_lens()
-    # Need to test that the spike appears at the right place
-    @test true
 end

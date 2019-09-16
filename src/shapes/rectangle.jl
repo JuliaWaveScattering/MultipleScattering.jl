@@ -15,6 +15,9 @@ function Rectangle(bottomleft::Union{AbstractVector{T},NTuple{2,T}}, topright::U
     origin = (bottomleft .+ topright)./2
     width = topright[1] - bottomleft[1]
     height = topright[2] - bottomleft[2]
+    if sum(bottomleft .< topright) < 2
+        error("bottomleft: $bottomleft should be below and left of topright: $topright.")
+    end    
     Rectangle{T}(origin, width, height)
 end
 

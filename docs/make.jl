@@ -24,17 +24,17 @@ makedocs(
             "library/acoustics.md",
             "library/random.md"
         ],
+        "Theory" => "maths/README.md",
         "Examples" =>
         [
             "example/README.md",
             "example/box_size/README.md",
             "example/hankel_convergence/README.md",
-            "example/lens/README.md",
             "example/moments/README.md",
             "example/near_surface_backscattering/README.md",
             "example/random_particles/README.md",
             "example/time_response_single_particle/README.md",
-            "example/two_particles/README.md",
+            "example/two_particles/README.md"
         ]
     ]
 )

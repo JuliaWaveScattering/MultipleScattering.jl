@@ -90,6 +90,7 @@ When passing particle_shapes::Vector{Shape} we assume each element is equally li
 """
 function random_particles(particle_medium::P, particle_shape::S, region_shape::Shape{T,Dim}, N::Integer;
         seed=Random.make_seed(),
+        verbose::Bool = false,
         separation_ratio::T = T(1.005), # Min distance between particle centres relative to their outer radiuses.
         current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[] # Particles already present.
 ) where {T<:AbstractFloat,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
@@ -110,15 +111,17 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
     bounding_rect = bounding_rectangle(region_shape)
     bounding_rect_size = SVector(bounding_rect.width, bounding_rect.height)
 
-    @printf("""\n
-        Generating %d randomly positioned %s shaped particles
-        Total particle volume: %0.5g
-        Inside %s of volume: %0.5g
-        Particle volume fraction: %0.5g
-        Bounding box volume: %0.5g
-        """, N, name(particle_shape), N*volume(particle_shape), name(region_shape),
-        volume(region_shape), volfrac, volume(bounding_rect)
-    )
+    if verbose
+        @printf("""\n
+            Generating %d randomly positioned %s shaped particles
+            Total particle volume: %0.5g
+            Inside %s of volume: %0.5g
+            Particle volume fraction: %0.5g
+            Bounding box volume: %0.5g
+            """, N, name(particle_shape), N*volume(particle_shape), name(region_shape),
+            volume(region_shape), volfrac, volume(bounding_rect)
+        )
+    end    
 
     # Allocate memory for particles
     L = length(current_particles)

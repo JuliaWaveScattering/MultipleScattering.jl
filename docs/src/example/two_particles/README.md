@@ -1,3 +1,5 @@
+# OUT-DATED needs to be updated
+
 # Two particles
 
 Define two particles with the first centred at [1.,-2.], with radius 1.0, sound speed 2.0 and density 10.0

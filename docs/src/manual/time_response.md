@@ -122,6 +122,52 @@ time_response = frequency_to_time(freq_response; t_vec = t_vec, discrete_impulse
 ```
 ![](../assets/triangle_time_response.png)
 
+## Scattering example
+As an example, we will make a reflective lens out of particles. To achieve this we will place the particles into a region with the shape [`TimeOfFlight`](@ref).
+
+First we choose the properties of the lens:
+```julia
+p_radius = 0.1
+volfrac = 0.3
+
+x = [-10.0;0.0]
+outertime = 34.8
+innertime = 34.0
+
+# Generate particles which are at most outertime away from our listener
+outershape = TimeOfFlight(x, outertime)
+outerparticles = random_particles(Acoustic(2; ρ=0.0, c=0.0), Circle(p_radius);
+        region_shape = outershape,
+        volume_fraction = volfrac,
+        seed=2
+);
+
+# Filter out particles which are less than innertime away
+innershape = TimeOfFlight(x, innertime + 4*p_radius); # the + 4*p_radius is to account for double the particle diameter
+particles = filter(p -> p⊈innershape, outerparticles);
+
+plot(particles)
+```
+![](../assets/lens-particles.png)
+
+Next we simulate an impulse plane-wave starting at $x = -10$:
+```julia
+ωs = LinRange(0.01,2.0,100)
+
+plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0,0.0], position = x);
+sim = FrequencySimulation(particles, plane_wave);
+
+freq_response = run(sim, x, ωs);
+
+t_vec = -10.:0.2:81.
+time_response = frequency_to_time(freq_response; t_vec=t_vec, impulse = GaussianImpulse(1.5, 1.0))
+
+xticks = [0.,20.,34.,40.0,60.,80.]
+plot(time_response, title="Time response from lens", label="", xticks=xticks)
+```
+![](../assets/lens-response.png)
+
+The first peak is the incident wave, and the next peak is the wave scattered from the lens which should arrive close to `t = 34`.
 
 ## [Technical details](@id impulse_details)
 
@@ -145,4 +191,4 @@ where $\omega_M = \Omega$ and $\Delta \omega_m$ depends on the scheme used, with
 To learn more see the notes [Discrete Fourier Transform](../maths/DiscreteFourier.pdf) or the tests in the folder test of the source code.
 
 !!! tip
-    The most standard way to sample the frequencies is to take $\omega_m = m \Delta \omega$ and $\Delta \omega_m = \Delta \omega$, for some fixed $\Delta \omega$. If we substitute this sampling into $\phi(\mathbf x, t)$ we find that $\phi$ becomes periodic in time with period $T = \frac{2\pi n}{\Delta \omega}$, that is $\phi(\mathbf x, t + T) = \phi(\mathbf x, t)$ for every $t$. Suppose you wanted to calculate a scattered wave that arrives at time $t = T + \tau$, what would happen? The answer is you would see this scattered wave arrive at time $t = \tau$ if $\tau < T$. Note, this occurs often in this package because it is easy to get trapped waves when there is strong multiple scattering.
+    The standard way to sample the frequencies is to take $\omega_m = m \Delta \omega$ and $\Delta \omega_m = \Delta \omega$ for some constant $\Delta \omega$. If we substitute this sampling into the approximation for $\phi(\mathbf x, t)$, shown above, we find that $\phi(\mathbf x,t)$ becomes periodic in time $t$ with period $T = 2\pi / \Delta \omega$. That is $\phi(\mathbf x, t + T) = \phi(\mathbf x, t)$ for every $t$. Suppose you were calculating a scattered wave that arrives at time $t = T + \tau$, what would happen? The answer is you would see this scattered wave arrive at time $t = \tau$, assuming $\tau < T$. This wrong arrival time occurs often when waves get trapped due to strong multiple scattering.

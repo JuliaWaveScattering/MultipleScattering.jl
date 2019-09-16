@@ -41,10 +41,10 @@
         else
             map(y-> (y> zero(T)) ? y : zero(T), Y[i])
         end
-        (Y_down, Y_up)
+        [Y_down, Y_up]
     end
     for i = 1:(length(Ys)-1)
-        Ys[i+1] = (Ys[i+1][1] + Ys[i][1], Ys[i+1][2] + Ys[i][2])
+        Ys[i+1] = [Ys[i+1][1] + Ys[i][1], Ys[i+1][2] + Ys[i][2]]
     end
 
     for i in reverse(1:length(Ys))
@@ -57,7 +57,7 @@
       end
     end
 
-    for i in 1:min(15,length(results))
+    for i in 1:min(10,length(results))
       @series begin
         linealpha --> 0.2
         lab --> ""

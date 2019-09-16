@@ -1,20 +1,9 @@
-# Examples
+# Overview
 
 ## [Simple random particles](random_particles/README.md)
 - Simple example of random particles in rectangle
 
-## [Two particles](two_particles/README.md)
-- Specify particle positions manually
-- Give different particles different radii and different material properties
-
-## [Lens](lens/README.md)
-- Use the shape functions to create particles in a new geometry
-- See time response from a semi-circular wall
-
 ## [Random particles in a circle](particles_in_circle/README.md)
-- Generate random particles in a circle
-
-## [Make a gif of harmonic scattering](plot/README.md)
 - Generate random particles in a circle
 
 ## [StatisticalMoments](moments/README.md)
