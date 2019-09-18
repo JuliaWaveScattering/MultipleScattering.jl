@@ -4,7 +4,7 @@ The plotting for this package is supplied by the package [Plots](http://docs.jul
 
 Below are examples of plotting the whole field in frequency (harmonic wave) and time. The examples require the package `Plots` and, mostly, `PyPlot`.
 
-## Field - Harmonic slit
+## Field - Harmonic two gaps
 ```julia
 using MultipleScattering
 using Plots; pyplot(size = (800,300))
@@ -20,7 +20,7 @@ particles = [
   Particle(particle_medium, Circle([0.,y],1.0))
 for y = -40:2*radius:40.]
 
-# Make two slits in the wall
+# Make two gaps in the wall
 deleteat!(particles,[18,19,23,24])
 
 # Define region to plot
@@ -45,9 +45,32 @@ plot(result,ω;
 p2 = plot!(particles, ylims = (-15.0,15.0));
 plot(p1, p2)
 
-# savefig("slit-diffraction.png")
+# savefig("gap-diffraction.png")
 ```
 ![](../assets/slit-diffraction.png)
+
+## Movie - Harmonic two gaps
+Continuing from [Field - Harmonic two gaps](@ref), the previous example, we can plot how the harmonic field oscillates in time. That is, to get the harmonic field at time $t$ we just multiple the field by $\mathrm e^{-\mathrm i \omega t}$ for every $\mathbf x$. For example, the plane wave $\mathrm e^{\mathrm i x k}$ would become $\mathrm e^{\mathrm i x k -\mathrm i \omega t}$.   
+
+```julia
+pyplot(size = (600,450))
+
+ts = LinRange(0.,2pi/ω,30)
+
+maxc = round(10*maximum(real.(field(result))))/10
+minc = round(10*minimum(real.(field(result))))/10
+
+anim = @animate for t in ts
+    plot(result,ω; seriestype = :contour,
+        phase_time=t, clim=(minc,maxc),
+        ylims = (-15.0,15.0) , c=:balance
+    )
+    plot!(sim)
+    plot!(colorbar=false, title="",axis=false, xlab="",ylab="")
+end
+# gif(anim,"gap-diffraction.gif", fps = 7)
+
+```
 
 ## Movie - Harmonic from random particles
 
@@ -88,7 +111,6 @@ anim = @animate for t in ts
     plot!(simulation)
     plot!(colorbar=false, title="",axis=false, xlab="",ylab="")
 end
-#
-gif(anim,"backscatter_harmonic.gif", fps = 7)
+# gif(anim,"backscatter_harmonic.gif", fps = 7)
 ```
 ![backscattering from harmonic wave](../assets/backscatter_harmonic.gif)
