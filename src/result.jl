@@ -14,7 +14,7 @@ struct FrequencySimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationRes
     ω::Vector{T}
 end
 
-function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}}, AbstractArray{AbstractVector{Complex{T}}}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T}
+function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}},AbstractMatrix{A}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T, A<:AbstractVector{Complex{T}}}
 
     if size(field,2) == 1 # if field is a vector we cast it to a Matrix
         field = reshape(field, size(field,1), size(field,2))

@@ -30,8 +30,9 @@ region = Rectangle(bottomleft, topright)
 
 # Calculating scattering for a plane wave
 source =  plane_source(host_medium; direction = [1.0,0.0])
-sim = FrequencySimulation(particles, source)
-result = run(sim, region, [ω]; res=100)
+
+# You can skip the step of defining FrequencySimulation
+result = run(particles, source, region, [ω]; res=100)
 
 plot(result,ω;
     field_apply = abs, seriestype = :contour,
@@ -53,7 +54,7 @@ plot(p1, p2)
 Continuing from [Field - Harmonic two gaps](@ref), the previous example, we can plot how the harmonic field oscillates in time. That is, to get the harmonic field at time $t$ we just multiple the field by $\mathrm e^{-\mathrm i \omega t}$ for every $\mathbf x$. For example, the plane wave $\mathrm e^{\mathrm i x k}$ would become $\mathrm e^{\mathrm i x k -\mathrm i \omega t}$.   
 
 ```julia
-pyplot(size = (600,450))
+pyplot(size = (450,300))
 
 ts = LinRange(0.,2pi/ω,30)
 
@@ -65,12 +66,43 @@ anim = @animate for t in ts
         phase_time=t, clim=(minc,maxc),
         ylims = (-15.0,15.0) , c=:balance
     )
-    plot!(sim)
+    plot!(particles)
     plot!(colorbar=false, title="",axis=false, xlab="",ylab="")
 end
 # gif(anim,"gap-diffraction.gif", fps = 7)
-
 ```
+![](../assets/gap-diffraction.gif)
+
+## Movie - Time impulse plane-wave - two gaps
+Continuing from [Field - Harmonic two gaps](@ref), we can plot how an impulse plave-wave in time passes through two gaps. See [# Time response](@ref) for more details on the code used below.
+
+```julia
+pyplot(size = (450,300))
+ωs = LinRange(0.0,2.0,200)
+
+# We use a lower resolution (res = 50) as this is a heavier calculation
+result = run(particles, source, region, ωs; res = 40)
+
+# Calculate time response over rect
+t_max = real(rect.width / host_medium.c)
+ts = LinRange(0.0,t_max,100)
+impulse = GaussianImpulse(maximum(ωs)*0.8)
+timres = frequency_to_time(result; t_vec = ts, impulse = impulse)
+
+maxc = round(10*maximum(field(timres)))/10
+minc = round(10*minimum(field(timres)))/10
+
+# timres = TimeSimulationResult(timres.field .+ max_c/100.0 , timres.x, timres.t)
+
+anim = @animate for t in ts
+    plot(timres,t,seriestype=:contour, clim = (minc, maxc), leg = false)
+    plot!(particles)
+    plot!(frame = :none, title="", xlab="",ylab="")
+end
+
+# gif(anim,"gap-diffraction.gif", fps = 7)
+```
+![](../assets/gap-diffraction.gif)
 
 ## Movie - Harmonic from random particles
 

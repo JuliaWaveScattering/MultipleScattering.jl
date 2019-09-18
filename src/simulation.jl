@@ -42,7 +42,19 @@ end
 
 import Base.run
 
-run(sim::Source, x_vec::Vector, ω; kws...) = run(FrequencySimulation(sim), x_vec, ω; kws...)
+run(particles::AbstractParticles, source::Source, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation(particles,source), x, ω; kws...)
+
+run(source::Source, x::Union{Shape,Vector}, ω; kws...) = run(FrequencySimulation(source), x, ω; kws...)
+
+function run(sim::FrequencySimulation{T,Dim,P}, x::AbstractVector{T}, ωs::AbstractVector{T}=T[];
+        kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
+    run(sim,[x],ωs; kws...)
+end
+
+function run(sim::FrequencySimulation{T,Dim,P}, x::AbstractVector{T}, ω::T;
+        kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
+    run(sim,[x],[ω]; kws...)
+end
 
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ω::T;
@@ -117,16 +129,6 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     end
 end
 
-function run(sim::FrequencySimulation{T,Dim,P}, x::AbstractVector{T}, ωs::AbstractVector{T}=T[];
-        kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
-    run(sim,[x],ωs; kws...)
-end
-
-function run(sim::FrequencySimulation{T,Dim,P}, x::AbstractVector{T}, ω::T;
-        kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
-    run(sim,[x],[ω]; kws...)
-end
-
 # Add docstring to run functions
 """
     run(sim::FrequencySimulation, x, ω; basis_order=5)
@@ -156,7 +158,8 @@ function run(sim::FrequencySimulation, region::Shape, ω_vec::AbstractVector;
 
     #Size of the step in x and y direction
     step_size = [rect.width / xres, rect.height / yres]
-    x_vec = [SVector(bottomleft(rect) + step_size.*[i,j]) for i=0:xres, j=0:yres][:]
+    bl = bottomleft(rect)
+    x_vec = [SVector{2}(bl + step_size .* [i,j]) for i=0:xres, j=0:yres][:]
 
     inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
     x2_vec = filter(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)

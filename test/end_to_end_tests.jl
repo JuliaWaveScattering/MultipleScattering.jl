@@ -10,6 +10,7 @@
         source = plane_source(a,[0.0,0.0],[1.0,0.0])
         sim = FrequencySimulation(particles,source)
         result = run(sim, SVector(1.0,2.0), 0.1)
+        result = run(particles, source, SVector(1.0,2.0), 0.1)
         result = 3.2*result + result*4.0im + 0.3+4.0im # changes result.field
         @test true
     end
@@ -24,5 +25,7 @@
         sim = FrequencySimulation(particles,source)
         @test true
     end
+
+    include("time_one_particle.jl")
 
 end
