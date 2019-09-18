@@ -54,16 +54,16 @@ anim = @animate for t in ts
     plot!(particles)
     plot!(colorbar=false, title=&quot;&quot;,axis=false, xlab=&quot;&quot;,ylab=&quot;&quot;)
 end
-# gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-diffraction.gif" alt/></p><h2><a class="nav-anchor" id="Movie-Time-impulse-plane-wave-two-gaps-1" href="#Movie-Time-impulse-plane-wave-two-gaps-1">Movie - Time impulse plane-wave - two gaps</a></h2><p>Continuing from <a href="#Field-Harmonic-two-gaps-1">Field - Harmonic two gaps</a>, we can plot how an impulse plave-wave in time passes through two gaps. See <a href="manual/@ref"># Time response</a> for more details on the code used below.</p><pre><code class="language-julia">pyplot(size = (450,300))
-ωs = LinRange(0.0,2.0,200)
+# gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-diffraction.gif" alt/></p><h2><a class="nav-anchor" id="Movie-Time-impulse-plane-wave-two-gaps-1" href="#Movie-Time-impulse-plane-wave-two-gaps-1">Movie - Time impulse plane-wave - two gaps</a></h2><p>Continuing from <a href="#Field-Harmonic-two-gaps-1">Field - Harmonic two gaps</a>, we can plot how an impulse plave-wave in time passes through two gaps. See <a href="../time_response/#Time-response-1">Time response</a> for more details on the code used below.</p><pre><code class="language-julia">pyplot(size = (450,300))
+ωs = LinRange(0.0,2.0,300)[2:end] # avoid using ω = 0
 
 # We use a lower resolution (res = 50) as this is a heavier calculation
-result = run(particles, source, region, ωs; res = 40)
+result = run(particles, source, region, ωs; res = 50)
 
 # Calculate time response over rect
-t_max = real(rect.width / host_medium.c)
-ts = LinRange(0.0,t_max,100)
-impulse = GaussianImpulse(maximum(ωs)*0.8)
+t_max = 0.75 .* real(region.width / host_medium.c)
+ts = LinRange(0.0,t_max,75)
+impulse = GaussianImpulse(maximum(ωs)*0.6)
 timres = frequency_to_time(result; t_vec = ts, impulse = impulse)
 
 maxc = round(10*maximum(field(timres)))/10
@@ -71,13 +71,17 @@ minc = round(10*minimum(field(timres)))/10
 
 # timres = TimeSimulationResult(timres.field .+ max_c/100.0 , timres.x, timres.t)
 
+ylims =  (-region.height/2,region.height/2)
 anim = @animate for t in ts
-    plot(timres,t,seriestype=:contour, clim = (minc, maxc), leg = false)
+    plot(timres,t,seriestype=:contour,
+      clim = (minc, maxc),
+      leg = false, ylims = ylims
+    )
     plot!(particles)
     plot!(frame = :none, title=&quot;&quot;, xlab=&quot;&quot;,ylab=&quot;&quot;)
 end
 
-# gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-diffraction.gif" alt/></p><h2><a class="nav-anchor" id="Movie-Harmonic-from-random-particles-1" href="#Movie-Harmonic-from-random-particles-1">Movie - Harmonic from random particles</a></h2><pre><code class="language-julia">using MultipleScattering
+# gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-time-diffraction.gif" alt/></p><h2><a class="nav-anchor" id="Movie-Harmonic-from-random-particles-1" href="#Movie-Harmonic-from-random-particles-1">Movie - Harmonic from random particles</a></h2><pre><code class="language-julia">using MultipleScattering
 using Plots; pyplot()
 
 num_particles = 70
