@@ -74,19 +74,19 @@ end
 ![](../assets/gap-diffraction.gif)
 
 ## Movie - Time impulse plane-wave - two gaps
-Continuing from [Field - Harmonic two gaps](@ref), we can plot how an impulse plave-wave in time passes through two gaps. See [# Time response](@ref) for more details on the code used below.
+Continuing from [Field - Harmonic two gaps](@ref), we can plot how an impulse plave-wave in time passes through two gaps. See [Time response](@ref) for more details on the code used below.
 
 ```julia
 pyplot(size = (450,300))
-ωs = LinRange(0.0,2.0,200)
+ωs = LinRange(0.0,2.0,300)[2:end] # avoid using ω = 0
 
 # We use a lower resolution (res = 50) as this is a heavier calculation
-result = run(particles, source, region, ωs; res = 40)
+result = run(particles, source, region, ωs; res = 50)
 
 # Calculate time response over rect
-t_max = real(rect.width / host_medium.c)
-ts = LinRange(0.0,t_max,100)
-impulse = GaussianImpulse(maximum(ωs)*0.8)
+t_max = 0.75 .* real(region.width / host_medium.c)
+ts = LinRange(0.0,t_max,75)
+impulse = GaussianImpulse(maximum(ωs)*0.6)
 timres = frequency_to_time(result; t_vec = ts, impulse = impulse)
 
 maxc = round(10*maximum(field(timres)))/10
@@ -94,15 +94,19 @@ minc = round(10*minimum(field(timres)))/10
 
 # timres = TimeSimulationResult(timres.field .+ max_c/100.0 , timres.x, timres.t)
 
+ylims =  (-region.height/2,region.height/2)
 anim = @animate for t in ts
-    plot(timres,t,seriestype=:contour, clim = (minc, maxc), leg = false)
+    plot(timres,t,seriestype=:contour,
+      clim = (minc, maxc),
+      leg = false, ylims = ylims
+    )
     plot!(particles)
     plot!(frame = :none, title="", xlab="",ylab="")
 end
 
 # gif(anim,"gap-diffraction.gif", fps = 7)
 ```
-![](../assets/gap-diffraction.gif)
+![](../assets/gap-time-diffraction.gif)
 
 ## Movie - Harmonic from random particles
 
