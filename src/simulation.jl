@@ -58,7 +58,8 @@ end
 
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ω::T;
-        basis_order::Int = 5) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
+        basis_order::Int = 5,
+        only_scattered_waves::Bool = false) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
 
     x_vec = [SVector{Dim,T}(x...) for x in x_vec]
 
@@ -68,6 +69,12 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     else
         # Calculate the outgoing basis coefficients around each particle, this is where most of the maths happens
         a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
+
+        if only_scattered_waves # remove source wave
+            sim = FrequencySimulation(sim.particles,
+                constant_source(sim.source.medium, zero(T)*im)
+            )    
+        end
 
         # Evaluate the total field at the requested x positions
         field_vec = field(sim, ω, x_vec, a_vec)
@@ -99,9 +106,12 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     end
 
     # ugly bit of code to seperate keywords for simulating frequencies
-    ks = []
-    freq_kws = Iterators.filter(k -> contains(==,ks,k[1]), kws)
-    time_kws = setdiff(kws,freq_kws)
+    # ks = []
+    # freq_kws = Iterators.filter(kw -> occursin(==,ks,kw[1]), kws)
+    # time_kws = setdiff(kws,freq_kws)
+
+    freq_kws = kws
+
 
     # if user asks for ω = 0, then we provide
     if first(ωs) == zero(T)
@@ -122,10 +132,11 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     if !result_in_time
         FrequencySimulationResult(fields,x_vec,Vector(ωs))
     else
-        if isempty(ts) ts = ω_to_t(ωs) end
-
-        # better to use the defaults of TimeSimulationResult's Constructor.
-        frequency_to_time(FrequencySimulationResult(fields,x_vec,Vector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
+        @error "Using `result_in_time=true` in `run` is depricated and will be removed in later versions. Please instead use `frequency_to_time` on the results of `run`."
+        # if isempty(ts) ts = ω_to_t(ωs) end
+        #
+        # # better to use the defaults of TimeSimulationResult's Constructor.
+        # frequency_to_time(FrequencySimulationResult(fields,x_vec,Vector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
     end
 end
 

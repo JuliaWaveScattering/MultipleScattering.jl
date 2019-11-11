@@ -12,7 +12,7 @@ export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule, outgoing_
        sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet,
        pressure_release, impedance
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
-export Source, source_expand, self_test, point_source, plane_source,
+export Source, source_expand, self_test, constant_source, point_source, plane_source,
        (*), (+)
 
 export Simulation, run, TimeSimulation, forcing, field

@@ -53,6 +53,10 @@ function self_test(source::Source{P,T}) where {P,T}
     return true
 end
 
+function constant_source(medium::P, num::Complex{T} = zero(Float64) * im) where {P,T}
+    return Source{P,T}(medium, (x,ω) -> num, (order,x,ω) -> [num])
+end
+
 """
     source_expand(Source, centre; basis_order = 4)
 
