@@ -6,7 +6,7 @@ Physical properties for a homogenous isotropic acoustic medium with wavespeed (c
 
 Simulations in this medium produce scalar (1D) fields in Dim dimensions.
 """
-struct Acoustic{T,Dim} <: PhysicalProperties{T,Dim,1}
+struct Acoustic{T,Dim} <: PhysicalMedium{T,Dim,1}
     ρ::T # Density
     c::Complex{T} # Phase velocity
 end
@@ -20,7 +20,7 @@ import Base.show
 function show(io::IO, p::Acoustic)
     # Acoustic template paramaters can be determined entirely from the medium and shape so we do not need to print them
     # Print is the style of the first constructor
-    write(io, "Acoustic($(p.ρ), $(p.c), $(dim(p)))")
+    write(io, "Acoustic($(p.ρ), $(p.c), $(spatial_dimension(p)))")
     return
 end
 

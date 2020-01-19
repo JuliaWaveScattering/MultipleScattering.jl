@@ -27,7 +27,7 @@ end
 
 
 function boundary_fields(sim::FrequencySimulation{T,Dim,P}, ωs::Vector{T};
-        numberofparticles::Int = min(4, length(sim.particles)), dr = 10000*eps(T)) where {Dim, P<:PhysicalProperties, T<:Float64}
+        numberofparticles::Int = min(4, length(sim.particles)), dr = 10000*eps(T)) where {Dim, P<:PhysicalMedium, T<:Float64}
     particles = sim.particles[1:numberofparticles]
 
     # points just inside particles
@@ -54,7 +54,7 @@ end
 
 "returns (displacement_jump, stress_jump) along the boundaries of numberofparticles with wavenumbers k_arr. NOTE the stress is calculated by numerically approximately the derivative, so can be inaccurate."
 function boundary_conditions(simulation::FrequencySimulation{T,Dim,P}, ωs::Vector{T};
-        numberofparticles::Int = min(4, length(simulation.particles)), dr = 10000*eps(T)) where {Dim, P<:PhysicalProperties, T<:Float64}
+        numberofparticles::Int = min(4, length(simulation.particles)), dr = 10000*eps(T)) where {Dim, P<:PhysicalMedium, T<:Float64}
 
     simulation2 = deepcopy(simulation)
     simulation2.particles = shuffle(simulation2.particles) # randomly shuffle the order

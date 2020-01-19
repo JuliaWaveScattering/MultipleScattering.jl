@@ -1,10 +1,10 @@
 const MAX_ATTEMPTS_TO_FIT_PARTICLE = 3000
 
 
-random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_shape::Shape{T,Dim}; kws...) where {T<:AbstractFloat,Dim} = random_particles(particle_medium, [particle_shape]; kws...)
+random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shape::Shape{T,Dim}; kws...) where {T<:AbstractFloat,Dim} = random_particles(particle_medium, [particle_shape]; kws...)
 
 
-function random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_shapes::Vector{S};
+function random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shapes::Vector{S};
         num_particles::Int = length(particle_shapes), volume_fraction::T = zero(T),
         region_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*sum(outer_radius.(particle_shapes)), T(10)*sum(outer_radius.(particle_shapes))),
         current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[],
@@ -49,7 +49,7 @@ end
 # f1(; a = [2])
 # a
 
-# function random_particles(particle_medium::PhysicalProperties{T,Dim}, particle_shape::Shape{T,Dim};
+# function random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shape::Shape{T,Dim};
 #         region_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*outer_radius(particle_shape), T(10)*outer_radius(particle_shape)),
 #         num_particles::Int = 0, volume_fraction::T = zero(T), kws...) where {T<:AbstractFloat,Dim}
 #
@@ -66,7 +66,7 @@ end
 
 function random_particles(particle_medium::P, particle_shape::S,
     region_shape::Shape{T,Dim}, volfrac::AbstractFloat; kws...
-) where {T,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
+) where {T,Dim,P<:PhysicalMedium{T,Dim},S<:Shape{T,Dim}}
 
     N = Int(round(volfrac * volume(region_shape) / volume(particle_shape)))
     return random_particles(particle_medium, particle_shape, region_shape, N; kws...)
@@ -93,7 +93,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
         verbose::Bool = false,
         separation_ratio::T = T(1.005), # Min distance between particle centres relative to their outer radiuses.
         current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[] # Particles already present.
-) where {T<:AbstractFloat,Dim,P<:PhysicalProperties{T,Dim},S<:Shape{T,Dim}}
+) where {T<:AbstractFloat,Dim,P<:PhysicalMedium{T,Dim},S<:Shape{T,Dim}}
 
     # Check volume fraction is not impossible
     volfrac = N * volume(particle_shape) / volume(region_shape)

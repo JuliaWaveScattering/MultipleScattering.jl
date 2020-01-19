@@ -1,3 +1,21 @@
+"""
+Represent any source (incident) wave
+
+Subtypes may have a symmetry (such as [`PlaneSource`](@ref)) and will contain information about physical medium.
+"""
+abstract type AbstractSource{T} end
+
+"""
+    PlaneSource(medium::P, field::Function, coef::Function)
+
+Is a struct type which describes a plane-wave source that drives/forces the whole system. It has four fields: a polar angle `θ`, an azimuth angle `φ`, a physical `medium`, and an `amplitude` vector.
+"""
+struct PlaneSource{P<:PhysicalMedium,T} <: AbstractSource{T}
+    medium::P
+    amplitude::Union{Complex{T},Vector{Complex{T}}}
+    θ::T
+    φ::T # defaults to 0 for two spatial dimensions
+end
 
 """
     Source(medium::P, field::Function, coef::Function)
@@ -15,12 +33,12 @@ The field `Source.coef`
 regular_basis_function(medium::Acoustic{T,2}, ω::T)
 
 """
-struct Source{P<:PhysicalProperties,T<:AbstractFloat}
+struct Source{P<:PhysicalMedium,T<:AbstractFloat} <: AbstractSource{T}
     medium::P
     field::Function
     coef::Function
     # Enforce that the Types are the same
-    function Source{P,T}(medium::P,field::Function,coef::Function) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
+    function Source{P,T}(medium::P,field::Function,coef::Function) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}}
         s = new{P,T}(medium,field,coef)
         self_test(s)
         return s
@@ -33,21 +51,21 @@ Check that the source functions return the correct types
 function self_test(source::Source{P,T}) where {P,T}
 
     # Example data with correct dimensions and types from P and T
-    x = SVector(ntuple(i->one(T),dim(P)))
+    x = SVector(ntuple(i->one(T),spatial_dimension(P)))
     ω = one(T)
 
     # Check that the result of field has same dimension and type as PhysicalProperty field
-    if field_dim(P) == 1
-        source.field(x,ω)::Union{Complex{T},SVector{field_dim(P),Complex{T}}}
+    if field_dimension(P) == 1
+        source.field(x,ω)::Union{Complex{T},SVector{field_dimension(P),Complex{T}}}
     else
-        source.field(x,ω)::SVector{field_dim(P),Complex{T}}
+        source.field(x,ω)::SVector{field_dimension(P),Complex{T}}
     end
 
     # Check that the result of field has same dimension as field dimension of P
-    if field_dim(P) == 1
-        source.coef(1,x,ω)::Union{Vector{Complex{T}},Vector{SVector{field_dim(P),Complex{T}}}}
+    if field_dimension(P) == 1
+        source.coef(1,x,ω)::Union{Vector{Complex{T}},Vector{SVector{field_dimension(P),Complex{T}}}}
     # else # this else is not necessarily correct..
-    #     source.coef(1,x,ω)::SVector{field_dim(P),Complex{T}}
+    #     source.coef(1,x,ω)::SVector{field_dimension(P),Complex{T}}
     end
 
     return true

@@ -7,11 +7,10 @@ export Shape, Circle, Rectangle, EmptyShape, outer_radius, volume, name, iscongr
        TimeOfFlightFromPoint, (==), isequal, show
 export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
-export PhysicalProperties, Acoustic, Electromagnetic, AcousticCapsule, outgoing_basis_function,
-       regular_basis_function, basis_coefficients, internal_field, dim, field_dim,
-       sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet,
-       pressure_release, impedance
+export PhysicalMedium, Acoustic, Electromagnetic, AcousticCapsule, outgoing_basis_function, regular_basis_function, basis_coefficients, internal_field, dim, field_dim, sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet, pressure_release, impedance
+export spatial_dimension, field_dimension  
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
+export Specie, number_density, volume_fraction
 export Source, source_expand, self_test, constant_source, point_source, plane_source,
        (*), (+)
 

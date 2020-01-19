@@ -1,6 +1,6 @@
 
 "Create the matrix S which will be inverted to find the scattering coefficients. Currently assumes 2D."
-function scattering_matrix(medium::PhysicalProperties, particles::AbstractParticles, t_matrices::Vector, ω::T, Nh::Integer)::Matrix{Complex{T}} where T
+function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles, t_matrices::Vector, ω::T, Nh::Integer)::Matrix{Complex{T}} where T
     # Generate response for one specific k
     # Number of particles
     P = length(particles)

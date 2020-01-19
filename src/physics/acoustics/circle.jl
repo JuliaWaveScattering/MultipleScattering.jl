@@ -5,7 +5,7 @@ AcousticCircleParticle{T} = Particle{T,2,Acoustic{T,2},Circle{T}}
 
 The T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium.
 """
-function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
+function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoustic{T,2}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
     if isnan(abs(p.medium.c)*p.medium.ρ)
@@ -46,7 +46,7 @@ function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoust
     end
 
     # Get Zns for positive m
-    Zns = map(Zn,0:M)
+    Zns = map(Zn,0:basis_order)
 
     return - Diagonal(vcat(reverse(Zns), Zns[2:end]))
 end

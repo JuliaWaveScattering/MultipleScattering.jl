@@ -1,13 +1,13 @@
 @testset "Constructors" begin
     # 2D Acoustic
     a2 = Acoustic(0.1, 0.1+0.0im, 2)
-    @test dim(a2) == 2
-    @test field_dim(a2) == 1
+    @test spatial_dimension(a2) == 2
+    @test field_dimension(a2) == 1
 
     # 3D Acoustic
     a3 = Acoustic(1.0, 1.0+0.0im, 3)
-    @test dim(a3) == 3
-    @test field_dim(a3) == 1
+    @test spatial_dimension(a3) == 3
+    @test field_dimension(a3) == 1
 
     # Boundary condition constuctors
     @test sound_hard(2) == hard(a2)

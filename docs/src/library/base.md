@@ -34,7 +34,7 @@ Sphere
 Physical properties types and functions.
 
 ```@docs
-PhysicalProperties
+PhysicalMedium
 field_dim
 dim
 outgoing_basis_function
