@@ -75,6 +75,9 @@ function Specie(p::AbstractParticle{T,Dim}; volume_fraction::T = 0.0, exclusion_
     Specie{T,Dim,typeof(p)}(p,volume_fraction,numberofparticles,exclusion_distance)
 end
 
+# Shorthand for all Vectors of species
+Species{T<:AbstractFloat,Dim,P} = Vector{S} where S<:Specie{T,Dim,P}
+
 "Returns the volume fraction of the specie."
 volume_fraction(s::Specie) = s.volume_fraction
 
@@ -94,6 +97,7 @@ boundary_points(p::AbstractParticle, num_points::Int = 3; kws...) = boundary_poi
 CircleParticle{T,P} = Particle{T,2,P,Circle{T}}
 
 outer_radius(p::AbstractParticle) = outer_radius(shape(p))
+outer_radius(s::Specie) = outer_radius(s.particle)
 volume(p::AbstractParticle) = volume(shape(p))
 
 bounding_rectangle(p::AbstractParticle) = bounding_rectangle(shape(p))
