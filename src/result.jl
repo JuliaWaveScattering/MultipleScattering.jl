@@ -14,13 +14,15 @@ struct FrequencySimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationRes
     ω::Vector{T}
 end
 
-function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}},AbstractMatrix{A}}, x::AbstractVector{SVector{Dim,T}}, ω::AbstractVector{T}) where {Dim,T, A<:AbstractVector{Complex{T}}}
+function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}},AbstractMatrix{A}}, x::AbstractVector{V}, ω::AbstractVector{T}) where {T, A<:AbstractVector{Complex{T}}, V<:AbstractVector{T}}
 
     if size(field,2) == 1 # if field is a vector we cast it to a Matrix
         field = reshape(field, size(field,1), size(field,2))
     end
+    x = [SVector(xi...) for xi in x]
     field = [SVector(d...) for d in field]
     FieldDim = size(field[1],1)
+    Dim = length(x[1])
     FrequencySimulationResult{T,Dim,FieldDim}(field, Vector(x), Vector(ω))
 end
 
