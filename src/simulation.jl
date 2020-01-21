@@ -8,7 +8,7 @@ Build a FrequencySimulation. If particles are not provided, an empty array is us
 
 After building, you can [`run`](@ref) the simulation to get a [`FrequencySimulationResult`](@ref).
 """
-mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <: Simulation{T,Dim}
+mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalMedium} <: Simulation{T,Dim}
     "Vector of particles, can be of different types."
     particles::AbstractParticles
     "Source wave, where source.medium is the background medium of the simulation."
@@ -16,12 +16,12 @@ mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalProperties} <
 end
 
 # Constructor which infers parametric types from input arguments, note that we  don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
+function FrequencySimulation(particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
     FrequencySimulation{T,Dim,P}(particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
-function FrequencySimulation(source::Source{P,T}) where {Dim,T,P<:PhysicalProperties{T,Dim}}
+function FrequencySimulation(source::Source{P,T}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
     FrequencySimulation{T,Dim,P}(Vector{AbstractParticle{T,Dim}}(undef,0), source)
 end
 
@@ -59,7 +59,7 @@ end
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ω::T;
         basis_order::Int = 5,
-        only_scattered_waves::Bool = false) where {Dim,FieldDim,T,P<:PhysicalProperties{T,Dim,FieldDim}}
+        only_scattered_waves::Bool = false) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}}
 
     x_vec = [SVector{Dim,T}(x...) for x in x_vec]
 
@@ -73,7 +73,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
         if only_scattered_waves # remove source wave
             sim = FrequencySimulation(sim.particles,
                 constant_source(sim.source.medium, zero(T)*im)
-            )    
+            )
         end
 
         # Evaluate the total field at the requested x positions

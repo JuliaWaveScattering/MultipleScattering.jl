@@ -16,7 +16,7 @@ Circle(radius::T) where {T} = Circle{T}(SVector(zero(T),zero(T)), radius)
 
 import Base.show
 function show(io::IO, c::Circle)
-    # Circle template paramaters can be determined entirely from the origin and radius so we do not need to print them
+    # Circle template parameters can be determined entirely from the origin and radius so we do not need to print them
     # Print is the style of the first constructor
     write(io, "Circle($(c.origin.data), $(c.radius))")
     return
