@@ -8,10 +8,6 @@ function t_matrix(p::AbstractParticle{T,Dim}, medium::PhysicalMedium{T,Dim}, ω:
     error("T-matrix function is not yet written for $(name(p.medium)) $(name(p.shape)) in a $(name(medium)) medium")
 end
 
-get_t_matrices(medium::PhysicalMedium, species::Vector{S}, ω::AbstractFloat, Nh::Integer) where S<:Specie = get_t_matrices(medium, [s.particle for s in species], ω, Nh)
-
-t_matrix(s::Specie, medium::PhysicalMedium, ω::AbstractFloat, order::Integer) = t_matrix(s.particle, medium, ω, order)
-
 """
 Returns vector of T-matrices from a vector of particles in a specific domain.
 Can save computation if multiple of the same kind of particle are present in the

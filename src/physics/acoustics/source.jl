@@ -1,9 +1,9 @@
 """
-    point_source(medium::Acoustic, source_position, amplitude=1)::Source{Acoustic}
+    point_source(medium::Acoustic, source_position, amplitude=1)::Source
 
 Create 2D [`Acoustic`](@ref) point [`Source`](@ref) (zeroth Hankel function of first type)
 """
-function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::Source{Acoustic{T,2},T} where T <: AbstractFloat
+function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,2}} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
@@ -23,23 +23,23 @@ function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T
         return (amp(ω)*im)/4 * [hankelh1(-n,k*r) * exp(-im*n*θ) for n = -order:order]
     end
 
-    return Source{Acoustic{T,2},T}(medium, source_field, source_coef)
+    return Source{T,Acoustic{T,2}}(medium, source_field, source_coef)
 end
 
 function plane_source(medium::Acoustic{T,2}; position = SVector(zero(T),zero(T)),
         direction = SVector(one(T),zero(T)),
-        amplitude::Union{T,Complex{T},Function} = one(T))::Source{Acoustic{T,2},T} where {T}
+        amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,2}} where {T}
 
     plane_source(medium, position, direction, amplitude)
 end
 
 """
-    plane_source(medium::Acoustic, source_position, source_direction=[1,0], amplitude=1)::Source{Acoustic}
+    plane_source(medium::Acoustic, source_position, source_direction=[1,0], amplitude=1)::Source
 
 Create 2D [`Acoustic`](@ref) planar wave [`Source`](@ref)
 """
 function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T),zero(T)),
-        amplitude::Union{T,Complex{T}} = one(T))::Source{Acoustic{T,2},T} where {T}
+        amplitude::Union{T,Complex{T}} = one(T))::Source{T,Acoustic{T,2}} where {T}
 
     # Convert to SVector for efficiency and consistency
     position = SVector{2,T}(position)
@@ -64,5 +64,5 @@ function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T
         source_field(centre,ω) * [exp(im * n *(T(pi)/2 -  θ)) for n = -order:order]
     end
 
-    return Source{Acoustic{T,2},T}(medium, source_field, source_coef)
+    return Source{T,Acoustic{T,2}}(medium, source_field, source_coef)
 end

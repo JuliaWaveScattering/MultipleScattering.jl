@@ -12,16 +12,16 @@ mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalMedium} <: Si
     "Vector of particles, can be of different types."
     particles::AbstractParticles
     "Source wave, where source.medium is the background medium of the simulation."
-    source::Source{P,T}
+    source::Source{T,P}
 end
 
 # Constructor which infers parametric types from input arguments, note that we  don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(particles::AbstractParticles{T,Dim}, source::Source{P,T}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
+function FrequencySimulation(particles::AbstractParticles{T,Dim}, source::Source{T,P}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
     FrequencySimulation{T,Dim,P}(particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
-function FrequencySimulation(source::Source{P,T}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
+function FrequencySimulation(source::Source{T,P}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
     FrequencySimulation{T,Dim,P}(Vector{AbstractParticle{T,Dim}}(undef,0), source)
 end
 

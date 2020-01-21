@@ -62,30 +62,6 @@ function CapsuleParticle(p1::Particle{T,Dim,P,S},p2::Particle{T,Dim,P,S}) where 
     CapsuleParticle{T,Dim,P,S}(p1,p2)
 end
 
-"Represents a set of particles."
-struct Specie{T<:AbstractFloat,Dim,P<:AbstractParticle{T,Dim}}
-    particle::P
-    volume_fraction::T
-    numberofparticles::Int
-    exclusion_distance::T
-end
-
-# Convenience constructor which does not require explicit types/parameters
-function Specie(p::AbstractParticle{T,Dim}; volume_fraction::T = 0.0, exclusion_distance::T = 1.005, numberofparticles::Int = -1) where {Dim,T<:AbstractFloat}
-    Specie{T,Dim,typeof(p)}(p,volume_fraction,numberofparticles,exclusion_distance)
-end
-
-# Shorthand for all Vectors of species
-Species{T<:AbstractFloat,Dim,P} = Vector{S} where S<:Specie{T,Dim,P}
-
-"Returns the volume fraction of the specie."
-volume_fraction(s::Specie) = s.volume_fraction
-
-"Returns the number density of the specie."
-number_density(s::Specie{T,2,P}) where {T,P} = s.volume_fraction / (outer_radius(s.particle)^2 * pi)
-
-number_density(s::Specie{T,3,P}) where {T,P} = s.volume_fraction / (T(4/3) * outer_radius(s.particle)^3 * pi)
-
 shape(p::Particle) = p.shape
 shape(p::CapsuleParticle) = p.outer.shape
 
@@ -97,7 +73,6 @@ boundary_points(p::AbstractParticle, num_points::Int = 3; kws...) = boundary_poi
 CircleParticle{T,P} = Particle{T,2,P,Circle{T}}
 
 outer_radius(p::AbstractParticle) = outer_radius(shape(p))
-outer_radius(s::Specie) = outer_radius(s.particle)
 volume(p::AbstractParticle) = volume(shape(p))
 
 bounding_rectangle(p::AbstractParticle) = bounding_rectangle(shape(p))

@@ -6,15 +6,29 @@ Subtypes may have a symmetry (such as [`PlaneSource`](@ref)) and will contain in
 abstract type AbstractSource{T} end
 
 """
-    PlaneSource(medium::P, field::Function, coef::Function)
+    PlaneSource(medium::P, amplitude::SVector, wavevector::SVector)
 
-Is a struct type which describes a plane-wave source that drives/forces the whole system. It has four fields: a polar angle `θ`, an azimuth angle `φ`, a physical `medium`, and an `amplitude` vector.
+Is a struct type which describes a plane-wave source that drives/forces the whole system. It has three fields: a physical `medium`, an `amplitude` of the source, and the direction the propagate in `wavevector`.
+
+For any given angular frequency ω, the PlaneSource has the ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the wavevector.
 """
-struct PlaneSource{P<:PhysicalMedium,T} <: AbstractSource{T}
+struct PlaneSource{T,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
     medium::P
-    amplitude::Union{Complex{T},Vector{Complex{T}}}
-    θ::T
-    φ::T # defaults to 0 for two spatial dimensions
+    wavevector::SVector{Dim,T}
+    amplitude::SVector{FieldDim,Complex{T}}
+    # Check that P has same Dim and FieldDim
+    function PlaneSource{T,Dim,FieldDim,P}(medium::P,wavevector::AbstractArray{T},amplitude::AbstractArray{Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+        if length(wavevector) != Dim || length(amplitude) != FieldDim
+            @error "The dimensions of the medium do not match the wavevector or amplitude vector."
+        else
+            new{T,Dim,FieldDim,P}(medium,wavevector,amplitude)
+        end
+    end
+end
+
+# Convenience constructor which does not require explicit types/parameters
+function PlaneSource(medium::P,wavevector::AbstractArray{T},amplitude::AbstractArray{Complex{T}} = SVector(Complex{T}(1))) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+    PlaneSource{T,Dim,FieldDim,P}(medium,wavevector,amplitude)
 end
 
 """
@@ -33,13 +47,13 @@ The field `Source.coef`
 regular_basis_function(medium::Acoustic{T,2}, ω::T)
 
 """
-struct Source{P<:PhysicalMedium,T<:AbstractFloat} <: AbstractSource{T}
+struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T}
     medium::P
     field::Function
     coef::Function
     # Enforce that the Types are the same
-    function Source{P,T}(medium::P,field::Function,coef::Function) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}}
-        s = new{P,T}(medium,field,coef)
+    function Source{T,P}(medium::P,field::Function,coef::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+        s = new{T,P}(medium,field,coef)
         self_test(s)
         return s
     end
@@ -48,7 +62,7 @@ end
 """
 Check that the source functions return the correct types
 """
-function self_test(source::Source{P,T}) where {P,T}
+function self_test(source::Source{T,P}) where {P,T}
 
     # Example data with correct dimensions and types from P and T
     x = SVector(ntuple(i->one(T),spatial_dimension(P)))
@@ -72,7 +86,7 @@ function self_test(source::Source{P,T}) where {P,T}
 end
 
 function constant_source(medium::P, num::Complex{T} = zero(Float64) * im) where {P,T}
-    return Source{P,T}(medium, (x,ω) -> num, (order,x,ω) -> [num])
+    return Source{T,P}(medium, (x,ω) -> num, (order,x,ω) -> [num])
 end
 
 """
@@ -80,7 +94,7 @@ end
 
 Returns a function of `(x,ω)` which approximates the value of the source at `(x,ω)`. That is, the source is written in terms of a regular basis expansion centred at `centre`.
 """
-function source_expand(source::Source{P,T}, centre::AbstractVector{T}; basis_order::Int = 4) where {P,T}
+function source_expand(source::Source{T,P}, centre::AbstractVector{T}; basis_order::Int = 4) where {P,T}
 
     # Convert to SVector for efficiency and consistency
     centre = SVector(centre...)
@@ -92,18 +106,18 @@ function source_expand(source::Source{P,T}, centre::AbstractVector{T}; basis_ord
 end
 
 import Base.(+)
-function +(s1::Source{P,T},s2::Source{P,T})::Source{P,T} where {P,T}
+function +(s1::Source{T,P},s2::Source{T,P})::Source{T,P} where {P,T}
     if s1.medium != s2.medium
         error("Can not add sources from different physical mediums.")
     end
     field(x,ω) = s1.field(x,ω) + s2.field(x,ω)
     coef(n,centre,ω) = s1.coef(n,centre,ω) + s2.coef(n,centre,ω)
 
-    Source{P,T}(s1.medium,field,coef)
+    Source{T,P}(s1.medium,field,coef)
 end
 
 import Base.(*)
-function *(a,s::Source{P,T})::Source{P,T} where {P,T}
+function *(a,s::Source{T,P})::Source{T,P} where {P,T}
     if typeof(one(Complex{T})*a) != Complex{T}
         error("Multiplying source by $a would cause source type to change, please explicitly cast $a to same type as Source ($T)")
     end
@@ -111,7 +125,7 @@ function *(a,s::Source{P,T})::Source{P,T} where {P,T}
     field(x,ω) = a * s.field(x,ω)
     coef(n,centre,ω) = a .* s.coef(n,centre,ω)
 
-    Source{P,T}(s.medium,field,coef)
+    Source{T,P}(s.medium,field,coef)
 end
 
 *(s::Source,a) = *(a,s)
