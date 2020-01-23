@@ -19,6 +19,7 @@ export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
 ## Sources
 export AbstractSource, Source, source_expand, self_test, constant_source, point_source, plane_source,
        (*), (+)
+export PlaneSource
 
 ## Main simulation and results
 export Simulation, run, TimeSimulation, forcing, field

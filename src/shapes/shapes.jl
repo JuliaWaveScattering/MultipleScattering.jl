@@ -39,6 +39,7 @@ end
 # Concrete shapes
 include("rectangle.jl")
 include("circle.jl")
+include("halfspace.jl")
 include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
 include("sphere.jl")

@@ -15,7 +15,7 @@ Halfspace(normal::NTuple{Dim,T}, origin::AbstractVector{T} = zeros(T,Dim)) where
 
 name(shape::Halfspace) = "Halfspace"
 
-outer_radius(hs::Halfspace{T}) = T(Inf)
+outer_radius(hs::Halfspace{T}) where T = T(Inf)
 
 # import Base.issubset
 # function issubset(inner_rect::Rectangle{T}, outer_rect::Rectangle{T}) where T

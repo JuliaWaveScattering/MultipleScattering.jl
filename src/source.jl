@@ -10,14 +10,14 @@ abstract type AbstractSource{T} end
 
 Is a struct type which describes a plane-wave source that drives/forces the whole system. It has three fields: a physical `medium`, an `amplitude` of the source, and the direction the propagate in `wavevector`.
 
-For any given angular frequency ω, the PlaneSource has the ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the wavevector.
+For any given angular frequency ω, the PlaneSource has the value ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the wavevector.
 """
 struct PlaneSource{T,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
     medium::P
-    wavevector::SVector{Dim,T}
+    wavevector::SVector{Dim,Complex{T}}
     amplitude::SVector{FieldDim,Complex{T}}
     # Check that P has same Dim and FieldDim
-    function PlaneSource{T,Dim,FieldDim,P}(medium::P,wavevector::AbstractArray{T},amplitude::AbstractArray{Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+    function PlaneSource{T,Dim,FieldDim,P}(medium::P,wavevector::AbstractArray{T},amplitude::AbstractArray{CT} where CT<:Union{T,Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
         if length(wavevector) != Dim || length(amplitude) != FieldDim
             @error "The dimensions of the medium do not match the wavevector or amplitude vector."
         else
