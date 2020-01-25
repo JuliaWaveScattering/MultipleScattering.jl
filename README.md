@@ -6,8 +6,8 @@
 
 *A Julia library for simulating, processing, and plotting multiple scattering of waves.*
 
-The library uses the multipole method to solve the Helmholtz equation
-(time-harmonic waves). The multipole method is particularly efficient at solving scattering problems for particles in an infinite domain. This library is configured to use T-matrices to represent scattering from particles with any shape and properties (currently implemented for acoustics). The package is setup to deal with different spatial dimensions and types of waves which satisfy Helmholtz equation's, e.g. acoustics, electromagnetism, elasticity. For details on some of the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
+The library focuses on multipole methods (addition translation theorems) to solve the inhomogeneous Helmholtz equation
+(time-harmonic waves). Multipole methods are particularly efficient at solving scattering from particles in an infinite domain. This library is configured to use T-matrices (also known as scattering matrices) to represent scattering from particles with any shape and properties (currently implemented for acoustics). The package is setup to deal with different spatial dimensions and types of waves which satisfy Helmholtz equation's, e.g. acoustics, electromagnetism, elasticity. For details on some of the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
 
 <!-- If you are here to learn about
 [Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490). To see how to take the [moments](example/moments) of the backscattering [click here](example/moments). -->
