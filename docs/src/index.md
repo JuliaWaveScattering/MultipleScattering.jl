@@ -11,7 +11,7 @@ Install Julia v1.0 or later, then run
 
 ```julia
 using Pkg
-Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
+Pkg.clone("https://github.com/JuliaWaveScattering/MultipleScattering.jl.git")
 using MultipleScattering
 ```
 

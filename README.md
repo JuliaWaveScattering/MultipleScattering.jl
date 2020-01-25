@@ -16,7 +16,7 @@ The library focuses on multipole methods (addition translation theorems) to solv
 This package is tested and works for Julia 0.6.
 To get started, download and include the library
 ```julia
-Pkg.clone("https://github.com/jondea/MultipleScattering.jl.git")
+Pkg.clone("https://github.com/JuliaWaveScattering/MultipleScattering.jl.git")
 using MultipleScattering
 ```
 
@@ -111,21 +111,21 @@ We are relatively new to Julia, and this is our first package, if anything is
 untoward or even non-standard, please let us know.
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
-[docs-dev-url]: https://jondea.github.io/MultipleScattering.jl/dev
+[docs-dev-url]: https://JuliaWaveScattering.github.io/MultipleScattering.jl/dev
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-stable-url]: https://jondea.github.io/MultipleScattering.jl/stable
+[docs-stable-url]: https://JuliaWaveScattering.github.io/MultipleScattering.jl/stable
 
 [doi-img]: https://zenodo.org/badge/96763392.svg
 [doi-url]: https://zenodo.org/badge/latestdoi/96763392
 
-[travis-img]: https://travis-ci.org/jondea/MultipleScattering.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/jondea/MultipleScattering.jl
+[travis-img]: https://travis-ci.org/JuliaWaveScattering/MultipleScattering.jl.svg?branch=master
+[travis-url]: https://travis-ci.org/JuliaWaveScattering/MultipleScattering.jl
 
-[codecov-img]: http://codecov.io/github/jondea/MultipleScattering.jl/coverage.svg?branch=master
-[codecov-url]: http://codecov.io/github/jondea/MultipleScattering.jl?branch=master
+[codecov-img]: http://codecov.io/github/JuliaWaveScattering/MultipleScattering.jl/coverage.svg?branch=master
+[codecov-url]: http://codecov.io/github/JuliaWaveScattering/MultipleScattering.jl?branch=master
 
-[coveralls-img]: https://coveralls.io/repos/github/jondea/MultipleScattering.jl/badge.svg?branch=master
-[coveralls-url]: https://coveralls.io/github/jondea/MultipleScattering.jl?branch=master
+[coveralls-img]: https://coveralls.io/repos/github/JuliaWaveScattering/MultipleScattering.jl/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/JuliaWaveScattering/MultipleScattering.jl?branch=master
 
-[issues-url]: https://github.com/jondea/MultipleScattering.jl/issues
+[issues-url]: https://github.com/JuliaWaveScattering/MultipleScattering.jl/issues

@@ -43,5 +43,5 @@ deploydocs(
     branch = "gh-pages",
     latest = "master",
     target = "build",
-    repo = "github.com/jondea/MultipleScattering.jl.git"
+    repo = "github.com/JuliaWaveScattering/MultipleScattering.jl.git"
 )
