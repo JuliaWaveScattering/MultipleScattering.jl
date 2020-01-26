@@ -27,7 +27,7 @@ struct PlaneSource{T,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
 end
 
 # Convenience constructor which does not require explicit types/parameters
-function PlaneSource(medium::P,wavevector::AbstractArray{T},amplitude::AbstractArray{Complex{T}} = SVector(Complex{T}(1))) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+function PlaneSource(medium::P, wavevector::AbstractArray{T}, amplitude::AbstractArray{Complex{T}} = SVector(Complex{T}(1))) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
     PlaneSource{T,Dim,FieldDim,P}(medium,wavevector,amplitude)
 end
 
