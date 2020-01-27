@@ -6,29 +6,34 @@ Subtypes may have a symmetry (such as [`PlaneSource`](@ref)) and will contain in
 abstract type AbstractSource{T} end
 
 """
-    PlaneSource(medium::P, amplitude::SVector, wavevector::SVector)
+    PlaneSource(medium::P, amplitude::SVector, wavedirection::SVector)
 
-Is a struct type which describes a plane-wave source that drives/forces the whole system. It has three fields: a physical `medium`, an `amplitude` of the source, and the direction the propagate in `wavevector`.
+Is a struct type which describes a plane-wave source that drives/forces the whole system. It has three fields: a physical `medium`, an `amplitude` of the source, and the direction the propagate in `wavedirection`.
 
-For any given angular frequency ω, the PlaneSource has the value ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the wavevector.
+For any given angular frequency ω, the PlaneSource has the value ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the wavedirection.
 """
 struct PlaneSource{T,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
     medium::P
-    wavevector::SVector{Dim,Complex{T}}
+    wavedirection::SVector{Dim,Complex{T}}
     amplitude::SVector{FieldDim,Complex{T}}
     # Check that P has same Dim and FieldDim
-    function PlaneSource{T,Dim,FieldDim,P}(medium::P,wavevector::AbstractArray{T},amplitude::AbstractArray{CT} where CT<:Union{T,Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
-        if length(wavevector) != Dim || length(amplitude) != FieldDim
-            @error "The dimensions of the medium do not match the wavevector or amplitude vector."
+    function PlaneSource{T,Dim,FieldDim,P}(medium::P,wavedirection::AbstractArray{T},amplitude::AbstractArray{CT} where CT<:Union{T,Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+        normw = sqrt(sum(wavedirection .^2)) # note if wavedirection is complex this is different from norm(wavedirection)
+        if normw != one(T)
+            @warn "The wavedirection will be normalised so that sum(wavedirection .^2) == 1.0"
+            wavedirection = wavedirection ./ normw
+        end
+        if length(wavedirection) != Dim || length(amplitude) != FieldDim
+            @error "The dimensions of the medium do not match the wavedirection or amplitude vector."
         else
-            new{T,Dim,FieldDim,P}(medium,wavevector,amplitude)
+            new{T,Dim,FieldDim,P}(medium,wavedirection,amplitude)
         end
     end
 end
 
 # Convenience constructor which does not require explicit types/parameters
-function PlaneSource(medium::P, wavevector::AbstractArray{T}, amplitude::AbstractArray{Complex{T}} = SVector(Complex{T}(1))) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
-    PlaneSource{T,Dim,FieldDim,P}(medium,wavevector,amplitude)
+function PlaneSource(medium::P, wavedirection::AbstractArray{T} = [one(T); zeros(T,Dim-1)], amplitude::AbstractArray{Complex{T}} = SVector(Complex{T}(1))) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+    PlaneSource{T,Dim,FieldDim,P}(medium,wavedirection,amplitude)
 end
 
 """
