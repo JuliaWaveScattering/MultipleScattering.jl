@@ -19,14 +19,14 @@ struct PlaneSource{T,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
     # Check that P has same Dim and FieldDim
     function PlaneSource{T,Dim,FieldDim,P}(medium::P,wavedirection::AbstractArray{T},amplitude::AbstractArray{CT} where CT<:Union{T,Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
         normw = sqrt(sum(wavedirection .^2)) # note if wavedirection is complex this is different from norm(wavedirection)
-        if normw != one(T)
+        if !(normw ≈ one(T))
             @warn "The wavedirection will be normalised so that sum(wavedirection .^2) == 1.0"
-            wavedirection = wavedirection ./ normw
         end
+
         if length(wavedirection) != Dim || length(amplitude) != FieldDim
             @error "The dimensions of the medium do not match the wavedirection or amplitude vector."
         else
-            new{T,Dim,FieldDim,P}(medium,wavedirection,amplitude)
+            new{T,Dim,FieldDim,P}(medium,wavedirection ./ normw,amplitude)
         end
     end
 end
