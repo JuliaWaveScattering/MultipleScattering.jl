@@ -89,7 +89,7 @@ end
 function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ωs::AbstractArray{T}=T[];
         ts::AbstractArray{T} = T[], result_in_time = !isempty(ts),
         basis_order::Int = 5,
-        min_basis_order::Int = max(3, Int(round(ωs[1] * basis_order / ωs[end]))),
+        min_basis_order::Int = basis_order,
         basis_order_vec::AbstractVector{Int} = [-1],
         kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim)  where {Dim,P,T}
 
@@ -97,6 +97,10 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     x_vec = [SVector{Dim,T}(x...) for x in x_vec]
 
     # Considering basis_order to be the maximum basis order, then to avoid too much truncation error we use smaller basis orders on the smaller frequencies.
+    basis_order_0 = max(3, Int(round(ωs[1] * basis_order / ωs[end])))
+    if basis_order < basis_order_0
+        @warn "The given basis_order = $basis_order was smaller than $basis_order_0 which is an estimated minimum basis order"
+    end
     if basis_order_vec == [-1]
         max_basis_order = max(basis_order,min_basis_order)
         basis_order_vec = Int.(round.(
@@ -105,13 +109,7 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
         basis_order_vec = basis_order_vec[sortperm(ωs)]
     end
 
-    # ugly bit of code to seperate keywords for simulating frequencies
-    # ks = []
-    # freq_kws = Iterators.filter(kw -> occursin(==,ks,kw[1]), kws)
-    # time_kws = setdiff(kws,freq_kws)
-
     freq_kws = kws
-
 
     # if user asks for ω = 0, then we provide
     if first(ωs) == zero(T)
