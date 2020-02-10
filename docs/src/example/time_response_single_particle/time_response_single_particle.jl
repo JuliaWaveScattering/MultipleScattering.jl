@@ -17,7 +17,7 @@ function run_time_response_single_particle(;
     source =  plane_source(host_medium; position = [0.0,0.0], direction = [1.0,0.0])
 
     # Simulate a single particle in frequency space
-    freq_result = run(particles, source, [0.0,0.0], ωs; basis_order = 14)
+    freq_result = run(particles, source, [0.0,0.0], ωs; min_basis_order = 1, basis_order = 14)
 
     # Convert the frequency simulation into a time simulation
     time_result = frequency_to_time(freq_result; impulse = GaussianImpulse(1.0, 10/maximum(ωs)^2))
