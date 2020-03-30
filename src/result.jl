@@ -19,6 +19,14 @@ function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}},Abstra
     if size(field,2) == 1 # if field is a vector we cast it to a Matrix
         field = reshape(field, size(field,1), size(field,2))
     end
+
+    # We expect size(field) == (length(ω),length(x)), if it's the other way around, we assume the user just input the transpose.
+    if size(field) == (length(ω), length(x))
+        field = transpose(field)
+    elseif size(field) != (length(x),length(ω))
+        @error "we expect size(field) == (length(x),length(ω))"
+    end
+
     x = [SVector(xi...) for xi in x]
     field = [SVector(d...) for d in field]
     FieldDim = size(field[1],1)
