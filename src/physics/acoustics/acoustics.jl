@@ -35,12 +35,6 @@ Characteristic specific acoustic impedance (z₀) of medium
 """
 impedance(medium::Acoustic) = medium.ρ * medium.c
 
-include("circle.jl")
-include("concentric_capsule.jl")
-include("source.jl")
-include("boundary_data.jl")
-
-
 function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
     return function acoustic_basis_function(order::Integer, x::AbstractVector{T})
         r = norm(x)
@@ -60,6 +54,32 @@ function regular_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
         k = ω/medium.c
         [besselj(m,k*r)*exp(im*θ*m) for m = -order:order]
     end
+end
+
+
+
+# Check for material properties that don't make sense or haven't been implemented
+"""
+    check_material(p::Particle{T}, outer_medium::Acoustic{T})
+
+Checks if wave scattering from the particle `p` is physically viable given the material properties of `p` and its surrounding medium `outer_medium`.
+"""
+function check_material(p::Particle{T}, outer_medium::Acoustic{T}) where T <: AbstractFloat
+
+if isnan(abs(p.medium.c)*p.medium.ρ)
+    throw(DomainError("Particle's phase speed times density is not a number!"))
+elseif isnan(abs(outer_medium.c)*outer_medium.ρ)
+    throw(DomainError("The medium's phase speed times density is not a number!"))
+elseif iszero(outer_medium.c)
+    throw(DomainError("Wave propagation in a medium with zero phase speed is not defined"))
+elseif iszero(outer_medium.ρ) && iszero(p.medium.c*p.medium.ρ)
+    throw(DomainError("Scattering in a medium with zero density from a particle with zero density or zero phase speed is not defined"))
+elseif iszero(outer_radius(p))
+    throw(DomainError("Scattering from a circle of zero radius is not implemented yet"))
+end
+
+return true
+
 end
 
 """

@@ -13,7 +13,7 @@ Returns vector of T-matrices from a vector of particles in a specific domain.
 Can save computation if multiple of the same kind of particle are present in the
 vector.
 """
-function get_t_matrices(medium::PhysicalMedium, particles::AbstractParticles, ω::AbstractFloat, Nh::Integer)::Vector
+function get_t_matrices(medium::PhysicalMedium, particles::AbstractParticles, ω::AbstractFloat, basis_order::Integer)::Vector
 
     t_matrices = Vector{AbstractMatrix}(undef,length(particles))
 
@@ -37,7 +37,7 @@ function get_t_matrices(medium::PhysicalMedium, particles::AbstractParticles, ω
 
         # Congruent particle was not found, we must calculate this t-matrix
         if !found
-            t_matrices[p_i] = t_matrix(p, medium, ω, Nh)
+            t_matrices[p_i] = t_matrix(p, medium, ω, basis_order)
             push!(unique_particles, particles[p_i])
             push!(unique_t_matrices, t_matrices[p_i])
         end

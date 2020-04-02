@@ -5,6 +5,8 @@ using MultipleScattering
 using LinearAlgebra
 using Plots
 
+include("special_functions.jl")
+
 include("shapetests.jl")
 include("particle_tests.jl")
 

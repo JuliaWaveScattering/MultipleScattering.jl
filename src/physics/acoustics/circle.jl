@@ -8,17 +8,7 @@ The T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium.
 function t_matrix(p::Particle{T,2,Acoustic{T,2},Circle{T}}, outer_medium::Acoustic{T,2}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
-    if isnan(abs(p.medium.c)*p.medium.ρ)
-        throw(DomainError("Particle's phase speed times density is not a number!"))
-    elseif isnan(abs(outer_medium.c)*outer_medium.ρ)
-        throw(DomainError("The medium's phase speed times density is not a number!"))
-    elseif iszero(outer_medium.c)
-        throw(DomainError("Wave propagation in a medium with zero phase speed is not defined"))
-    elseif iszero(outer_medium.ρ) && iszero(p.medium.c*p.medium.ρ)
-        throw(DomainError("Scattering in a medium with zero density from a particle with zero density or zero phase speed is not defined"))
-    elseif iszero(outer_radius(p))
-        throw(DomainError("Scattering from a circle of zero radius is not implemented yet"))
-    end
+    check_material(p, outer_medium)
 
     "Returns a ratio used in multiple scattering which reflects the material properties of the particles"
     function Zn(m::Integer)::Complex{T}

@@ -1,3 +1,5 @@
+# This file is machine-generated - editing it directly is not advised
+
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
@@ -8,16 +10,16 @@ uuid = "9e28174c-4ba2-5203-b857-d8d62c4213ee"
 version = "0.8.10"
 
 [[BinaryProvider]]
-deps = ["Libdl", "Pkg", "SHA", "Test"]
-git-tree-sha1 = "055eb2690182ebc31087859c3dd8598371d3ef9e"
+deps = ["Libdl", "SHA"]
+git-tree-sha1 = "5b08ed6036d9d3f0ee6369410b830f8873d4024c"
 uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
-version = "0.5.3"
+version = "0.5.8"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
-git-tree-sha1 = "84aa74986c5b9b898b0d1acaf3258741ee64754f"
+git-tree-sha1 = "ed2c4abadf84c53d9e58510b5fc48912c2336fbb"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "2.1.0"
+version = "2.2.0"
 
 [[Dates]]
 deps = ["Printf"]
@@ -28,11 +30,22 @@ deps = ["Mmap"]
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 
 [[Distributed]]
-deps = ["LinearAlgebra", "Random", "Serialization", "Sockets"]
+deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
+[[GSL]]
+deps = ["BinaryProvider", "Libdl", "Markdown"]
+git-tree-sha1 = "5412051557d2c0d5a76f8d4b6a9b849123fac892"
+uuid = "92c85e6c-cbff-5e0c-80f7-495c94daaecd"
+version = "0.6.0"
+
+[[HalfIntegers]]
+git-tree-sha1 = "dda04cbf819c4d62abaa4593aa7f108a291651ba"
+uuid = "f0d1745a-41c9-11e9-1dd9-e5d34d218721"
+version = "1.1.0"
+
 [[InteractiveUtils]]
-deps = ["LinearAlgebra", "Markdown"]
+deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[LibGit2]]
@@ -65,6 +78,12 @@ version = "0.10.0"
 deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
+[[Primes]]
+deps = ["Test"]
+git-tree-sha1 = "ff1a2323cb468ec5f201838fcbe3c232266b1f95"
+uuid = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
+version = "0.4.0"
+
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -82,6 +101,11 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 [[Random]]
 deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[[RationalRoots]]
+git-tree-sha1 = "4165f49c451e6fc4bc0a2eeb1250abdf8c6e550e"
+uuid = "308eb6b3-cc68-5ff3-9e97-c3c4da4fa681"
+version = "0.1.0"
 
 [[RecipesBase]]
 deps = ["Random", "Test"]
@@ -133,8 +157,14 @@ uuid = "30578b45-9adc-5946-b283-645ec420af67"
 version = "0.4.0"
 
 [[UUIDs]]
-deps = ["Random"]
+deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[WignerSymbols]]
+deps = ["HalfIntegers", "Primes", "RationalRoots"]
+git-tree-sha1 = "dfb49a51c4c8e205d1d7ddc7e6a1a29da871ef52"
+uuid = "9f57e263-0b3d-5e2e-b1be-24f2bb48858b"
+version = "1.1.0"

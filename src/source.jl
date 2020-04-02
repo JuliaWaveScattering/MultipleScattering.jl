@@ -12,7 +12,7 @@ Is a struct type which describes a plane-wave source that drives/forces the whol
 
 For any given angular frequency ω, the PlaneSource has the value ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the wavedirection.
 """
-struct PlaneSource{T,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
+struct PlaneSource{T<:AbstractFloat,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
     medium::P
     wavedirection::SVector{Dim,Complex{T}}
     amplitude::SVector{FieldDim,Complex{T}}

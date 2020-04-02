@@ -10,7 +10,7 @@ export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
 
 ## Physical mediums
-export PhysicalMedium, Acoustic, Electromagnetic, AcousticCapsule, outgoing_basis_function, regular_basis_function, basis_coefficients, internal_field, sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet, pressure_release, impedance
+export PhysicalMedium, Acoustic, Electromagnetic, AcousticCapsule, outgoing_basis_function, regular_basis_function, basis_coefficients, internal_field, check_material, sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet, pressure_release, impedance
 export spatial_dimension, field_dimension
 
 ## Particles
@@ -43,12 +43,17 @@ import Printf: @printf
 import StaticArrays: SVector
 import OffsetArrays: OffsetArray
 
+using WignerSymbols, GSL
 using Random, LinearAlgebra, RecipesBase, Statistics
 using ProgressMeter
 
+
 # Generic machinery common to all physical models
 include("shapes/shapes.jl")
-include("physics/physical_properties.jl")
+
+include("physics/special_functions.jl") # Special functions missing from Base library
+include("physics/physical_medium.jl")
+
 include("particle.jl")
 include("source.jl")
 include("result.jl")
@@ -61,7 +66,7 @@ include("scattering_matrix.jl")
 
 # Specific physical models
 include("physics/diffbessel.jl")
-include("physics/acoustics/acoustics.jl")
+include("physics/acoustics/export.jl")
 include("physics/electromagnetism.jl")
 
 #Plotting and graphics
