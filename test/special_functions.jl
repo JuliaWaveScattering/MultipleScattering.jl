@@ -1,21 +1,31 @@
-using GSL
+using GSL, SpecialFunctions
 using Test, LinearAlgebra
 
 @testset "Special functions" begin
 
-    @testset "spherical bessel functions" begin
-        x = 1.1 + 1.1im
-        @test sbesselj(1, x) ≈ sin(x)/x^2 - cos(x)/x
-        @test shankelh1(1, x) ≈ - exp(im*x) * (x + im) / (x^2)
+    @testset "bessel functions" begin
 
-        x = 3.1 + 1.1im
+        x = rand() - 0.5 + (rand() - 0.5) * im
+
+        @test diffbessel(besselj,2,x,2) ≈ diffbesselj(2,x,2)
+        @test diffbessel(hankelh1,2,x,2) ≈ diffhankelh1(2,x,2)
+
+        @test diffbessel(besselj,4,x,3) ≈ diffbesselj(4,x,3)
+        @test diffbessel(hankelh1,4,x,3) ≈ diffhankelh1(4,x,3)
+
+        # spherical bessel functions
+        @test shankelh1(1, x) ≈ - exp(im*x) * (x + im) / (x^2)
+        @test sbesselj(1, x) ≈ sin(x)/x^2 - cos(x)/x
+
+        @test sbesselj(1, eps(Float64)) ≈ 0.0
+        @test sbesselj(0, eps(Float64)) ≈ 1.0
+
         n = 1
         @test 2 * diffsbessel(shankelh1,n,x) ≈ shankelh1(n-1, x) - (shankelh1(n, x) + x*shankelh1(n+1, x))/x
 
         @test diffsbessel(shankelh1,n,x) ≈ diffshankelh1(n,x)
         @test diffsbessel(sbesselj,n,x) ≈ diffsbesselj(n,x)
 
-        x = 3.1 - 2.1im
         n = 2
         @test 2 * diffsbessel(shankelh1,n,x) ≈ shankelh1(n-1, x) - (shankelh1(n, x) + x*shankelh1(n+1, x))/x
 
@@ -70,6 +80,8 @@ using Test, LinearAlgebra
 
         ls, ms = spherical_harmonics_indices(l_max)
         sphs = spherical_harmonics(l_max, θ, φ)
+
+        @test maximum(i - lm_to_spherical_harmonic_index(ls[i],ms[i]) for i in eachindex(ls)) == 0
 
         # check special case l == abs(m)
         inds = findall(ls .== abs.(ms))

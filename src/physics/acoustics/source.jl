@@ -38,8 +38,7 @@ end
 
 Create 2D [`Acoustic`](@ref) planar wave [`Source`](@ref)
 """
-function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T),zero(T)),
-        amplitude::Union{T,Complex{T}} = one(T))::Source{T,Acoustic{T,2}} where {T}
+function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{T,Acoustic{T,2}} where {T}
 
     # Convert to SVector for efficiency and consistency
     position = SVector{2,T}(position)

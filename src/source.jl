@@ -6,35 +6,63 @@ Subtypes may have a symmetry (such as [`PlaneSource`](@ref)) and will contain in
 abstract type AbstractSource{T} end
 
 """
-    PlaneSource(medium::P, amplitude::SVector, wavedirection::SVector)
+    PlaneSource(medium::P, amplitude::SVector, direction::SVector)
 
-Is a struct type which describes a plane-wave source that drives/forces the whole system. It has three fields: a physical `medium`, an `amplitude` of the source, and the direction the propagate in `wavedirection`.
+Is a struct type which describes a plane-wave source that drives/forces the whole system. It has three fields: a physical `medium`, an `amplitude` of the source, and the direction the propagate in `direction`.
 
-For any given angular frequency ω, the PlaneSource has the value ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the wavedirection.
+For any given angular frequency ω, the PlaneSource has the value ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the direction.
 """
 struct PlaneSource{T<:AbstractFloat,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
     medium::P
-    wavedirection::SVector{Dim,Complex{T}}
+    direction::SVector{Dim,Complex{T}}
+    position::SVector{Dim,Complex{T}}
     amplitude::SVector{FieldDim,Complex{T}}
     # Check that P has same Dim and FieldDim
-    function PlaneSource{T,Dim,FieldDim,P}(medium::P,wavedirection::AbstractArray{T},amplitude::AbstractArray{CT} where CT<:Union{T,Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
-        normw = sqrt(sum(wavedirection .^2)) # note if wavedirection is complex this is different from norm(wavedirection)
+    function PlaneSource{T,Dim,FieldDim,P}(medium::P, direction::AbstractArray{T}, position::AbstractArray{T}, amplitude::AbstractArray{CT} where CT<:Union{T,Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+        normw = sqrt(sum(direction .^2)) # note if direction is complex this is different from norm(direction)
         if !(normw ≈ one(T))
-            @warn "The wavedirection will be normalised so that sum(wavedirection .^2) == 1.0"
+            @warn "The direction will be normalised so that sum(direction .^2) == 1.0"
         end
 
-        if length(wavedirection) != Dim || length(amplitude) != FieldDim
-            @error "The dimensions of the medium do not match the wavedirection or amplitude vector."
+        if length(direction) != Dim || length(position) != Dim
+            throw(DimensionMismatch("The spatial dimensions of the medium do not match dimensions of the direction or position vector."))
+        elseif length(amplitude) != FieldDim
+            throw(DimensionMismatch("The dimensions of the field in the medium (i.e. always 1 for acoustics) do not match the dimension of the amplitude vector."))
         else
-            new{T,Dim,FieldDim,P}(medium,wavedirection ./ normw,amplitude)
+            new{T,Dim,FieldDim,P}(medium,direction ./ normw, position, amplitude)
         end
     end
 end
 
+field(s::PlaneSource{T}) where T = function (x::AbstractArray{T}, ω::T)
+        s.amplitude * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
+    end
+
+field(s::PlaneSource{T,Dim,1}) where {T, Dim} = function (x::AbstractArray{T}, ω::T)
+        s.amplitude[1] * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
+    end
+
+field(s::PlaneSource{T}, x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
+
 # Convenience constructor which does not require explicit types/parameters
-function PlaneSource(medium::P, wavedirection::AbstractArray{T} = [one(T); zeros(T,Dim-1)], amplitude::AbstractArray{Complex{T}} = SVector(Complex{T}(1))) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
-    PlaneSource{T,Dim,FieldDim,P}(medium,wavedirection,amplitude)
+function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim}, direction::AbstractArray{T} = [one(T); zeros(T,Dim-1)], position::AbstractArray{T} = zeros(T,Dim), amplitude::Union{CT,AbstractArray{CT}} where CT<:Union{T,Complex{T}} = SVector{FieldDim}(ones(Complex{T},FieldDim))) where {T,Dim,FieldDim}
+
+    if !(typeof(amplitude) <: AbstractArray)
+        amplitude = [amplitude]
+    end
+
+    PlaneSource{T,Dim,FieldDim,PhysicalMedium{T,Dim,FieldDim}}(medium,direction,position,amplitude)
 end
+
+function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim};
+        direction::AbstractArray{T} = [one(T); zeros(T,Dim-1)],
+        position::AbstractArray{T} = zeros(T,Dim),
+        amplitude::Union{CT,AbstractArray{CT}} where CT<:Union{T,Complex{T}} = SVector{FieldDim}(ones(Complex{T},FieldDim))
+    ) where {T,Dim,FieldDim}
+
+    PlaneSource(medium,direction,position,amplitude)
+end
+
 
 """
     Source(medium::P, field::Function, coef::Function)
@@ -89,6 +117,9 @@ function self_test(source::Source{T,P}) where {P,T}
 
     return true
 end
+
+field(s::Source) = s.field
+field(s::Source{T},x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
 
 function constant_source(medium::P, num::Complex{T} = zero(Float64) * im) where {P,T}
     return Source{T,P}(medium, (x,ω) -> num, (order,x,ω) -> [num])

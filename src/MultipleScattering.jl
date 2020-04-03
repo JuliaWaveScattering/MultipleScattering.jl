@@ -37,12 +37,12 @@ export random_particles, statistical_moments
 export t_matrix, get_t_matrices
 export scattering_matrix
 
-import SpecialFunctions: besselj, hankelh1
 import Printf: @printf
 
-import StaticArrays: SVector
-import OffsetArrays: OffsetArray
+using StaticArrays: SVector
+using OffsetArrays: OffsetArray
 
+using SpecialFunctions: besselj, hankelh1
 using WignerSymbols, GSL
 using Random, LinearAlgebra, RecipesBase, Statistics
 using ProgressMeter
