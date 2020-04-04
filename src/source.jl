@@ -46,7 +46,7 @@ field(s::PlaneSource{T}, x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
 
 # Convenience constructor which does not require explicit types/parameters
 function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim},
-        direction::AbstractArray{T} = [one(T); zeros(T,Dim-1)],
+        direction::AbstractArray{T},
         position::AbstractArray{T} = zeros(T,Dim),
         amplitude::Union{CT,AbstractArray{CT}} where CT<:Union{T,Complex{T}} = SVector{FieldDim}(ones(Complex{T},FieldDim))
     ) where {T,Dim,FieldDim}
@@ -55,7 +55,7 @@ function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim},
         amplitude = [amplitude]
     end
 
-    PlaneSource{T,Dim,FieldDim,PhysicalMedium{T,Dim,FieldDim}}(medium,direction,position,amplitude)
+    PlaneSource{T,Dim,FieldDim,typeof(medium)}(medium,direction,position,amplitude)
 end
 
 function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim};
