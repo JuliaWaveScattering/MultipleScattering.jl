@@ -45,7 +45,11 @@ field(s::PlaneSource{T,Dim,1}) where {T, Dim} = function (x::AbstractArray{T}, �
 field(s::PlaneSource{T}, x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
 
 # Convenience constructor which does not require explicit types/parameters
-function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim}, direction::AbstractArray{T} = [one(T); zeros(T,Dim-1)], position::AbstractArray{T} = zeros(T,Dim), amplitude::Union{CT,AbstractArray{CT}} where CT<:Union{T,Complex{T}} = SVector{FieldDim}(ones(Complex{T},FieldDim))) where {T,Dim,FieldDim}
+function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim},
+        direction::AbstractArray{T} = [one(T); zeros(T,Dim-1)],
+        position::AbstractArray{T} = zeros(T,Dim),
+        amplitude::Union{CT,AbstractArray{CT}} where CT<:Union{T,Complex{T}} = SVector{FieldDim}(ones(Complex{T},FieldDim))
+    ) where {T,Dim,FieldDim}
 
     if !(typeof(amplitude) <: AbstractArray)
         amplitude = [amplitude]

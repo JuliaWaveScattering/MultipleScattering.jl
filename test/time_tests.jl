@@ -1,5 +1,21 @@
 import StaticArrays: SVector
 
+@testset "Impulse operations" begin
+
+    ω_vec = 0.0:0.1:1.01
+    t_vec = 0.0:0.1:1.01
+
+    gauss = GaussianImpulse(maximum(ω_vec))
+    dirac = FreqDiracImpulse(ω_vec[1])
+    impulse = gauss +  dirac * 2.0
+
+    @test_throws(DomainError,[1]*dirac)
+
+    @test all(impulse.in_freq.(ω_vec) .== gauss.in_freq.(ω_vec) + 2.0 .* dirac.in_freq.(ω_vec))
+    @test all(impulse.in_time.(t_vec) .== gauss.in_time.(t_vec) + 2.0 .* dirac.in_time.(t_vec))
+
+end
+
 @testset "Time Result" begin
     sound_p = Acoustic(.1, 0.1 + 0.0im,2)
     particles = [Particle(sound_p,Circle([10.5,0.0], .5))]

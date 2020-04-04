@@ -63,7 +63,6 @@ Get field from result, optionally specifying indices.
 
 Returns single value of/matrix of complex SVectors() if vector field, and complex float if scalar field.
 """
-field(result::SimulationResult) = result.field
 
 function field(result::SimulationResult, i::Integer, j::Integer)
     result.field[i,j]
@@ -72,6 +71,7 @@ end
 function field(result::SimulationResult{T,Dim,1}) where {Dim, T}
     map(x->x[1], result.field)
 end
+field(result::SimulationResult) = result.field
 
 function field(result::SimulationResult{T,Dim,1}, i::Integer, j::Integer) where {Dim, T}
     result.field[i,j][1]
@@ -81,20 +81,20 @@ import Base.size
 size(r::FrequencySimulationResult) = (length(r.x),length(r.ω))
 size(r::TimeSimulationResult) = (length(r.x),length(r.t))
 
-import Base.union
-"""
-Combine two FrequencyResults intelligently, allows user to optionally sort ω
-and x
-"""
-function union(r1::FrequencySimulationResult, r2::FrequencySimulationResult; sort::Function = identity)
-    if r1.x == r2.x
-    elseif r1.ω == r2.ω
-    end
-end
-
-function union(r1::SimulationResult,r2::SimulationResult)
-    error("No implementation of union found for Simulation Results of type $(typeof(r1)) and $(typeof(r2))")
-end
+# import Base.union
+# """
+# Combine two FrequencyResults intelligently, allows user to optionally sort ω
+# and x
+# """
+# function union(r1::FrequencySimulationResult, r2::FrequencySimulationResult; sort::Function = identity)
+#     if r1.x == r2.x
+#     elseif r1.ω == r2.ω
+#     end
+# end
+#
+# function union(r1::SimulationResult,r2::SimulationResult)
+#     error("No implementation of union found for Simulation Results of type $(typeof(r1)) and $(typeof(r2))")
+# end
 
 import Base.(+)
 function +(s1::SimulationResult,s2::SimulationResult)::SimulationResult
