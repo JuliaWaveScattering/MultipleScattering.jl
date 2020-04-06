@@ -4,6 +4,9 @@ export gaunt_coefficients
 export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical_harmonic_index
 export spherical_harmonics
 
+
+#NOTE spherical bessel and hankel functions soon coming to SpecialFunctions.jl https://github.com/JuliaMath/SpecialFunctions.jl/pull/196
+
 """
     sbesselj(m,x)
 
@@ -137,6 +140,11 @@ returns a vector of all spherical harmonics with degree `l <= l_max`. The degree
 
 The associated legendre polynomials are taken from the package GSL.jl.
 """
+function spherical_harmonics(l_max::Int, θ::Complex{T}, φ::Union{T,Complex{T}}) where T <: AbstractFloat
+
+    throw(DomainError(θ, "Currently GLS.jl is used to calculate associated legendre polynomials, which only take real angles as arguments. Hopefully soon SpecialFunctions.jl will implement associated Legendre for complex arguments: https://github.com/JuliaMath/SpecialFunctions.jl/pull/175"))
+
+end
 function spherical_harmonics(l_max::Int, θ::T, φ::T) where T <: AbstractFloat
 
     ls, ms = associated_legendre_indices(l_max)
