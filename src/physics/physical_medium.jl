@@ -17,17 +17,17 @@ spatial_dimension(p::PhysicalMedium{T,Dim,FieldDim}) where {Dim,FieldDim,T} = Di
 spatial_dimension(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}} = Dim
 
 """
-Basis functions in a specific dimension for specific physcial properties..
+A basis for regular functions, that is, smooth functions. A series expansion in this basis should converge to any regular function within a ball.
 """
 function regular_basis_function(medium::P, ω::T) where {P<:PhysicalMedium,T}
-    error("No basis function implmented for this physics type.")
+    error("No regular basis function implemented for this physics type.")
 end
 
 """
-Basis of outgoing wave functions in a specific dimension for specific physcial properties..
+Basis of outgoing wave. A series expansion in this basis should converge to any scattered field outside of a ball which contains the scatterer.
 """
 function outgoing_basis_function(medium::P, ω::T) where {P<:PhysicalMedium,T}
-    error("No basis function implmented for this physics type.")
+    error("No outgoing basis function implmented for this physics type.")
 end
 
 """

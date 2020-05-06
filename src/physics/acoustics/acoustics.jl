@@ -36,9 +36,8 @@ Characteristic specific acoustic impedance (z₀) of medium
 impedance(medium::Acoustic) = medium.ρ * medium.c
 
 function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
-    return function acoustic_basis_function(order::Integer, x::AbstractVector{T})
-        r = norm(x)
-        θ = atan(x[2],x[1])
+    return function (order::Integer, x::AbstractVector{T})
+        r, θ  = cartesian_to_radial_coordinates(x)
         k = ω/medium.c
         [hankelh1(m,k*r)*exp(im*θ*m) for m = -order:order]
     end
@@ -46,16 +45,28 @@ end
 
 regular_basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T} = regular_basis_function(p.medium, ω)
 
-"Basis function when inside a particle. Assumes particle is a circle, which approximately works for all shapes."
 function regular_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
-    return function acoustic_basis_function(order::Integer, x::AbstractVector{T})
-        r = norm(x)
-        θ = atan(x[2],x[1])
+    return function (order::Integer, x::AbstractVector{T})
+        r, θ  = cartesian_to_radial_coordinates(x)
         k = ω/medium.c
-        [besselj(m,k*r)*exp(im*θ*m) for m = -order:order]
+        return [besselj(m,k*r)*exp(im*θ*m) for m = -order:order]
     end
 end
 
+function regular_basis_function(medium::Acoustic{T,3}, ω::T) where {T}
+    return function (order::Integer, x::AbstractVector{T})
+        r, θ, φ  = cartesian_to_radial_coordinates(x)
+
+        k = ω / medium.c
+
+        Ys = spherical_harmonics(order, θ, φ)
+        js = [sbesselj(l,k*r) for l = 0:order]
+
+        lm_to_n = lm_to_spherical_harmonic_index
+
+        return [js[l+1] * Ys[lm_to_n(l,m)] for l = 0:order for m = -l:l]
+    end
+end
 
 
 # Check for material properties that don't make sense or haven't been implemented

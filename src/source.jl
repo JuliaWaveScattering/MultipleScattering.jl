@@ -101,9 +101,8 @@ Check that the source functions return the correct types
 """
 function self_test(source::Source{T,P}) where {P,T}
 
-    # Example data with correct dimensions and types from P and T
-    x = SVector(ntuple(i->one(T),spatial_dimension(P)))
-    ω = one(T)
+    # choose rand postion, hopefully not the source position/origin
+    x = SVector(rand(T.(0.1:0.1:1.0),spatial_dimension(P))...)
 
     # Check that the result of field has same dimension and type as PhysicalProperty field
     if field_dimension(P) == 1
@@ -134,7 +133,7 @@ end
 
 Returns a function of `(x,ω)` which approximates the value of the source at `(x,ω)`. That is, the source is written in terms of a regular basis expansion centred at `centre`.
 """
-function source_expand(source::Source{T,P}, centre::AbstractVector{T}; basis_order::Int = 4) where {P,T}
+function source_expand(source::Source{T}, centre::AbstractVector{T}; basis_order::Int = 4) where T
 
     # Convert to SVector for efficiency and consistency
     centre = SVector(centre...)

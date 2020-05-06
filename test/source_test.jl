@@ -15,7 +15,7 @@
     x = [1.0, 1.0]
     @test field(s3,x,1.0) == 2*field(s1,x,1.0) + field(s2,x,1.0)
 
-    # Test the bessel expansions of the source
+    # Test regular basis expansion of the source
     ω = 0.8
     basis_order = 7
     centre =  [1.0,0.0]
@@ -29,9 +29,7 @@
     s_expand = source_expand(source, centre; basis_order = 4)
     @test norm([field(source,x,ω) - s_expand(x,ω) for x in xs]) < 2e-9*norm([field(source,x,ω) for x in xs])
 
-
-    # Test equivalence between plane-Sources
-    # a plane-wave source with explicit wave direction
+    # Test DimensionMismatch between 3D and 2D
 
     direction = SVector(-10.0,1.0)
     position = SVector(rand(2)...)
@@ -41,6 +39,7 @@
     @test_throws(DimensionMismatch,PlaneSource(a3_host; direction = direction))
     @test_throws(DimensionMismatch,PlaneSource(a3_host; amplitude = [1.0,2.0]))
 
+    # Test equivalence between plane-Sources
     psource = PlaneSource(a2_host; direction = direction, position =  position, amplitude = amplitude)
 
     source = plane_source(a2_host; direction = direction, position =  position, amplitude = amplitude)
@@ -56,4 +55,27 @@
     end
 
     @test maximum(errs) ≈ 0.0
+
+    # test constructors for 3D acoustics checks
+    a3_host = Acoustic(3, ρ = 1.3, c = 1.5 + 0.0im)
+
+    direction = rand(3)
+    position = rand(3)
+    amplitude = rand() + 0.1
+
+    # internal constructor checks
+    psource = plane_source(a3_host; direction = direction, position =  position, amplitude = amplitude)
+
+    # Check that the field converges to its regular basis expansion around centre
+    k = real(ω / psource.medium.c)
+    centre = position + (4.0pi / k) .* rand(3)
+    x = centre + (0.1 / k) .* rand(3)
+
+    s_expand = source_expand(psource, x; basis_order = 4)
+
+    if norm(field(psource,x,ω) - s_expand(x,ω)) > 1e-7 * abs(field(psource,x,ω))
+        error("The field of the source: $source was not equal to its series expansion in a regular basis.")
+    end
+
+    @test true
 end
