@@ -101,6 +101,8 @@ Check that the source functions return the correct types
 """
 function self_test(source::Source{T,P}) where {P,T}
 
+    ω = one(T)
+
     # choose rand postion, hopefully not the source position/origin
     x = SVector(rand(T.(0.1:0.1:1.0),spatial_dimension(P))...)
 
