@@ -17,8 +17,8 @@ using Test, LinearAlgebra
         @test shankelh1(1, x) ≈ - exp(im*x) * (x + im) / (x^2)
         @test sbesselj(1, x) ≈ sin(x)/x^2 - cos(x)/x
 
-        @test sbesselj(1, eps(Float64)) ≈ 0.0
-        @test sbesselj(0, eps(Float64)) ≈ 1.0
+        @test sbesselj(1, eps(zero(Float64))) ≈ 0.0
+        @test sbesselj(0, eps(zero(Float64))) ≈ 1.0
 
         n = 1
         @test 2 * diffsbessel(shankelh1,n,x) ≈ shankelh1(n-1, x) - (shankelh1(n, x) + x*shankelh1(n+1, x))/x
@@ -131,8 +131,8 @@ using Test, LinearAlgebra
         m2 = rand(-l2:l2)
         m3 = m1-m2
 
-        @test_throws(DomainError,gaunt_coefficients(l1,2*l1,l2,m2,l3,m3))
-        @test_throws(MethodError,gaunt_coefficients(l1,m1,l2,m2,0.1,m3))
+        @test_throws(DomainError,gaunt_coefficient(l1,2*l1,l2,m2,l3,m3))
+        @test_throws(MethodError,gaunt_coefficient(l1,m1,l2,m2,0.1,m3))
 
         # the spherical harmonics linearisation formula
         θ, φ = rand(2) .* pi
@@ -145,8 +145,11 @@ using Test, LinearAlgebra
 
         cs = reshape(
             [
-                gaunt_coefficients(l1,m1,l2,m2,l3,m3)
-            for l3 = 0:l_max for m3 = -l3:l3 for l2 = 0:l_small for m2 = -l2:l2 for l1 = 0:l_small for m1 = -l1:l1]
+                gaunt_coefficient(l1,m1,l2,m2,l3,m3)
+
+                    for l3 = 0:l_max for m3 = -l3:l3
+                for l2 = 0:l_small for m2 = -l2:l2
+            for l1 = 0:l_small for m1 = -l1:l1]
         , ((l_small + 1)^2,(l_small + 1)^2,(l_max+1)^2));
 
         for n2 in 1:(l_small + 1)^2, n3 in 1:(l_small + 1)^2

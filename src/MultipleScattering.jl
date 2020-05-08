@@ -10,8 +10,14 @@ export boundary_functions, boundary_points, boundary_data, bounding_rectangle
 export bottomleft, topright
 
 ## Physical mediums
-export PhysicalMedium, Acoustic, Electromagnetic, AcousticCapsule, outgoing_basis_function, regular_basis_function, basis_coefficients, internal_field, check_material, sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet, pressure_release, impedance
+export PhysicalMedium, outgoing_basis_function, regular_basis_function, estimate_regular_basisorder, basisorder_to_linearindices, basis_coefficients, internal_field, check_material
 export spatial_dimension, field_dimension
+
+## Electromagnetic
+export Electromagnetic
+
+## Acoustics
+export Acoustic, AcousticCapsule, sound_hard, hard, rigid, zero_neumann, sound_soft, soft, zero_dirichlet, pressure_release, impedance
 
 ## Particles
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles

@@ -1,6 +1,6 @@
 export sbesselj, shankelh1, diffsbessel, diffbessel
 export diffbesselj, diffhankelh1, diffsbesselj, diffshankelh1
-export gaunt_coefficients
+export gaunt_coefficient
 export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical_harmonic_index
 export spherical_harmonics
 export cartesian_to_radial_coordinates, radial_to_cartesian_coordinates
@@ -18,11 +18,19 @@ atan(y::Complex,x::Complex) = - im * log( (x+y*im) / sqrt(x^2+y^2) )
 
 Returns the spherical besselj function. The order is 'm' and the argument is 'x'. Note 'x' can be a complex number.
 """
-function sbesselj(m::Number,x::T) where T<: Union{F,Complex{F}} where F <: AbstractFloat
-    if (abs(x) > eps(F))
-        return sqrt(pi/(T(2)*x)) * besselj(m+1/2,x)
+# function sbesselj(m::Number,x::T) where T<: Union{F,Complex{F}} where F <: AbstractFloat
+    # if (abs(x) > eps(F))
+    #     return sqrt(pi/(T(2)*x)) * besselj(m+1/2,x)
+    # else
+    #     return (m > 0 ? zero(T) : one(T))
+    # end
+# end
+function sbesselj(nu::Number, x::T) where {T}
+    besselj_nuhalf_x = besselj(nu + one(nu)/2, x)
+    if abs(x) ≤ sqrt(eps(real(zero(besselj_nuhalf_x))))
+        nu == 0 ? one(besselj_nuhalf_x) : zero(besselj_nuhalf_x)
     else
-        return (m > 0 ? zero(T) : one(T))
+        √((float(T))(π)/2x) * besselj_nuhalf_x
     end
 end
 
@@ -31,7 +39,7 @@ end
 
 Returns the spherical hankel function of the first kind. The order is 'm' and the argument is 'x'. Note 'x' can be a complex number.
 """
-shankelh1(m::Number,x::Number) = sqrt(pi/(2*x)) * hankelh1(m+1/2,x)
+shankelh1(nu::Number,x::T) where T = √((float(T))(π)/2x) * hankelh1(nu+one(nu)/2,x)
 
 """
     diffsbessel(f::Function,m,x)
@@ -43,7 +51,11 @@ function diffsbessel(f::Function,n::Number,z::Number)
 end
 
 function diffsbesselj(n::Number,z::Number)
-    return sbesselj(n-1,z) - (n+1) * sbesselj(n,z) / z
+    return if n == 0
+        - sbesselj(1,z) # case due to numerical stability
+    else
+        sbesselj(n-1,z) - (n+1) * sbesselj(n,z) / z
+    end
 end
 
 function diffshankelh1(n::Number,z::Number)
@@ -103,25 +115,25 @@ end
 
 
 """
-    gaunt_coefficients(l1,m1,l2,m2,l3,m3)
+    gaunt_coefficient(l1,m1,l2,m2,l3,m3)
 
 A version of the Gaunt coefficients which are used to write the product of two spherical harmonics. If Y_{l,m} is a complex spherical harmonic, with the typical phase conventions from quantum mechanics, then:
 
-    gaunt_coefficients(l1,m1,l2,m2,l3,m3) = 4*π*im^{l2+l3-l1} Integral[Y_{l1,m1}*conj(Y_{l2,m2})*conj(Y_{l3,m3})]
+    gaunt_coefficient(l1,m1,l2,m2,l3,m3) = 4*π*im^{l2+l3-l1} Integral[Y_{l1,m1}*conj(Y_{l2,m2})*conj(Y_{l3,m3})]
 
 where the integral is over the solid angle.
 
 The most standard gaunt coefficients `G(l1,m1;l2,m2;l3)` are related through the identity:
 
-    4pi * G(l1,m1;l2,m2;l3) = im^(l1-l2-l3) * (-1)^m2 * gaunt_coefficients(l1,m1,l2,-m2,l3,m1+m2)
+    4pi * G(l1,m1;l2,m2;l3) = im^(l1-l2-l3) * (-1)^m2 * gaunt_coefficient(l1,m1,l2,-m2,l3,m1+m2)
 
 """
-function gaunt_coefficients(T::Type{<:AbstractFloat},l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int)
+function gaunt_coefficient(T::Type{<:AbstractFloat},l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int)
     # note the wigner3j has only one convention, and is highly symmetric.
     return (one(T)*im)^(l2+l3-l1) * (-T(1))^m1 * sqrt(4pi*(2*l1+1)*(2*l2+1)*(2*l3+1)) *
         wigner3j(T,l1,l2,l3,0,0,0) * wigner3j(T,l1,l2,l3,m1,-m2,-m3)
 end
-gaunt_coefficients(l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int) = gaunt_coefficients(Float64,l1,m1,l2,m2,l3,m3)
+gaunt_coefficient(l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int) = gaunt_coefficient(Float64,l1,m1,l2,m2,l3,m3)
 
 lm_to_spherical_harmonic_index(l::Int,m::Int)::Int = l^2 + m + l + 1
 

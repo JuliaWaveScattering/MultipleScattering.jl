@@ -195,7 +195,7 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     S = scattering_matrix(sim.source.medium, sim.particles, t_matrices, ω, basis_order)
 
     # Get forcing vector from source, forms the right hand side of matrix equation to find basis_coefficients
-    forcing = reduce(vcat, [sim.source.coef(basis_order,origin(p),ω) for p in sim.particles])
+    forcing = reduce(vcat, [sim.source.coefficients(basis_order,origin(p),ω) for p in sim.particles])
 
     # Find Hankel coefficients by solving scattering matrix for this forcing
     a = S\forcing

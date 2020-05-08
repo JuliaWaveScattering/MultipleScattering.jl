@@ -23,8 +23,8 @@ function t_matrix(p::Particle{T,3,Acoustic{T,3},Sphere{T}}, outer_medium::Acoust
         else
             q = impedance(p.medium)/impedance(outer_medium) # Impedance ratio
             γ = outer_medium.c/p.medium.c #speed ratio
-            numer = q * diffsbesselj(m, ak) * sbesselj(m, γ * ak) - sbesselj(m, ak)*diffbesselj(m, γ * ak)
-            denom = q * diffshankelh1(m, ak) * sbesselj(m, γ * ak) - shankelh1(m, ak)*diffsbesselj(m, γ * ak)
+            numer = q * diffsbesselj(m, ak) * sbesselj(m, γ * ak) - sbesselj(m, ak) * diffsbesselj(m, γ * ak)
+            denom = q * diffshankelh1(m, ak) * sbesselj(m, γ * ak) - shankelh1(m, ak) * diffsbesselj(m, γ * ak)
         end
 
         return numer / denom

@@ -91,7 +91,7 @@ julia> plane_wave.field(x,ω) # the value of the field
 0.5403023058681398 + 0.8414709848078965im
 ```
 
-To calculate the scattering from a particle due to a source, we need the coefficients $a_n(\mathbf x_0, \omega) = $ Source.coef(x0,ω). We use these coefficients to represent the source in a radial coordinate system. That is, for any origin $\mathbf x_0$, we need to represent the incident wave $u_{\text{in}}(\mathbf x)$ using a series or regular waves
+To calculate the scattering from a particle due to a source, we need the coefficients $a_n(\mathbf x_0, \omega) = $ Source.coefficients(n,x0,ω). We use these coefficients to represent the source in a radial coordinate system. That is, for any origin $\mathbf x_0$, we need to represent the incident wave $u_{\text{in}}(\mathbf x)$ using a series or regular waves
 
 $u_{\text{in}}(\mathbf x) = \sum_n a_n(\mathbf x_0, \omega) \mathrm v_n(\mathbf x - \mathbf x_0),$  
 
@@ -119,7 +119,7 @@ julia> x = x0 + 0.1*rand(2); basis_order = 10;
 
 julia> vs = regular_basis_function(medium, ω);
 
-julia> source.field(x,ω) ≈ sum(source.coef(basis_order,x0,ω) .* vs(basis_order, x - x0))
+julia> source.field(x,ω) ≈ sum(source.coefficients(basis_order,x0,ω) .* vs(basis_order, x - x0))
 true
 ```
 

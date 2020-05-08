@@ -86,11 +86,13 @@ regular_basis_function(medium::Acoustic{T,2}, ω::T)
 """
 struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T}
     medium::P
+    "Use: field(x,ω)"
     field::Function
-    coef::Function
+    "Use: coefficientsf(n,x,ω)"
+    coefficients::Function
     # Enforce that the Types are the same
-    function Source{T,P}(medium::P,field::Function,coef::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
-        s = new{T,P}(medium,field,coef)
+    function Source{T,P}(medium::P,field::Function,coefficients::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+        s = new{T,P}(medium,field,coefficients)
         self_test(s)
         return s
     end
@@ -115,9 +117,9 @@ function self_test(source::Source{T,P}) where {P,T}
 
     # Check that the result of field has same dimension as field dimension of P
     if field_dimension(P) == 1
-        source.coef(1,x,ω)::Union{Vector{Complex{T}},Vector{SVector{field_dimension(P),Complex{T}}}}
+        source.coefficients(1,x,ω)::Union{Vector{Complex{T}},Vector{SVector{field_dimension(P),Complex{T}}}}
     # else # this else is not necessarily correct..
-    #     source.coef(1,x,ω)::SVector{field_dimension(P),Complex{T}}
+    #     source.coefficients(1,x,ω)::SVector{field_dimension(P),Complex{T}}
     end
 
     return true
@@ -142,7 +144,7 @@ function source_expand(source::Source{T}, centre::AbstractVector{T}; basis_order
 
     return function (x::AbstractVector{T}, ω::T)
         vs = regular_basis_function(source.medium, ω)
-        sum(source.coef(basis_order,centre,ω) .* vs(basis_order, x - centre))
+        sum(source.coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre))
     end
 end
 
@@ -152,7 +154,7 @@ function +(s1::Source{T,P},s2::Source{T,P})::Source{T,P} where {P,T}
         error("Can not add sources from different physical mediums.")
     end
     field(x,ω) = s1.field(x,ω) + s2.field(x,ω)
-    coef(n,centre,ω) = s1.coef(n,centre,ω) + s2.coef(n,centre,ω)
+    coef(n,centre,ω) = s1.coefficients(n,centre,ω) + s2.coefficients(n,centre,ω)
 
     Source{T,P}(s1.medium,field,coef)
 end
@@ -164,7 +166,7 @@ function *(a,s::Source{T,P})::Source{T,P} where {P,T}
     end
 
     field(x,ω) = a * s.field(x,ω)
-    coef(n,centre,ω) = a .* s.coef(n,centre,ω)
+    coef(n,centre,ω) = a .* s.coefficients(n,centre,ω)
 
     Source{T,P}(s.medium,field,coef)
 end

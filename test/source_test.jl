@@ -63,7 +63,7 @@
     position = rand(3)
     amplitude = rand() + 0.1
 
-    # internal constructor checks
+    # check expansion in regular spherical waves
     psource = plane_source(a3_host; direction = direction, position =  position, amplitude = amplitude)
 
     # Check that the field converges to its regular basis expansion around centre

@@ -35,6 +35,9 @@ Characteristic specific acoustic impedance (z₀) of medium
 """
 impedance(medium::Acoustic) = medium.ρ * medium.c
 
+basisorder_to_linearindices(::Type{Acoustic{T,3}}, order::Int) where T = order^2:(order+1)^2
+basisorder_to_linearindices(::Type{Acoustic{T,2}}, order::Int) where T = [1, 2*order + 1]
+
 function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
     return function (order::Integer, x::AbstractVector{T})
         r, θ  = cartesian_to_radial_coordinates(x)
@@ -43,21 +46,20 @@ function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
     end
 end
 
-regular_basis_function(p::Particle{T,2,Acoustic{T,2}}, ω::T) where {T} = regular_basis_function(p.medium, ω)
+regular_basis_function(p::Particle{T,Dim,Acoustic{T,Dim}}, ω::T) where {T,Dim} = regular_basis_function(Acoustic{T,Dim}, ω / p.medium.c)
 
-function regular_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
+regular_basis_function(medium::Acoustic{T,Dim}, ω::T) where {T,Dim} = regular_basis_function(Acoustic{T,Dim}, ω / medium.c)
+
+function regular_basis_function(::Type{Acoustic{T,2}}, k::Union{T,Complex{T}}) where T
     return function (order::Integer, x::AbstractVector{T})
         r, θ  = cartesian_to_radial_coordinates(x)
-        k = ω/medium.c
         return [besselj(m,k*r)*exp(im*θ*m) for m = -order:order]
     end
 end
 
-function regular_basis_function(medium::Acoustic{T,3}, ω::T) where {T}
+function regular_basis_function(::Type{Acoustic{T,3}}, k::Union{T,Complex{T}}) where T
     return function (order::Integer, x::AbstractVector{T})
         r, θ, φ  = cartesian_to_radial_coordinates(x)
-
-        k = ω / medium.c
 
         Ys = spherical_harmonics(order, θ, φ)
         js = [sbesselj(l,k*r) for l = 0:order]
