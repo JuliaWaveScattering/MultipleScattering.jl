@@ -7,10 +7,10 @@ export Shape, Circle, Rectangle, EmptyShape, Halfspace, TimeOfFlight, TimeOfFlig
 
 export outer_radius, volume, name, iscongruent, (≅), congruent, in, issubset, origin, shape, Sphere, (==), isequal, show
 export boundary_functions, boundary_points, boundary_data, bounding_rectangle
-export bottomleft, topright
+export points_in_shape, bottomleft, topright
 
 ## Physical mediums
-export PhysicalMedium, outgoing_basis_function, regular_basis_function, estimate_regular_basisorder, basisorder_to_linearindices, basis_coefficients, internal_field, check_material
+export PhysicalMedium, outgoing_basis_function, regular_basis_function, estimate_regular_basisorder, basisorder_to_linearindices, basis_coefficients, basislength_to_basisorder, internal_field, check_material
 export spatial_dimension, field_dimension
 
 ## Electromagnetic

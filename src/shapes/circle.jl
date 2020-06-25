@@ -9,8 +9,8 @@ struct Circle{T} <: Shape{T,2}
 end
 
 # Alternate constructors, where type is inferred naturally
-Circle(origin::Tuple{T,T}, radius::T) where {T} = Circle{T}(origin, radius)
-Circle(origin::Vector{T}, radius::T) where {T} = Circle{T}(origin, radius)
+Circle(origin::NTuple{2}, radius::T) where {T} = Circle{T}(origin, radius)
+Circle(origin::Vector, radius::T) where {T} = Circle{T}(origin, radius)
 # If no position is given, assume origin is at zero
 Circle(radius::T) where {T} = Circle{T}(SVector(zero(T),zero(T)), radius)
 

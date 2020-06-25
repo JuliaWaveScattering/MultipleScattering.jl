@@ -6,7 +6,9 @@
         field_apply = real, seriestype = :surface)
 
     x = [x[1] for x in simres.x[x_indices]]
-    y = [x[2] for x in simres.x[x_indices]]
+
+    # y will actually be z for 3D...
+    y = [x[end] for x in simres.x[x_indices]]
     ω = getfield(simres, 3)[ω_index]
 
     phase = exp(-im*ω*phase_time)

@@ -41,29 +41,29 @@ A tuples of vectors of the field close to the boundary of the shape. The field i
 boundary_data
 
 
-estimate_regular_basisorder(medium::P, ka) where P<:PhysicalMedium = estimate_regular_basisorder(P, ka)
+# estimate_regular_basisorder(medium::P, ka) where P<:PhysicalMedium = estimate_regular_basisorder(P, ka)
 
 """
     estimate_regular_basis_order(::Type{PhysicalMedium}, ka; tol = 1e-6)
 
 where `ka = 2π * a / λ` is a ratio between a length `a` and a wavelength `λ`.
 """
-function estimate_regular_basisorder(::Type{P}, ka; tol = 1e-6) where P<:PhysicalMedium
+function estimate_regular_basisorder(medium::P, ka; tol = 1e-6) where P<:PhysicalMedium
 
-    vs = regular_basis_function(P, ka)
+    vs = regular_basis_function(medium, medium.c)
 
     # A very large initial guess
     L = Int(round(10 * abs(ka)))
 
-    xs = rand(spatial_dimension(P),10)
+    kxs = ka .* rand(spatial_dimension(medium),10)
 
     l = nothing
     while isnothing(l)
-        meanvs = mean(abs.(vs(L, xs[:,i])) for i in axes(xs,2))
+        meanvs = mean(abs.(vs(L, kxs[:,i])) for i in axes(kxs,2))
         normvs = [norm(meanvs[basisorder_to_linearindices(P,i)]) for i = 1:L]
         l = findfirst(normvs .< tol)
         L = L + Int(round(abs(ka))) + 1
     end
-    
+
     return l
 end

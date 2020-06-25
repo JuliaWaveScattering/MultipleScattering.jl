@@ -44,6 +44,46 @@ include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
 include("sphere.jl")
 include("empty_shape.jl")
+"""
+    points_in_shape(Shape; res = 20, xres = res, yres = res,
+             exclude_region = EmptyShape(region), kws...)
+
+returns `(x_vec, region_inds)` where `x_vec` is a vector of two-dimensional points that cover a rectangle which bounds `Shape`, and `region_inds` is an array of linear indices such that `x_vec[region_inds]` are points contained `Shape`.
+
+"""
+function points_in_shape(region::Shape{T,2};
+        res::Number = 20, xres::Number = res, yres::Number = res,
+        exclude_region::Shape = EmptyShape(region),
+        kws...) where T
+
+    rect = bounding_rectangle(region; kws...)
+
+    #Size of the step in x and y direction
+    x_vec_step = [rect.width / xres, rect.height / yres]
+    bl = bottomleft(rect)
+    x_vec = [SVector{2}(bl + x_vec_step .* [i,j]) for i=0:xres, j=0:yres][:]
+    region_inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
+
+    return x_vec, region_inds
+end
+
+function points_in_shape(region::Shape{T,3};
+        res::Number = 20, xres::Number = res, zres::Number = res,
+        y::T =  region.origin[2],
+        exclude_region::Shape = EmptyShape(region)) where T
+
+    rect = bounding_rectangle(region; y = y)
+
+    #Size of the step in x and y direction
+    x_vec_step = [rect.width / xres, zero(T), rect.height / zres]
+    bl = bottomleft(rect)
+    bl_vec = [bl[1],zero(T),bl[2]]
+    x_vec = [SVector{3}(bl_vec + x_vec_step .* [i,0,j]) for i=0:xres, j=0:zres][:]
+    region_inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
+
+    return x_vec, region_inds
+end
+
 
 "points on the boundary of a shape"
 function boundary_points(shape::Shape{T,Dim}, num_points::Int = 4; dr = zero(T)) where {Dim,T}

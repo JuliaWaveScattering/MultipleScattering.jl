@@ -35,7 +35,7 @@ function t_matrix(cap::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, medium::Aco
     return Diagonal(vcat(reverse(Tns), Tns[2:end]))
 end
 
-function internal_field(x::SVector{2,T}, p::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector) where T
+function internal_field(x::AbstractArray{T}, p::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector) where T
 
     Nh = Int((length(scattering_coefficients) - one(T))/T(2.0)) #shorthand
 

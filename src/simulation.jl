@@ -59,7 +59,7 @@ end
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},Vector{SVector{Dim,T}}}, ω::T;
         basis_order::Int = 5,
-        only_scattered_waves::Bool = false) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}}
+        only_scattered_waves::Bool = false, kws...) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}}
 
     x_vec = [SVector{Dim,T}(x...) for x in x_vec]
 
@@ -158,22 +158,13 @@ Run the simulation `sim` for a grid of positions in rectangle and for angular fr
 Frequency can be a float or vector of floats. The resolution of the grid points is defined
 by xres and yres.
 """
-function run(sim::FrequencySimulation, region::Shape, ω_vec::AbstractVector;
-             res::Number = 20, xres::Number = res, yres::Number = res,
-             exclude_region::Shape = EmptyShape(region),
-             kws...)
+function run(sim::FrequencySimulation{T,Dim}, region::Shape, ω_vec::AbstractVector;
+            kws...) where {T,Dim}
 
-    rect = bounding_rectangle(region)
+    x_vec, inds = points_in_shape(region; kws...)
+    # x_vec is a square grid of points and x_vec[inds] are the points in the region.
 
-    #Size of the step in x and y direction
-    step_size = [rect.width / xres, rect.height / yres]
-    bl = bottomleft(rect)
-    x_vec = [SVector{2}(bl + step_size .* [i,j]) for i=0:xres, j=0:yres][:]
-
-    inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
-    x2_vec = filter(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
-
-    result = run(sim, x2_vec, ω_vec; kws...)
+    result = run(sim, x_vec[inds], ω_vec; kws...)
 
     field_mat = zeros(typeof(result.field[1]), length(x_vec), length(ω_vec))
     field_mat[inds,:] = result.field
@@ -208,20 +199,20 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     return a
 end
 
-function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{SVector{Dim,T}}, a_vec) where {Dim,P,T}
+function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{v}, a_vec) where {Dim,P,T,v <: AbstractArray{T}}
 
-    Nh = Int((size(a_vec,1) - one(T)) / T(2.0)) # basis_order
+    N = basislength_to_basisorder(P,size(a_vec,1))
     num_particles = length(sim.particles)
     basis = outgoing_basis_function(sim.source.medium, ω)
 
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i
             p = sim.particles[i]
-            sum(a_vec[:,i] .* basis(Nh, x-origin(p)))
+            sum(a_vec[:,i] .* basis(N, x-origin(p)))
         end
     end
     map(x_vec) do x
-        j = findfirst(p -> x∈p, sim.particles)
+        j = findfirst(p -> x ∈ p, sim.particles)
         if typeof(j) === Nothing
             sim.source.field(x,ω) + sum_basis(x)
         else

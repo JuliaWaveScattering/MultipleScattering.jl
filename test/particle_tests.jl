@@ -144,8 +144,6 @@
 
 end
 
-
-
 @testset "Capsule Particle" begin
 
     circle_in = Circle((0.0,0.0),1.0)

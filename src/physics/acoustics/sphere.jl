@@ -36,28 +36,31 @@ function t_matrix(p::Particle{T,3,Acoustic{T,3},Sphere{T}}, outer_medium::Acoust
     return - Diagonal(Zns)
 end
 
-# """
-#     internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
-#
-# The internal field for a 2D circlular acoustic particle in a 2D acoustic medium.
-# """
-# function internal_field(x::SVector{2,T}, p::Particle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where T
+"""
+    internal_field(x, p::Particle{T,3,Acoustic{T,3},Sphere{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
 
-    # Nh = Int((length(scattering_coefficients) - one(T))/T(2.0)) #shorthand
-    # if iszero(p.medium.c) || isinf(abs(p.medium.c))
-        # return zero(Complex{T})
-    # else
-    #     r = outer_radius(p)
-    #     k = ω/sim.source.medium.c
-    #     kp = ω/p.medium.c
-    #     diagZ = - diag(t_matrix(p, sim.source.medium, ω, Nh))
-    #
-    #     internal_coefs = scattering_coefficients ./
-    #         (diagZ .* besselj.(-Nh:Nh,kp*r)) .*
-    #         (diagZ .* hankelh1.(-Nh:Nh,k*r) - besselj.(-Nh:Nh,k*r))
-    #
-    #     inner_basis = regular_basis_function(p, ω)
-    #
-    #     return sum(inner_basis(Nh, x-origin(p)) .* internal_coefs)
-    # end
-# end
+The internal field for a 2D circlular acoustic particle in a 2D acoustic medium.
+"""
+function internal_field(x::AbstractArray{T}, p::Particle{T,3,Acoustic{T,3},Sphere{T}}, sim::FrequencySimulation{T}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where T
+
+    N = basislength_to_basisorder(Acoustic{T,3},length(scattering_coefficients))
+    @warn "the internal field of an acoustic sphere has not been implemented, though this is simple to do!"
+
+    if iszero(p.medium.c) || isinf(abs(p.medium.c))
+        return zero(Complex{T})
+    else
+        return zero(Complex{T})
+        # r = outer_radius(p)
+        # k = ω/sim.source.medium.c
+        # kp = ω/p.medium.c
+        # diagZ = - diag(t_matrix(p, sim.source.medium, ω, N))
+        #
+        # internal_coefs = scattering_coefficients ./
+        #     (diagZ .* besselj.(-N:N,kp*r)) .*
+        #     (diagZ .* hankelh1.(-N:N,k*r) - besselj.(-N:N,k*r))
+        #
+        # inner_basis = regular_basis_function(p, ω)
+        #
+        # return sum(inner_basis(N, x-origin(p)) .* internal_coefs)
+    end
+end

@@ -9,8 +9,8 @@ struct Sphere{T} <: Shape{T,3}
 end
 
 # Alternate constructors, where type is inferred naturally
-Sphere(origin::NTuple{3,T}, radius::T) where {T} = Sphere{T}(origin, radius)
-Sphere(origin::Vector{T}, radius::T) where {T} = Sphere{T}(origin, radius)
+Sphere(origin::NTuple{3}, radius::T) where {T} = Sphere{T}(origin, radius)
+Sphere(origin::Vector, radius::T) where {T} = Sphere{T}(origin, radius)
 # If no position is given, assume origin is at zero
 Sphere(radius::T) where {T} = Sphere{T}(SVector(zero(T),zero(T),zero(T)), radius)
 
@@ -36,3 +36,15 @@ end
 function congruent(s::Sphere{T}, x) where T
     Sphere{T}(x, s.radius)
 end
+
+function Circle(sphere::Sphere; y = sphere.origin[2])
+    if abs(y - sphere.origin[2]) > sphere.radius
+        return EmptyShape(sphere)
+    else
+        r = sqrt(sphere.radius^2 - (sphere.origin[2] - y)^2)
+        return Circle(sphere.origin[[1,3]], r)
+    end
+end
+
+bounding_rectangle(sphere::Sphere; kws...) = bounding_rectangle(Circle(sphere; kws...))
+boundary_functions(sphere::Sphere; kws...) = boundary_functions(Circle(sphere; kws...))
