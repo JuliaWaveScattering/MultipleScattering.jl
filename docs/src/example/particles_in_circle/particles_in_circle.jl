@@ -40,13 +40,13 @@ height = 300
 # pyplot(leg=false, size=(1.4*height,height))
 
 ω = 0.5
-plot(big_particle_simulation, ω; res=15, bounds = box);
-plot!(big_particle)
+#plot(big_particle_simulation, ω; res=15, bounds = box);
+#plot!(big_particle)
 
 #savefig("plot_field_big.png")
 
-plot(simulation, ω; res=15, bounds = box);
-plot!(particles, linecolor = :green)
+#plot(simulation, ω; res=15, bounds = box);
+#plot!(particles, linecolor = :green)
 
 #savefig("plot_field.png")
 # ```
@@ -62,9 +62,9 @@ plot!(particles, linecolor = :green)
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
 
-plot(result, lab = "scattering from particles")
-plot!(big_result,
-    lab = "scattering from big particle",
-    title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
+#plot(result, lab = "scattering from particles")
+#plot!(big_result,
+#    lab = "scattering from big particle",
+#    title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
 # ```
 # ![The response comparison](plot_response_compare.png)

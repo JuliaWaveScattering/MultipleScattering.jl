@@ -54,7 +54,7 @@
         abs(pf(x,ω) - sf(x,ω))
     end
 
-    @test maximum(errs) ≈ 0.0
+    @test maximum(errs) < 2.0 * eps(Float64)
 
     # test constructors for 3D acoustics checks
     a3_host = Acoustic(3, ρ = 1.3, c = 1.5 + 0.0im)
