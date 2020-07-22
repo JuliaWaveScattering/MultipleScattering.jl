@@ -26,6 +26,45 @@ function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T
     return Source{T,Acoustic{T,2}}(medium, source_field, source_coef)
 end
 
+function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,3}} where T <: AbstractFloat
+
+    # Convert to SVector for efficiency and consistency
+    source_position = SVector{3,T}(source_position)
+
+    if typeof(amplitude) <: Number
+        amp(ω) = amplitude
+    else
+        amp = amplitude
+    end
+
+    source_field(x,ω) = amp(ω) / (T(4π) * norm(x-source_position)) * exp(im * ω/medium.c * norm(x-source_position))
+
+    @error "not yet implemented"
+    # function source_coef(order,centre,ω)
+    #     # plane-wave expansion for complex vectors
+    #     k = ω/medium.c
+    #     r, θ, φ  = cartesian_to_radial_coordinates(centre - source_position)
+    #     Ys = spherical_harmonics(order, θ, φ)
+    #     lm_to_n = lm_to_spherical_harmonic_index
+    #
+    #     return T(4pi) * source_field(centre,ω) .*
+    #     [
+    #         Complex{T}(im)^l * (-one(T))^m * Ys[lm_to_n(l,-m)]
+    #     for l = 0:order for m = -l:l]
+    # end
+    #
+    # function source_coef(order,centre,ω)
+    #     k = ω/medium.c
+    #     r, θ = cartesian_to_radial_coordinates(centre - source_position)
+    #
+    #     # using Graf's addition theorem
+    #     return (amp(ω)*im)/4 * [hankelh1(-n,k*r) * exp(-im*n*θ) for n = -order:order]
+    # end
+
+    return Source{T,Acoustic{T,3}}(medium, source_field, source_coef)
+end
+
+
 function plane_source(medium::Acoustic{T,Dim}; position = SVector(zeros(T,Dim)...),
         direction = SVector(one(T), zeros(T,Dim-1)...),
         amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,Dim}} where {T, Dim}

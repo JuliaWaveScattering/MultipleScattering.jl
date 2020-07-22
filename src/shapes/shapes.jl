@@ -56,7 +56,7 @@ function points_in_shape(region::Shape{T,2};
         exclude_region::Shape = EmptyShape(region),
         kws...) where T
 
-    rect = bounding_rectangle(region; kws...)
+    rect = bounding_rectangle(region)
 
     #Size of the step in x and y direction
     x_vec_step = [rect.width / xres, rect.height / yres]
