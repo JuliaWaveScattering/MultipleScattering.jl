@@ -4,7 +4,7 @@ makedocs(
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true"
     ), # changes urls if built locally
-    sitename="MultipleScattering.jl",
+    sitename = "MultipleScattering.jl",
     authors = "Artur L. Gower and Jonathan Deakin",
     source= "src",
     modules=[MultipleScattering],
