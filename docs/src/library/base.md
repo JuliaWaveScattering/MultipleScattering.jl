@@ -35,8 +35,8 @@ Physical properties types and functions.
 
 ```@docs
 PhysicalMedium
-field_dim
-dim
+field_dimension
+spatial_dimension
 outgoing_basis_function
 regular_basis_function
 internal_field

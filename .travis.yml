@@ -5,6 +5,7 @@ os:
 julia:
   - 1.0
   - 1.1
+  - 1.2
   - nightly
 notifications:
   email: false
@@ -38,6 +39,7 @@ after_success:
 jobs:
   include:
     - stage: "Documentation"
+      julia: 1.4
       os: linux
       env:
         - DOCUMENTER_DEBUG=true
