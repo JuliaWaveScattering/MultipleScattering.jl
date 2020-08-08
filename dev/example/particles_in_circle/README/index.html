@@ -32,20 +32,20 @@ height = 300
 pyplot(leg=false, size=(1.4*height,height))
 
 ω = 0.5
-plot(big_particle_simulation, ω; res=15, bounds = box);
-plot!(big_particle)
+#plot(big_particle_simulation, ω; res=15, bounds = box);
+#plot!(big_particle)
 
 #savefig(&quot;plot_field_big.png&quot;)
 
-plot(simulation, ω; res=15, bounds = box);
-plot!(particles, linecolor = :green)
+#plot(simulation, ω; res=15, bounds = box);
+#plot!(particles, linecolor = :green)
 
 #savefig(&quot;plot_field.png&quot;)</code></pre><p>Resulting in the figures:</p><p><img src="../plot_field_big.png" alt="The field with big particle"/> <img src="../plot_field.png" alt="The field with particles"/></p><p>If we compare the response measured at the listener <code>[-10., 0.]</code>, they should be very similar:</p><pre><code class="language-julia">#define angular frequency range
 ωs = collect(LinRange(0.1,1.0,10))
 result = run(simulation, x, ωs)
 big_result = run(big_particle_simulation, x, ωs)
 
-plot(result, lab = &quot;scattering from particles&quot;)
-plot!(big_result,
-    lab = &quot;scattering from big particle&quot;,
-    title=&quot;Compare scattered wave from one big particle, \n and a circle filled with small particles&quot;)</code></pre><p><img src="../plot_response_compare.png" alt="The response comparison"/></p><footer><hr/></footer></article></body></html>
+#plot(result, lab = &quot;scattering from particles&quot;)
+#plot!(big_result,
+   # lab = &quot;scattering from big particle&quot;,
+   # title=&quot;Compare scattered wave from one big particle, \n and a circle filled with small particles&quot;)</code></pre><p><img src="../plot_response_compare.png" alt="The response comparison"/></p><footer><hr/></footer></article></body></html>

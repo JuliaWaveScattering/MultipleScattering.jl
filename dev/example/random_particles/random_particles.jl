@@ -48,10 +48,10 @@ result = run(simulation, x, ωs)
     topright = [max_width,max_width]
     bounds = Rectangle(bottomleft,topright)
 
-    plot(simulation,0.8; res=80, bounds=bounds)
-    plot!(region_shape, linecolor=:red)
-    plot!(simulation)
-    scatter!([x[1]],[x[2]], lab="receiver")
+    #plot(simulation,0.8; res=80, bounds=bounds)
+    #plot!(region_shape, linecolor=:red)
+    #plot!(simulation)
+    #scatter!([x[1]],[x[2]], lab="receiver")
 
     #savefig("plot_field.png")
 # ```

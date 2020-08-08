@@ -6,9 +6,9 @@ Now choose the receiver position `x`, the host medium, set plane wave as a sourc
 We use the `Plots` package to plot both the response at the listener position x
 </code></pre><p>julia     using Plots; #pyplot(linewidth = 2.0)     plot(result, field<em>apply=real) # plot result     plot!(result, field</em>apply=imag)     #savefig(&quot;plot_result.png&quot;)</p><pre><code class="language-none">![Plot of response against wavenumber](plot_result.png)
 
-And plot the whole field inside the region_shape `bounds` for a specific wavenumber (`ω=0.8`)</code></pre><p>julia     bottomleft = [-15.,-max<em>width]     topright = [max</em>width,max_width]     bounds = Rectangle(bottomleft,topright)</p><pre><code class="language-none">plot(simulation,0.8; res=80, bounds=bounds)
-plot!(region_shape, linecolor=:red)
-plot!(simulation)
-scatter!([x[1]],[x[2]], lab=&quot;receiver&quot;)
+And plot the whole field inside the region_shape `bounds` for a specific wavenumber (`ω=0.8`)</code></pre><p>julia     bottomleft = [-15.,-max<em>width]     topright = [max</em>width,max_width]     bounds = Rectangle(bottomleft,topright)</p><pre><code class="language-none">#plot(simulation,0.8; res=80, bounds=bounds)
+#plot!(region_shape, linecolor=:red)
+#plot!(simulation)
+#scatter!([x[1]],[x[2]], lab=&quot;receiver&quot;)
 
 #savefig(&quot;plot_field.png&quot;)</code></pre><p>``` <img src="../plot_field.png" alt="Plot real part of acoustic field"/></p><h2><a class="nav-anchor" id="Things-to-try-1" href="#Things-to-try-1">Things to try</a></h2><ul><li>Try changing the volume fraction, particle radius and ω values we evaluate</li></ul><footer><hr/><a class="previous" href="../../near_surface_backscattering/README/"><span class="direction">Previous</span><span class="title">Near-surface backscattering</span></a><a class="next" href="../../time_response_single_particle/README/"><span class="direction">Next</span><span class="title">Time response from single particle</span></a></footer></article></body></html>

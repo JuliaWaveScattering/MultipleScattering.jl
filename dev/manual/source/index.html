@@ -29,7 +29,7 @@ Acoustic(1.0, 1.0 + 0.0im, 2)
 julia&gt; x = [1.0,1.0]; ω = 1.0;
 
 julia&gt; plane_wave.field(x,ω) # the value of the field
-0.5403023058681398 + 0.8414709848078965im</code></pre><p>To calculate the scattering from a particle due to a source, we need the coefficients <span>$a_n(\mathbf x_0, \omega) = $ Source.coef(x0,ω). We use these coefficients to represent the source in a radial coordinate system. That is, for any origin $\mathbf x_0$</span>, we need to represent the incident wave <span>$u_{\text{in}}(\mathbf x)$</span> using a series or regular waves</p><div>\[u_{\text{in}}(\mathbf x) = \sum_n a_n(\mathbf x_0, \omega) \mathrm v_n(\mathbf x - \mathbf x_0),\]</div><p>where for the scalar wave equation:</p><div>\[\mathrm v_n(\mathbf x) = \begin{cases}
+0.5403023058681398 + 0.8414709848078965im</code></pre><p>To calculate the scattering from a particle due to a source, we need the coefficients <span>$a_n(\mathbf x_0, \omega) = $ Source.coefficients(n,x0,ω). We use these coefficients to represent the source in a radial coordinate system. That is, for any origin $\mathbf x_0$</span>, we need to represent the incident wave <span>$u_{\text{in}}(\mathbf x)$</span> using a series or regular waves</p><div>\[u_{\text{in}}(\mathbf x) = \sum_n a_n(\mathbf x_0, \omega) \mathrm v_n(\mathbf x - \mathbf x_0),\]</div><p>where for the scalar wave equation:</p><div>\[\mathrm v_n(\mathbf x) = \begin{cases}
    \mathrm J_n(k r) \mathrm e^{\mathrm i \theta n} &amp; \text{for } \mathbf x \in \mathbb R^2, \\
    \mathrm j_\ell(k r) \mathrm Y_\ell^m(\hat{\mathbf x}) &amp; \text{for } \mathbf x \in \mathbb R^3,\\
 \end{cases}\]</div><p>where for the first case <span>$(r,\theta)$</span> are the polar coordinates and <span>$n$</span> sums over <span>$-N,-N+1, \cdots, N$</span>, where <span>$N$</span> is the basis order, and <span>$\mathrm J_n$</span> is a Bessel function. For the second case, we use a spherical coordinates with <span>$r = \| \mathbf x\|$</span> and <span>$\hat{\mathbf x} = \mathbf x/\|\mathbf x\|$</span>, <span>$n$</span> denotes the multi-index <span>$n=\{\ell,m\}$</span> with summation over <span>$\ell = 0, 1, \cdots,N$</span> and <span>$m=-\ell,-\ell+1,\ell$</span>, <span>$\mathrm j_\ell$</span> is a spherical Bessel function, and <span>$\mathrm Y_\ell^m$</span> is a spherical harmonic.</p><p>Both the inbuilt plane and point sources have functions <code>coef</code> which satisfy the above identity, for example</p><pre><code class="language-julia-repl">julia&gt; using LinearAlgebra, SpecialFunctions;
@@ -44,7 +44,7 @@ julia&gt; x = x0 + 0.1*rand(2); basis_order = 10;
 
 julia&gt; vs = regular_basis_function(medium, ω);
 
-julia&gt; source.field(x,ω) ≈ sum(source.coef(basis_order,x0,ω) .* vs(basis_order, x - x0))
+julia&gt; source.field(x,ω) ≈ sum(source.coefficients(basis_order,x0,ω) .* vs(basis_order, x - x0))
 true</code></pre><p>The package also supplies a convenience function <code>source_expand</code>, which represents the source in terms of regular waves, for example:  </p><pre><code class="language-julia-repl">julia&gt; source2 = source_expand(source, x0; basis_order = 10);
 
 julia&gt; source.field(x,ω) ≈ source2(x,ω)
