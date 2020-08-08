@@ -6,9 +6,9 @@ makedocs(
     ), # changes urls if built locally
     sitename = "MultipleScattering.jl",
     authors = "Artur L. Gower and Jonathan Deakin",
-    source= "src",
-    modules=[MultipleScattering],
-    pages=[
+    source = "src",
+    modules = [MultipleScattering],
+    pages = [
         "Home" =>"index.md",
         "Manual" => [
             "manual/intro.md",
@@ -41,8 +41,6 @@ makedocs(
 
 deploydocs(
     branch = "gh-pages",
-    devbranch = "master",
-    devurl = "dev",
     target = "build",
     versions = ["stable" => "v^", "v#.#"],
     repo = "github.com/JuliaWaveScattering/MultipleScattering.jl.git"
