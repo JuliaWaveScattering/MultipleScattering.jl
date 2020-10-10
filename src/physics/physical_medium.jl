@@ -1,6 +1,8 @@
 """
-Holds information about the physical properties of the medium, the dimension of
-the field and the number of dimensions it is a function of.
+    PhysicalMedium{T<:AbstractFloat,Dim,FieldDim}
+
+An abstract type used to represent the physical medium, the dimension of
+the field, and the number of spatial dimensions.
 """
 abstract type PhysicalMedium{T<:AbstractFloat,Dim,FieldDim} end
 

@@ -2,7 +2,7 @@ abstract type Simulation{T,Dim} end
 
 """
     FrequencySimulation([particles::AbstractParticles=[],]
-                        source::Source)
+                        source::AbstractSource)
 
 Build a FrequencySimulation. If particles are not provided, an empty array is used.
 
@@ -12,16 +12,16 @@ mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalMedium} <: Si
     "Vector of particles, can be of different types."
     particles::AbstractParticles
     "Source wave, where source.medium is the background medium of the simulation."
-    source::Source{T,P}
+    source::AbstractSource{T,P}
 end
 
 # Constructor which infers parametric types from input arguments, note that we  don't need to do much type checking as the struct will error is inconsistent
-function FrequencySimulation(particles::AbstractParticles{T,Dim}, source::Source{T,P}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
+function FrequencySimulation(particles::AbstractParticles{T,Dim}, source::AbstractSource{T,P}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
     FrequencySimulation{T,Dim,P}(particles, source)
 end
 
 # A simulation with just sources is perfectly reasonable
-function FrequencySimulation(source::Source{T,P}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
+function FrequencySimulation(source::AbstractSource{T,P}) where {Dim,T,P<:PhysicalMedium{T,Dim}}
     FrequencySimulation{T,Dim,P}(Vector{AbstractParticle{T,Dim}}(undef,0), source)
 end
 
@@ -42,9 +42,9 @@ end
 
 import Base.run
 
-run(particles::AbstractParticles, source::Source, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation(particles,source), x, ω; kws...)
+run(particles::AbstractParticles, source::AbstractSource, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation(particles,source), x, ω; kws...)
 
-run(source::Source, x::Union{Shape,Vector}, ω; kws...) = run(FrequencySimulation(source), x, ω; kws...)
+run(source::AbstractSource, x::Union{Shape,Vector}, ω; kws...) = run(FrequencySimulation(source), x, ω; kws...)
 
 function run(sim::FrequencySimulation{T,Dim,P}, x::AbstractVector{T}, ωs::AbstractVector{T}=T[];
         kws...)::(SimulationResult{T,Dim,FieldDim} where FieldDim) where {Dim,P,T}
@@ -65,7 +65,8 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
 
     # return just the source if there are no particles
     if isempty(sim.particles)
-        field_vec = sim.source.field.(x_vec,ω)
+        f = field(sim.source)
+        field_vec = f.(x_vec,ω)
     else
         # Calculate the outgoing basis coefficients around each particle, this is where most of the maths happens
         a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
@@ -186,7 +187,8 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     S = scattering_matrix(sim.source.medium, sim.particles, t_matrices, ω, basis_order)
 
     # Get forcing vector from source, forms the right hand side of matrix equation to find basis_coefficients
-    forcing = reduce(vcat, [sim.source.coefficients(basis_order,origin(p),ω) for p in sim.particles])
+    source_coefficient = regular_spherical_coefficients(sim.source)
+    forcing = reduce(vcat, [source_coefficient(basis_order,origin(p),ω) for p in sim.particles])
 
     # Find Hankel coefficients by solving scattering matrix for this forcing
     a = S\forcing
@@ -214,7 +216,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{v}, a_vec
     map(x_vec) do x
         j = findfirst(p -> x ∈ p, sim.particles)
         if typeof(j) === Nothing
-            sim.source.field(x,ω) + sum_basis(x)
+            field(sim.source)(x,ω) + sum_basis(x)
         else
             p = sim.particles[j]
             internal_field(x, p, sim, ω, collect(a_vec[:,j]))

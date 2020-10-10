@@ -7,7 +7,7 @@ makedocs(
     sitename = "MultipleScattering.jl",
     authors = "Artur L. Gower and Jonathan Deakin",
     source = "src",
-    modules = [MultipleScattering],
+    # modules = [MultipleScattering],
     pages = [
         "Home" =>"index.md",
         "Manual" => [

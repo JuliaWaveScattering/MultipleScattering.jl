@@ -3,7 +3,7 @@ Represent any source (incident) wave
 
 Subtypes may have a symmetry (such as [`PlaneSource`](@ref)) and will contain information about physical medium.
 """
-abstract type AbstractSource{T} end
+abstract type AbstractSource{T,P} end
 
 """
     PlaneSource(medium::P, amplitude::SVector, direction::SVector)
@@ -12,10 +12,10 @@ Is a struct type which describes a plane-wave source that drives/forces the whol
 
 For any given angular frequency ω, the PlaneSource has the value ``e^{i ω/c \\mathbf v \\cdot \\mathbf x }`` at the point ``\\mathbf x``, where ``c`` is the medium wavespeed and ``\\mathbf v`` is the direction.
 """
-struct PlaneSource{T<:AbstractFloat,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T}
+struct PlaneSource{T<:AbstractFloat,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{T,P}
     medium::P
-    direction::SVector{Dim,Complex{T}}
-    position::SVector{Dim,Complex{T}}
+    direction::SVector{Dim,T}
+    position::SVector{Dim,T}
     amplitude::SVector{FieldDim,Complex{T}}
     # Check that P has same Dim and FieldDim
     function PlaneSource{T,Dim,FieldDim,P}(medium::P, direction::AbstractArray{T}, position::AbstractArray{T}, amplitude::AbstractArray{CT} where CT<:Union{T,Complex{T}}) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
@@ -84,11 +84,11 @@ The field `Source.coef`
 regular_basis_function(medium::Acoustic{T,2}, ω::T)
 
 """
-struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T}
+struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T,P}
     medium::P
     "Use: field(x,ω)"
     field::Function
-    "Use: coefficientsf(n,x,ω)"
+    "Use: coefficients(n,x,ω)"
     coefficients::Function
     # Enforce that the Types are the same
     function Source{T,P}(medium::P,field::Function,coefficients::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
@@ -96,6 +96,15 @@ struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T}
         self_test(s)
         return s
     end
+end
+
+"""
+    regular_spherical_coefficients(source::Source)
+
+return a function which can calculate the coefficients of a regular spherical wave basis.
+"""
+function regular_spherical_coefficients(source::Source)
+    source.coefficients
 end
 
 """
@@ -115,7 +124,7 @@ function self_test(source::Source{T,P}) where {P,T}
         source.field(x,ω)::SVector{field_dimension(P),Complex{T}}
     end
 
-    # Check that the result of field has same dimension as field dimension of P
+    # Check that the result of field has the same dimension as field dimension of P
     if field_dimension(P) == 1
         source.coefficients(1,x,ω)::Union{Vector{Complex{T}},Vector{SVector{field_dimension(P),Complex{T}}}}
     # else # this else is not necessarily correct..
@@ -137,14 +146,16 @@ end
 
 Returns a function of `(x,ω)` which approximates the value of the source at `(x,ω)`. That is, the source is written in terms of a regular basis expansion centred at `centre`.
 """
-function source_expand(source::Source{T}, centre::AbstractVector{T}; basis_order::Int = 4) where T
+function source_expand(source::AbstractSource{T}, centre::AbstractVector{T}; basis_order::Int = 4) where T
 
     # Convert to SVector for efficiency and consistency
     centre = SVector(centre...)
 
     return function (x::AbstractVector{T}, ω::T)
         vs = regular_basis_function(source.medium, ω)
-        sum(source.coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre))
+        regular_coefficients = regular_spherical_coefficients(source)
+
+        sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre))
     end
 end
 
