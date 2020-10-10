@@ -1,0 +1,273 @@
+
+\documentclass[ 12pt, a4paper]{article}
+% Use the option doublespacing or reviewcopy to obtain double line spacing
+% \documentclass[doublespacing]{elsart}
+
+% the natbib package allows both number and author-year (Harvard)
+% style referencing;
+\usepackage{natbib}
+% if you use PostScript figures in your article
+% use the graphics package for simple commands
+%\usepackage{graphics}
+% or use the graphicx package for more complicated commands
+\usepackage{graphicx}
+% or use the epsfig package if you prefer to use the old commands
+%\usepackage{epsfig}
+% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+\usepackage{amsmath}
+%\usepackage{amsthm}
+\usepackage{mathdots}
+%\usepackage{mathaccents}
+\evensidemargin=0cm \oddsidemargin=0cm \setlength{\textwidth}{16cm}
+\usepackage{setspace}
+\usepackage{stmaryrd}
+\usepackage{theorem}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lema}{Lema}
+\theorembodyfont{\normalfont}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{solution}{Solution}
+\def \proof{\noindent {\bf \emph{Proof:}} }
+
+\newcommand{\be}{\begin{equation}}
+\newcommand{\en}{\end{equation}}
+\def\bga#1\ega{\begin{gather}#1\end{gather}} % suggested in technote.tex
+\def\bgas#1\egas{\begin{gather*}#1\end{gather*}}
+
+\def\bal#1\eal{\begin{align}#1\end{align}} % suggested in technote.tex
+\def\bals#1\eals{\begin{align*}#1\end{align*}}
+
+\newcommand{\initial}[1]{{#1}_\circ}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\DeclareMathOperator{\sign}{sgn}
+\DeclareMathOperator{\divergence}{div}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Ord}{\mathcal{O}}
+\DeclareMathOperator{\GRAD}{grad}
+\DeclareMathOperator{\DIV}{DIV}
+
+\newcommand{\filler}{\hspace*{\fill}}
+\newcommand{\ii}{\textrm{i}}
+\newcommand{\ee}{\textrm{e}}
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+\def \bm#1{\mbox{\boldmath{$#1$}}}   % this is used to write boldface Greek
+
+\graphicspath{{../Images/}}
+\graphicspath{{Media/}}
+
+\doublespacing
+
+\setlength{\topmargin}{0cm} \addtolength{\textheight}{2cm}
+
+\begin{document}
+
+\title{\sc{ Discrete Fourier Transforms}}
+\author{
+Artur L Gower\footnotemark[2]  \\[12pt]
+%$^a$ School of Mathematics, Statistics and Applied Mathematics,\\
+%National University of Ireland Galway;\\
+}
+\date{\today}
+\maketitle
+
+\footnotetext[2]{Department of Mechanical Engineering, The University of Sheffield, UK.}
+
+\begin{abstract}
+Here we give details on Green's functions and Fourier transforms. We mostly focus on using discrete impulse functions, and also show how to do a discrete Fourier transform without including the zero frequency $\omega =0$. The reason for avoiding $\omega =0$ is for functions, like Hankel functions, which have a singularity at $\omega =0$. The Mathematica notebook \url{DiscreteFourierOffset.nb}, in the same directory, shows how to implement these methods and compares them with known analytic results.
+\end{abstract}
+
+\noindent
+{\textit{Keywords:} Discrete Fourier, Discrete offset Fourier, Greens functions}
+
+
+%%%%%%%%%%%%
+
+\section{Incident wave}
+
+We look to solve the 3D wave equation
+\be
+\mathcal L \{\varphi \}(\vec x,t) = \frac{1}{c^2} \frac{\partial^2 \varphi}{\partial t^2}(\vec x,t) - \nabla^2 \varphi(\vec x,t)  = \frac{1}{c^2}B(\vec x,t),
+\label{eqn:ScalarWaveEquation}
+\en
+with the conditions
+\be
+\varphi(\vec x,0^{-}) =0 , \quad \dot \varphi( \vec x,0^{-}) =0 \quad \text{and} \quad  \lim_{\|\vec x\| \to 0} \varphi(\vec x,t) =0,
+\en
+where $B$ is the body force\footnote{This $B$ is technically only a body force for an elastic SH-wave. The interpretation of $B$ depends on the physical interpretation of $\varphi$.}. To solve this we use the Delta Dirac $\delta(\vec x) = \delta(x)\delta(y)\delta(z) = \delta (r)/(4 \pi r^2)$ if $r$ is the radius of a spherical coordinate system, and first solve the wave equation in spherical coordinates
+\be
+\frac{1}{c^2}\frac{\partial^2 g}{\partial t^2} -  \frac{1}{r^2} \frac{\partial}{\partial r} \left (r^2 \frac{\partial g}{\partial r} \right )  = \frac{\delta(r)}{4 \pi r^2} \delta (t)
+\en
+with $g(r,t) =0$ for $t<0$.  This is not trivially solved, as when differentiating $r^{-1}$ a distribution appears on the origin. The solution can be found in p. 92 Achenbach (1973)\footnote{There he changes to spherical coordinates, substitutes $\varphi(r,t) = \Phi(r,t)/r$, and with witchcraft solves the resulting scalar wave equation, picking only the outgoing wave} .
+\be
+g(r, t) = \frac{1}{4 \pi r} \delta(t - r/c).
+\label{eqn:ScalarGreen3D}
+\en
+%Note replacing $\delta$ for some function $f$ above would give the solution for when $B(x,t) = c^2 f(t) \delta( \vec x)$.
+ If we let $B(\vec x,t) = \delta (\vec x) b(t)$, then the solution to Eq.~\eqref{eqn:ScalarWaveEquation} without a scatterer, i.e. for the incident wave, becomes
+\begin{multline}
+\varphi^I(\vec x,t) = \int g(\vec x - \vec \xi,t -\tau)\frac{1}{c^2} B(\vec \xi, \tau) d \vec \xi d\tau =
+\\
+ \int g(\vec x - \vec \xi,t -\tau)\frac{1}{c^2} \delta(\vec \xi) b(\tau) d \vec \xi d\tau =  \int \delta(t- \tau - r/c) \frac{b(\tau)}{4 c^2 \pi r}  d\tau = \frac{b(t- r/c)}{4 c^2 \pi r}.
+\label{eqn:ScalarPointImpact}
+%  \int \frac{1}{4 \pi}  \frac{1}{c^2} B\left ( \sqrt{r^2 + r\xi^2   \mp 2  r r_\xi \cos\theta_\xi \sin\phi_\xi} , t -r_\xi /c \right) r_\xi \sin \phi_\xi d \phi_\xi d \theta_\xi d r_\xi ,
+\end{multline}
+which is the solution to Eq.~\eqref{eqn:ScalarWaveEquation} because
+\[
+\mathcal L \{\varphi^I \}(\vec x,t) = \int \mathcal L \{ g \}(\vec x -\vec \xi,t -\tau)\frac{1}{c^2}B(\vec \xi, \tau) d \xi d \tau =  \int  \delta(\vec x -\vec \xi,t -\tau) \frac{1}{c^2} B(\vec \xi, \tau) d \xi d \tau = \frac{1}{c^2}B(\vec x,t).
+\]
+Let us adopt the Fourier transform convention:
+\[
+f(t) = \frac{1}{2 \pi} \int_{-\infty}^\infty \hat f(\omega) \ee^{- \ii \omega t} d \omega \;\; \text{and} \;\; \hat f(\omega) = \int_{-\infty}^\infty  f(t) \ee^{\ii \omega t} d t.
+\]
+
+If we took one frequency $g(r,t) =  \hat g(r,\omega) \ee^{-\ii \omega t}$ and solved for $\hat g$ with $B = c^2 \ee^{- \ii \omega t} \delta(\vec x)$, one frequency of $c^2 \delta(\vec x) \delta(t)$, the solution using only outgoing waves would be
+\be
+\hat g(r, \omega) = \frac{\ee^{\ii k r}}{4 \pi r},
+\en
+ with $k = \omega /c$, which after a Fourier transform would give the causal 3D Greens function~\eqref{eqn:ScalarGreen3D} as expected.
+
+For the frequency decomposition of the 2D Greens function $\hat g_2$, we imagine that all functions will be independent of the $z$ coordinate. So to use $\hat g$ in a convolution we need to first integrate over $z$:
+\be
+\hat g_2 = \int_{-\infty}^\infty \hat g(r, \omega) dz =  \int_{-\infty}^\infty \frac{\ee^{\ii k \sqrt{ r^2 + z^2} }}{4 \pi \sqrt{ r^2 + z^2}} dz = \frac{\ii}{4}H_0^{(1)}(k r),
+\en
+where $r^2 = x^2 + y^2$ and $\hat g_2$ is an outgoing wave solution to
+\be
+ k^2 \hat g_2 + \nabla^2_2 \hat g_2 = - \delta(x)\delta(y),
+\en
+where $\hat B(\vec x , \omega) = c^2 \delta(\vec x)$ and $\nabla_2$ is the gradient in $x$ and $y$. Note that Graf's and Gegenbauer's addition formulas are very useful to rewrite any bessel or hankel function.
+
+To calculate $g_2$ we can take the 3D Greens~\eqref{eqn:ScalarGreen3D} substitute $r \to \sqrt{r^2 + z^2}$ and integrate in $z$ to get
+\be
+g_2 = \int_{-\infty}^{\infty} \frac{\delta(c t - \sqrt{r^2 + z^2})}{4 \pi \sqrt{r^2 + z^2}} c dz = \frac{c}{2 \pi} \frac{H_s(t -|r|/c)}{\sqrt{c^2 t^2 - r^2}},
+\en
+where $H_s$ is the Heavside step function, so that $H_s(t-|r|/c)$ is zero for $r > ct$.
+
+We can now calculate the 2D incident wave for $B(\vec x,t) = \delta(\vec x) b (t)$ by using the procedure~\eqref{eqn:ScalarPointImpact} for $g_2$ to find
+\be
+\varphi^I(\vec x,t) =
+ \int_{-\infty}^{\infty} g_2(r ,t -\tau) \frac{b(\tau)}{c^2}  d\tau = \int_{|r|/c}^{\text{max} \{t, \frac{|r|}{c}\} } \frac{1}{2 \pi c} \frac{b(t-\tau)}{\sqrt{c^2 \tau^2 - r^2}}  d\tau,
+  %\int_{-\infty}^{t-r/c}  \frac{1}{2 \pi c} \frac{b(\tau) }{\sqrt{c^2 (t- \tau)^2 - r^2}}  d\tau,
+\label{eqn:ScalarPointImpact2D}
+\en
+where we changed variables $\tau \leftarrow t -\tau$ so that we can differentiate the above expression in $t$ more easily (specially numerically) and assumed that $b(-t) =0$ for $t>0$.
+Alternatively,  Eq.~\eqref{eqn:ScalarPointImpact2D} can also be written in terms of the Fourier transforms $\hat g_2(r, \omega)$ and $\hat b(\omega)$ as
+\be
+\varphi^I(\vec x,t) =
+ \frac{1}{c^2} \int_{-\infty}^{\infty}  g_2(r ,\tau) b(t -\tau)  d\tau = \frac{1}{2 \pi c^2} \int_{-\infty}^{\infty} \ee^{-\ii \omega t}  \hat g_2(r ,\omega) \hat b(\omega)  d \omega.
+\label{eqn:ConvolutionWithGreen2D}
+\en
+
+Assuming that $b(t) = 0$ for $t \not \in [0, T]$, then we turn into a numerical method by approximating $b(t)$ with its truncated Fourier series.
+
+\be
+\varphi^I(\vec x,t) \approx \frac{1}{T c^2}   \sum_{n = - N}^N \ee^{-\ii \frac { 2 \pi n }{T} t}  \hat g_2(r ,2 \pi n /T) \hat b_N^n   .
+\label{eqn:ConvolutionWithGreen2DN}
+\en
+One issue is that $\hat g_2$ has a singularity at $\omega =0$. More generally, every Hankel function of the first type has a singularity at $\omega =0$,  which we will deal with carefully in the next section.
+
+\subsection{The offset Discrete Fourier Transform}
+ Approximating an impulse $b(t)$ with its truncated Fourier series $b_N(t)$ means that
+\be
+b_N(t) = \frac{1}{T} \sum_{n = -N}^{ N} \hat b_N^n \ee^{- \ii t \frac{2 \pi n}{T}}, \;\; \text{where} \;\; \hat b_N^n := \hat b_N\left (\frac{2 \pi n}{T}\right ) =  \int_0^T b(t) \ee^{\ii \frac{2 \pi n t}{T}} dt,
+\en
+%which can be used to approximate the Fourier transformed $\hat b(\omega)$ for $\omega \in [- 2 \pi \frac{N}{T}, 2 \pi \frac{N}{T}]$ using
+%\be
+%c_n = \int_{0}^T b_N(t) \ee^{\ii t \frac{2 \pi n}{T} } dt  = \hat b_N(2 \pi n/T) ,
+%\en
+%for $n= - N, -N+1, \ldots, N$.
+Alternatively we can fix $\omega_n = n \delta \omega$, so that $T = 2\pi/\delta \omega$ and $N= \Omega/\delta \omega$.
+
+We can turn this into the discrete Fourier transform by using only the points
+ %$b_N(m T /(2N +1))$ with $m=0, 1, \ldots 2N$, from which we get
+\be
+b_N^m := b_N \left (\frac{m T}{2N +1}\right )= \frac{1}{T} \sum_{n = -N}^{ N} \hat b^n_N \ee^{-2 \pi  \ii  \frac{ m n}{2N +1}},
+%=  \frac{1}{T} \sum_{n = 0}^{ 2 N}  \hat b^{n- N}_N  \ee^{-2 \pi  \ii  \frac{ m n}{2 N}}   \ee^{2 \pi  \ii m  \frac{N}{2 N +1}},
+\en
+for $m= 0, 1, \ldots, 2 N$. We can now apply some linear algebra to extract the coefficients $T^{-1}\hat b^{n}_N$ of the vectors
+\be
+(\vec v_n)^m:=  \ee^{-2 \pi  \ii  \frac{ m n }{2 N + 1}}  \;\; \text{ for } n=0, 1,  \ldots 2 N,
+%\ee^{2 \pi  \ii m  \frac{N}{2 N +1}}  \;\; \text{ for } n=0, 1,  \ldots 2 N,
+\en
+ where $\vec v_n \cdot \bar{\vec v}_j = (2 N +1) \delta_{nj}$, to reach that
+\be
+\hat b^{n}_N  = \frac{T}{(2 N +1)} \sum_{m=0}^{2 N} b_N^m \ee^{2 \pi  \ii  \frac{ m n }{2 N + 1}},
+\en
+which is the definition of the discrete Fourier transform.
+
+For wave problems there is often a singularity at $\omega =0$, a frequency which we used above. The easiest way to deal with this is just to take $\hat b^0_N =0$ which results in the wrong constant being added to the whole time signal. This wrong constant can be corrected by attempting to make the signal casual, which works well if we know the time signal is a pulse. Failing that, the whole frequency range can be offset by constant.
+
+Suppose we wish to approximate $b(t)$ by
+\be
+b(t) \approx \frac{1}{T}\sum_{n=-N}^N \hat \beta^n_N \ee^{-\ii t( 2 \pi n/T + \delta)},
+\en
+then we see that by multiplying by $\ee^{\ii t( 2 \pi m/T + \delta)}$, for $m= -N, \ldots, N$, on both sides\footnote{Check the proof of converges of the Fourier series and see if it can be adapted to this case.} and integrating we get
+\be
+\hat \beta^n_N = \int_0^T b(t) \ee^{\ii t( 2 \pi n/T + \delta)} dt = \hat b\left (\frac{ 2 \pi n}{T} + \delta \right),
+\en
+which looks like the Discrete Fourier transform of $\beta(t) = b(t)\ee^{\ii t \delta}$. In fact substituting $b(t)$ for $\beta(t)$ we get
+\be
+\beta(t) \approx \frac{1}{T}\sum_{n=-N}^N \hat \beta^n_N \ee^{-\ii  2 \pi n t /T },
+\en
+from which we know that by taking $\beta_N^m = \beta(m T /(2 N +1))$ we have that
+\be
+\beta_N^m = \frac{1}{T}\sum_{n=-N}^N \hat \beta^n_N \ee^{-2 \pi \ii \frac{n m}{2 N +1} } \quad \text{and}  \quad
+ \hat \beta_N^n = \frac{T}{2N +1}\sum_{m=0}^{2N} \beta^m_N \ee^{2 \pi \ii \frac{n m}{2 N +1} }.
+\en
+ The above translated back to $b(t)$ gives us
+\bga
+b\left (\frac{ m T} {2 N +1} \right) \approx \ee^{- \ii \delta \frac{ m T} {2 N +1}} \frac{1}{T}\sum_{n=-N}^N  \hat b\left (\frac{ 2 \pi n}{T} + \delta \right) \ee^{-2 \pi \ii \frac{n m}{2 N +1} } \quad \text{and}
+\label{eqn:InverseOffsetDFT} \\
+ \hat b\left (\frac{ 2 \pi n}{T} + \delta \right) \approx \frac{T}{2N +1}\sum_{m=0}^{2N} \ee^{ \ii \delta \frac{ m T} {2 N +1}}  b\left (\frac{ m T} {2 N +1} \right)  \ee^{2 \pi \ii \frac{n m}{2 N +1} },
+ \label{eqn:OffsetDFT}
+\ega
+where $m =0, \ldots, 2N$ for $t\in [0,T]$, and $n =-N, \ldots, N$ for $\omega \in [ \delta - 2 \pi N /T , \delta + 2 \pi N /T ]$. In our methods the more important parameter is the maximum frequency $\Omega \approx 2 \pi N /T$, followed by $N$, so that $T = 2 \pi N/  \Omega$, which should be bigger than the period of $b(t)$.
+
+Typically the discrete Fourier, and its inverse, are implemented so that both $n$ and $m$ run from $0$ to $2N$. That is the input to a DFT is $(\hat \beta_N^0, \hat \beta_N^1, \ldots, \hat \beta_N^{2 N})$. So we must adjust Eq.~\eqref{eqn:InverseOffsetDFT} so that $n$ runs from $0$ to $2N$. Turning to Eq.\eqref{eqn:OffsetDFT} we see that
+\[
+\hat b\left ( -\frac{ 2 \pi n}{T} + \delta \right)  = \hat b_{-n} =  \hat b_{-n + 2N +1},
+\]
+which for $n = 1, 2, \ldots, N$ gives $\hat b_{-1} = \hat b_{2N}$, $ \hat b_{-2} = \hat b_{2N -1}$, \ldots, $ \hat b_{-N} = \hat b_{N +1}$ . We use this to rewrite Eq.~\eqref{eqn:InverseOffsetDFT} as
+\bga
+  b_m \approx \ee^{- \ii \delta \frac{ m T} {2 N +1}} \frac{1}{T}\sum_{n=0}^{2N}  \hat b_n \ee^{-2 \pi \ii \frac{n m}{2 N +1} }.
+  \label{eqn:InverseOffsetDFT}
+\ega
+To be clear, the input vector for DFT would typically be
+\[
+\hat{\vec b} = (\hat b_0, \hat b_1, \ldots, \hat b_N, \hat b_{-N}, \ldots, \hat b_{-1}),
+\]
+  calculated from $\vec \omega = \delta + (1,2\pi/T, \ldots, 2N \pi/T,- N \pi/T, \ldots,-  \pi/T )$.  Below are some examples.
+
+The default Mathematica DFT calculates
+\bga
+\hat {\vec f_n} = \mathrm{Fourier}[\vec f]_n = \frac{1}{\sqrt{2N+1}} \sum_{m=0}^{2 N} f_m \ee^{2 \pi \ii \frac{n m}{2N+1}},
+\\
+{\vec f_m} = \mathrm{InverseFourier}[\hat{\vec f}]_m = \frac{1}{\sqrt{2N+1}} \sum_{n=0}^{2 N} \hat f_n \ee^{-2 \pi \ii \frac{n m}{2N+1}}.
+\ega
+So taking $\hat f_n = \hat b_n \sqrt{2N +1}/T$ leads to $b_m = \ee^{-\ii \delta \frac{m T}{2N+1}} f_m$.
+
+Julia's fft reverse the role of the forward and back DFT. For Julia's taking $\hat f_n = \hat b_{-n} (2N +1)/T$ leads to $b_m = \ee^{\ii \delta \frac{m T}{2N+1}} f_m$.
+
+Note that when we cut out the discontinuity from $\hat b$, the Discrete Fourier Transform will approximate $\hat b$ for some bell shaped curve (and likewise for the time curve). If $\delta$ is to small in comparison to $\delta \omega$ this bell shape will be much too big and rounded to approximate the sharp step from the hankel function. For example, numerically we find that for $\delta = 0.01 \delta \omega$ are already significantly off, whereas for $\delta =0.1 \delta \omega$ they results are always decent (within $1\%$ error when reconstructing the time signal).
+
+
+Convolution formulas such as~\eqref{eqn:ConvolutionWithGreen2D} can also be written in terms of the Offset Discrete Fourier Transform. Let
+\be
+h(t) =  \frac{1}{c^2} \int_{-\infty}^\infty \ee^{-\ii \omega t} \hat g(\omega) \hat b(\omega) d \omega.
+\en
+Assuming $\Omega$ an $N$ is given, we can represent the above by the inverse of the Offset Discrete Fourier Transform by using Eq.~\eqref{eqn:InverseOffsetDFT} to get
+%\[
+%h\left ( \frac{ m T} {2 N +1} \right) \approx \ee^{- \ii \delta \frac{ m T} {2 N +1}}  \frac{1}{T c^2}   \sum_{n = -N}^N \ee^{- 2 \pi \ii   \frac{  n m } {2 N +1} } \hat g(2 \pi n /T +\delta) \hat b(2 \pi n /T +\delta)   .
+%\]
+\be
+h\left (  \frac{m  \pi}{\Omega} \frac{2 N } {2 N +1} \right) \approx \ee^{- \ii \delta \frac{m \pi}{\Omega} \frac{2 N} {2 N +1}}  \frac{\Omega}{2 \pi N c^2}   \sum_{n = -N}^N \ee^{- 2 \pi \ii   \frac{  n m } {2 N +1} } \hat g\left (\Omega \frac{n}{N}  +\delta \right) \hat b\left ( \Omega \frac{n}{N}  +\delta \right)   .
+\en
+
+
+
+\end{document}
