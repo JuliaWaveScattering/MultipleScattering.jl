@@ -21,8 +21,8 @@ end
 @recipe function plot(shape::Shape)
 
     grid --> false
-    xlab --> "x"
-    ylab --> "y"
+    xguide --> "x"
+    yguide --> "y"
     aspect_ratio := 1.0
     label --> ""
     linecolor --> :grey

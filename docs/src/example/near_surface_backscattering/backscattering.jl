@@ -68,7 +68,7 @@ bM = backscattered_waves[M] # backscattering from largest material
 differences = [norm(b - bM) for b in backscattered_waves[1:(M-1)]]./norm(bM)
 
 plot_converge = plot(num_particles[1:(M-1)], differences,
-    xlabel = "number of particles", ylabel ="error %",
+    xlabel = "number of particles", yguide ="error %",
     label="frequency convergence"
 )
 savefig("freq_convergence.png")
@@ -94,7 +94,7 @@ backscattered_waves = field.(time_results)
 bM = backscattered_waves[M] # backscattering from largest material
 differences = [norm(b - bM) for b in backscattered_waves[1:(M-1)]]./norm(bM)
 plot(plot_converge)
-plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", ylabel ="error %", label="time convergence")
+plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", yguide ="error %", label="time convergence")
 savefig("compare_convergence.png")
 
 ## Using near surface backscattering

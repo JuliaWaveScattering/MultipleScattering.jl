@@ -4,6 +4,8 @@ import StaticArrays: SVector
 using MultipleScattering
 using LinearAlgebra
 using Plots
+pyplot()
+plot()
 
 include("special_functions.jl")
 
