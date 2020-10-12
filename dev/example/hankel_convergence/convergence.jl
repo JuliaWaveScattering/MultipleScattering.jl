@@ -42,15 +42,15 @@ function plot_hankel_order_convergence(simulations)
         plot(simulations[end],0.5),
         plot(simulations[1].k_arr, [real(responses),imag(responses)],
              labels=[ map(c -> "real "*c,labels)  map(c -> "imag "*c,labels)],
-             xlab="Wavenumber (k)", ylab="Response", linecolor=[realcolors imagcolors]
+             xguide ="Wavenumber (k)", yguide ="Response", linecolor=[realcolors imagcolors]
         ),
         plot(simulations[1].k_arr, absvec.(error),
              yscale=:log10, labels=labels, linecolor=colors,
-             xlab="Wavenumber (k)", ylab="Absolute error",
+             xguide ="Wavenumber (k)", yguide ="Absolute error",
         ),
         plot(m[1:end-1], integrated_error,
              yscale=:log10, legend=false,
-             xlab="Hankel order", ylab="\$L^2\$ integrated error",
+             xguide ="Hankel order", yguide ="\$L^2\$ integrated error",
         )
     )
 

@@ -24,7 +24,7 @@ function plot_box_size_convergence(simulations;times = [20,30,40,50,60,70])
 
     colors = LinRange(RGB(0.6,1,0.6),RGB(0,0.4,0),length(times))
 
-    plot(xlab="Time (t)",ylab="Response")
+    plot(xguide ="Time (t)",yguide ="Response")
     for s in eachindex(simulations)
         plot!(simulations[s],color=colors[s],label="Box cut at t=$(times[s])")
     end

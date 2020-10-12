@@ -52,7 +52,7 @@ anim = @animate for t in ts
         ylims = (-15.0,15.0) , c=:balance
     )
     plot!(particles)
-    plot!(colorbar=false, title=&quot;&quot;,axis=false, xlab=&quot;&quot;,ylab=&quot;&quot;)
+    plot!(colorbar=false, title=&quot;&quot;,axis=false, xguide =&quot;&quot;,yguide =&quot;&quot;)
 end
 # gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-diffraction.gif" alt/></p><h2 id="Movie-Time-impulse-plane-wave-two-gaps"><a class="docs-heading-anchor" href="#Movie-Time-impulse-plane-wave-two-gaps">Movie - Time impulse plane-wave - two gaps</a><a id="Movie-Time-impulse-plane-wave-two-gaps-1"></a><a class="docs-heading-anchor-permalink" href="#Movie-Time-impulse-plane-wave-two-gaps" title="Permalink"></a></h2><p>Continuing from <a href="#Field-Harmonic-two-gaps">Field - Harmonic two gaps</a>, we can plot how an impulse plave-wave in time passes through two gaps. See <a href="../time_response/#Time-response">Time response</a> for more details on the code used below.</p><pre><code class="language-julia">pyplot(size = (450,300))
 ωs = LinRange(0.0,2.0,300)[2:end] # avoid using ω = 0
@@ -78,7 +78,7 @@ anim = @animate for t in ts
       leg = false, ylims = ylims
     )
     plot!(particles)
-    plot!(frame = :none, title=&quot;&quot;, xlab=&quot;&quot;,ylab=&quot;&quot;)
+    plot!(frame = :none, title=&quot;&quot;, xguide =&quot;&quot;,yguide =&quot;&quot;)
 end
 
 # gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-time-diffraction.gif" alt/></p><h2 id="Movie-Harmonic-from-random-particles"><a class="docs-heading-anchor" href="#Movie-Harmonic-from-random-particles">Movie - Harmonic from random particles</a><a id="Movie-Harmonic-from-random-particles-1"></a><a class="docs-heading-anchor-permalink" href="#Movie-Harmonic-from-random-particles" title="Permalink"></a></h2><pre><code class="language-julia">using MultipleScattering
@@ -115,6 +115,6 @@ minc = round(10*minimum(real.(field(result))))/10
 anim = @animate for t in ts
     plot(result,ω; seriestype = :contour, phase_time=t, clim=(minc,maxc), c=:balance)
     plot!(simulation)
-    plot!(colorbar=false, title=&quot;&quot;,axis=false, xlab=&quot;&quot;,ylab=&quot;&quot;)
+    plot!(colorbar=false, title=&quot;&quot;,axis=false, xguide =&quot;&quot;,yguide =&quot;&quot;)
 end
-# gif(anim,&quot;backscatter_harmonic.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/backscatter_harmonic.gif" alt="backscattering from harmonic wave"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../time_response/">« Time response</a><a class="docs-footer-nextpage" href="../new_types/">New particles »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 11 October 2020 09:18">Sunday 11 October 2020</span>. Using Julia version 1.4.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# gif(anim,&quot;backscatter_harmonic.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/backscatter_harmonic.gif" alt="backscattering from harmonic wave"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../time_response/">« Time response</a><a class="docs-footer-nextpage" href="../new_types/">New particles »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 12 October 2020 18:55">Monday 12 October 2020</span>. Using Julia version 1.5.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
