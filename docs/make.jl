@@ -42,7 +42,6 @@ makedocs(
 deploydocs(
     branch = "gh-pages",
     target = "build",
-    devurl = "dev",
-    versions = ["stable" => "v^", "v#.#.#", devurl => devurl],
+    versions = ["stable" => "v^", "v#.#.#"],
     repo = "github.com/JuliaWaveScattering/MultipleScattering.jl.git"
 )
