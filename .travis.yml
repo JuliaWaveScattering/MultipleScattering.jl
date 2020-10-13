@@ -2,6 +2,7 @@
 language: julia
 os:
   - linux
+  - osx
 julia:
   - 1.0
   - 1.5
@@ -31,6 +32,9 @@ env:
 
 # add seperate job for creating and deploying documentation
 jobs:
+  allow_failures:
+    - os: osx
+    - julia: nightly
   include:
     - stage: "Documentation"
       julia: 1.5
