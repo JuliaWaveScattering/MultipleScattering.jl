@@ -13,13 +13,15 @@ The library focuses on multipole methods (addition translation theorems) to solv
 [Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490). To see how to take the [moments](example/moments) of the backscattering [click here](example/moments). -->
 
 ## Installation
-This package is tested and works for Julia 0.6.
-To get started, download and include the library
+This package is available for Julia 1.0.5 and beyond. To get started, just add the package by typing
 ```julia
-Pkg.clone("https://github.com/JuliaWaveScattering/MultipleScattering.jl.git")
-using MultipleScattering
+julia> ]
+pkg> add MultipleScattering
 ```
-
+then press the backspace key followed by
+```julia
+julia> using MultipleScattering
+```
 ## Documentation
 
 - [**master**][docs-dev-url] &mdash; *documentation of the in-development version.*
