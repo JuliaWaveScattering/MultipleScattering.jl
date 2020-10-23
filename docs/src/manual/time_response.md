@@ -160,7 +160,7 @@ sim = FrequencySimulation(particles, plane_wave);
 freq_response = run(sim, x, ωs);
 
 t_vec = -10.:0.2:81.
-time_response = frequency_to_time(freq_response; t_vec=t_vec, impulse = GaussianImpulse(1.5, 1.0))
+time_response = frequency_to_time(freq_response; t_vec=t_vec, impulse = GaussianImpulse(1.5; σ = 1.0))
 
 xticks = [0.,20.,34.,40.0,60.,80.]
 plot(time_response, title="Time response from lens", label="", xticks=xticks)

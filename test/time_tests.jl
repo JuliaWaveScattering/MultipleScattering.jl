@@ -2,18 +2,39 @@ import StaticArrays: SVector
 
 @testset "Impulse operations" begin
 
-    ω_vec = 0.0:0.1:1.01
-    t_vec = 0.0:0.1:1.01
+    # test adding analytic impulses
+        ω_vec = 0.0:0.1:1.01
+        t_vec = 0.0:0.1:1.01
 
-    gauss = GaussianImpulse(maximum(ω_vec))
-    dirac = FreqDiracImpulse(ω_vec[1])
-    impulse = gauss +  dirac * 2.0
+        gauss = GaussianImpulse(maximum(ω_vec))
+        dirac = FreqDiracImpulse(ω_vec[1])
+        impulse = gauss +  dirac * 2.0
 
-    @test_throws(DomainError,[1]*dirac)
+        @test_throws(DomainError,[1]*dirac)
 
-    @test all(impulse.in_freq.(ω_vec) .== gauss.in_freq.(ω_vec) + 2.0 .* dirac.in_freq.(ω_vec))
-    @test all(impulse.in_time.(t_vec) .== gauss.in_time.(t_vec) + 2.0 .* dirac.in_time.(t_vec))
+        @test all(impulse.in_freq.(ω_vec) .== gauss.in_freq.(ω_vec) + 2.0 .* dirac.in_freq.(ω_vec))
+        @test all(impulse.in_time.(t_vec) .== gauss.in_time.(t_vec) + 2.0 .* dirac.in_time.(t_vec))
 
+    # test a shifted discrete impulse
+        t_vec = 0.0:0.1:10.01
+        ω_vec = t_to_ω(t_vec)
+
+        gauss = GaussianImpulse(maximum(ω_vec) / 2)
+
+        discrete_impulse = continuous_to_discrete_impulse(gauss, t_vec, ω_vec; t_shift = 4.2, ω_shift = maximum(ω_vec) / 2);
+
+        time_response = frequency_to_time(discrete_impulse.in_freq, ω_vec, t_vec);
+        freq_response = time_to_frequency(real.(discrete_impulse.in_time), t_vec, ω_vec);
+
+        @test maximum(abs.(time_response - discrete_impulse.in_time)) < 1e-2
+        @test maximum(abs.(freq_response - discrete_impulse.in_freq)) < 1e-2
+
+    # compare with the analytic shifts
+        gauss_shift = GaussianImpulse(maximum(ω_vec) / 2; t_shift = 4.2, ω_shift = maximum(ω_vec) / 2)
+        discrete_impulse2 = continuous_to_discrete_impulse(gauss_shift, t_vec, ω_vec);
+
+        @test maximum(abs.(discrete_impulse2.in_time - discrete_impulse.in_time)) < 1e-10
+        @test maximum(abs.(discrete_impulse2.in_freq - discrete_impulse.in_freq)) < 1e-10
 end
 
 @testset "Time Result" begin

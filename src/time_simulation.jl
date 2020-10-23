@@ -111,7 +111,7 @@ The inverse of the function frequency_to_time (only an exact inverse when using
 :dft integration). We use the Fourier transform convention:
 F(ω) =  ∫ f(t)*exp(im*ω*t) dt
 """
-function time_to_frequency(field_mat::AbstractArray{T}, t_vec::AbstractVector{T},
+function time_to_frequency(field_mat::Union{AbstractArray{T},AbstractArray{Complex{T}}}, t_vec::AbstractVector{T},
         ω_vec::AbstractArray{T} = t_to_ω(t_vec);
         impulse::ContinuousImpulse{T} = TimeDiracImpulse(zero(T)),
         discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
