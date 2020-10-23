@@ -20,7 +20,7 @@ function run_time_response_single_particle(;
     freq_result = run(particles, source, [0.0,0.0], ωs; min_basis_order = 1, basis_order = 14)
 
     # Convert the frequency simulation into a time simulation
-    time_result = frequency_to_time(freq_result; impulse = GaussianImpulse(1.0, 10/maximum(ωs)^2))
+    time_result = frequency_to_time(freq_result; impulse = GaussianImpulse(1.0; σ = 10/maximum(ωs)^2))
 
     return freq_result, time_result
 end
