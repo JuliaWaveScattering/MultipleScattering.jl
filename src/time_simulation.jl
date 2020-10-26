@@ -10,6 +10,8 @@ function frequency_to_time(simres::FrequencySimulationResult{T,Dim,FieldDim};
         method = :dft
     ) where {Dim,FieldDim,T}
 
+    t_vec = discrete_impulse.t
+
     time_field = frequency_to_time(transpose(field(simres)), simres.ω, t_vec;
         discrete_impulse = discrete_impulse, method = method)
 
@@ -26,6 +28,8 @@ function time_to_frequency(timres::TimeSimulationResult{T,Dim,FieldDim};
         discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse,timres.t, ω_vec),
         method =:dft
     ) where {Dim,FieldDim,T}
+
+    ω_vec = discrete_impulse.ω
 
     freq_field = time_to_frequency(transpose(field(timres)), timres.t, ω_vec;
         discrete_impulse = discrete_impulse, method = method)
@@ -45,7 +49,9 @@ function ω_to_t(ω_arr::AbstractArray{T}) where T <: AbstractFloat
     elseif minimum(ω_arr) < zero(T)
         error("expected only non-negative values for the frequencies")
     end
-    dω = ω_arr[2] - ω_arr[1]
+
+    dω = median(abs.((circshift(ω_arr,1) - ω_arr)[2:end]))
+
     t_arr = LinRange(zero(T),2π/dω,2N+2)[1:(2N+1)]
     return t_arr
 end
@@ -91,6 +97,9 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
         discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
         method=:dft) where T <: AbstractFloat
 
+    # In case the used specifies discrete_impulse but not t_vec
+    t_vec = discrete_impulse.t
+
     if size(field_mat,1) != size(ω_vec,1) error("Vector of frequencies ω_vec expected to be same size as size(field_mat,1)") end
 
     function f(t::T,j::Int)
@@ -101,7 +110,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
         fs
     end
     inverse_fourier_integral = (t,j) -> numerical_integral(ω_vec, f(t,j), method)
-    u = [inverse_fourier_integral(t,j) for t in t_vec, j in axes(field_mat,2)]
+    u = [inverse_fourier_integral(t,j) for t in discrete_impulse.t, j in axes(field_mat,2)]
 
     return real.(u)/pi # a constant 1/(2pi) appears due to our Fourier convention, but because we only use positive frequencies, and assume a real time signal, this becomes 1/pi.
 end
@@ -117,10 +126,13 @@ function time_to_frequency(field_mat::Union{AbstractArray{T},AbstractArray{Compl
         discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
         method=:dft) where T <: AbstractFloat
 
+    # In case the used specifies discrete_impulse but not ω_vec
+    ω_vec = discrete_impulse.ω
+
     # to use an impulse below in time we would need to do a discrete convolution, which we decided against.
-    f(ω::T, j::Int) = field_mat[:,j].*exp.((im*ω).*t_vec)
+    f(ω::T, j::Int) = field_mat[:,j] .* exp.((im*ω) .* t_vec)
     fourier_integral = (ω,j) -> numerical_integral(t_vec, f(ω,j), method)
-    uhat = [discrete_impulse.in_freq[i]*fourier_integral(ω_vec[i],j) for i in eachindex(ω_vec), j in axes(field_mat,2)]
+    uhat = [discrete_impulse.in_freq[i]*fourier_integral(discrete_impulse.ω[i],j) for i in eachindex(discrete_impulse.ω), j in axes(field_mat,2)]
 
     return uhat
 end

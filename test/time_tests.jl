@@ -46,12 +46,12 @@ end
     sim = FrequencySimulation(particles, source)
 
     ω_vec = 0.0:0.01:5.01
-    @test LinRange(ω_vec) == t_to_ω(ω_to_t(ω_vec)) # only exact for length(ω_vec) = even number
+    @test LinRange(ω_vec) ≈ t_to_ω(ω_to_t(ω_vec)) # only exact for length(ω_vec) = even number
 
     # invertability of dft
         x_vec = [ [0.0,0.0], [3.0,0.0]]
         ω_vec = 0.0:0.1:1.01
-        t_vec = 0.0:0.1:1.01
+        t_vec = ω_to_t(ω_vec)
         simres = run(sim, x_vec, ω_vec)
         # choose an impulse which does nothing and so can be inverted
         discrete_impulse = DiscreteTimeDiracImpulse(0.0, t_vec, ω_vec)
@@ -79,9 +79,12 @@ end
 
         ω_vec = 0.0:0.0001:2.01 # need a high sampling to match a delta impluse function!
         t_vec = 0.:0.5:20.
+
+        impulse = GaussianImpulse(maximum(ω_vec))
+
         simres = run(sim, x_vec, ω_vec)
-        timres1 = frequency_to_time(simres; t_vec = t_vec, method=:trapezoidal, impulse = GaussianImpulse(maximum(simres.ω)))
-        timres2 = frequency_to_time(simres; t_vec = t_vec, method=:dft, impulse = GaussianImpulse(maximum(simres.ω)))
+        timres1 = frequency_to_time(simres; t_vec = t_vec, method=:trapezoidal, impulse = impulse)
+        timres2 = frequency_to_time(simres; t_vec = t_vec, method=:dft, impulse = impulse)
         @test norm(field(timres1) - field(timres2))/norm(field(timres1)) < 2e-5
         # plot(timres1.t, [field(timres1)[1,:]-field(timres2)[1,:]])
 end
