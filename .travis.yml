@@ -32,6 +32,8 @@ env:
 
 # add seperate job for creating and deploying documentation
 jobs:
+  allow_failures:
+    - julia: nightly
   include:
     - stage: "Documentation"
       julia: 1.4
