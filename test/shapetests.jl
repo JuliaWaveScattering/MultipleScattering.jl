@@ -125,6 +125,7 @@
         @test Sphere((0.0,0.0,0.0), 1.0) == Sphere([0.0,0.0,0.0], 1.0)
     end
 
+    # Causing Segmentation fault on Julia 1.1
     @testset "Plot Shapes" begin
         # Just try each to see if we have any errors (yes thats a very low bar)
         rectangle = Rectangle([0.0,0.0],[2.0,3.0])

@@ -58,6 +58,24 @@ function Particle(medium::P,s::S) where {Dim,T,P<:PhysicalMedium{T,Dim},S<:Shape
     Particle{T,Dim,P,S}(medium,s)
 end
 
+"""
+    Particle(medium, radius)
+
+Returns a particle shaped like a sphere, when the physical `medium` is 3 dimensional, with the specified `radius`.
+"""
+function Particle(medium::P, radius::T) where {T, P <: PhysicalMedium{T,3}}
+    Particle{T,3,P,Sphere{T}}(medium,Sphere(radius))
+end
+
+"""
+    Particle(medium, radius)
+
+A particle shaped like a cylinder.
+"""
+function Particle(medium::P, radius::T) where {T, P <: PhysicalMedium{T,2}}
+    Particle{T,2,P,Circle{T}}(medium, Circle(radius))
+end
+
 function CapsuleParticle(p1::Particle{T,Dim,P,S},p2::Particle{T,Dim,P,S}) where {T,Dim,S<:Shape,P<:PhysicalMedium}
     CapsuleParticle{T,Dim,P,S}(p1,p2)
 end

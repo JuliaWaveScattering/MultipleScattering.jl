@@ -2,10 +2,10 @@
 language: julia
 os:
   - linux
+  - osx
 julia:
   - 1.0
-  - 1.1
-  - 1.2
+  - 1.5
   - nightly
 notifications:
   email: false
@@ -36,7 +36,7 @@ jobs:
     - julia: nightly
   include:
     - stage: "Documentation"
-      julia: 1.4
+      julia: 1.5
       os: linux
       env:
         - DOCUMENTER_DEBUG=true
@@ -44,7 +44,6 @@ jobs:
         - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
                                                Pkg.instantiate()'
         - julia --project=docs/ docs/make.jl
-      name: "HTML"
       after_success: skip
 
 ## uncomment the following lines to override the default test script

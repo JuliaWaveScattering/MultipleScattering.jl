@@ -67,7 +67,7 @@ anim = @animate for t in ts
         ylims = (-15.0,15.0) , c=:balance
     )
     plot!(particles)
-    plot!(colorbar=false, title="",axis=false, xlab="",ylab="")
+    plot!(colorbar=false, title="",axis=false, xguide ="",yguide ="")
 end
 # gif(anim,"gap-diffraction.gif", fps = 7)
 ```
@@ -101,7 +101,7 @@ anim = @animate for t in ts
       leg = false, ylims = ylims
     )
     plot!(particles)
-    plot!(frame = :none, title="", xlab="",ylab="")
+    plot!(frame = :none, title="", xguide ="",yguide ="")
 end
 
 # gif(anim,"gap-diffraction.gif", fps = 7)
@@ -145,7 +145,7 @@ minc = round(10*minimum(real.(field(result))))/10
 anim = @animate for t in ts
     plot(result,ω; seriestype = :contour, phase_time=t, clim=(minc,maxc), c=:balance)
     plot!(simulation)
-    plot!(colorbar=false, title="",axis=false, xlab="",ylab="")
+    plot!(colorbar=false, title="",axis=false, xguide ="",yguide ="")
 end
 # gif(anim,"backscatter_harmonic.gif", fps = 7)
 ```

@@ -1,7 +1,7 @@
 "Plot the response across time"
 @recipe function plot(simulation::TimeSimulation)
-    xlabel --> "Time (t)"
-    ylabel --> "Response"
+    xguide --> "Time (t)"
+    yguide --> "Response"
     grid --> false
     title --> "Response from particles of radius $(signif(simulation.frequency_simulation.particles[1].r,2)) contained in a $(lowercase(name(simulation.frequency_simulation.shape)))\n with volfrac=$(signif(calculate_volfrac(simulation.frequency_simulation),2)) measured at ($(simulation.frequency_simulation.listener_positions[1,1]), $(simulation.frequency_simulation.listener_positions[2,1]))"
 

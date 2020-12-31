@@ -7,7 +7,7 @@ makedocs(
     sitename = "MultipleScattering.jl",
     authors = "Artur L. Gower and Jonathan Deakin",
     source = "src",
-    modules = [MultipleScattering],
+    # modules = [MultipleScattering],
     pages = [
         "Home" =>"index.md",
         "Manual" => [
@@ -42,6 +42,6 @@ makedocs(
 deploydocs(
     branch = "gh-pages",
     target = "build",
-    versions = ["stable" => "v^", "v#.#"],
+    versions = ["stable" => "v^", "v#.#.#"],
     repo = "github.com/JuliaWaveScattering/MultipleScattering.jl.git"
 )

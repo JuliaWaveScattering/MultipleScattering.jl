@@ -65,7 +65,7 @@ function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T
 end
 
 
-function plane_source(medium::Acoustic{T,Dim}; position = SVector(zeros(T,Dim)...),
+function plane_source(medium::Acoustic{T,Dim}; position::AbstractArray{T} = SVector(zeros(T,Dim)...),
         direction = SVector(one(T), zeros(T,Dim-1)...),
         amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,Dim}} where {T, Dim}
 
@@ -77,7 +77,7 @@ end
 
 Create an [`Acoustic`](@ref) planar wave [`Source`](@ref)
 """
-function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{T,Acoustic{T,2}} where {T}
+function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{T,Acoustic{T,2}} where {T}
 
     # Convert to SVector for efficiency and consistency
     position = SVector(position...)
@@ -105,7 +105,7 @@ function plane_source(medium::Acoustic{T,2}, position, direction = SVector(one(T
     return Source{T,Acoustic{T,2}}(medium, source_field, source_coef)
 end
 
-function plane_source(medium::Acoustic{T,3}, position, direction = SVector(zero(T),zero(T),one(T)), amplitude::Union{T,Complex{T}} = one(T)) where {T}
+function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(zero(T),zero(T),one(T)), amplitude::Union{T,Complex{T}} = one(T)) where {T}
 
     # Convert to SVector for efficiency and consistency
     position = SVector(position...)
@@ -137,4 +137,14 @@ function plane_source(medium::Acoustic{T,3}, position, direction = SVector(zero(
     end
 
     return Source{T,Acoustic{T,3}}(medium, source_field, source_coef)
+end
+
+function regular_spherical_coefficients(psource::PlaneSource{T,Dim,1,Acoustic{T,Dim}}) where {T,Dim}
+    source = plane_source(psource.medium;
+        amplitude = psource.amplitude[1],
+        position = psource.position,
+        direction = psource.direction
+    )
+
+    source.coefficients
 end

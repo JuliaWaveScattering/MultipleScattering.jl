@@ -23,7 +23,7 @@ export Acoustic, AcousticCapsule, sound_hard, hard, rigid, zero_neumann, sound_s
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
 
 ## Sources
-export AbstractSource, Source, source_expand, self_test, constant_source, point_source, plane_source,
+export AbstractSource, Source, source_expand, regular_spherical_coefficients, self_test, constant_source, point_source, plane_source,
        (*), (+)
 export PlaneSource
 

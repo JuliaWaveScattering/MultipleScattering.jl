@@ -7,10 +7,10 @@ A struct used to represent a numerical impulse. Only the fields: `in_freq` which
 """
 struct DiscreteImpulse{T<:AbstractFloat}
     t::Vector{T}
-    in_time::Vector{T}
+    in_time::Vector{Complex{T}}
     ω::Vector{T}
     in_freq::Vector{Complex{T}}
-    function DiscreteImpulse{T}(t_vec::AbstractArray{T}, in_time::AbstractVector{T}, ω_vec::AbstractArray{T}, in_freq::AbstractVector{Complex{T}}, do_self_test=true) where {T}
+    function DiscreteImpulse{T}(t_vec::AbstractArray{T}, in_time::AbstractVector{Complex{T}}, ω_vec::AbstractArray{T}, in_freq::AbstractVector{Complex{T}}, do_self_test=true) where {T}
         impulse = new{T}(t_vec,collect(in_time),ω_vec,collect(in_freq))
         if do_self_test self_test(impulse) end
         return impulse
@@ -28,9 +28,9 @@ function self_test(impulse::DiscreteImpulse{T}) where {T}
     return right_size
 end
 
-function DiscreteImpulse(t_vec::AbstractArray{T}, in_time::AbstractArray{T},
+function DiscreteImpulse(t_vec::AbstractArray{T}, in_time::Union{AbstractArray{Complex{T}},AbstractArray{T}},
         ω_vec::AbstractArray{T} = t_to_ω(t_vec),
-        in_freq::Union{AbstractArray{Complex{T}},Vector{T}} = Complex{T}[];
+        in_freq::Union{AbstractArray{Complex{T}},AbstractArray{T}} = Complex{T}[];
     kws... ) where {T}
 
     if isempty(in_freq)
@@ -38,7 +38,7 @@ function DiscreteImpulse(t_vec::AbstractArray{T}, in_time::AbstractArray{T},
     end
 
     return DiscreteImpulse{T}(
-        Vector{T}(t_vec), Vector{T}(in_time), Vector{T}(ω_vec), Vector{Complex{T}}(in_freq)
+        Vector{T}(t_vec), Vector{Complex{T}}(in_time), Vector{T}(ω_vec), Vector{Complex{T}}(in_freq)
     )
 end
 
@@ -47,13 +47,13 @@ See also: [`DiscreteImpulse`](@ref), [`frequency_to_time`](@ref)
 
     ContinuousImpulse{T<:AbstractFloat}
 
-A struct used to represnt analytic impulse functions. Has two fields: `in_time` a function of time `t`, and `in_freq` a function of the angular frequency `ω`. `in_freq` should be the Fourier transform of `in_time`, though this is not enforced.
+A struct used to represent an analytic impulse function. Has two fields: `in_time` a function of time `t`, and `in_freq` a function of the angular frequency `ω`. `in_freq` should be the Fourier transform of `in_time`, though this is not enforced.
 
 We use the Fourier transform convention:
 F(ω) =  ∫ f(t)*exp(im*ω*t) dt,
 f(t) = (2π)^(-1) * ∫ F(ω)*exp(-im*ω*t) dω.
 
-An impluse f(t) is convoluted in time with the field u(t), however we avoid the convlution by working with the fourier transform F(ω) of the impulse f(t), which results in
+An impluse f(t) is convoluted in time with the field u(t), however we avoid the convolution by working with the fourier transform F(ω) of the impulse f(t), which results in
 
 frequency to time: (2π)^(-1) * ∫ F(ω)*U(ω)*exp(-im*ω*t) dω
 """
@@ -68,9 +68,20 @@ struct ContinuousImpulse{T<:AbstractFloat}
     end
 end
 
-function continuous_to_discrete_impulse(impulse::ContinuousImpulse{T}, t_vec::AbstractArray{T}, ω_vec::AbstractArray{T} = t_to_ω(t_vec)) where {T}
+"""
+    continuous_to_discrete_impulse(impulse::ContinuousImpulse, t_vec, ω_vec = t_to_ω(t_vec); t_shift = 0.0, ω_shift = 0.0) 
 
-    return DiscreteImpulse(t_vec, impulse.in_time.(t_vec), ω_vec, impulse.in_freq.(ω_vec))
+Returns a [`DiscreteImpulse`](@ref) by sampling `impulse`. The signal can be shifted in time and frequency by choosing `t_shit` and `ω_shift`.
+"""
+function continuous_to_discrete_impulse(impulse::ContinuousImpulse{T}, t_vec::AbstractArray{T}, ω_vec::AbstractArray{T} = t_to_ω(t_vec); t_shift::T = zero(T), ω_shift::T = zero(T)) where {T}
+
+    # shift in frequency then in time
+    in_time = impulse.in_time.(t_vec .- t_shift) .* cos.(ω_shift .* (t_vec .- t_shift))
+
+    # shift in frequency then in time
+    in_freq = (impulse.in_freq.(ω_vec .- ω_shift) .+ impulse.in_freq.(ω_vec .+ ω_shift)) .* exp.(im .* ω_vec .* t_shift) ./ T(2)
+
+    return DiscreteImpulse(t_vec, in_time, ω_vec, in_freq)
 end
 
 """
@@ -143,13 +154,18 @@ end
 """
 See also: [`ContinuousImpulse`](@ref), [`TimeDiracImpulse`](@ref)
 
-    GaussianImpulse(maxω[, a = 3.0/maxω^2])
+    GaussianImpulse(maxω[; σ = 3.0/maxω^2])
 
-Returns a gaussian impulse function, which in the frequency domain is exp(-a*ω^2)*(2sqrt(a*pi)).
+Returns a gaussian impulse function, which in the frequency domain is `exp(-σ*ω^2)*(2sqrt(σ*pi))`.
 """
-function GaussianImpulse(maxω::T, a::T = T(3.0)/maxω^2; time_shift = zero(T)) where {T<:AbstractFloat}
-    in_time(t::T) = exp(-(t-time_shift)^2/(4a))
-    in_freq(ω::T) = exp(-a*ω^2)*exp(im*ω*time_shift)*(2sqrt(a*pi))
+function GaussianImpulse(maxω::T; σ::T = T(3.0)/maxω^2, t_shift = zero(T), ω_shift = zero(T)) where T<:AbstractFloat
+    # shift in frequency then in time
+    in_time(t::T) = exp(-(t - t_shift)^2 / (4σ)) * cos(ω_shift * (t - t_shift))
+
+    # shift in frequency then in time
+    gauss_freq(ω::T) = exp(-σ*ω^2) * (2sqrt(σ*pi))
+    in_freq(ω::T) = (gauss_freq(ω - ω_shift) + gauss_freq(ω + ω_shift)) * exp.(im * ω * t_shift) / 2
+
     ContinuousImpulse{T}(in_time, in_freq)
 end
 
@@ -161,7 +177,7 @@ See also: [`ContinuousImpulse`](@ref), [`TimeDiracImpulse`](@ref)
 Returns a discretised gaussian impulse.
 """
 function DiscreteGaussianImpulse(t_vec::AbstractArray{T}, ω_vec::AbstractArray{T} = t_to_ω(t_vec);
-        a::T = T(2.48)/maximum(ω_vec)^2) where {T}
+        kws...) where {T}
 
-    return continuous_to_discrete_impulse(GaussianImpulse(one(T), a), t_vec, ω_vec)
+    return continuous_to_discrete_impulse(GaussianImpulse(one(T); kws...), t_vec, ω_vec)
 end
