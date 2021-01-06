@@ -1,30 +1,26 @@
 
-"Create the matrix S which will be inverted to find the scattering coefficients. Currently assumes 2D."
-function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles, t_matrices::Vector, ω::T, Nh::Integer)::Matrix{Complex{T}} where T
+"Create the matrix S which will be inverted to find the scattering coefficients."
+function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles, t_matrices::Vector, ω::T, order::Integer)::Matrix{Complex{T}} where T
     # Generate response for one specific k
     # Number of particles
     P = length(particles)
 
+    # Length of scattering basisfor each particle
+    N = basisorder_to_basislength(typeof(medium),order)
+
     # No particles means no scattering
     if P == 0
-        #@warn "You have computed the scattering matrix with no particles, are you sure something hasn't gone wrong?"
         return Matrix{Complex{T}}(undef,0,0)
     end
-
-    # Number of hankel basis function at each particle
-    H = 2Nh + 1
-    basis = outgoing_basis_function(medium, ω)
 
     # Faire: this could potentially return an MMatrix
     function S_block(j,l)
         if j == l
-            return Matrix{Complex{T}}(I, H, H)
+            return zeros(Complex{T}, N, N)
         else
             x_lj = origin(particles[j]) .- origin(particles[l])
-            # Faire: basis functions could be more efficient if it returned a vector
-            basis_vec = basis(2Nh,x_lj)
-            mat = [basis_vec[p-m+H] for m in -Nh:Nh, p in -Nh:Nh]
-            return -  mat * t_matrices[l]
+            U = outgoing_translation_matrix(medium, order, ω, x_lj)
+            return - U * t_matrices[l]
         end
     end
 
@@ -32,10 +28,10 @@ function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles,
     S_blocks = [S_block(j,l) for j in 1:P, l in 1:P]
 
     # Reshape S_blocks into big matrix
-    S = Matrix{Complex{T}}(undef, P*H, P*H)
+    S = zeros(Complex{T}, P*N, P*N)
     for i in 1:P
         for j in 1:P
-            S[((i-1)*H+1):(i*H), ((j-1)*H+1):(j*H)] .= S_blocks[i,j]
+            S[((i-1)*N+1):(i*N), ((j-1)*N+1):(j*N)] .= S_blocks[i,j]
         end
     end
 

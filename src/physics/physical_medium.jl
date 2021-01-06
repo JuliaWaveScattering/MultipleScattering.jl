@@ -62,7 +62,7 @@ function estimate_regular_basisorder(medium::P, ka; tol = 1e-6) where P<:Physica
     l = nothing
     while isnothing(l)
         meanvs = mean(abs.(vs(L, kxs[:,i])) for i in axes(kxs,2))
-        normvs = [norm(meanvs[basisorder_to_linearindices(P,i)]) for i = 1:L]
+        normvs = [norm(meanvs[basisorder_to_basislength(P,i-1):basisorder_to_basislength(P,i)]) for i = 1:L]
         l = findfirst(normvs .< tol)
         L = L + Int(round(abs(ka))) + 1
     end

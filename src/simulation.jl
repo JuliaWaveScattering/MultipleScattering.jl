@@ -190,11 +190,11 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     source_coefficient = regular_spherical_coefficients(sim.source)
     forcing = reduce(vcat, [source_coefficient(basis_order,origin(p),ω) for p in sim.particles])
 
-    # Find Hankel coefficients by solving scattering matrix for this forcing
-    a = S\forcing
+    # Find scattering coefficients by solving this forcing
+    a = (S + I) \ forcing
 
     # reshape and multiply by t-matrix to get the scattering coefficients
-    a = reshape(a,2basis_order+1,length(sim.particles))
+    a = reshape(a,basisorder_to_basislength(P,basis_order),length(sim.particles))
     for i in axes(a,2)
         a[:,i] = t_matrices[i] * a[:,i]
     end

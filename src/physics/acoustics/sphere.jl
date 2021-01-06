@@ -29,11 +29,12 @@ function t_matrix(p::Particle{T,3,Acoustic{T,3},Sphere{T}}, outer_medium::Acoust
 
         return numer / denom
     end
+    Zns = Zn.(0:basis_order)
 
-    # Get Zns for positive m
-    Zns = map(Zn,0:basis_order)
-
-    return - Diagonal(Zns)
+    len(order::Int) = basisorder_to_basislength(Acoustic{T,3},order)
+    T_vec = - vcat(Zns[1],[repeat(Zns[l+1:l+1],len(l)-len(l-1)) for l = 1:basis_order]...)
+    
+    return Diagonal(T_vec)
 end
 
 """

@@ -62,9 +62,7 @@ using Test, LinearAlgebra
 
         @test sf_legendre_array(GSL_SF_LEGENDRE_NONE, l_max, x)[1:length(ls)] ≈ Plm_arr
 
-        sph_factors = map(eachindex(ls)) do i
-           (-1)^ms[i] * sqrt((2ls[i] + 1)/(4pi) * factorial(ls[i]-ms[i]) / factorial(ls[i]+ms[i]))
-        end
+        sph_factors = (-1).^ms .* sqrt.((2 .* ls .+ 1) ./ (4pi) .* factorial.(ls-ms) ./ factorial.(ls+ms))
 
         condon_phase = (-1).^ms
 
@@ -84,10 +82,10 @@ using Test, LinearAlgebra
         @test maximum(i - lm_to_spherical_harmonic_index(ls[i],ms[i]) for i in eachindex(ls)) == 0
 
         # check special case l == abs(m)
-        inds = findall(ls .== abs.(ms))
+        is = findall(ls .== abs.(ms))
 
-        for i in inds
-            @test sphs[i] ≈ (sign(ms[i]))^ls[i] / (2^ls[i] * factorial(ls[i])) *
+        for i in is
+            @test sphs[i] ≈ (- sign(ms[i]))^ls[i] / (2^ls[i] * factorial(ls[i])) *
                 sqrt(factorial(2*ls[i] + 1) / (4pi)) * sin(θ)^ls[i] * exp(im * ms[i] * φ)
         end
 
@@ -97,10 +95,10 @@ using Test, LinearAlgebra
 
         # special case m == 0, reduce to just Legendre polynomials
         Ps = sf_legendre_Pl_array(l_max, cos(θ))
-        inds = findall(ms .== 0)
+        is = findall(ms .== 0)
 
         for l in 0:l_max
-            @test sphs[inds][l+1] ≈ sqrt((2l+1)/(4pi)) * Ps[l+1]
+            @test sphs[is][l+1] ≈ sqrt((2l+1)/(4pi)) * Ps[l+1]
         end
 
         #sphs[inds] .≈ sqrt.((2 .* (0:l_max) .+ 1) ./ (4pi)) .* Ps

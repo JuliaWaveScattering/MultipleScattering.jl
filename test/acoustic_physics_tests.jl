@@ -1,6 +1,6 @@
 import StaticArrays: SVector
 
-@testset "Constructors" begin
+@testset "Acoustic constructors" begin
     # 2D Acoustic
     a2 = Acoustic(0.1, 0.1+0.0im, 2)
     @test spatial_dimension(a2) == 2
@@ -23,7 +23,36 @@ import StaticArrays: SVector
     @test sound_hard(2)  != sound_soft(2)
 end
 
-@testset "Circle T-matrix" begin
+@testset "Acoustic special functions" begin
+    T = Float64
+    ms = 0:4
+    map(2:3) do Dim
+        L1 = basisorder_to_basislength(Acoustic{T,Dim},ms[1])
+        L2 = basisorder_to_basislength(Acoustic{T,Dim},ms[end])
+
+        m = basislength_to_basisorder(Acoustic{T,Dim}, L2)
+
+        @test m == ms[end]
+        @test L1 == 1
+    end
+
+    # Test outgoing translation matrix
+    ω = rand() + 0.1
+    medium = Acoustic(3; ρ = 1.0, c = 1.0)
+    r = rand(3) - [0.5,0.5,0.5];
+    d = rand(3) - [0.5,0.5,0.5];
+    d = 10 * d * norm(r) / norm(d)
+
+    order = 2
+    U = outgoing_translation_matrix(medium, 4*order, ω, d)
+    vs = regular_basis_function(medium, ω)(4*order,r)
+    us = outgoing_basis_function(medium, ω)(order,r + d)
+
+    @test maximum(abs.( (U * vs)[1:(order +1 )^2] - us) ./ abs.(us)) < 1e-7
+
+end
+
+@testset "Acoustic circle T-matrix" begin
 
     circle = Circle((0.0,0.0), 2.0)
     a2 = Acoustic(0.1, 0.1+0.0im, 2)

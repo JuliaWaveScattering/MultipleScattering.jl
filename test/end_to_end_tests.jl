@@ -2,18 +2,40 @@
 @testset "End-to-end" begin
 
     @testset "Particles with same shape" begin
+
+        # 2D acoustics
         circle1 = Circle((0.0,0.0),1.0)
         circle2 = Circle((0.0,5.0),2.0)
-        a_p = Acoustic(1.0,1.0,2)
-        a = Acoustic(0.3,0.2,2)
+        a_p = Acoustic(2; ρ = 1.0, c = 1.0)
+        a = Acoustic(2; ρ = 0.3, c = 0.2)
         particles = [Particle(a_p,circle1), Particle(a_p,circle2)]
-        source = plane_source(a,[0.0,0.0],[1.0,0.0])
+
+        source = plane_source(a; position = [0.0,0.0], direction = [1.0,0.0])
         sim = FrequencySimulation(particles,source)
         result = run(sim, SVector(1.0,2.0), 0.1)
         result = run(particles, source, SVector(1.0,2.0), 0.1)
         result = 3.2*result + result*4.0im + 0.3+4.0im # changes result.field
         3.2 + result
-        
+
+        @test field(result)[1] == result.field[1][1] # returns
+        @test field(result,1,1) == result.field[1][1] # returns
+
+        # 3D acoustics
+        s1 = Sphere((1.0,-1.0,2.0),1.0)
+        s2 = Sphere((0.0,3.0,0.0),2.0)
+        a_p = Acoustic(3; ρ = 1.0, c = 1.0)
+        a = Acoustic(3; ρ = 0.3, c = 0.2)
+
+        particles = [Particle(a_p,s1), Particle(a_p,s2)]
+        source = plane_source(a; position = [0.0,0.0,0.0], direction = [0.0,0.0,1.0])
+
+        x = SVector(-3.0,2.0,3.0)
+        ω = 0.1
+        sim = FrequencySimulation(particles,source)
+        result = run(particles, source, x, ω)
+        result = 3.2*result + result*4.0im + 0.3+4.0im # changes result.field
+        3.2 + result
+
         @test field(result)[1] == result.field[1][1] # returns
         @test field(result,1,1) == result.field[1][1] # returns
     end

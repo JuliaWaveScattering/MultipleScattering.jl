@@ -181,7 +181,7 @@ function spherical_harmonics(l_max::Int, θ::T, φ::T) where T <: AbstractFloat
     end
 
     ls, ms = spherical_harmonics_indices(l_max)
-    Ylm_vec = exp.(ms .* (im*φ)) .* Ylm_vec
+    Ylm_vec = (-one(T)) .^ ms .* exp.(ms .* (im*φ)) .* Ylm_vec
 
     return Ylm_vec
 end
