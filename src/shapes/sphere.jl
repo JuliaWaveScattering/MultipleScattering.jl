@@ -47,4 +47,30 @@ function Circle(sphere::Sphere; y = sphere.origin[2])
 end
 
 bounding_rectangle(sphere::Sphere; kws...) = bounding_rectangle(Circle(sphere; kws...))
-boundary_functions(sphere::Sphere; kws...) = boundary_functions(Circle(sphere; kws...))
+# boundary_functions(sphere::Sphere; kws...) = boundary_functions(Circle(sphere; kws...))
+
+function boundary_functions(sphere::Sphere{T}) where T
+
+    function x(t,s=T(0))
+        check_boundary_coord_range(t)
+        check_boundary_coord_range(s)
+
+        sphere.radius * sin(t * π) * cos(s * 2π) + origin(sphere)[1]
+    end
+
+    function y(t,s=T(0))
+        check_boundary_coord_range(t)
+        check_boundary_coord_range(s)
+
+        sphere.radius * sin(t * π) * sin(s * 2π) + origin(sphere)[2]
+    end
+
+    function z(t,s=T(0))
+        check_boundary_coord_range(t)
+        check_boundary_coord_range(s)
+
+        sphere.radius * cos(t * π) + origin(sphere)[3]
+    end
+
+    return x, y, z
+end

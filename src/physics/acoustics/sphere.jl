@@ -33,35 +33,6 @@ function t_matrix(p::Particle{T,3,Acoustic{T,3},Sphere{T}}, outer_medium::Acoust
 
     len(order::Int) = basisorder_to_basislength(Acoustic{T,3},order)
     T_vec = - vcat(Zns[1],[repeat(Zns[l+1:l+1],len(l)-len(l-1)) for l = 1:basis_order]...)
-    
+
     return Diagonal(T_vec)
-end
-
-"""
-    internal_field(x, p::Particle{T,3,Acoustic{T,3},Sphere{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
-
-The internal field for a 2D circlular acoustic particle in a 2D acoustic medium.
-"""
-function internal_field(x::AbstractArray{T}, p::Particle{T,3,Acoustic{T,3},Sphere{T}}, sim::FrequencySimulation{T}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where T
-
-    N = basislength_to_basisorder(Acoustic{T,3},length(scattering_coefficients))
-    @warn "the internal field of an acoustic sphere has not been implemented, though this is simple to do!"
-
-    if iszero(p.medium.c) || isinf(abs(p.medium.c))
-        return zero(Complex{T})
-    else
-        return zero(Complex{T})
-        # r = outer_radius(p)
-        # k = ω/sim.source.medium.c
-        # kp = ω/p.medium.c
-        # diagZ = - diag(t_matrix(p, sim.source.medium, ω, N))
-        #
-        # internal_coefs = scattering_coefficients ./
-        #     (diagZ .* besselj.(-N:N,kp*r)) .*
-        #     (diagZ .* hankelh1.(-N:N,k*r) - besselj.(-N:N,k*r))
-        #
-        # inner_basis = regular_basis_function(p, ω)
-        #
-        # return sum(inner_basis(N, x-origin(p)) .* internal_coefs)
-    end
 end

@@ -36,7 +36,7 @@ end
         @test L1 == 1
     end
 
-    # Test outgoing translation matrix
+    # Test 3D outgoing translation matrix
     ω = rand() + 0.1
     medium = Acoustic(3; ρ = 1.0, c = 1.0)
     r = rand(3) - [0.5,0.5,0.5];
@@ -48,8 +48,25 @@ end
     vs = regular_basis_function(medium, ω)(4*order,r)
     us = outgoing_basis_function(medium, ω)(order,r + d)
 
-    @test maximum(abs.( (U * vs)[1:(order +1 )^2] - us) ./ abs.(us)) < 1e-7
+    L = length(us)
+    @test maximum(abs.( (U * vs)[1:L] - us) ./ abs.(us)) < 4e-7
 
+    # Test 2D outgoing translation matrix
+    ω = rand() + 0.1
+    medium = Acoustic(2; ρ = 1.0, c = 1.0)
+    r = rand(2) - [0.5,0.5];
+    d = rand(2) - [0.5,0.5];
+    d = 10 * d * norm(r) / norm(d)
+
+    # Note that to be accurate the order of vs
+    order = 4
+    larger_order = 3order
+    U = outgoing_translation_matrix(medium, larger_order, ω, d)
+    vs = regular_basis_function(medium, ω)(larger_order,r)
+    us = outgoing_basis_function(medium, ω)(order,r + d)
+
+    L = larger_order+1
+    @test maximum(abs.((U * vs)[L-order:L+order] - us) ./ abs.(us)) < 1e-9
 end
 
 @testset "Acoustic circle T-matrix" begin

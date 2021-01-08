@@ -18,7 +18,7 @@ end
 end
 
 
-@recipe function plot(shape::Shape)
+@recipe function plot(shape::Shape{T,2}) where T
 
     grid --> false
     xguide --> "x"
@@ -28,7 +28,7 @@ end
     linecolor --> :grey
 
     x, y = boundary_functions(shape)
-
+    
     (x, y, 0.0, 1.0)
 
 end

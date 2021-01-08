@@ -85,11 +85,19 @@ function points_in_shape(region::Shape{T,3};
 end
 
 
-"points on the boundary of a shape"
-function boundary_points(shape::Shape{T,Dim}, num_points::Int = 4; dr = zero(T)) where {Dim,T}
-    x, y = boundary_functions(shape)
-    v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape))
+"Returns a set of points on the boundary of a 2D shape."
+function boundary_points(shape2D::Shape{T,2}, num_points::Int = 4; dr = zero(T)) where T
+    x, y = boundary_functions(shape2D)
+    v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape2D))
     return [ v(τ) for τ in LinRange(zero(T),one(T),num_points+1)[1:end-1] ]
+end
+
+"Returns a set of points on the boundary of a 3D shape."
+function boundary_points(shape3D::Shape{T,3}, num_points::Int = 4; dr = zero(T)) where T
+    x, y, z = boundary_functions(shape3D)
+    v(τ,s) = SVector(x(τ,s),y(τ,s),z(τ,s)) + dr * (SVector(x(τ,s),y(τ,s),z(τ,s)) - origin(shape3D))
+    mesh = LinRange(zero(T),one(T),num_points+1)[1:end-1]
+    return [v(τ,s) for τ in mesh, s in mesh]
 end
 
 "Returns rectangle which completely encloses the shapes"

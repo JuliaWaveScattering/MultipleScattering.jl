@@ -110,21 +110,19 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
         basis_order_vec = basis_order_vec[sortperm(ωs)]
     end
 
-    freq_kws = kws
-
     # if user asks for ω = 0, then we provide
     if first(ωs) == zero(T)
         # Compute for each angular frequency, then join up all the results
         fields = mapreduce(
-            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], freq_kws...).field,
+            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], kws...).field,
         hcat, eachindex(ωs)[2:end])
 
         # extrapolate field at ω = 0, which should be real when the time signal is real
-        zeroresponse = real(ωs[3].*fields[:,1] - ωs[2].*fields[:,2])./(ωs[3]-ωs[2])
+        zeroresponse = real(ωs[3].*fields[:,1] - ωs[2].*fields[:,2]) ./ (ωs[3]-ωs[2])
         fields = reshape([zeroresponse; fields[:]], length(zeroresponse), size(fields,2)+1)
     else
         fields = mapreduce(
-            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], freq_kws...).field,
+            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], kws...).field,
         hcat, eachindex(ωs))
     end
 
@@ -219,7 +217,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{v}, a_vec
             field(sim.source)(x,ω) + sum_basis(x)
         else
             p = sim.particles[j]
-            internal_field(x, p, sim, ω, collect(a_vec[:,j]))
+            internal_field(x, p, sim.source, ω, collect(a_vec[:,j]))
         end
     end
 end
