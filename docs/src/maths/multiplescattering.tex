@@ -107,7 +107,7 @@ where we assumed $ |\rv - \rv_i| > a_i $ for $i=1,2,\ldots N$, the $f_n^i$ are c
 where $n$ denotes a multi index which depends on the dimension and if the waves are scalar or vector fields.
 
 In general, we can write the multiple scattering system in the form:
-\begin{equation}\label{eq:Individual-expansion-coefficients}
+\begin{equation}\label{eqn:multiple-scattering-general}
    \alpha_n^i=g_{n}^i
     +\sum_{\substack{j=1\\j\neq i}}^N \sum_{n' n''}\mathcal{U}_{n''n}(k\rv_i - k\rv_j)T_{n''n'}^j \alpha_{n'}^j,
 \end{equation}
@@ -130,25 +130,25 @@ For easy implementation we need the functions:
 \psi_\inc \mapsto g^m_j \quad \text{and} \quad \text{particle} \mapsto T^{nm}_j.
 \]
 
-For efficient implementation we rewrite~\eqref{eqn:As} as a matrix equation. Let
+For efficient implementation we rewrite~\eqref{eqn:multiple-scattering-general} as a matrix equation. Let
 \begin{align}
   &(\vec \alpha_j)_n =  \alpha_n^j, \quad (\vec g_j)_n =  g_n^j,
   \\
-  &(\vec T_j)_{nn'} = T_{nn'}^j, \quad (\vec {\mathcal U}_{j \ell})_{nn'} = \mathcal U_{n'n}(k \rv_j - k\rv_\ell),
+  &(\vec T_j)_{nn'} = T_{nn'}^j, \quad (\vec {\mathcal U}_{j \ell})_{n'n} = \mathcal U_{n'n}(k \rv_j - k\rv_\ell),
   % H_{n'-n}(k R_{\ell j})\ee^{\ii(n'-n)\Theta_{\ell j}},
 \end{align}
 
  Then
 \begin{equation}
- \sum_{\ell}(\delta_{j \ell} +  (\delta_{j \ell}-1) \vec {\mathcal U}_{j \ell} \vec T_\ell) \vec \alpha_\ell  =  \vec g_j,
+ \sum_{\ell}(\delta_{j \ell} +  (\delta_{j \ell}-1) \vec {\mathcal U}_{j \ell}^{\mathrm T} \vec T_\ell) \vec \alpha_\ell  =  \vec g_j,
 \end{equation}
-which leads to a block matrix equation:
+where $\cdot ^{\mathrm T}$ is the transpose operation. The above then leads to a block matrix equation:
 \begin{equation}
   \begin{bmatrix}
-    \vec I & - \vec {\mathcal U}_{1 2}\vec T_2 & \cdots & - \vec {\mathcal U}_{1 (N-1)} \vec T_{N-1} & - \vec {\mathcal U}_{1 N} \vec T_N \\
-    - \vec {\mathcal U}_{2 1} \vec T_1 & \vec I &  - \vec {\mathcal U}_{2 3} \vec T_3 & \cdots & - \vec {\mathcal U}_{2 N} \vec T_N \\
+    \vec I & - \vec {\mathcal U}_{1 2}^{\mathrm T}\vec T_2 & \cdots & - \vec {\mathcal U}_{1 (N-1)}^{\mathrm T} \vec T_{N-1} & - \vec {\mathcal U}_{1 N}^{\mathrm T} \vec T_N \\
+    - \vec {\mathcal U}_{2 1}^{\mathrm T} \vec T_1 & \vec I &  - \vec {\mathcal U}_{2 3}^{\mathrm T} \vec T_3 & \cdots & - \vec {\mathcal U}_{2 N}^{\mathrm T} \vec T_N \\
      & \vdots & & & \vdots \\
-     - \vec {\mathcal U}_{N 1} \vec T_1  & \cdots & \cdots & -  \vec {\mathcal U}_{N (N-1)} \vec T_{N-1} & \vec I
+     - \vec {\mathcal U}_{N 1}^{\mathrm T} \vec T_1  & \cdots & \cdots & -  \vec {\mathcal U}_{N (N-1)}^{\mathrm T} \vec T_{N-1} & \vec I
   \end{bmatrix}
   \begin{bmatrix}
     \vec \alpha_1 \\
