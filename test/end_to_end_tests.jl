@@ -4,8 +4,8 @@
     @testset "Particles with same shape" begin
 
         # 2D acoustics
-        circle1 = Circle((0.0,0.0),1.0)
-        circle2 = Circle((0.0,5.0),2.0)
+        circle1 = Sphere((0.0,0.0),1.0)
+        circle2 = Sphere((0.0,5.0),2.0)
         a_p = Acoustic(2; ρ = 1.0, c = 1.0)
         a = Acoustic(2; ρ = 0.3, c = 0.2)
         particles = [Particle(a_p,circle1), Particle(a_p,circle2)]
@@ -41,8 +41,8 @@
     end
 
     @testset "Particles with different shape" begin
-        circle = Circle((0.0,0.0),1.0)
-        rect = Rectangle((2.0,2.0),3.0,2.0)
+        circle = Sphere((0.0,0.0),1.0)
+        rect = Box((2.0,2.0),(3.0,2.0))
         a_p = Acoustic(1.0,1.0,2)
         a = Acoustic(0.3,0.2,2)
         particles = [Particle(a_p,circle), Particle(a_p,rect)]

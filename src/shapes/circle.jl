@@ -32,7 +32,8 @@ function issubset(inner_circle::Circle{T}, outer_circle::Circle{T}) where T
     norm(origin(outer_circle) - origin(inner_circle)) <= outer_circle.radius - inner_circle.radius
 end
 
-function issubset(circle::Circle{T}, rect::Rectangle{T}) where {T}
+function issubset(circle::Circle{T}, rect::Box{T,2}) where {T}
+    
     all((origin(circle) .- circle.radius) .>= bottomleft(rect)) &&
     all((origin(circle) .+ circle.radius) .<= topright(rect))
 end

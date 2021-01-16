@@ -71,7 +71,7 @@ end
 
 @testset "Acoustic circle T-matrix" begin
 
-    circle = Circle((0.0,0.0), 2.0)
+    circle = Sphere((0.0,0.0), 2.0)
     a2 = Acoustic(0.1, 0.1+0.0im, 2)
     a2_host = Acoustic(1.0, 1.0+0.0im, 2)
     ω = 0.5
@@ -88,7 +88,7 @@ end
     @test_throws DomainError t_matrix(p, Acoustic(1.0, 0.0im, 2), ω, N_basis)
     p = Particle(Acoustic(0.0, 1.0im, 2),circle)
     @test_throws DomainError t_matrix(p, Acoustic(0.0, 1.0+0.0im, 2), ω, N_basis)
-    p = Particle(a2, Circle(SVector(1.0, 1.0), 0.0))
+    p = Particle(a2, Sphere(SVector(1.0, 1.0), 0.0))
     @test_throws DomainError t_matrix(p, a2_host, ω, N_basis)
 
 end

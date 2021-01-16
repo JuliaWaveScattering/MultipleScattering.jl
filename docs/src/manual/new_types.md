@@ -32,7 +32,7 @@ function in(x::AbstractVector, r::MyRectangle)::Bool
     all(abs.(x .- r.origin) .<= [r.width, r.height])
 end
 
-function issubset(circle::Circle{T}, r::MyRectangle{T}) where {T}
+function issubset(circle::Sphere{T,2}, r::MyRectangle{T}) where {T}
     all((origin(circle) .- circle.radius) .>= r.origin - [r.width/2.0, r.height/2.0]) &&
     all((origin(circle) .+ circle.radius) .<= r.origin + [r.width/2.0, r.height/2.0])
 end

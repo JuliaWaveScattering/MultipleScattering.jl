@@ -14,7 +14,7 @@ First we choose the region to place particles and the receiver position:
 ```jldoctest moments; output = false
 bottomleft = [0.0;-25.0]
 topright = [50.0;25.0]
-shape = Rectangle(bottomleft, topright)
+shape = Box([bottomleft, topright])
 x = [-10.0,0.0]
 
 # output

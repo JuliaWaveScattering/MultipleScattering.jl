@@ -15,13 +15,13 @@ particle_medium =  Acoustic(2; ρ=10.0, c=2.0); # 2D acoustic particle with dens
 
 ```jldoctest intro; output = false
 mymedium = Acoustic(2; ρ=10.0, c=2.0); # 2D acoustics with density ρ = 10.0 and soundspeed c = 2.0
-myshape = Circle([-2.0,2.0], 2.0);
+myshape = Sphere([-2.0,2.0], 2.0);
 p1 = Particle(mymedium, myshape);
 MultipleScattering.shape(p1) # we use "MultipleScattering." just in case the function shape is already defined
 
 # output
 
-Circle((-2.0, 2.0), 2.0)
+Sphere((-2.0, 2.0), 2.0)
 ```
 
 ## Placing particles in a region
@@ -31,7 +31,7 @@ Suppose we want to place many circular particles in a region. The region has to 
 # Define the region
 centre = [0.,0.]
 big_radius = 3.0
-circle = Circle(centre, big_radius)
+circle = Sphere(centre, big_radius)
 
 # Define the particle geometry and medium
 p_radius = 0.3

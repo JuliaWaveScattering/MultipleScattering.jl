@@ -6,7 +6,7 @@ random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shape::Shape{T
 
 function random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shapes::Vector{S};
         num_particles::Int = length(particle_shapes), volume_fraction::T = zero(T),
-        region_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*sum(outer_radius.(particle_shapes)), T(10)*sum(outer_radius.(particle_shapes))),
+        region_shape::Shape{T,Dim} = Box(zeros(T,Dim), ones(T,Dim) .* T(10)*sum(outer_radius.(particle_shapes))),
         current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[],
         kws...
 ) where {T<:AbstractFloat,Dim, S<:Shape{T,Dim}}
@@ -83,8 +83,8 @@ end
 Generate `N` random particles that fit inside `region_shape` (or fill with `volume_fraction`)
 
 Specify seed to make output deterministic. Algorithm places particles unifomly randomly inside
-the bounding rectangle of `region_shape` and discards particle if it overlaps (based on outer radius)
-or does not lies completely in box box.
+the bounding box of `region_shape` and discards particle if it overlaps (based on outer radius)
+or does not lies completely in box.
 
 When passing particle_shapes::Vector{Shape} we assume each element is equally likely to occur. Repeating the same shape will lead to it being placed more often.
 """
@@ -108,8 +108,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
     # Create pseudorandom device with specified seed
     randgen = MersenneTwister(seed)
 
-    bounding_rect = bounding_rectangle(region_shape)
-    bounding_rect_size = SVector(bounding_rect.width, bounding_rect.height)
+    box = bounding_box(region_shape)
 
     if verbose
         @printf("""\n
@@ -119,9 +118,9 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
             Particle volume fraction: %0.5g
             Bounding box volume: %0.5g
             """, N, name(particle_shape), N*volume(particle_shape), name(region_shape),
-            volume(region_shape), volfrac, volume(bounding_rect)
+            volume(region_shape), volfrac, volume(box)
         )
-    end    
+    end
 
     # Allocate memory for particles
     L = length(current_particles)
@@ -136,7 +135,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
 
             outside_box = true
             while outside_box
-                x = bounding_rect_size .* (1 .- 2 .* rand(randgen,T,2)) .+ origin(bounding_rect)
+                x = (box.dimensions ./ 2) .* (1 .- 2 .* rand(randgen,T,Dim)) + origin(box)
                 particles[n] = Particle(particle_medium, congruent(particle_shape, x))
                 outside_box = !(particles[n] ⊆ region_shape)
             end

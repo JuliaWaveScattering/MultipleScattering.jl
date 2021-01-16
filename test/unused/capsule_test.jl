@@ -4,14 +4,14 @@ import StaticArrays: SVector
 using MultipleScattering
 
 concen_particles1 = [
-    Particle(Acoustic(2.0,2.0,2),Circle((0.0,0.0),2.0)),
-    Particle(Acoustic(0.2,0.2,2),Circle((0.0,0.0),1.0))
+    Particle(Acoustic(2.0,2.0,2),Sphere((0.0,0.0),2.0)),
+    Particle(Acoustic(0.2,0.2,2),Sphere((0.0,0.0),1.0))
 ]
 concen_particles2 = [
-    Particle(Acoustic(2.0,1.0,2),Circle((6.0,3.0),1.)),
-    Particle(Acoustic(0.4,0.8,2),Circle((6.0,3.0),1.4))
+    Particle(Acoustic(2.0,1.0,2),Sphere((6.0,3.0),1.)),
+    Particle(Acoustic(0.4,0.8,2),Sphere((6.0,3.0),1.4))
 ]
-particle = Particle(Acoustic(1.5,1.5,2),Circle((-6.0,-3.0),0.8))
+particle = Particle(Acoustic(1.5,1.5,2),Sphere((-6.0,-3.0),0.8))
 
 ps = [CapsuleParticle(concen_particles2...), CapsuleParticle(concen_particles1...), particle]
 # plot(ps)
@@ -51,12 +51,12 @@ gif(anim,"time_capsule_balance.gif", fps = 4)
 
 
 concen = CapsuleParticle(
-    Particle(Acoustic(2.0,2.0,2),Circle((0.0,0.0),2.0)),
-    Particle(Acoustic(0.2,0.2,2),Circle((0.0,0.0),1.0))
+    Particle(Acoustic(2.0,2.0,2),Sphere((0.0,0.0),2.0)),
+    Particle(Acoustic(0.2,0.2,2),Sphere((0.0,0.0),1.0))
 )
 
 n=12
-ps = [Particle(Acoustic(0.1,0.1,2),Circle((4*cos(θ),4*sin(θ)),0.5)) for θ in LinRange(0.,2pi,n+1)[1:n] ]
+ps = [Particle(Acoustic(0.1,0.1,2),Sphere((4*cos(θ),4*sin(θ)),0.5)) for θ in LinRange(0.,2pi,n+1)[1:n] ]
 ps = [concen; ps]
 plot(ps)
 

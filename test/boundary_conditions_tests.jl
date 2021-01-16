@@ -10,13 +10,13 @@
 
         # Choose particles
         soft_medium = Acoustic(0.,0.0 + 0.0im,2)
-        p_soft = Particle(soft_medium,Circle([1.0,2.0], .5))
+        p_soft = Particle(soft_medium, Sphere([1.0,2.0], .5))
 
         hard_medium = Acoustic(Inf,Inf + 0.0im,2)
-        p_hard = Particle(hard_medium,Circle([-3.0,-2.0], 0.3))
+        p_hard = Particle(hard_medium, Sphere([-3.0,-2.0], 0.3))
 
         sound = Acoustic(medium.ρ, 4. + 0.0im,2)
-        p1 = Particle(sound,Circle([-10.0,0.0], .2))
+        p1 = Particle(sound, Sphere([-10.0,0.0], .2))
 
         particles = [p_soft, p_hard, p1]
 
@@ -75,14 +75,14 @@
     @testset "CapsuleParticle" begin
 
         concen_particles1 = [
-            Particle(Acoustic(2.0,2.0,2),Circle((0.0,0.0),1.0)),
-            Particle(Acoustic(1.0,1.,2),Circle((0.0,0.0),2.0))
+            Particle(Acoustic(2.0,2.0,2),Sphere((0.0,0.0),1.0)),
+            Particle(Acoustic(1.0,1.,2),Sphere((0.0,0.0),2.0))
         ]
         concen_particles2 = [
-            Particle(Acoustic(2.0,1.0,2),Circle((6.0,3.0),1.)),
-            Particle(Acoustic(0.4,0.8,2),Circle((6.0,3.0),1.4))
+            Particle(Acoustic(2.0,1.0,2),Sphere((6.0,3.0),1.)),
+            Particle(Acoustic(0.4,0.8,2),Sphere((6.0,3.0),1.4))
         ]
-        particle = Particle(Acoustic(1.5,1.5,2),Circle((-6.0,-3.0),0.8))
+        particle = Particle(Acoustic(1.5,1.5,2),Sphere((-6.0,-3.0),0.8))
 
         ps = [CapsuleParticle(concen_particles2...), CapsuleParticle(concen_particles1...), particle]
 

@@ -15,7 +15,7 @@ particle_shape = Circle(radius)
 max_width = 20*radius
 bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
-region_shape = Rectangle(bottomleft,topright)
+region_shape = Box([bottomleft,topright])
 
 particles = random_particles(particle_medium, particle_shape; region_shape = region_shape, num_particles = num_particles)
 # ```
@@ -46,7 +46,7 @@ result = run(simulation, x, ωs)
 # ```julia
     bottomleft = [-15.,-max_width]
     topright = [max_width,max_width]
-    bounds = Rectangle(bottomleft,topright)
+    bounds = Box([bottomleft,topright])
 
     #plot(simulation,0.8; res=80, bounds=bounds)
     #plot!(region_shape, linecolor=:red)

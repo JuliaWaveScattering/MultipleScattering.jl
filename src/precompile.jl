@@ -1,7 +1,7 @@
 
 # Precompile most objects in Float64, as it will be most commonly used
-circle1 = Circle((1.0,2.0), 0.5)
-circle2 = Circle((0.0,1.0), 0.5)
+circle1 = Sphere((1.0,2.0), 0.5)
+circle2 = Sphere((0.0,1.0), 0.5)
 
 particle_medium = Acoustic(0.1, 0.2+0.5im, 2)
 host_medium = Acoustic(1.0, 1.0+0.0im, 2)
