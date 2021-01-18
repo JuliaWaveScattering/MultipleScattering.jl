@@ -115,33 +115,6 @@
         @test true
     end
 
-
-    @testset "Random generation" begin
-
-        # Make two random seeds, extremely low probability they will be the same
-        seed1 = 1
-        seed2 = 2
-
-        region_shape = Sphere(2, 20.0)
-
-        volfrac = 0.1
-        radius = 0.5
-        particle_shape = Circle(radius)
-        medium = Acoustic(1.0,1.0,2)
-        particles1  = random_particles(medium, particle_shape, region_shape, volfrac; seed=seed1)
-        particles1a = random_particles(medium, particle_shape, region_shape, volfrac; seed=seed1)
-        particles2  = random_particles(medium, particle_shape, region_shape, volfrac; seed=seed2)
-
-        # Particles should be determined solely by the seed
-        @test particles1 == particles1a
-        @test particles1 != particles2
-
-        @test_throws ErrorException random_particles(medium, particle_shape, region_shape, 0.9)
-        @test_throws ErrorException random_particles(medium, particle_shape, region_shape, 0.5; seed=3)
-
-    end
-
-
 end
 
 @testset "Capsule Particle" begin

@@ -12,10 +12,10 @@ end
 Sphere(origin::NTuple{Dim}, radius::T) where {T,Dim} = Sphere{T,Dim}(origin, radius)
 Sphere(origin::AbstractVector, radius::T) where {T} = Sphere{T,length(origin)}(origin, radius)
 
-# If no position is given, assume 3D and origin is at zero
-Circle(radius::T) where T <: AbstractFloat = Sphere(2, radius::T)
-
 Sphere(Dim, radius::T) where {T} = Sphere{T,Dim}(zeros(T,Dim), radius)
+
+Circle(radius::T) where T <: AbstractFloat = Sphere(2, radius::T)
+Sphere(radius::T) where {T} = Sphere{T,3}(zeros(T,3), radius)
 
 name(shape::Sphere) = "Sphere"
 name(shape::Sphere{T,2}) where T = "Circle"
