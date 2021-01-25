@@ -13,7 +13,7 @@ sim = FrequencySimulation(transducer)
 
 using Plots; gr()
 
-bounds = Rectangle([-1.9,-5.],[10.,5.])
+bounds = Box([[-1.9,-5.],[10.,5.]])
 plot(sim, 4., seriestype=:contour, bounds=bounds, res=60)
 
 ω_vec = 0.0:0.02:8.01

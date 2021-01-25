@@ -110,21 +110,19 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
         basis_order_vec = basis_order_vec[sortperm(ωs)]
     end
 
-    freq_kws = kws
-
     # if user asks for ω = 0, then we provide
     if first(ωs) == zero(T)
         # Compute for each angular frequency, then join up all the results
         fields = mapreduce(
-            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], freq_kws...).field,
+            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], kws...).field,
         hcat, eachindex(ωs)[2:end])
 
         # extrapolate field at ω = 0, which should be real when the time signal is real
-        zeroresponse = real(ωs[3].*fields[:,1] - ωs[2].*fields[:,2])./(ωs[3]-ωs[2])
+        zeroresponse = real(ωs[3].*fields[:,1] - ωs[2].*fields[:,2]) ./ (ωs[3]-ωs[2])
         fields = reshape([zeroresponse; fields[:]], length(zeroresponse), size(fields,2)+1)
     else
         fields = mapreduce(
-            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], freq_kws...).field,
+            i -> run(sim,x_vec,ωs[i]; basis_order = basis_order_vec[i], kws...).field,
         hcat, eachindex(ωs))
     end
 
@@ -151,10 +149,10 @@ vector of floats.
 function run(s::FrequencySimulation) throw(MethodError(run, (s,))) end
 
 """
-    run(sim::FrequencySimulation, rectangle;
+    run(sim::FrequencySimulation, region::Shape;
         res=20, xres=res, yres=res, basis_order=5)
 
-Run the simulation `sim` for a grid of positions in rectangle and for angular frequency `ω`.
+Run the simulation `sim` for a grid of positions in region and for angular frequency `ω`.
 
 Frequency can be a float or vector of floats. The resolution of the grid points is defined
 by xres and yres.
@@ -190,11 +188,11 @@ function basis_coefficients(sim::FrequencySimulation{T,Dim,P}, ω::T; basis_orde
     source_coefficient = regular_spherical_coefficients(sim.source)
     forcing = reduce(vcat, [source_coefficient(basis_order,origin(p),ω) for p in sim.particles])
 
-    # Find Hankel coefficients by solving scattering matrix for this forcing
-    a = S\forcing
+    # Find scattering coefficients by solving this forcing
+    a = (S + I) \ forcing
 
     # reshape and multiply by t-matrix to get the scattering coefficients
-    a = reshape(a,2basis_order+1,length(sim.particles))
+    a = reshape(a,basisorder_to_basislength(P,basis_order),length(sim.particles))
     for i in axes(a,2)
         a[:,i] = t_matrices[i] * a[:,i]
     end
@@ -219,7 +217,7 @@ function field(sim::FrequencySimulation{T,Dim,P}, ω::T, x_vec::Vector{v}, a_vec
             field(sim.source)(x,ω) + sum_basis(x)
         else
             p = sim.particles[j]
-            internal_field(x, p, sim, ω, collect(a_vec[:,j]))
+            internal_field(x, p, sim.source, ω, collect(a_vec[:,j]))
         end
     end
 end

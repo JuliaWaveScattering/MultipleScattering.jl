@@ -19,7 +19,7 @@ volume(shape::Halfspace) = Inf
 outer_radius(hs::Halfspace{T}) where T = T(Inf)
 
 # import Base.issubset
-# function issubset(inner_rect::Rectangle{T}, outer_rect::Rectangle{T}) where T
+# function issubset(inner_rect::Halfspace{T}, outer_rect::Halfspace{T}) where T
 #     all(topright(inner_rect) .<= topright(outer_rect)) &&
 #     all(bottomleft(inner_rect) .>= bottomleft(outer_rect))
 # end
@@ -46,7 +46,7 @@ function iscongruent(h1::Halfspace{T}, h2::Halfspace{T}) where T
 end
 
 function congruent(h::Halfspace{T}, x) where T
-    Rectangle{T}(h.normal, x)
+    Halfspace(h.normal, x)
 end
 
 function boundary_functions(h::Halfspace{T,2}, scale::T = 10.0) where T

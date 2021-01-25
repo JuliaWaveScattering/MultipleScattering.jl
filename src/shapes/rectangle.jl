@@ -17,7 +17,7 @@ function Rectangle(bottomleft::Union{AbstractVector{T},NTuple{2,T}}, topright::U
     height = topright[2] - bottomleft[2]
     if sum(bottomleft .< topright) < 2
         error("bottomleft: $bottomleft should be below and left of topright: $topright.")
-    end    
+    end
     Rectangle{T}(origin, width, height)
 end
 
@@ -67,7 +67,7 @@ function congruent(r::Rectangle{T}, x) where T
 end
 
 # Rectangle bounds itself
-bounding_rectangle(rect::Rectangle) = rect
+bounding_box(rect::Rectangle) = rect
 
 "Return SVector with the coordinates of the bottom left of a rectangle"
 bottomleft(rect::Rectangle) = origin(rect) .- SVector(rect.width/2, rect.height/2)

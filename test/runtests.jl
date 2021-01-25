@@ -10,6 +10,8 @@ include("special_functions.jl")
 include("shapetests.jl")
 include("particle_tests.jl")
 
+include("random.jl")
+
 include("print_tests.jl")
 
 include("fourier_tests.jl")

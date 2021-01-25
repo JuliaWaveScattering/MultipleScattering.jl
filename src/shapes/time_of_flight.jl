@@ -27,17 +27,16 @@ function volume(shape::TimeOfFlight{T}) where T <: AbstractFloat
 end
 
 import Base.issubset
-function issubset(circle::Circle, shape::TimeOfFlight)
+function issubset(circle::Sphere{T,2}, shape::TimeOfFlight{T}) where T
     l_to_p = origin(circle) - shape.listener_position
     return (origin(circle)[1] > 0) && (l_to_p[1] + norm(l_to_p) <= (shape.time - 2circle.radius))
 end
 
-function bounding_rectangle(shape::TimeOfFlight{T}) where T <: AbstractFloat
+function bounding_box(shape::TimeOfFlight{T}) where T <: AbstractFloat
     t = shape.time
     l = shape.listener_position
     x_max = max(t/2 + l[1], zero(T))
-    return Rectangle(SVector( zero(T), l[2] - sqrt(t^2 + 2t*l[1])),
-                     SVector( x_max,   l[2] + sqrt(t^2 + 2t*l[1])) )
+    return Box([SVector(zero(T), l[2] - sqrt(t^2 + 2t*l[1])), SVector(x_max, l[2] + sqrt(t^2 + 2t*l[1]))])
 end
 
 

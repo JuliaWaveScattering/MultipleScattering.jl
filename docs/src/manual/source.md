@@ -28,7 +28,7 @@ We can plot this source wave one frequency ω by using
 ```julia
 julia> ω = 1.0;
 
-julia> domain = Rectangle([-1.0,-1.0],[1.0,1.0]);
+julia> domain = Box([[-1.0,-1.0],[1.0,1.0]]);
 
 julia> plot(plane_wave, ω; bounds = domain)
 ```
@@ -39,7 +39,7 @@ Another useful source is the point source $u_{\text{in}}(x,y) = \frac{\mathrm i 
 ```jldoctest intro
 julia> x0 = [0.0,-1.2];
 
-julia> domain = Rectangle([-1.0,-1.0],[1.0,1.0]);
+julia> domain = Box([[-1.0,-1.0],[1.0,1.0]]);
 
 julia> point_wave = point_source(medium, x0, A);
 ```

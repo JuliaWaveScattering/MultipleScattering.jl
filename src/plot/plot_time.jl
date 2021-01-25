@@ -28,13 +28,13 @@ end
 
     @series begin
         # find a box which covers everything
-        shape_bounds = bounding_rectangle(simulation.shape)
+        shape_bounds = bounding_box(simulation.shape)
         listeners_as_particles = map(
             l -> Particle(simulation.listener_positions[:,l],mean_radius(simulation)/2),
             1:size(simulation.listener_positions,2)
         )
-        particle_bounds = bounding_rectangle([simulation.particles; listeners_as_particles])
-        bounds = bounding_rectangle(shape_bounds, particle_bounds)
+        particle_bounds = bounding_box([simulation.particles; listeners_as_particles])
+        bounds = bounding_box(shape_bounds, particle_bounds)
 
         if build_field
           field_simulation = run(simulation, bounds; xres=xres, yres=yres)

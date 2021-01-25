@@ -17,7 +17,7 @@ particle_medium = Acoustic(0.0, 0.0, 2)
 
 # Create a wall of particles
 particles = [
-  Particle(particle_medium, Circle([0.,y],1.0))
+  Particle(particle_medium, Sphere([0.,y],1.0))
 for y = -40:2*radius:40.]
 
 # Make two gaps in the wall
@@ -26,7 +26,7 @@ deleteat!(particles,[18,19,23,24])
 # Define region to plot
 bottomleft = [-10.;-15.]
 topright = [30.;15.]
-region = Rectangle(bottomleft, topright)
+region = Box([bottomleft, topright])
 
 # Calculating scattering for a plane wave
 source =  plane_source(host_medium; direction = [1.0,0.0])
@@ -125,7 +125,7 @@ particle_shape = Circle(radius)
 max_width = 50*radius
 bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
-shape = Rectangle(bottomleft,topright)
+shape = Box([bottomleft,topright])
 
 particles = random_particles(particle_medium, particle_shape; region_shape = shape, num_particles = num_particles)
 
@@ -134,7 +134,7 @@ source =  plane_source(host_medium; direction = [1.0,0.5])
 simulation = FrequencySimulation(particles, source)
 
 bottomleft = [-25.,-max_width]
-bounds = Rectangle(bottomleft,topright)
+bounds = Box([bottomleft,topright])
 result = run(simulation, bounds, [ω]; res=100)
 
 ts = LinRange(0.,2pi/ω,30)

@@ -28,7 +28,7 @@ end
 
     @series begin
         if bounds != :none
-            # bounds = bounding_rectangle(sim.particles)
+            # bounds = bounding_box(sim.particles)
             xlims --> (bottomleft(bounds)[1], topright(bounds)[1])
             ylims --> (bottomleft(bounds)[2], topright(bounds)[2])
         end
@@ -51,12 +51,12 @@ end
     region_shape = (region_shape != :auto) ? region_shape :
         if isempty(sim.particles)
             if bounds == :auto
-                @warn "What region to plot? For example, use keyword bounds = Rectangle([-1.0,-1.0],[1.0,1.0])"
-                Rectangle([-one(T),-one(T)],[one(T),one(T)])
+                @warn "What region to plot? For example, use keyword bounds = Box([[-1.0,-1.0],[1.0,1.0]])"
+                Box([[-one(T),-one(T)],[one(T),one(T)]])
             else bounds
             end
         else
-            region_shape = bounding_rectangle(sim.particles)
+            region_shape = bounding_box(sim.particles)
         end
 
     bounds = bounding_rectangle(region_shape)
@@ -68,7 +68,7 @@ end
     # rectangle with them
     p_xlims = plotattributes[:xlims]
     p_ylims = plotattributes[:ylims]
-    bounds = Rectangle((T(p_xlims[1]),T(p_ylims[1])), (T(p_xlims[2]),T(p_ylims[2])))
+    bounds = Box([[T(p_xlims[1]),T(p_ylims[1])], [T(p_xlims[2]),T(p_ylims[2])]])
 
     region_shape = (bounds ⊆ region_shape) ? bounds : region_shape
 

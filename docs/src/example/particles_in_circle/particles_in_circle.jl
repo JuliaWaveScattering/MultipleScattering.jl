@@ -15,7 +15,7 @@ big_radius = 3.0
 particle_medium = Acoustic(2; ρ=0.0, c=0.0) # 2D particle with density ρ = 0.0 and soundspeed c = 0.0
 particle_shape = Circle(radius)
 
-circle = Circle(centre, big_radius)
+circle = Sphere(centre, big_radius)
 
 particles = random_particles(particle_medium, particle_shape; region_shape = circle, volume_fraction = volfrac, seed=1)
 
@@ -32,7 +32,7 @@ big_particle_simulation = FrequencySimulation([big_particle], source)
 #define a bounding box for plot
     bottomleft = [-10, -2*big_radius]
     topright = [big_radius, 2*big_radius]
-    box = Rectangle(bottomleft, topright)
+    box = Box([bottomleft, topright])
 
 using Plots
 height = 300

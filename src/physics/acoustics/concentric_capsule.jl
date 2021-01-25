@@ -1,10 +1,10 @@
 
 """
-    t_matrix(CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, Acoustic{T,2}, ω, order)
+    t_matrix(CapsuleParticle{T,2,Acoustic{T,2},Sphere{T,2}}, Acoustic{T,2}, ω, order)
 
 The T-matrix for a 2D circlular capsule particle in an acoustic medium.
 """
-function t_matrix(cap::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
+function t_matrix(cap::CapsuleParticle{T,2,Acoustic{T,2},Sphere{T,2}}, medium::Acoustic{T,2}, ω::T, M::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     k = ω / medium.c
     k0 = ω / cap.inner.medium.c
@@ -35,7 +35,7 @@ function t_matrix(cap::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, medium::Aco
     return Diagonal(vcat(reverse(Tns), Tns[2:end]))
 end
 
-function internal_field(x::AbstractArray{T}, p::CapsuleParticle{T,2,Acoustic{T,2},Circle{T}}, sim::FrequencySimulation{T,2,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector) where T
+function internal_field(x::AbstractArray{T}, p::CapsuleParticle{T,2,Acoustic{T,2},Sphere{T,2}}, source::Source{T,Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector) where T
 
     Nh = Int((length(scattering_coefficients) - one(T))/T(2.0)) #shorthand
 
@@ -46,13 +46,13 @@ function internal_field(x::AbstractArray{T}, p::CapsuleParticle{T,2,Acoustic{T,2
         return zero(Complex{T})
     end
 
-    k = ω / sim.source.medium.c
+    k = ω / source.medium.c
     k0 = ω / p.inner.medium.c
     k1 = ω / p.outer.medium.c
     a0 = outer_radius(p.inner)
     a1 = outer_radius(p.outer)
     q0 = (p.inner.medium.ρ*p.inner.medium.c) / (p.outer.medium.ρ*p.outer.medium.c)
-    q = (sim.source.medium.ρ*sim.source.medium.c) / (p.outer.medium.ρ*p.outer.medium.c)
+    q = (source.medium.ρ*source.medium.c) / (p.outer.medium.ρ*p.outer.medium.c)
 
     Yn(n::Integer) = hankelh1(n,k1*a1)*besselj(n,k1*a0) - hankelh1(n,k1*a0)*besselj(n,k1*a1)
     Yddn(n::Integer) = diffhankelh1(n,k1*a1)*diffbesselj(n,k1*a0) - diffhankelh1(n,k1*a0)*diffbesselj(n,k1*a1)

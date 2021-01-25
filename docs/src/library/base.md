@@ -17,16 +17,15 @@ Shape
 origin
 iscongruent(::Shape,::Shape)
 congruent
-bounding_rectangle
+bounding_box
 boundary_functions
 name
 outer_radius
 volume
-Circle
-Rectangle
+Sphere
+Box
 TimeOfFlightFromPoint
 TimeOfFlight
-Sphere
 ```
 
 ## [Physical property](@id base_physical_property)

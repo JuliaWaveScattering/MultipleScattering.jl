@@ -11,8 +11,8 @@ Shape is an abstract type which represents the shape of particles, and also the 
 ## Existing shapes
 The package provides three basic shapes. You can plot them using:
 ```jldoctest intro; output = false
-rectangle = Rectangle([0.0,-1.0],[1.0,2.0])
-circle = Circle([-1.0,0.0],1.0)
+rectangle = Box([[0.0,-1.0],[1.0,2.0]])
+circle = Sphere([-1.0,0.0],1.0)
 timeofflight = TimeOfFlight([1.0,0.0],3.0)
 # output
 TimeOfFlight{Float64}([1.0, 0.0], 3.0)
@@ -25,4 +25,4 @@ plot!(timeofflight, linecolor = :blue)
 ```
 ![Plot the three shapes](../assets/shapes.png)
 
-The `Rectangle` and `TimeOfFlight` are usually region where particles are placed. Time of flight is a shape which contains shapes from a half space which take at most `t` time to reach from the listener. The `Circle` is also used to define circular particles.
+The `Box` and `TimeOfFlight` are usually region where particles are placed. Time of flight is a shape which contains shapes from a half space which take at most `t` time to reach from the listener. The `Circle` is also used to define circular particles.

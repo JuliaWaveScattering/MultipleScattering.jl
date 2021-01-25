@@ -10,7 +10,7 @@ function run_time_response_single_particle(;
     particle_medium = Acoustic(2; ρ = 10.0, c = 0.5)
 
     # Define positions and radii of particle
-    particles = [Particle(particle_medium, Circle([particle_x,0.0],radius))]
+    particles = [Particle(particle_medium, Sphere([particle_x,0.0],radius))]
 
     # Define source wave
     host_medium = Acoustic(1.0, 1.0, 2)

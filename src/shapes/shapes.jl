@@ -38,17 +38,18 @@ end
 
 # Concrete shapes
 include("rectangle.jl")
-include("circle.jl")
+include("box.jl")
+# include("circle.jl")
+include("sphere.jl")
 include("halfspace.jl")
 include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
-include("sphere.jl")
 include("empty_shape.jl")
 """
     points_in_shape(Shape; res = 20, xres = res, yres = res,
              exclude_region = EmptyShape(region), kws...)
 
-returns `(x_vec, region_inds)` where `x_vec` is a vector of two-dimensional points that cover a rectangle which bounds `Shape`, and `region_inds` is an array of linear indices such that `x_vec[region_inds]` are points contained `Shape`.
+returns `(x_vec, region_inds)` where `x_vec` is a vector of points that cover a box which bounds `Shape`, and `region_inds` is an array of linear indices such that `x_vec[region_inds]` are points contained `Shape`.
 
 """
 function points_in_shape(region::Shape{T,2};
@@ -56,10 +57,10 @@ function points_in_shape(region::Shape{T,2};
         exclude_region::Shape = EmptyShape(region),
         kws...) where T
 
-    rect = bounding_rectangle(region)
+    rect = bounding_box(region)
 
     #Size of the step in x and y direction
-    x_vec_step = [rect.width / xres, rect.height / yres]
+    x_vec_step = rect.dimensions ./ [xres, yres]
     bl = bottomleft(rect)
     x_vec = [SVector{2}(bl + x_vec_step .* [i,j]) for i=0:xres, j=0:yres][:]
     region_inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
@@ -68,41 +69,51 @@ function points_in_shape(region::Shape{T,2};
 end
 
 function points_in_shape(region::Shape{T,3};
-        res::Number = 20, xres::Number = res, zres::Number = res,
-        y::T =  region.origin[2],
+        res::Number = 20,
         exclude_region::Shape = EmptyShape(region)) where T
 
-    rect = bounding_rectangle(region; y = y)
+    box = bounding_box(region)
 
     #Size of the step in x and y direction
-    x_vec_step = [rect.width / xres, zero(T), rect.height / zres]
-    bl = bottomleft(rect)
-    bl_vec = [bl[1],zero(T),bl[2]]
-    x_vec = [SVector{3}(bl_vec + x_vec_step .* [i,0,j]) for i=0:xres, j=0:zres][:]
+    x_vec_step = box.dimensions ./ res
+    bl = box_corners(box)[1]
+    x_vec = [SVector{3}(bl + x_vec_step .* [i,0,j]) for i=0:xres, j=0:zres][:]
     region_inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
 
     return x_vec, region_inds
 end
 
 
-"points on the boundary of a shape"
-function boundary_points(shape::Shape{T,Dim}, num_points::Int = 4; dr = zero(T)) where {Dim,T}
-    x, y = boundary_functions(shape)
-    v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape))
+"Returns a set of points on the boundary of a 2D shape."
+function boundary_points(shape2D::Shape{T,2}, num_points::Int = 4; dr = zero(T)) where T
+    x, y = boundary_functions(shape2D)
+    v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape2D))
     return [ v(τ) for τ in LinRange(zero(T),one(T),num_points+1)[1:end-1] ]
 end
 
-"Returns rectangle which completely encloses the shapes"
-bounding_rectangle(shape1::Shape, shape2::Shape) = bounding_rectangle([shape1, shape2])
+"Returns a set of points on the boundary of a 3D shape."
+function boundary_points(shape3D::Shape{T,3}, num_points::Int = 4; dr = zero(T)) where T
+    x, y, z = boundary_functions(shape3D)
+    v(τ,s) = SVector(x(τ,s),y(τ,s),z(τ,s)) + dr * (SVector(x(τ,s),y(τ,s),z(τ,s)) - origin(shape3D))
+    mesh = LinRange(zero(T),one(T),num_points+1)[1:end-1]
+    return [v(τ,s) for τ in mesh, s in mesh]
+end
+
+"Returns box which completely encloses the shapes"
+bounding_box(shape1::Shape, shape2::Shape) = bounding_box([shape1, shape2])
 
 # Create a box which bounds an array of shapes
-function bounding_rectangle(shapes::Vector{S}) where S<:Shape
-    boxes = bounding_rectangle.(shapes)
+function bounding_box(shapes::Vector{S}) where S<:Shape
+    boxes = bounding_box.(shapes)
+    corners_mat = hcat(vcat((box_corners.(boxes))...)...)
 
-    min_bottomleft = min.(bottomleft.(boxes)...)
-    max_topright   = max.(topright.(boxes)...)
+    maxdims = maximum(corners_mat, dims=2)
+    mindims = minimum(corners_mat, dims=2)
 
-    return Rectangle(min_bottomleft, max_topright)
+    c = (maxdims + mindims) ./ 2
+    dimensions = maxdims - mindims
+
+    return Box(c, dimensions)
 end
 
 # Docstrings

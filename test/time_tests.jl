@@ -39,7 +39,7 @@ end
 
 @testset "Time Result" begin
     sound_p = Acoustic(.1, 0.1 + 0.0im,2)
-    particles = [Particle(sound_p,Circle([10.5,0.0], .5))]
+    particles = [Particle(sound_p,Sphere([10.5,0.0], .5))]
 
     sound_sim = Acoustic(1., 1. + 0.0im,2)
     source = plane_source(sound_sim, [0.0,0.0], [1.0,0.0], 1.)
