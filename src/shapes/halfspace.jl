@@ -15,6 +15,7 @@ Halfspace(normal::NTuple{Dim,T}, origin::AbstractVector{T} = zeros(T,Dim)) where
 
 name(shape::Halfspace) = "Halfspace"
 
+volume(shape::Halfspace) = Inf
 outer_radius(hs::Halfspace{T}) where T = T(Inf)
 
 # import Base.issubset
