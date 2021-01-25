@@ -30,4 +30,4 @@ plot(simulation,w; res=80, field_apply=abs)
 TimeSimulation = TimeSimulation(simulation)
 plot(TimeSimulation)
 
-# simulation = FrequencySimulation(particles, w_arr; source_direction = [0.,1.], shape = Rectangle([0.,-10.],[10.,40.]))
+# simulation = FrequencySimulation(particles, w_arr; source_direction = [0.,1.], shape = Box([[0.,-10.],[10.,40.]]))

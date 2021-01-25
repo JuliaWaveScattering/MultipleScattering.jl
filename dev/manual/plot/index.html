@@ -10,7 +10,7 @@ particle_medium = Acoustic(0.0, 0.0, 2)
 
 # Create a wall of particles
 particles = [
-  Particle(particle_medium, Circle([0.,y],1.0))
+  Particle(particle_medium, Sphere([0.,y],1.0))
 for y = -40:2*radius:40.]
 
 # Make two gaps in the wall
@@ -19,7 +19,7 @@ deleteat!(particles,[18,19,23,24])
 # Define region to plot
 bottomleft = [-10.;-15.]
 topright = [30.;15.]
-region = Rectangle(bottomleft, topright)
+region = Box([bottomleft, topright])
 
 # Calculating scattering for a plane wave
 source =  plane_source(host_medium; direction = [1.0,0.0])
@@ -95,7 +95,7 @@ particle_shape = Circle(radius)
 max_width = 50*radius
 bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
-shape = Rectangle(bottomleft,topright)
+shape = Box([bottomleft,topright])
 
 particles = random_particles(particle_medium, particle_shape; region_shape = shape, num_particles = num_particles)
 
@@ -104,7 +104,7 @@ source =  plane_source(host_medium; direction = [1.0,0.5])
 simulation = FrequencySimulation(particles, source)
 
 bottomleft = [-25.,-max_width]
-bounds = Rectangle(bottomleft,topright)
+bounds = Box([bottomleft,topright])
 result = run(simulation, bounds, [ω]; res=100)
 
 ts = LinRange(0.,2pi/ω,30)
@@ -117,4 +117,4 @@ anim = @animate for t in ts
     plot!(simulation)
     plot!(colorbar=false, title=&quot;&quot;,axis=false, xguide =&quot;&quot;,yguide =&quot;&quot;)
 end
-# gif(anim,&quot;backscatter_harmonic.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/backscatter_harmonic.gif" alt="backscattering from harmonic wave"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../time_response/">« Time response</a><a class="docs-footer-nextpage" href="../new_types/">New particles »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Wednesday 6 January 2021 18:57">Wednesday 6 January 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# gif(anim,&quot;backscatter_harmonic.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/backscatter_harmonic.gif" alt="backscattering from harmonic wave"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../time_response/">« Time response</a><a class="docs-footer-nextpage" href="../new_types/">New particles »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 25 January 2021 11:26">Monday 25 January 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

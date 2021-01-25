@@ -21,7 +21,7 @@ particle_shape = Circle(radius)
 bottomleft = [0.,-max_width]
 topright = [max_width,max_width]
 
-shape = Rectangle(bottomleft,topright)
+shape = Box([bottomleft,topright])
 particles = random_particles(particle_medium, particle_shape; region_shape = shape, volume_fraction = volfrac, seed = 1)
 
 # We send an incoming harmonic plane wave and receive the backscattering at `x`:
@@ -45,7 +45,7 @@ num_particles = zeros(length(widths))
 results = map(eachindex(widths)) do i
     bottomleft = [0.,-widths[i]]
     topright = [widths[i],widths[i]]
-    shape = Rectangle(bottomleft, topright)
+    shape = Box([bottomleft, topright])
 
     ps = filter(p -> p ⊆ shape, particles) # select particles that are inside shape
     num_particles[i] = Int(length(ps))
