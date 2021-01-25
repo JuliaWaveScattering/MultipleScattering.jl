@@ -160,7 +160,7 @@
             );
 
             @test maximum(norm.(pressure_results[1].field - pressure_results[2].field) ./ norm.(pressure_results[2].field)) < 1e-7
-            @test maximum(norm.(displace_results[1].field - displace_results[2].field) ./ norm.(displace_results[2].field)) < 1e-6
+            @test maximum(norm.(displace_results[1].field - displace_results[2].field) ./ norm.(displace_results[2].field)) < 4e-6
         end
     end
 end
