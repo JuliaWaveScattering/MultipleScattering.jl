@@ -45,26 +45,34 @@ boundary_data
 
 # estimate_regular_basisorder(medium::P, ka) where P<:PhysicalMedium = estimate_regular_basisorder(P, ka)
 
+
 """
-    estimate_regular_basis_order(::Type{PhysicalMedium}, ka; tol = 1e-6)
-
-where `ka = 2π * a / λ` is a ratio between a length `a` and a wavelength `λ`.
+    estimate_regular_basis_order(medium::P, ω::Number, radius::Number; tol = 1e-6)
 """
-function estimate_regular_basisorder(medium::P, ka; tol = 1e-6) where P<:PhysicalMedium
+function estimate_regular_basisorder(medium::P, ω::Number, radius::Number; tol = 1e-6) where P<:PhysicalMedium
 
-    vs = regular_basis_function(medium, medium.c)
+    @error "This is not complete"
 
-    # A very large initial guess
-    L = Int(round(10 * abs(ka)))
+    k = ω / real(medium.c)
+    vs = regular_basis_function(medium, ω)
 
-    kxs = ka .* rand(spatial_dimension(medium),10)
+    # A large initial guess
+    L = Int(round(4 * abs(k*radius)))
+
+    xs = radius .* rand(spatial_dimension(medium),10)
 
     l = nothing
     while isnothing(l)
-        meanvs = mean(abs.(vs(L, kxs[:,i])) for i in axes(kxs,2))
-        normvs = [norm(meanvs[basisorder_to_basislength(P,i-1):basisorder_to_basislength(P,i)]) for i = 1:L]
+        meanvs = [
+            mean(norm(vs(l, xs[:,i])) for i in axes(xs,2))
+        for l = 1:L]
+
+        meanvs = mean(abs.(vs(L, xs[:,i])) for i in axes(xs,2))
+        normvs = [
+            norm(meanvs[basisorder_to_basislength(P,i-1):basisorder_to_basislength(P,i)])
+        for i = 1:L]
         l = findfirst(normvs .< tol)
-        L = L + Int(round(abs(ka))) + 1
+        L = L + Int(round(abs(k * radius / 2.0))) + 1
     end
 
     return l

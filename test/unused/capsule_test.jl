@@ -98,7 +98,7 @@ gif(anim,"capsulse_dance.gif", fps = 4)
 ω = 0.65
 anim = @animate for ω in 0.:0.01:2.
     # plot(timres,t,seriestype=:contour, clim=(-0.8,0.8), c=:balance)
-    plot(simres,ω,seriestype=:contour, clim=(-1.1,1.1), c=:pu_or)
+    plot(simres,ω,seriestype=:contour, clim=(-1.1,1.1), c=:balance)
     plot!(sim)
 end
 

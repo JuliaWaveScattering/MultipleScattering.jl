@@ -151,6 +151,26 @@ issubset(s::Shape, particle::AbstractParticle) = issubset(s, shape(particle))
 issubset(particle::AbstractParticle, s::Shape) = issubset(shape(particle), s)
 issubset(particle1::AbstractParticle, particle2::AbstractParticle) = issubset(shape(particle1), shape(particle2))
 
+"""
+    estimate_regular_basis_order(medium::P, ω::Number, radius::Number; tol = 1e-6)
+"""
+function estimate_outgoing_basisorder(medium::PhysicalMedium, p::Particle, ω::Number; tol = 1e-6)
+
+    k = ω / real(medium.c)
+
+    # A large initial guess
+    L = Int(round(4 * abs(k*outer_radius(p)))) + 1
+
+    ts = [
+        norm(diag(t_matrix(p, medium, ω, l)))
+    for l = 1:L]
+    ts = ts ./ ts[1];
+
+    l = findfirst(diff(ts) .< tol)
+
+    return l
+end
+
 # Add generic documentation from shape
 @doc (@doc issubset(::Shape, ::Shape)) issubset(::Shape, ::AbstractParticle)
 @doc (@doc issubset(::Shape, ::Shape)) issubset(::AbstractParticle, ::Shape)

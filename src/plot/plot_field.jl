@@ -13,7 +13,7 @@
 
     phase = exp(-im*ω*phase_time)
 
-    seriescolor --> :pu_or
+    seriescolor --> :balance
     title --> "Field for ω = $ω"
     seriestype --> seriestype
     aspect_ratio --> 1.0
@@ -45,7 +45,7 @@ end
     y = [x[2] for x in timres.x[x_indices]]
     t = getfield(timres, 3)[t_index]
 
-    seriescolor --> :pu_or
+    seriescolor --> :balance
     title --> "Field for time = $t"
     seriestype --> seriestype
     aspect_ratio --> 1.0

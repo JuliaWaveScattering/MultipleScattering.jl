@@ -98,10 +98,6 @@ function run(sim::FrequencySimulation{T,Dim,P}, x_vec::Union{Vector{Vector{T}},V
     x_vec = [SVector{Dim,T}(x...) for x in x_vec]
 
     # Considering basis_order to be the maximum basis order, then to avoid too much truncation error we use smaller basis orders on the smaller frequencies.
-    basis_order_0 = max(3, Int(round(ωs[1] * basis_order / ωs[end])))
-    if basis_order < basis_order_0
-        @warn "The given basis_order = $basis_order was smaller than $basis_order_0 which is an estimated minimum basis order"
-    end
     if basis_order_vec == [-1]
         max_basis_order = max(basis_order,min_basis_order)
         basis_order_vec = Int.(round.(

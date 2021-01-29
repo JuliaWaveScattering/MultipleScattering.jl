@@ -53,7 +53,7 @@ end
         response_mat = transpose(reshape(field_TimeSimulation.response[1,:], (xres+1, yres+1)))
         linetype --> :contour
         fill --> true
-        fillcolor --> :pu_or
+        fillcolor --> :balance
         title --> "Field at time=$(t_arr[1])"
 
         (x_pixels, y_pixels, resp_fnc.(response_mat))
