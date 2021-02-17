@@ -25,7 +25,7 @@ volume(shape::MyRectangle) = shape.width * shape.height
 name(shape::MyRectangle) = "MyRectangle"
 
 # every shape needs a bounding rectangle, this is where particles are first placed.
-bounding_rectangle(shape::MyRectangle) = Rectangle(shape.origin, shape.width, shape.height)
+bounding_rectangle(shape::MyRectangle) = Box(shape.origin, [shape.width, shape.height])
 
 import Base.in, Base.issubset
 function in(x::AbstractVector, r::MyRectangle)::Bool
