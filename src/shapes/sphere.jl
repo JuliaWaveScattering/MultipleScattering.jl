@@ -14,6 +14,7 @@ Sphere(origin::AbstractVector, radius::T) where {T} = Sphere{T,length(origin)}(o
 
 Sphere(Dim, radius::T) where {T} = Sphere{T,Dim}(zeros(T,Dim), radius)
 
+Circle(origin::Union{AbstractVector{T},NTuple{2,T}}, radius::T) where T <: AbstractFloat = Sphere{T,2}(origin, radius::T)
 Circle(radius::T) where T <: AbstractFloat = Sphere(2, radius::T)
 Sphere(radius::T) where {T} = Sphere{T,3}(zeros(T,3), radius)
 

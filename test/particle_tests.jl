@@ -6,7 +6,7 @@
     @testset "Types" begin
 
         circle1 = Sphere((0.0,0.0),1.0)
-        circle2 = Sphere((0.0,5.0),2.0)
+        circle2 = Circle((0.0,5.0),2.0)
         a = Acoustic(1.0,1.0,2)
         homog_particles = [Particle(a,circle1), Particle(a,circle2)]
 

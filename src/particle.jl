@@ -61,19 +61,10 @@ end
 """
     Particle(medium, radius)
 
-Returns a particle shaped like a sphere, when the particle shape is not given and with the specified `radius`.
+Returns a particle shaped like a sphere or circle, when the particle shape is not given and with the specified `radius`.
 """
 function Particle(medium::P, radius::T) where {T, Dim, P <: PhysicalMedium{T,Dim}}
-    Particle{T,Dim,P,Sphere{T,Dim}}(medium,Sphere(radius))
-end
-
-"""
-    Particle(medium, radius)
-
-A particle shaped like a cylinder.
-"""
-function Particle(medium::P, radius::T) where {T, P <: PhysicalMedium{T,2}}
-    Particle{T,2,P,Sphere{T,2}}(medium, Sphere(2,radius))
+    Particle{T,Dim,P,Sphere{T,Dim}}(medium,Sphere(Dim,radius))
 end
 
 function CapsuleParticle(p1::Particle{T,Dim,P,S},p2::Particle{T,Dim,P,S}) where {T,Dim,S<:Shape,P<:PhysicalMedium}

@@ -37,9 +37,8 @@ function check_boundary_coord_range(t)
 end
 
 # Concrete shapes
-include("rectangle.jl")
+# include("rectangle.jl")
 include("box.jl")
-# include("circle.jl")
 include("sphere.jl")
 include("halfspace.jl")
 include("time_of_flight.jl")
@@ -113,7 +112,7 @@ function bounding_box(shapes::Vector{S}) where S<:Shape
     c = (maxdims + mindims) ./ 2
     dimensions = maxdims - mindims
 
-    return Box(c, dimensions)
+    return Box(c[:], dimensions[:])
 end
 
 # Docstrings

@@ -12,6 +12,9 @@
 
         source = plane_source(a; position = [0.0,0.0], direction = [1.0,0.0])
         sim = FrequencySimulation(particles,source)
+
+        show(sim);
+
         result = run(sim, SVector(1.0,2.0), 0.1)
         result = run(particles, source, SVector(1.0,2.0), 0.1)
         result = 3.2*result + result*4.0im + 0.3+4.0im # changes result.field
@@ -19,6 +22,11 @@
 
         @test field(result)[1] == result.field[1][1] # returns
         @test field(result,1,1) == result.field[1][1] # returns
+
+        # run simulation over a region rather than a specif set of x points
+        ω = 0.1
+        region = bounding_box([p.shape for p in particles])
+        result = run(particles, source, region, [ω]; res=10)
 
         # 3D acoustics
         s1 = Sphere((1.0,-1.0,2.0),1.0)
@@ -38,6 +46,7 @@
 
         @test field(result)[1] == result.field[1][1] # returns
         @test field(result,1,1) == result.field[1][1] # returns
+
     end
 
     @testset "Particles with different shape" begin

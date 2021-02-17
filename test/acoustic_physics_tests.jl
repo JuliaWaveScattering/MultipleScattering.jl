@@ -75,7 +75,8 @@ end
     a2 = Acoustic(0.1, 0.1+0.0im, 2)
     a2_host = Acoustic(1.0, 1.0+0.0im, 2)
     ω = 0.5
-    N_basis = 5
+
+    N_basis = estimate_outgoing_basisorder(a2_host, Particle(a2,circle), ω)
 
     # Test return type is satisfied for valid input
     t = t_matrix(Particle(a2,circle), a2_host, ω, N_basis)

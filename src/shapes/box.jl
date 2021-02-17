@@ -32,6 +32,8 @@ end
 
 Box(dimensions::AbstractVector{T}) where T = Box(zeros(T,length(dimensions)),dimensions)
 
+Rectangle(bottomleft::Union{AbstractVector{T},NTuple{2,T}}, topright::Union{AbstractVector{T},NTuple{2,T}}) where T = Box([bottomleft,topright])
+
 name(shape::Box) = "Box"
 name(shape::Box{T,2}) where T = "Rectangle"
 
