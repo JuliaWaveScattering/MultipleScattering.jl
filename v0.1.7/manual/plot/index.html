@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Plotting · MultipleScattering.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="MultipleScattering.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit">MultipleScattering.jl</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="../intro/">Introduction</a></li><li><a class="tocitem" href="../source/">Sources</a></li><li><a class="tocitem" href="../shapes/">Shapes</a></li><li><a class="tocitem" href="../particles/">Particles</a></li><li><a class="tocitem" href="../time_response/">Time response</a></li><li class="is-active"><a class="tocitem" href>Plotting</a><ul class="internal"><li><a class="tocitem" href="#Field-Harmonic-two-gaps"><span>Field - Harmonic two gaps</span></a></li><li><a class="tocitem" href="#Movie-Harmonic-two-gaps"><span>Movie - Harmonic two gaps</span></a></li><li><a class="tocitem" href="#Movie-Time-impulse-plane-wave-two-gaps"><span>Movie - Time impulse plane-wave - two gaps</span></a></li><li><a class="tocitem" href="#Movie-Harmonic-from-random-particles"><span>Movie - Harmonic from random particles</span></a></li></ul></li><li><a class="tocitem" href="../new_types/">New particles</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../library/base/">Base</a></li><li><a class="tocitem" href="../../library/acoustics/">Acoustic</a></li><li><a class="tocitem" href="../../library/random/">Random</a></li></ul></li><li><a class="tocitem" href="../../maths/README/">Theory</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../../example/README/">Overview</a></li><li><a class="tocitem" href="../../example/box_size/README/">Box size</a></li><li><a class="tocitem" href="../../example/hankel_convergence/README/">Convergence when increasing the number of Hankel functions</a></li><li><a class="tocitem" href="../../example/moments/README/">StatisticalMoments</a></li><li><a class="tocitem" href="../../example/near_surface_backscattering/README/">Near-surface backscattering</a></li><li><a class="tocitem" href="../../example/random_particles/README/">Simple random particles example</a></li><li><a class="tocitem" href="../../example/time_response_single_particle/README/">Time response from single particle</a></li><li><a class="tocitem" href="../../example/two_particles/README/">OUT-DATED needs to be updated</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href>Plotting</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Plotting</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/JuliaWaveScattering/MultipleScattering.jl/blob/master/docs/src/manual/plot.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Plotting"><a class="docs-heading-anchor" href="#Plotting">Plotting</a><a id="Plotting-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting" title="Permalink"></a></h1><p>The plotting for this package is supplied by the package <a href="http://docs.juliaplots.org">Plots</a>. The options and keywords used for the package Plots can be used for the plots in this package.</p><p>Below are examples of plotting the whole field in frequency (harmonic wave) and time. The examples require the package <code>Plots</code> and, mostly, <code>PyPlot</code>.</p><h2 id="Field-Harmonic-two-gaps"><a class="docs-heading-anchor" href="#Field-Harmonic-two-gaps">Field - Harmonic two gaps</a><a id="Field-Harmonic-two-gaps-1"></a><a class="docs-heading-anchor-permalink" href="#Field-Harmonic-two-gaps" title="Permalink"></a></h2><pre><code class="language-julia">using MultipleScattering
+using Plots; pyplot(size = (800,300))
+
+radius = 1
+ω = 2.0
+
+host_medium = Acoustic(1.0, 1.0, 2)
+particle_medium = Acoustic(0.0, 0.0, 2)
+
+# Create a wall of particles
+particles = [
+  Particle(particle_medium, Sphere([0.,y],1.0))
+for y = -40:2*radius:40.]
+
+# Make two gaps in the wall
+deleteat!(particles,[18,19,23,24])
+
+# Define region to plot
+bottomleft = [-10.;-15.]
+topright = [30.;15.]
+region = Box([bottomleft, topright])
+
+# Calculating scattering for a plane wave
+source =  plane_source(host_medium; direction = [1.0,0.0])
+
+# You can skip the step of defining FrequencySimulation
+result = run(particles, source, region, [ω]; res=100)
+
+plot(result,ω;
+    field_apply = abs, seriestype = :contour,
+    title = &quot;Absolute value&quot;
+  );
+p1 = plot!(particles, ylims = (-15.0,15.0));  
+plot(result,ω;
+    field_apply = real, seriestype = :contour,
+    title = &quot;Real part&quot;
+);
+p2 = plot!(particles, ylims = (-15.0,15.0));
+plot(p1, p2)
+
+# savefig(&quot;gap-diffraction.png&quot;)</code></pre><p><img src="../../assets/slit-diffraction.png" alt/></p><h2 id="Movie-Harmonic-two-gaps"><a class="docs-heading-anchor" href="#Movie-Harmonic-two-gaps">Movie - Harmonic two gaps</a><a id="Movie-Harmonic-two-gaps-1"></a><a class="docs-heading-anchor-permalink" href="#Movie-Harmonic-two-gaps" title="Permalink"></a></h2><p>Continuing from <a href="#Field-Harmonic-two-gaps">Field - Harmonic two gaps</a>, the previous example, we can plot how the harmonic field oscillates in time. That is, to get the harmonic field at time <span>$t$</span> we just multiple the field by <span>$\mathrm e^{-\mathrm i \omega t}$</span> for every <span>$\mathbf x$</span>. For example, the plane wave <span>$\mathrm e^{\mathrm i x k}$</span> would become <span>$\mathrm e^{\mathrm i x k -\mathrm i \omega t}$</span>.   </p><pre><code class="language-julia">pyplot(size = (450,300))
+
+ts = LinRange(0.,2pi/ω,30)
+
+maxc = round(10*maximum(real.(field(result))))/10
+minc = round(10*minimum(real.(field(result))))/10
+
+anim = @animate for t in ts
+    plot(result,ω; seriestype = :contour,
+        phase_time=t, clim=(minc,maxc),
+        ylims = (-15.0,15.0) , c=:balance
+    )
+    plot!(particles)
+    plot!(colorbar=false, title=&quot;&quot;,axis=false, xguide =&quot;&quot;,yguide =&quot;&quot;)
+end
+# gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-diffraction.gif" alt/></p><h2 id="Movie-Time-impulse-plane-wave-two-gaps"><a class="docs-heading-anchor" href="#Movie-Time-impulse-plane-wave-two-gaps">Movie - Time impulse plane-wave - two gaps</a><a id="Movie-Time-impulse-plane-wave-two-gaps-1"></a><a class="docs-heading-anchor-permalink" href="#Movie-Time-impulse-plane-wave-two-gaps" title="Permalink"></a></h2><p>Continuing from <a href="#Field-Harmonic-two-gaps">Field - Harmonic two gaps</a>, we can plot how an impulse plave-wave in time passes through two gaps. See <a href="../time_response/#Time-response">Time response</a> for more details on the code used below.</p><pre><code class="language-julia">pyplot(size = (450,300))
+ωs = LinRange(0.0,2.0,300)[2:end] # avoid using ω = 0
+
+# We use a lower resolution (res = 50) as this is a heavier calculation
+result = run(particles, source, region, ωs; res = 50)
+
+# Calculate time response over rect
+t_max = 0.75 .* real(region.width / host_medium.c)
+ts = LinRange(0.0,t_max,75)
+impulse = GaussianImpulse(maximum(ωs)*0.6)
+timres = frequency_to_time(result; t_vec = ts, impulse = impulse)
+
+maxc = round(10*maximum(field(timres)))/10
+minc = round(10*minimum(field(timres)))/10
+
+# timres = TimeSimulationResult(timres.field .+ max_c/100.0 , timres.x, timres.t)
+
+ylims =  (-region.height/2,region.height/2)
+anim = @animate for t in ts
+    plot(timres,t,seriestype=:contour,
+      clim = (minc, maxc),
+      leg = false, ylims = ylims
+    )
+    plot!(particles)
+    plot!(frame = :none, title=&quot;&quot;, xguide =&quot;&quot;,yguide =&quot;&quot;)
+end
+
+# gif(anim,&quot;gap-diffraction.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/gap-time-diffraction.gif" alt/></p><h2 id="Movie-Harmonic-from-random-particles"><a class="docs-heading-anchor" href="#Movie-Harmonic-from-random-particles">Movie - Harmonic from random particles</a><a id="Movie-Harmonic-from-random-particles-1"></a><a class="docs-heading-anchor-permalink" href="#Movie-Harmonic-from-random-particles" title="Permalink"></a></h2><pre><code class="language-julia">using MultipleScattering
+using Plots; pyplot()
+
+num_particles = 70
+radius = 1.0
+ω = 1.0
+
+host_medium = Acoustic(1.0, 1.0, 2)
+particle_medium = Acoustic(0.2, 0.3, 2)
+particle_shape = Circle(radius)
+
+max_width = 50*radius
+bottomleft = [0.,-max_width]
+topright = [max_width,max_width]
+shape = Box([bottomleft,topright])
+
+particles = random_particles(particle_medium, particle_shape; region_shape = shape, num_particles = num_particles)
+
+source =  plane_source(host_medium; direction = [1.0,0.5])
+
+simulation = FrequencySimulation(particles, source)
+
+bottomleft = [-25.,-max_width]
+bounds = Box([bottomleft,topright])
+result = run(simulation, bounds, [ω]; res=100)
+
+ts = LinRange(0.,2pi/ω,30)
+
+maxc = round(10*maximum(real.(field(result))))/10
+minc = round(10*minimum(real.(field(result))))/10
+
+anim = @animate for t in ts
+    plot(result,ω; seriestype = :contour, phase_time=t, clim=(minc,maxc), c=:balance)
+    plot!(simulation)
+    plot!(colorbar=false, title=&quot;&quot;,axis=false, xguide =&quot;&quot;,yguide =&quot;&quot;)
+end
+# gif(anim,&quot;backscatter_harmonic.gif&quot;, fps = 7)</code></pre><p><img src="../../assets/backscatter_harmonic.gif" alt="backscattering from harmonic wave"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../time_response/">« Time response</a><a class="docs-footer-nextpage" href="../new_types/">New particles »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 22 February 2021 10:46">Monday 22 February 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
