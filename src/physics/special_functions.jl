@@ -190,7 +190,7 @@ cartesian_to_radial_coordinates(x::Vector) = cartesian_to_radial_coordinates(SVe
 radial_to_cartesian_coordinates(θ::Vector) = radial_to_cartesian_coordinates(SVector(θ...))
 
 function cartesian_to_radial_coordinates(x::SVector{3,CT}) where CT
-    r = sqrt(sum(x .^2)) # note this should be complex if x is complex
+    r = sqrt(sum(x .^2)) # note this is, and should be, a complex number when x is a complex vector
     θ = atan(sqrt(x[1]^2+x[2]^2),x[3])
     φ = atan(x[2], x[1])
     return [r,θ,φ]

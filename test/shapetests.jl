@@ -142,4 +142,20 @@
 
         @test true
     end
+
+    @testset "Infinite volume shapes" begin
+        normal = rand(3);
+        origin = rand(3);
+        width = 1.0 + rand();
+        p = Plate(normal, width, origin)
+        h = Halfspace(normal, origin)
+
+        shapes = [p,h];
+
+        @test isempty(findall( (volume.(shapes) .== Inf) .== 0))
+
+        xs = [rand(3) for i = 1:10];
+        [[x ∈ s for x in xs] for s in shapes]
+
+    end
 end

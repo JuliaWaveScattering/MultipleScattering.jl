@@ -1,7 +1,7 @@
 """
     Halfspace(normal::AbstractVector{T} [, origin::AbstractVector{T}=zeros()])
 
-N-dimensional [`Shape`](@ref) defined by all points x = origin - λ * normal, for any λ > 0.
+A halfspace defined by all the points ``\\mathbf x`` that satify ``(\\mathbf x - \\mathbf o) \\cdot \\mathbf n < 0`` where ``\\mathbf n`` is the unit normal and ``\\mathbf o`` is the origin.
 """
 struct Halfspace{T,Dim} <: Shape{T,Dim}
     normal::SVector{Dim,T} # outward pointing normal vector

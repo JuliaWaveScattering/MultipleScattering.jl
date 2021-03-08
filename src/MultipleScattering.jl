@@ -3,7 +3,7 @@ __precompile__()
 module MultipleScattering
 
 ## Shapes
-export Shape, Circle, Rectangle, Box, EmptyShape, Halfspace, TimeOfFlight, TimeOfFlightFromPoint
+export Shape, Circle, Rectangle, Box, EmptyShape, Halfspace, Plate, TimeOfFlight, TimeOfFlightFromPoint
 
 export outer_radius, volume, name, iscongruent, (≅), congruent, in, issubset, origin, shape, Sphere, (==), isequal, show
 export boundary_functions, boundary_points, boundary_data, bounding_box, box_corners

@@ -41,9 +41,11 @@ end
 include("box.jl")
 include("sphere.jl")
 include("halfspace.jl")
+include("plate.jl")
 include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
 include("empty_shape.jl")
+
 """
     points_in_shape(Shape; res = 20, xres = res, yres = res,
              exclude_region = EmptyShape(region), kws...)
