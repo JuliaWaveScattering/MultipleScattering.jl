@@ -4,7 +4,7 @@
 A plate defined by all the points ``\\mathbf x`` that satify ``|(\\mathbf x - \\mathbf o) \\cdot \\mathbf n| < w /2`` where ``\\mathbf n`` is the unit normal, ``\\mathbf o`` is the origin, and ``w`` is the width.
 """
 struct Plate{T,Dim} <: Shape{T,Dim}
-    normal::SVector{Dim,T} # outward pointing normal vector
+    normal::SVector{Dim,T} # a unit vector which is orthogonal to the plate
     width::T # the width
     origin::SVector{Dim,T}
 end

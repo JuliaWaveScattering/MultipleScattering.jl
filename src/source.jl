@@ -82,7 +82,6 @@ Source.field(x,ω)
 
 The field `Source.coef`
 regular_basis_function(medium::Acoustic{T,2}, ω::T)
-
 """
 struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T,P}
     medium::P
