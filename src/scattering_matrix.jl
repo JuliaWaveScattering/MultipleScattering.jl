@@ -1,12 +1,12 @@
 
 "Create the matrix S which will be inverted to find the scattering coefficients."
-function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles, t_matrices::Vector, ω::T, order::Integer)::Matrix{Complex{T}} where T
+function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles, t_matrices::Vector, ω::T, basis_order::Integer)::Matrix{Complex{T}} where T
     # Generate response for one specific k
     # Number of particles
     P = length(particles)
 
     # Length of scattering basisfor each particle
-    N = basisorder_to_basislength(typeof(medium),order)
+    N = basisorder_to_basislength(typeof(medium),basis_order)
 
     # No particles means no scattering
     if P == 0
@@ -19,7 +19,7 @@ function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles,
             return zeros(Complex{T}, N, N)
         else
             x_lj = origin(particles[j]) .- origin(particles[l])
-            U = outgoing_translation_matrix(medium, order, ω, x_lj)
+            U = outgoing_translation_matrix(medium, basis_order, ω, x_lj)
             return - transpose(U) * t_matrices[l]
         end
     end

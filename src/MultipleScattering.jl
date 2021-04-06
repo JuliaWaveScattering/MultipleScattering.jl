@@ -45,7 +45,6 @@ export scattering_matrix
 
 import Printf: @printf
 
-using StaticArrays: SVector
 using OffsetArrays: OffsetArray
 
 using SpecialFunctions: besselj, hankelh1
