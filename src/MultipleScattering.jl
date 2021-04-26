@@ -10,7 +10,7 @@ export boundary_functions, boundary_points, boundary_data, bounding_box, box_cor
 export points_in_shape, bottomleft, topright
 
 ## Physical mediums
-export PhysicalMedium, outgoing_basis_function, regular_basis_function, outgoing_radial_basis, regular_radial_basis, outgoing_translation_matrix, estimate_regular_basisorder, estimate_outgoing_basisorder, basisorder_to_basislength, basis_coefficients, basislength_to_basisorder, internal_field, check_material
+export PhysicalMedium, outgoing_basis_function, regular_basis_function, outgoing_radial_basis, regular_radial_basis, outgoing_translation_matrix, regular_translation_matrix, estimate_regular_basisorder, estimate_outgoing_basisorder, basisorder_to_basislength, basis_coefficients, basislength_to_basisorder, internal_field, check_material
 export spatial_dimension, field_dimension
 
 ## Electromagnetic
@@ -23,7 +23,7 @@ export Acoustic, AcousticCapsule, sound_hard, hard, rigid, zero_neumann, sound_s
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
 
 ## Sources
-export AbstractSource, Source, source_expand, regular_spherical_coefficients, self_test, constant_source, point_source, plane_source,
+export AbstractSource, Source, source_expand, regular_spherical_coefficients, self_test, constant_source, point_source, plane_source, regular_spherical_source
        (*), (+)
 export PlaneSource
 

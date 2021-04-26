@@ -73,9 +73,27 @@
 
     s_expand = source_expand(psource, x; basis_order = 4)
 
-    if norm(field(psource,x,ω) - s_expand(x,ω)) > 1e-7 * abs(field(psource,x,ω))
-        error("The field of the source: $source was not equal to its series expansion in a regular basis.")
-    end
+    # test if the source is equal to its series expansion in a regular basis.
+    @test norm(field(psource,x,ω) - s_expand(x,ω)) < 1e-10 * abs(field(psource,x,ω))
 
-    @test true
+    # create source through a regular expansion of spherical waves
+
+    order = 3
+    len = basisorder_to_basislength(typeof(a3_host),order)
+
+    position = rand(3)
+
+    source = regular_spherical_source(a3_host, rand(len) ./ (1:len);
+        amplitude = rand(Complex{Float64}),
+        position = position
+    );
+
+    k = real(ω / source.medium.c)
+    centre = position + (4.0pi / k) .* rand(3)
+    x = centre + (0.1 / k) .* rand(3)
+
+    s_expand = source_expand(source, x; basis_order = 4)
+
+    @test norm(field(source,x,ω) - s_expand(x,ω)) < 1e-10 * abs(field(source,x,ω))
+
 end

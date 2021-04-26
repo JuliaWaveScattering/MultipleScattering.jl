@@ -46,13 +46,16 @@ struct TimeSimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T
     t::Vector{T}
 end
 
-function TimeSimulationResult(time_field::Union{AbstractArray{T},AbstractArray{AbstractVector{T}}}, x::AbstractVector{SVector{Dim,T}}, t::AbstractVector{T}) where {Dim,T}
+function TimeSimulationResult(time_field::Union{AbstractArray{T},AbstractArray{AbstractVector{T}}}, x::AbstractVector{V}, t::AbstractVector{T}) where {T,V<:AbstractVector{T}}
 
     if typeof(time_field) <: AbstractVector # if field is a vector we cast it to a Matrix
         time_field = reshape(time_field, size(time_field,1), size(time_field,2))
     end
+
+    x = [SVector(xi...) for xi in x]
     time_field = [SVector(d...) for d in time_field]
     FieldDim = size(time_field[1],1)
+    Dim = length(x[1])
     TimeSimulationResult{T,Dim,FieldDim}(time_field, Vector(x), Vector(t))
 end
 

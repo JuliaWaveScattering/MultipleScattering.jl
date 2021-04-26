@@ -144,6 +144,25 @@ function regular_basis_function(medium::Acoustic{T,3},  ω::Union{T,Complex{T}})
     end
 end
 
+function regular_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::T, x::AbstractVector{T}) where {T}
+    vs = regular_basis_function(medium, ω)(2*order,x)
+    c = gaunt_coefficient
+
+    ind(order::Int) = basisorder_to_basislength(Acoustic{T,3},order)
+    V = [
+        begin
+            i1 = abs(l-dl) == 0 ? 1 : ind(abs(l-dl)-1) + 1
+            i2 = ind(l+dl)
+
+            cs = [c(T,l,m,dl,dm,l1,m1) for l1 = abs(l-dl):(l+dl) for m1 = -l1:l1]
+            sum(vs[i1:i2] .* cs)
+        end
+    for dl = 0:order for dm = -dl:dl for l = 0:order for m = -l:l];
+
+    V = reshape(V, ((order+1)^2, (order+1)^2))
+
+    return V
+end
 
 # Check for material properties that don't make sense or haven't been implemented
 """

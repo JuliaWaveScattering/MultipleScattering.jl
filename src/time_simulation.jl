@@ -103,7 +103,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
     if size(field_mat,1) != size(ω_vec,1) error("Vector of frequencies ω_vec expected to be same size as size(field_mat,1)") end
 
     function f(t::T,j::Int)
-        fs = discrete_impulse.in_freq.*field_mat[:,j].*exp.(-(im*t).*ω_vec)
+        fs = discrete_impulse.in_freq.*field_mat[:,j] .* exp.(-(im*t) .* ω_vec)
         if method == :dft && ω_vec[1] == zero(T)
             fs[1] = fs[1]/T(2) # so as to not add ω=0 tωice in the integral of ω over [-inf,inf]
         end

@@ -97,6 +97,10 @@ struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T,P}
     end
 end
 
+function Source(medium::P,field::Function,coefficients::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+    return Source{T,P}(medium,field,coefficients)
+end
+
 """
     regular_spherical_coefficients(source::Source)
 
@@ -110,6 +114,8 @@ end
 Check that the source functions return the correct types
 """
 function self_test(source::Source{T,P}) where {P,T}
+
+medium, source_field, source_coef
 
     ω = one(T)
 
@@ -138,6 +144,35 @@ field(s::Source{T},x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
 
 function constant_source(medium::P, num::Complex{T} = zero(Float64) * im) where {P,T}
     return Source{T,P}(medium, (x,ω) -> num, (order,x,ω) -> [num])
+end
+
+"""
+    regular_spherical_source(PhysicalMedium,regular_coefficients; amplitude = one(T), position = zeros(T,Dim))
+
+``c_n = ```regular_coefficients[n]`, ``x_o=```position`, and let ``v_n(kx)`` represent the regular spherical basis with wavenumber ``k`` at position ``x``. The above returns a `source` where `source.field(x,ω) =```\\sum_n c_n v_n(kx -k x_0)``
+"""
+function regular_spherical_source(medium::PhysicalMedium{T,Dim},regular_coefficients::AbstractVector{CT}; amplitude::Union{T,Complex{T}} = one(T), position::AbstractArray{T} = SVector(zeros(T,Dim)...)) where {T,Dim,CT<:Union{T,Complex{T}}}
+
+    coeff_order = basislength_to_basisorder(typeof(medium),length(regular_coefficients))
+
+    function source_field(x,ω)
+        vs = regular_basis_function(medium, ω)(coeff_order,x-position)
+        return amplitude * sum(vs .* regular_coefficients)
+
+    end
+
+    function source_coef(order,centre,ω)
+        k = ω / medium.c
+
+        V = regular_translation_matrix(medium, max(order,coeff_order), ω, centre - position)
+
+        len2 = basisorder_to_basislength(typeof(medium),order)
+        len1 = length(regular_coefficients)
+
+        return amplitude .* sum(regular_coefficients[n] .* V[n,1:len2] for n in 1:len1)
+    end
+
+    return Source(medium, source_field, source_coef)
 end
 
 """

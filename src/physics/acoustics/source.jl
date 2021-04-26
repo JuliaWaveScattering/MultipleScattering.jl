@@ -3,7 +3,7 @@
 
 Create 2D [`Acoustic`](@ref) point [`Source`](@ref) (zeroth Hankel function of first type)
 """
-function point_source(medium::Acoustic{T,2}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,2}} where T <: AbstractFloat
+function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,2}} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
