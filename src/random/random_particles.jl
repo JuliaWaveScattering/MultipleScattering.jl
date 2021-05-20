@@ -1,5 +1,3 @@
-const MAX_ATTEMPTS_TO_FIT_PARTICLE = 3000
-
 
 random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shape::Shape{T,Dim}; kws...) where {T<:AbstractFloat,Dim} = random_particles(particle_medium, [particle_shape]; kws...)
 
@@ -92,6 +90,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
         seed=Random.make_seed(),
         verbose::Bool = false,
         separation_ratio::T = T(1.005), # Min distance between particle centres relative to their outer radiuses.
+        max_attempts_to_place_particle::Int = 3000, # Maximum number of attempts to place a particle
         current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[] # Particles already present.
 ) where {T<:AbstractFloat,Dim,P<:PhysicalMedium{T,Dim},S<:Shape{T,Dim}}
 
@@ -149,8 +148,8 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
             end
 
             num_attempts += 1
-            if num_attempts > MAX_ATTEMPTS_TO_FIT_PARTICLE
-                error("Tried to place a scatterer $MAX_ATTEMPTS_TO_FIT_PARTICLE times unsuccessfully. You could try increasing MAX_ATTEMPTS_TO_FIT_PARTICLE")
+            if num_attempts > max_attempts_to_place_particle
+                error("Tried to place a scatterer $max_attempts_to_place_particle times unsuccessfully. You could try increasing max_attempts_to_place_particle")
             end
 
         end
