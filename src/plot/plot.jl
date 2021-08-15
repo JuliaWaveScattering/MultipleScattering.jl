@@ -59,7 +59,7 @@ end
             region_shape = bounding_box(sim.particles)
         end
 
-    bounds = bounding_rectangle(region_shape)
+    bounds = bounding_box(region_shape)
     # If user has not set xlims and ylims, set them to the rectangle
     xlims --> (bottomleft(bounds)[1], topright(bounds)[1])
     ylims --> (bottomleft(bounds)[2], topright(bounds)[2])
