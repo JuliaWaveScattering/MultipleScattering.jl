@@ -34,8 +34,8 @@
         radius = 2.0
         o = [6.7,8.9]
         circle = Sphere(o, radius)
-        circle_bounding_rectangle = bounding_box(circle)
-        @test volume(circle) / volume(circle_bounding_rectangle) ≈ 0.7853981633974483
+        circle_bounding_box = bounding_box(circle)
+        @test volume(circle) / volume(circle_bounding_box) ≈ 0.7853981633974483
         @test name(circle) == "Circle"
 
         @test outer_radius(circle) == radius
@@ -47,7 +47,7 @@
 
         smaller_circle = Sphere(o, radius-2)
         @test smaller_circle ⊆ circle
-        @test circle ⊆ circle_bounding_rectangle
+        @test circle ⊆ circle_bounding_box
 
         # Test different ways to construct Circle produce same results
         @test Sphere((0.0,0.0), 1.0) == Sphere([0.0,0.0], 1.0) # Tuple or Vector
@@ -68,8 +68,8 @@
 
     @testset "Time of flight" begin
         time_of_flight = TimeOfFlight([-10.0,0.0],40.0)
-        time_of_flight_bounding_rectangle = bounding_box(time_of_flight)
-        ratio = volume(time_of_flight) / volume(time_of_flight_bounding_rectangle)
+        time_of_flight_bounding_box = bounding_box(time_of_flight)
+        ratio = volume(time_of_flight) / volume(time_of_flight_bounding_box)
         # Geometric arguments dictate that the ratio must be between 0.5 and 1.0
         @test ratio > 0.5
         @test ratio < 1.0
@@ -89,8 +89,8 @@
 
     @testset "Time of flight from point" begin
         time_of_flight = TimeOfFlightFromPoint([-10.0,0.0],40.0)
-        time_of_flight_bounding_rectangle = bounding_box(time_of_flight)
-        ratio = volume(time_of_flight) / volume(time_of_flight_bounding_rectangle)
+        time_of_flight_bounding_box = bounding_box(time_of_flight)
+        ratio = volume(time_of_flight) / volume(time_of_flight_bounding_box)
         # Geometric arguments dictate that the ratio must be between 0.5 and 1.0
         @test ratio > 0.5
         @test ratio < 1.0

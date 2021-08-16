@@ -19,13 +19,13 @@ end
 
 To be able to place particles in `MyRectangle` you need to extend the functions defined in the package you need to explicitly import them:
 ```julia
-import MultipleScattering: volume, name, bounding_rectangle
+import MultipleScattering: volume, name, bounding_box
 
 volume(shape::MyRectangle) = shape.width * shape.height
 name(shape::MyRectangle) = "MyRectangle"
 
 # every shape needs a bounding rectangle, this is where particles are first placed.
-bounding_rectangle(shape::MyRectangle) = Box(shape.origin, [shape.width, shape.height])
+bounding_box(shape::MyRectangle) = Box(shape.origin, [shape.width, shape.height])
 
 import Base.in, Base.issubset
 function in(x::AbstractVector, r::MyRectangle)::Bool
