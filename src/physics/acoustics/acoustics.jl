@@ -107,17 +107,19 @@ function outgoing_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::
     return U
 end
 
-regular_basis_function(p::Particle{T,Dim,Acoustic{T,Dim}}, ω::T) where {T,Dim} = regular_basis_function(p.medium, ω)
+# NOTE that medium in both functions below is only used to get c and to identify typeof(medium)
+regular_basis_function(p::Particle{T,Dim,Acoustic{T,Dim}}, ω::T) where {T,Dim} = regular_basis_function(ω/p.medium.c, p.medium)
+regular_basis_function(medium::Acoustic{T,Dim},  ω::Union{T,Complex{T}}) where {T,Dim} = regular_basis_function(ω/medium.c, medium)
 
 function regular_radial_basis(medium::Acoustic{T,2}, ω::T, order::Integer, r::T) where {T}
     k = ω/medium.c
     return besselj.(-order:order,k*r)
 end
 
-function regular_basis_function(medium::Acoustic{T,2}, ω::Union{T,Complex{T}}) where T
+function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::Acoustic{T,2}) where T
     return function (order::Integer, x::AbstractVector{T})
         r, θ  = cartesian_to_radial_coordinates(x)
-        k = ω/medium.c
+        k = wavenumber
 
         return [besselj(m,k*r)*exp(im*θ*m) for m = -order:order]
     end
@@ -130,13 +132,12 @@ function regular_radial_basis(medium::Acoustic{T,3}, ω::T, order::Integer, r::T
     return [js[l+1] for l = 0:order for m = -l:l]
 end
 
-function regular_basis_function(medium::Acoustic{T,3},  ω::Union{T,Complex{T}}) where T
+function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::Acoustic{T,3}) where T
     return function (order::Integer, x::AbstractVector{T})
         r, θ, φ  = cartesian_to_radial_coordinates(x)
-        k = ω/medium.c
 
         Ys = spherical_harmonics(order, θ, φ)
-        js = [sbesselj(l,k*r) for l = 0:order]
+        js = [sbesselj(l,wavenumber*r) for l = 0:order]
 
         lm_to_n = lm_to_spherical_harmonic_index
 

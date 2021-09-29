@@ -143,8 +143,8 @@
         # source = 0.5*source1 + 0.5*source2;
         source = 1.5*source2;
 
-        sim = FrequencySimulation(particles, source)
-        sim_source = FrequencySimulation(source)
+        sim = FrequencySimulation(particles, source);
+        sim_source = FrequencySimulation(source);
 
         # result = run(sim_source, SVector(1.0,2.0,1.0), ωs)
 

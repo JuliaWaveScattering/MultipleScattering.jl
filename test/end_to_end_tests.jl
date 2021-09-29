@@ -13,7 +13,7 @@
         source = plane_source(a; position = [0.0,0.0], direction = [1.0,0.0])
         sim = FrequencySimulation(particles,source)
 
-        show(sim);
+        # show(sim);
 
         result = run(sim, SVector(1.0,2.0), 0.1)
         result = run(particles, source, SVector(1.0,2.0), 0.1)
