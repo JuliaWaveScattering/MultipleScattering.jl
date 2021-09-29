@@ -28,7 +28,24 @@ end
     linecolor --> :grey
 
     x, y = boundary_functions(shape)
-    
+
     (x, y, 0.0, 1.0)
+
+end
+
+@recipe function plot(shape::Shape{T,3}) where T
+
+    println("Only the (x,z) coordinates of this shape will be drawn")
+
+    grid --> false
+    xguide --> "x"
+    yguide --> "y"
+    aspect_ratio := 1.0
+    label --> ""
+    linecolor --> :grey
+
+    x, y, z = boundary_functions(shape)
+
+    (x, z, 0.0, 1.0)
 
 end
