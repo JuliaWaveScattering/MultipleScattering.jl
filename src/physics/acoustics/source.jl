@@ -38,7 +38,8 @@ function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T
     end
 
     # SHOULD BE SPHERICAL HANKEL 0, then use translation matrix to get source coefficients!
-    source_field(x,ω) = amp(ω) / (T(4π) * norm(x-source_position)) * exp(im * ω/medium.c * norm(x-source_position))
+    # source_field(x,ω) = amp(ω) / (T(4π) * norm(x-source_position)) * exp(im * ω/medium.c * norm(x-source_position))
+    source_field(x,ω) = amp(ω) * shankelh1(0, ω/medium.c * norm(x-source_position))
 
     @error "not yet implemented"
     # function source_coef(order,centre,ω)
