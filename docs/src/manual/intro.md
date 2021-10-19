@@ -13,6 +13,7 @@ end
 
 ```jldoctest intro
 julia> spatial_dimension = 2; # could also be 3, but then all 2D vectors below would need to be 3D
+
 julia> host_medium = Acoustic(spatial_dimension; ρ=1.0, c=1.0) # density ρ = 1.0 and soundspeed c = 1.0
 Acoustic(1.0, 1.0 + 0.0im, 2)
 ```
