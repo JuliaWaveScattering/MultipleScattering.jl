@@ -29,14 +29,14 @@ julia> using MultipleScattering
 ## Simple example
 Define the properties of your host medium, for example
 ```julia
-dimension = 2 # could also be 3
+dimension = 2 # could also be 3, but then all 2D vectors need to be 3D vectors
 host_medium = Acoustic(dimension; ρ=1.0, c=1.0); # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
 ```
 an acoustic medium in 2D with density 1 and wavespeed 1.
 
 Next, define two dense, circular acoustic particles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
 ```julia
-particle_medium =  Acoustic(dimension; ρ=10.0, c=2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
+particle_medium =  Acoustic(dimension; ρ = 10.0, c = 2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
 p1 = Particle(particle_medium, Sphere([-2.0,2.0], 2.0));
 p2 = Particle(particle_medium, Sphere([-2.0,-2.0], 0.5));
 particles = [p1,p2];
