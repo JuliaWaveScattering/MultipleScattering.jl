@@ -42,10 +42,10 @@ particles = random_particles(Acoustic(2; ρ=0.0, c=0.0), Circle(radius);
         seed=2
 );
 
-typeof(particles)
+length(particles)
 
 # output
-Array{AbstractParticle{Float64,2},1}
+40
 ```
 To see the position of the chosen particles:
 ```julia
@@ -60,10 +60,9 @@ Scattering a plane-wave from these particles
 ωs = LinRange(0.01,1.0,100)
 plane_wave = plane_source(Acoustic(1.0, 1.0, 2);
     direction = [1.0,0.0], position = x);
-sim = FrequencySimulation(particles, plane_wave);
 ```
 ```julia
-plot(run(sim,x,ωs))
+plot(run(particles, plane_wave,x,ωs))
 ```
 ![](plot_result.png)
 

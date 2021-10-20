@@ -21,7 +21,7 @@ MultipleScattering.shape(p1) # we use "MultipleScattering." just in case the fun
 
 # output
 
-Sphere((-2.0, 2.0), 2.0)
+Sphere{Float64,2}([-2.0, 2.0], 2.0)
 ```
 
 ## Placing particles in a region
