@@ -41,7 +41,7 @@ julia> p1 = Particle(particle_medium, Sphere([-2.0,2.0], 2.0))
 Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere{Float64,2}([-2.0, 2.0], 2.0))
 
 julia> p2 = Particle(particle_medium, Sphere([-2.0,-2.0], 0.5))
-Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere{Float64,2}([-2.0, -2.0], 0.5))
+Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere{Float64, 2}([-2.0, -2.0], 0.5))
 
 julia> particles = [p1,p2];
 ```
