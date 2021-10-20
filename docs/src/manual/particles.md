@@ -102,4 +102,4 @@ plot(sim, ω; res=20,
 
 ## Particle internals
 
-To define the scattering from a particle we use the T-matrix method. This package only exports T-matrix for circular [`Particle`](@ref)  and circular [`CapsuleParticle`](@ref). To understand how to define new T-matrix read [Notes on the T-matrix](../maths/T-matrix.pdf) and see the source code of [`t_matrix`](@ref).
+To define the scattering from a particle we use the T-matrix method. This package only exports T-matrix for circular [`Particle`](@ref)  and circular [`CapsuleParticle`](@ref). To understand how to define new T-matrix read [Notes on the T-matrix](../maths/multiplescattering.pdf) and see the source code of [`t_matrix`](@ref).

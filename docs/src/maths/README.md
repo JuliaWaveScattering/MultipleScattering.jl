@@ -2,7 +2,7 @@
 
 Below are papers and notes that explain the theory behind this package.
 
-## [The T-matrix and Multiple Scattering](T-matrix.pdf)
+## [The equations of Multiple Scattering](multiplescattering.pdf)
 
 These short notes introduce the T-matrix, which defines how a particle scatters waves, and shows how it used in multiple scattering from many particles.
 

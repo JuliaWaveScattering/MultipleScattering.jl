@@ -80,7 +80,7 @@ julia> plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, res =
 ```
 ![Plot point wave](../assets/transducer-source.png)
 
-where `field_apply` is applied to the wave field at every point, the default is `field_apply = real`, and `res` is the resolution along both the $x$ and $y$ axis. Note, this is not computationally very efficient. See [`+(s1::Source{T,P},s2::Source{T,P}) where {P,T}`](@ref) for the very abstract code behind the scenes.
+where `field_apply` is applied to the wave field at every point, the default is `field_apply = real`, and `res` is the resolution along both the $x$ and $y$ axis. Note, this is not computationally very efficient. See [source.jl](../../../src/source.jl) for the very abstract code behind the scenes.
 
 To define a new source you will need to understand the internals below.
 
