@@ -38,14 +38,83 @@ end
 
 end
 
+
 "Plot the field for a particular wavenumber"
-@recipe function plot(sim::FrequencySimulation{T,Dim}, ω::T;
-            res=10, xres=res, yres=res,
-            field_apply=real,
-            region_shape = :auto,
-            bounds = :auto,
-            exclude_region = EmptyShape{T,Dim}(),
-            drawparticles=false) where {T,Dim}
+@recipe function plot(sim::FrequencySimulation{T,3}, ω::T;
+        res=10, xres=res, yres=res,
+        y = :auto,
+        field_apply=real,
+        region_shape = :auto,
+        bounds = :auto,
+        exclude_region = EmptyShape{T,3}(),
+        drawparticles=false) where {T}
+
+    # If user wants us to, generate bounding rectangle around particles
+    region_shape = (region_shape != :auto) ? region_shape :
+        if isempty(sim.particles)
+            if bounds == :auto
+                @warn "What region to plot? For example, use keyword bounds = Box([[-1.0,-1.0],[1.0,1.0]])"
+                Box([[-one(T),-one(T)],[one(T),one(T)]])
+            else bounds
+            end
+        else
+            region_shape = bounding_box(sim.particles)
+        end
+
+    bounds = bounding_box(region_shape)
+
+    # If user has not set xlims and ylims, set them to the rectangle
+    corners = box_corners(bounds)
+    xlims --> (corners[1][1], corners[end][1])
+    ylims --> (corners[1][end], corners[end][end])
+
+    if y == :auto
+        y = corners[1][2]
+    end
+
+    # Incase the user did set the xlims and ylims, generate a new bounding box with them
+    # p_xlims = plotattributes[:xlims]
+    # p_ylims = plotattributes[:ylims]
+    # bounds = Box([[T(p_xlims[1]),T(p_ylims[1])], [T(p_xlims[2]),T(p_ylims[2])]])
+    #
+    # region_shape = (bounds ⊆ region_shape) ? bounds : region_shape
+
+    field_sim = run(sim, region_shape, [ω]; y=y, xres=xres, zres=yres, exclude_region=exclude_region)
+    xy_mat = reshape(field_sim.x, (xres+1, yres+1))
+    x_pixels = [x[1] for x in xy_mat[:,1]]
+    y_pixels = [x[end] for x in xy_mat[1,:]]
+
+    @series begin
+
+        # Turn the responses (a big long vector) into a matrix, so that the heatmap will understand us
+        response_mat = transpose(reshape(field(field_sim), (xres+1, yres+1)))
+        seriestype --> :contour
+        fill --> true
+        grid --> false
+        aspect_ratio := 1.0
+        seriescolor --> :balance
+        title --> "Field at ω=$ω"
+
+        (x_pixels, y_pixels, field_apply.(response_mat))
+    end
+
+    if drawparticles
+        @series begin
+            sim.particles
+        end
+    end
+
+end
+
+
+"Plot the field for a particular wavenumber"
+@recipe function plot(sim::FrequencySimulation{T,2}, ω::T;
+        res=10, xres=res, yres=res,
+        field_apply=real,
+        region_shape = :auto,
+        bounds = :auto,
+        exclude_region = EmptyShape{T,2}(),
+        drawparticles=false) where {T}
 
     # If user wants us to, generate bounding rectangle around particles
     region_shape = (region_shape != :auto) ? region_shape :
@@ -72,7 +141,7 @@ end
 
     region_shape = (bounds ⊆ region_shape) ? bounds : region_shape
 
-    field_sim = run(sim, region_shape, [ω]; xres=xres, yres=yres, exclude_region=exclude_region)
+    field_sim = run(sim, region_shape, [ω]; xres=xres, yres=yres, zres=zres, exclude_region=exclude_region)
     xy_mat = reshape(field_sim.x, (xres+1, yres+1))
     x_pixels = [x[1] for x in xy_mat[:,1]]
     y_pixels = [x[2] for x in xy_mat[1,:]]

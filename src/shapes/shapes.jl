@@ -70,15 +70,17 @@ function points_in_shape(region::Shape{T,2};
 end
 
 function points_in_shape(region::Shape{T,3};
-        res::Number = 20,
+        y::T = zero(T),
+        res::Number = 20, xres::Number = res, zres::Number = res,
         exclude_region::Shape = EmptyShape(region)) where T
 
     box = bounding_box(region)
 
-    #Size of the step in x and y direction
-    x_vec_step = box.dimensions ./ res
+    #Size of the step in x and z direction
+    x_vec_step = [box.dimensions[1] / xres, zero(T), box.dimensions[3] / zres]
+
     bl = box_corners(box)[1]
-    x_vec = [SVector{3}(bl + x_vec_step .* [i,0,j]) for i=0:xres, j=0:zres][:]
+    x_vec = [SVector{3}(bl + x_vec_step .* [i,y,j]) for i = 0:xres, j = 0:zres][:]
     region_inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
 
     return x_vec, region_inds

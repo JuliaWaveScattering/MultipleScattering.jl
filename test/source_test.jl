@@ -65,6 +65,8 @@
 
     # check expansion in regular spherical waves
     psource = plane_source(a3_host; direction = direction, position =  position, amplitude = amplitude)
+    pointsource = point_source(a3_host, position, amplitude)
+
 
     # Check that the field converges to its regular basis expansion around centre
     k = real(ω / psource.medium.c)

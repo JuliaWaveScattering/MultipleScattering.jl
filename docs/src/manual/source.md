@@ -5,21 +5,25 @@ DocTestSetup = quote
     using MultipleScattering
 end
 ```
-[`Source`](@ref) is a `struct` which represents any source, also called an incident wave. For acoustics, any wave field $u_{\text{in}}(x,y)$ that satisfies $\nabla^2 u_{\text{in}}(x,y) + k^2 u_{\text{in}}(x,y) = 0$, with $k = \omega/c$, can be a source. See [Source](@ref source_base) for a list of relevant types and functions.
+[`Source`](@ref) is a `struct` which represents any source, also called an incident wave. See [Source](@ref source_base) for a list of relevant types and functions.
 
-## 2D Acoustics
+## Acoustics
 
-Two common source waves are shown below.
+For acoustics, any wave field $u_{\text{in}}(x,y)$ that satisfies $\nabla^2 u_{\text{in}}(x,y) + k^2 u_{\text{in}}(x,y) = 0$, with $k = \omega/c$, can be a source.
 
-For a plane-wave of the form $u_{\text{in}}(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$, where $A$ is the amplitude, $\mathbf n = (n_1,n_2)$ is the direction of propagation, and $\mathbf x_0 = (x_0,y_0)$ is the initially position of the source, we can use
+Two commonly used sources are a plane wave and point source. These can then be added together to create more complicated sources, like immitating a finite sized transducer / source.
+
+For a plane-wave of the form $u_{\text{in}}(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$, where $A$ is the amplitude, $\mathbf n = (n_1,n_2,n_2)$ is unit vector which points in the direction of propagation, and $\mathbf x_0 = (x_0,y_0,z_0)$ is the initially position (or origin) of the source, we can use
 ```jldoctest intro
-julia> medium = Acoustic(1.0, 1.0, 2);
+julia> dimension = 3;
+
+julia> medium = Acoustic(dimension; ρ = 1.0, c = 1.0);
 
 julia> A = 1.0;
 
-julia> n = [1.0,1.0];
+julia> n = [1.0,1.0,1.0];
 
-julia> x0 = [1.0,0.0];
+julia> x0 = [1.0,0.0,0.0];
 
 julia> plane_wave = plane_source(medium; amplitude = A, direction = n, position = x0);
 ```
@@ -28,23 +32,26 @@ We can plot this source wave one frequency ω by using
 ```julia
 julia> ω = 1.0;
 
-julia> domain = Box([[-1.0,-1.0],[1.0,1.0]]);
+julia> plot_origin = zeros(3); plot_dimensions = ones(3); plot_domain = Box(plot_origin, plot_dimensions);
 
-julia> plot(plane_wave, ω; bounds = domain)
+julia> using Plots; pyplot();
+
+julia> plot(plane_wave, ω; region_shape = plot_domain, y = 0.0) # in 3d currently only x-z slices are plotted for a given fixed y
 ```
 ![Plot plane wave](../assets/plane-wave.png)
 
-Another useful source is the point source $u_{\text{in}}(x,y) = \frac{\mathrm i A}{4} \mathrm H_0^{(1)}(k \|(x-x_0,y-y_0)\|)$ where $A$ is the amplitude,  $\mathbf x_0 = (x_0,y_0)$ is the origin of the point source, and $\mathrm H_0^{(1)}$ is the Hankel function of the first kind.
+Another useful source is the point source. In any dimension we consider the point source to be the zero order of the [`outgoing_basis_function`](@ref), which are the basis for all outgoing waves.
+
+The point source for 2D is $u_{\text{in}}(x,y) = \frac{\mathrm i A}{4} \mathrm H_0^{(1)}(k \|(x-x_0,y-y_0)\|)$ and for
+for 3D it is $u_{\text{in}}(x,y) = \frac{A}{4 \pi} \frac{e^{i k  \| x -  x_0\|)}{\| x -  x_0\|}$ where $A$ is the amplitude,  $\mathbf x_0$ is the origin of the point source, and $\mathrm H_0^{(1)}$ is the Hankel function of the first kind.
 
 ```jldoctest intro
-julia> x0 = [0.0,-1.2];
-
-julia> domain = Box([[-1.0,-1.0],[1.0,1.0]]);
+julia> x0 = [0.0,-1.2, 0.0];
 
 julia> point_wave = point_source(medium, x0, A);
 ```
 ```julia
-julia> plot(point_wave, ω; bounds = domain)
+julia> plot(point_wave, ω; region_shape = plot_domain)
 ```
 ![Plot point wave](../assets/point-wave.png)
 
@@ -58,21 +65,22 @@ The easiest way to create new sources is to just sum together predefined sources
 ```julia
 julia> source = (3.0 + 1.0im) * point_wave + plane_wave;
 
-julia> plot(source, ω; bounds = domain)
+julia> plot(source, ω; bounds = plot_domain)
 ```
-![Plot point wave](../assets/combined-source.png)
+![Plot combined source wave](../assets/combined-source.png)
 
-For example, to create a finite emitter/transducer source we can use:
+For example, we can use this to create a finite emitter/transducer source,
+```jldoctest intro
+julia> xs = LinRange(-0.7, 0.7, 30);
+
+julia> source = sum(xs) do x point_source(medium, [x, -1.1, 0.0]) end;
+```
 ```julia
-julia> ys = LinRange(-0.7, 0.7, 30);
-
-julia> source = sum(ys) do y point_source(medium, [-1.1, y]) end;
-
-julia> plot(source, 4.0; bounds = domain, field_apply = abs, res = 40)
+julia> plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, res = 40)
 ```
 ![Plot point wave](../assets/transducer-source.png)
 
-where `field_apply` is applied to the wave field at every point, the default is `field_apply = real`, and `res` is the resolution along both the $x$ and $y$ axis.
+where `field_apply` is applied to the wave field at every point, the default is `field_apply = real`, and `res` is the resolution along both the $x$ and $y$ axis. Note, this is not computationally very efficient. See [`+(s1::Source{T,P},s2::Source{T,P}) where {P,T}`](@ref) for the very abstract code behind the scenes.
 
 To define a new source you will need to understand the internals below.
 

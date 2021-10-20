@@ -26,6 +26,7 @@ function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, am
     return Source{T,Acoustic{T,2}}(medium, source_field, source_coef)
 end
 
+# If we replaced 3 with Dim below this could should work for all dimensions! Test carefully after changing.
 function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,3}} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
@@ -37,31 +38,23 @@ function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T
         amp = amplitude
     end
 
-    # SHOULD BE SPHERICAL HANKEL 0, then use translation matrix to get source coefficients!
     # source_field(x,ω) = amp(ω) / (T(4π) * norm(x-source_position)) * exp(im * ω/medium.c * norm(x-source_position))
-    source_field(x,ω) = amp(ω) * shankelh1(0, ω/medium.c * norm(x-source_position))
+    # source_field(x,ω) = amp(ω)/sqrt(4π) * shankelh1(0, ω/medium.c * norm(x-source_position))
+    source_field(x,ω) = amp(ω) * outgoing_basis_function(medium, ω)(0,x-source_position)[1]
 
-    @error "not yet implemented"
-    # function source_coef(order,centre,ω)
-    #     # plane-wave expansion for complex vectors
-    #     k = ω/medium.c
-    #     r, θ, φ  = cartesian_to_radial_coordinates(centre - source_position)
-    #     Ys = spherical_harmonics(order, θ, φ)
-    #     lm_to_n = lm_to_spherical_harmonic_index
-    #
-    #     return T(4pi) * source_field(centre,ω) .*
-    #     [
-    #         Complex{T}(im)^l * (-one(T))^m * Ys[lm_to_n(l,-m)]
-    #     for l = 0:order for m = -l:l]
-    # end
-    #
-    # function source_coef(order,centre,ω)
-    #     k = ω/medium.c
-    #     r, θ = cartesian_to_radial_coordinates(centre - source_position)
-    #
-    #     # using Graf's addition theorem
-    #     return (amp(ω)*im)/4 * [hankelh1(-n,k*r) * exp(-im*n*θ) for n = -order:order]
-    # end
+    # centre = 12.0 .* rand(3)
+    # x = centre + rand(3)
+
+    # order = 5
+    # U = outgoing_translation_matrix(medium, order, ω,  centre);
+    # vs = regular_basis_function(medium, ω)(order, x - centre);
+    # us = outgoing_basis_function(medium, ω)(0, x);
+    # sum(U[1,:] .* vs) - us[1]
+
+    function source_coef(order,centre,ω)
+        U = outgoing_translation_matrix(medium, order, ω,  centre);
+        return amp(ω) * U[1,:]
+    end
 
     return Source{T,Acoustic{T,3}}(medium, source_field, source_coef)
 end

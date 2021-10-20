@@ -114,9 +114,6 @@ end
 Check that the source functions return the correct types
 """
 function self_test(source::Source{T,P}) where {P,T}
-
-medium, source_field, source_coef
-
     ω = one(T)
 
     # choose rand postion, hopefully not the source position/origin
