@@ -12,9 +12,9 @@ end
 ```
 
 ```jldoctest intro
-julia> spatial_dimension = 2; # could also be 3, but then all 2D vectors below would need to be 3D
+julia> spatial_dim = 2; # could also be 3, but then all 2D vectors below would need to be 3D
 
-julia> host_medium = Acoustic(spatial_dimension; ρ=1.0, c=1.0) # density ρ = 1.0 and soundspeed c = 1.0
+julia> host_medium = Acoustic(spatial_dim; ρ=1.0, c=1.0) # density ρ = 1.0 and soundspeed c = 1.0
 Acoustic(1.0, 1.0 + 0.0im, 2)
 ```
 At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y,\omega) + k^2 u(x,y,\omega) = 0$, where $k = \omega/c$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
@@ -35,13 +35,13 @@ We generally call the incident wave a source. See [Sources](@ref) for details, a
 
 Next, we define some particles to scatter an acoustic wave. We choose two filled circles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
 ```jldoctest intro
-julia> particle_medium =  Acoustic(spatial_dimension; ρ=10.0, c=2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
+julia> particle_medium =  Acoustic(spatial_dim; ρ=10.0, c=2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
 
 julia> p1 = Particle(particle_medium, Sphere([-2.0,2.0], 2.0))
-Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere((-2.0, 2.0), 2.0))
+Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere{Float64,2}([-2.0, 2.0], 2.0))
 
 julia> p2 = Particle(particle_medium, Sphere([-2.0,-2.0], 0.5))
-Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere((-2.0, -2.0), 0.5))
+Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere{Float64,2}([-2.0, -2.0], 0.5))
 
 julia> particles = [p1,p2];
 ```
