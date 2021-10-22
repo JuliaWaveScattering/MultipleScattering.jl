@@ -18,13 +18,13 @@ function Box(origin::NTuple{Dim,T}, dimensions::NTuple{Dim,T}) where {T,Dim}
     Box{T,Dim}(origin, dimensions)
 end
 
-function Box(corners::Vector{S}) where S<:AbstractVector
-    centre = mean(corners)
-    cs = hcat([abs.(c - centre) for c in corners]...)
-    dimensions = 2 .* abs.(corners[1] - centre)
+function Box(boxcorners::Vector{S}) where S<:AbstractVector
+    centre = mean(boxcorners)
+    cs = hcat([abs.(c - centre) for c in boxcorners]...)
+    dimensions = 2 .* abs.(boxcorners[1] - centre)
 
-    if dimensions != 2 .* abs.(corners[2] - centre)
-        @error "expected $corners to be a vector of corners of a $(length(corners[1])) dimensional box, with sides aligned with the coordinate axis."
+    if dimensions != 2 .* abs.(boxcorners[2] - centre)
+        @error "expected $boxcorners to be a vector of corners of a $(length(boxcorners[1])) dimensional box, with sides aligned with the coordinate axis."
     end
 
     Box(centre,dimensions)
@@ -42,8 +42,8 @@ volume(box::Box) = prod(box.dimensions)
 
 import Base.issubset
 function issubset(inner::Box, outer::Box)
-    corners = box_corners(inner)
-    return all(c ∈ outer for c in corners)
+    boxcorners = corners(inner)
+    return all(c ∈ outer for c in boxcorners)
 end
 
 import Base.in
@@ -75,17 +75,17 @@ end
 bounding_box(b::Box) = b
 
 "Returns a vector of SVector with the coordinates of the corners of the box"
-function box_corners(b::Box{T,Dim}) where {T,Dim}
+function corners(b::Box{T,Dim}) where {T,Dim}
     d1 = origin(b) - b.dimensions ./ T(2)
     d2 = origin(b) + b.dimensions ./ T(2)
     ds =[d1,d2]
 
-    corners = map(0:(2^Dim-1)) do i
+    boxcorners = map(0:(2^Dim-1)) do i
         switches = 1 .+ [parse(Int,c)  for c in bitstring(i)[end-Dim+1:end]]
         [ds[switches[j]][j] for j in eachindex(switches)]
     end
 
-    return corners
+    return boxcorners
 end
 
 "Return SVector with the coordinates of the bottom left of a rectangle"

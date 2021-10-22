@@ -64,12 +64,12 @@ end
     bounds = bounding_box(region_shape)
 
     # If user has not set xlims and ylims, set them to the rectangle
-    corners = box_corners(bounds)
-    xlims --> (corners[1][1], corners[end][1])
-    ylims --> (corners[1][end], corners[end][end])
+    cs = corners(bounds)
+    xlims --> (cs[1][1], cs[end][1])
+    ylims --> (cs[1][end], cs[end][end])
 
     if y == :auto
-        y = corners[1][2]
+        y = cs[1][2]
     end
 
     # Incase the user did set the xlims and ylims, generate a new bounding box with them

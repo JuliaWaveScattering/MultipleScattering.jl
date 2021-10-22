@@ -5,7 +5,7 @@ DocTestSetup = quote
     using MultipleScattering
 end
 ```
-Shape is an abstract type which represents the shape of particles, and also the domain to place particles. See [Shape](@ref base_shape) for a list of relevant types and functions.
+Shape is an abstract type which represents the shape of particles, and also the domain to place particles. See [Shape](@ref base_shapes) for a list of relevant types and functions.
 
 
 ## Existing shapes

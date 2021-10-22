@@ -9,5 +9,5 @@ Acoustic type and functions.
 ```@autodocs
 Modules = [MultipleScattering]
 Order   = [:constant, :type, :function]
-Pages   = ["acoustics/acoustics.jl","acoustics/circle.jl","acoustics/concentric_capsule.jl","acoustics/source.jl"]
+Pages   = ["src/physics/acoustics/acoustics.jl", "src/physics/acoustics/circle.jl", "src/physics/acoustics/sphere.jl", "src/physics/acoustics/source.jl", "src/physics/acoustics/boundary_data.jl"]
 ```

@@ -8,38 +8,24 @@ CurrentModule = MultipleScattering
 Pages = ["base.md"]
 ```
 
-## [Shape](@id base_shape)
+## [Physical mediums](@id base_physical_property)
 
-Shape types and functions.
+The types and functions shared between all different types of physical mediums.
 
-```@docs
-Shape
-origin
-iscongruent(::Shape,::Shape)
-congruent
-bounding_box
-boundary_functions
-name
-outer_radius
-volume
-Sphere
-Box
-TimeOfFlightFromPoint
-TimeOfFlight
+```@autodocs
+Modules = [MultipleScattering]
+Order   = [:type, :function]
+Pages   = ["src/physics/physical_medium.jl", "src/physics/special_functions.jl"]
 ```
 
-## [Physical property](@id base_physical_property)
+## [Shapes and domains](@id base_shapes)
 
-Physical properties types and functions.
+Shapes are used to define the shape of particles, and to define containers (or configurations) where all particles are placed. It is also used in plotting.
 
-```@docs
-PhysicalMedium
-field_dimension
-spatial_dimension
-outgoing_basis_function
-regular_basis_function
-internal_field
-boundary_data
+```@autodocs
+Modules = [MultipleScattering]
+Order   = [:type, :function]
+Pages   = ["src/shapes/shapes.jl", "src/shapes/sphere.jl", "src/shapes/halfspace.jl", "src/shapes/plate.jl", "src/shapes/box.jl", "src/shapes/empty_shape.jl", "src/shapes/time_of_flight.jl"]
 ```
 
 ## [Particle](@id base_particle)
@@ -55,7 +41,7 @@ iscongruent(::AbstractParticle,::AbstractParticle)
 
 ## [Source](@id source_base)
 
-Source types and functions.
+Source types and functions for all physical mediums.
 
 ```@autodocs
 Modules = [MultipleScattering]
@@ -65,7 +51,7 @@ Pages   = ["src/source.jl"]
 
 ## [Impulse](@id impulse_base)
 
-Impulse types and functions.
+For convert to the time domain.
 
 ```@autodocs
 Modules = [MultipleScattering]

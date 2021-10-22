@@ -50,7 +50,7 @@ include("empty_shape.jl")
     points_in_shape(Shape; res = 20, xres = res, yres = res,
              exclude_region = EmptyShape(region), kws...)
 
-returns `(x_vec, region_inds)` where `x_vec` is a vector of points that cover a box which bounds `Shape`, and `region_inds` is an array of linear indices such that `x_vec[region_inds]` are points contained `Shape`.
+returns `(x_vec, region_inds)` where `x_vec` is a vector of points that cover a box which bounds `Shape`, and `region_inds` is an array of linear indices such that `x_vec[region_inds]` are points contained `Shape`. For 3D we use `zres` instead of `yres`.
 
 """
 function points_in_shape(region::Shape{T,2};
@@ -79,7 +79,7 @@ function points_in_shape(region::Shape{T,3};
     #Size of the step in x and z direction
     x_vec_step = [box.dimensions[1] / xres, zero(T), box.dimensions[3] / zres]
 
-    bl = box_corners(box)[1]
+    bl = corners(box)[1]
     x_vec = [SVector{3}(bl + x_vec_step .* [i,y,j]) for i = 0:xres, j = 0:zres][:]
     region_inds = findall(x -> !(x ∈ exclude_region) && x ∈ region, x_vec)
 
@@ -108,7 +108,7 @@ bounding_box(shape1::Shape, shape2::Shape) = bounding_box([shape1, shape2])
 # Create a box which bounds an array of shapes
 function bounding_box(shapes::Vector{S}) where S<:Shape
     boxes = bounding_box.(shapes)
-    corners_mat = hcat(vcat((box_corners.(boxes))...)...)
+    corners_mat = hcat(vcat((corners.(boxes))...)...)
 
     maxdims = maximum(corners_mat, dims=2)
     mindims = minimum(corners_mat, dims=2)
