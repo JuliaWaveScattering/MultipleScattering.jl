@@ -141,7 +141,7 @@ end
 
     region_shape = (bounds ⊆ region_shape) ? bounds : region_shape
 
-    field_sim = run(sim, region_shape, [ω]; xres=xres, yres=yres, zres=zres, exclude_region=exclude_region)
+    field_sim = run(sim, region_shape, [ω]; xres=xres, yres=yres, zres=yres, exclude_region=exclude_region)
     xy_mat = reshape(field_sim.x, (xres+1, yres+1))
     x_pixels = [x[1] for x in xy_mat[:,1]]
     y_pixels = [x[2] for x in xy_mat[1,:]]
