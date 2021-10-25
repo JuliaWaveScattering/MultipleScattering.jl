@@ -1,8 +1,7 @@
 # MultipleScattering
 
 <!-- [![][docs-stable-img]][docs-stable-url]  -->
-[![][docs-dev-img]][docs-dev-url] [![][doi-img]][doi-url] [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] [![][coveralls-img]][coveralls-url]
-
+[![][docs-dev-img]][docs-dev-url] [![][doi-img]][doi-url] [![CI](ci-img)](ci-url) [![][codecov-img]][codecov-url] [![][coveralls-img]][coveralls-url]
 
 *A Julia library for simulating, processing, and plotting multiple scattering of waves.*
 
@@ -122,8 +121,8 @@ untoward or even non-standard, please let us know.
 [doi-img]: https://zenodo.org/badge/96763392.svg
 [doi-url]: https://zenodo.org/badge/latestdoi/96763392
 
-[travis-img]: https://travis-ci.org/JuliaWaveScattering/MultipleScattering.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/JuliaWaveScattering/MultipleScattering.jl
+[ci-img]: https://github.com/JuliaWaveScattering/MultipleScattering.jl/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/JuliaWaveScattering/MultipleScattering.jl/actions/workflows/ci.yml
 
 [codecov-img]: http://codecov.io/github/JuliaWaveScattering/MultipleScattering.jl/coverage.svg?branch=master
 [codecov-url]: http://codecov.io/github/JuliaWaveScattering/MultipleScattering.jl?branch=master
