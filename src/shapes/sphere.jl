@@ -20,6 +20,7 @@ Sphere(radius::T) where {T} = Sphere{T,3}(zeros(T,3), radius)
 
 name(shape::Sphere) = "Sphere"
 name(shape::Sphere{T,2}) where T = "Circle"
+Symmetry(shape::Sphere{T,Dim}) where {T,Dim} = RadialSymmetry{Dim}()
 
 outer_radius(sphere::Sphere) = sphere.radius
 volume(shape::Sphere{T,3}) where T = 4//3 * π * shape.radius^3

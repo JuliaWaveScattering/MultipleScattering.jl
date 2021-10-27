@@ -110,7 +110,7 @@ import Base.(*)
 function *(a,impulse::ContinuousImpulse{T})::ContinuousImpulse{T} where {T}
 
     if typeof(one(Complex{T})*a) != Complex{T}
-        throw(DomainError(a, "Multiplying impulse by $a would cause impulse type to change, please explicitly cast $a to same type as Source ($T)"))
+        throw(DomainError(a, "Multiplying impulse by $a would cause impulse type to change, please explicitly cast $a to same type as RegularSource ($T)"))
     end
 
     in_time(t) = a*impulse.in_time(t)

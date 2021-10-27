@@ -169,6 +169,6 @@ end
 end
 
 "Plot the source field for a particular wavenumber"
-@recipe function plot(s::Source, ω)
+@recipe function plot(s::RegularSource, ω)
     (FrequencySimulation(s), ω)
 end

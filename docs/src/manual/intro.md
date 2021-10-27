@@ -19,7 +19,7 @@ Acoustic(1.0, 1.0 + 0.0im, 2)
 ```
 At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y,\omega) + k^2 u(x,y,\omega) = 0$, where $k = \omega/c$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
 
-### [Source wave](@id into_source)
+### [RegularSource wave](@id into_source)
 
 The host medium will determine the types of waves that can propagate. For example an incident plane wave $\mathrm e^{ \mathrm i k x}$ there is a convenient constructor
 ```jldoctest intro
@@ -29,7 +29,7 @@ julia> source = plane_source(host_medium; direction = [1.0,0.0]);
     Often $\mathrm e^{ \mathrm i k x - \mathrm i \omega t}$ is considered to be a harmonic plane-wave travelling along the $x-$axis. We omit the part $ - \mathrm i \omega t$ as is common in frequency space.  
 
 
-We generally call the incident wave a source. See [Sources](@ref) for details, and see [Acoustic](@ref) for some functions for the `Acoustic` medium.
+We generally call the incident wave a source. See [RegularSources](@ref) for details, and see [Acoustic](@ref) for some functions for the `Acoustic` medium.
 
 ### [Particles](@id into_particles)
 

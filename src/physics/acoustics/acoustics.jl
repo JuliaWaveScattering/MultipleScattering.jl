@@ -256,11 +256,11 @@ See [`sound_soft`](@ref).
 zero_dirichlet(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_soft(T, Dim)
 
 """
-    internal_field(x::AbstractVector, p::Particle{T,Dim,Acoustic{T,Dim}},  source::Source, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
+    internal_field(x::AbstractVector, p::Particle{T,Dim,Acoustic{T,Dim}},  source::RegularSource, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
 
 The internal field for an acoustic particle in an acoustic medium. For a sphere and circular cylinder the result is exact, for everything else it is an approximation which assumes smooth fields.
 """
-function internal_field(x::AbstractVector{T}, p::Particle{T,Dim,Acoustic{T,Dim}}, source::Source{T,Acoustic{T,Dim}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where {T,Dim}
+function internal_field(x::AbstractVector{T}, p::Particle{T,Dim,Acoustic{T,Dim}}, source::RegularSource{T,Acoustic{T,Dim}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where {T,Dim}
     if !(x ∈ p)
         @error "Point $x is not inside the particle with shape $(p.shape)"
     end

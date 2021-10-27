@@ -1,9 +1,9 @@
 """
-    point_source(medium::Acoustic, source_position, amplitude=1)::Source
+    point_source(medium::Acoustic, source_position, amplitude=1)::RegularSource
 
-Create 2D [`Acoustic`](@ref) point [`Source`](@ref) (zeroth Hankel function of first type)
+Create 2D [`Acoustic`](@ref) point [`RegularSource`](@ref) (zeroth Hankel function of first type)
 """
-function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,2}} where T <: AbstractFloat
+function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{T,Acoustic{T,2}} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
@@ -23,11 +23,11 @@ function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, am
         return (amp(ω)*im)/4 * [hankelh1(-n,k*r) * exp(-im*n*θ) for n = -order:order]
     end
 
-    return Source{T,Acoustic{T,2}}(medium, source_field, source_coef)
+    return RegularSource{T,Acoustic{T,2},WithoutSymmetry{2}}(medium, source_field, source_coef)
 end
 
 # If we replaced 3 with Dim below this could should work for all dimensions! Test carefully after changing.
-function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,3}} where T <: AbstractFloat
+function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{T,Acoustic{T,3}} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{3,T}(source_position)
@@ -56,31 +56,33 @@ function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T
         return amp(ω) * U[1,:]
     end
 
-    return Source{T,Acoustic{T,3}}(medium, source_field, source_coef)
+    return RegularSource{T,Acoustic{T,3},WithoutSymmetry{3}}(medium, source_field, source_coef)
 end
 
 
 function plane_source(medium::Acoustic{T,Dim}; position::AbstractArray{T} = SVector(zeros(T,Dim)...),
         direction = SVector(one(T), zeros(T,Dim-1)...),
-        amplitude::Union{T,Complex{T},Function} = one(T))::Source{T,Acoustic{T,Dim}} where {T, Dim}
+        amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{T,Acoustic{T,Dim}} where {T, Dim}
 
     plane_source(medium, position, direction, amplitude)
 end
 
 """
-    plane_source(medium::Acoustic, source_position, source_direction=[1,0], amplitude=1)::Source
+    plane_source(medium::Acoustic, source_position, source_direction=[1,0], amplitude=1)::RegularSource
 
-Create an [`Acoustic`](@ref) planar wave [`Source`](@ref)
+Create an [`Acoustic`](@ref) planar wave [`RegularSource`](@ref)
 """
-function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::Source{T,Acoustic{T,2}} where {T}
+function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::RegularSource{T,Acoustic{T,2}} where {T}
 
     # Convert to SVector for efficiency and consistency
     position = SVector(position...)
     direction = SVector((direction ./ norm(direction))...) # unit direction
 
+    S = (abs(dot(direction,azimuthalnormal(2))) == one(T)) ? PlanarAzimuthalSymmetry{2} : PlanarSymmetry{2}
+
     # This pseudo-constructor is rarely called, so do some checks and conversions
     if iszero(norm(direction))
-        throw(DomainError("Source direction must not have zero magnitude."))
+        throw(DomainError("RegularSource direction must not have zero magnitude."))
     end
 
     if typeof(amplitude) <: Number
@@ -97,7 +99,7 @@ function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T}, directi
         source_field(centre,ω) * [exp(im * n *(T(pi)/2 -  θ)) for n = -order:order]
     end
 
-    return Source{T,Acoustic{T,2}}(medium, source_field, source_coef)
+    return RegularSource{T,Acoustic{T,2},S}(medium, source_field, source_coef)
 end
 
 function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(zero(T),zero(T),one(T)), amplitude::Union{T,Complex{T}} = one(T)) where {T}
@@ -106,9 +108,11 @@ function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T}, directi
     position = SVector(position...)
     direction = SVector( (direction ./ norm(direction))...) # unit direction
 
+    S = (abs(dot(direction,azimuthalnormal(3))) == one(T)) ? PlanarAzimuthalSymmetry{3} : PlanarSymmetry{3}
+
     # This pseudo-constructor is rarely called, so do some checks and conversions
     if iszero(norm(direction))
-        throw(DomainError("Source direction must not have zero magnitude."))
+        throw(DomainError("RegularSource direction must not have zero magnitude."))
     end
 
     if typeof(amplitude) <: Number
@@ -131,10 +135,11 @@ function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T}, directi
         for l = 0:order for m = -l:l]
     end
 
-    return Source{T,Acoustic{T,3}}(medium, source_field, source_coef)
+    return RegularSource{T,Acoustic{T,3},S}(medium, source_field, source_coef)
 end
 
 function regular_spherical_coefficients(psource::PlaneSource{T,Dim,1,Acoustic{T,Dim}}) where {T,Dim}
+
     source = plane_source(psource.medium;
         amplitude = psource.amplitude[1],
         position = psource.position,

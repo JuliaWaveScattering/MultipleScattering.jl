@@ -2,6 +2,10 @@ __precompile__()
 
 module MultipleScattering
 
+## Symmetries
+export Symmetry, AbstractSymmetry, AbstractPlanarSymmetry, AbstractAzimuthalSymmetry
+export WithoutSymmetry, PlanarSymmetry, PlanarAzimuthalSymmetry, AzimuthalSymmetry, RadialSymmetry
+
 ## Shapes
 export Shape, Circle, Rectangle, Box, EmptyShape, Halfspace, Plate, TimeOfFlight, TimeOfFlightFromPoint
 
@@ -22,8 +26,8 @@ export Acoustic, AcousticCapsule, sound_hard, hard, rigid, zero_neumann, sound_s
 ## Particles
 export AbstractParticle, Particle, CapsuleParticle, AbstractParticles
 
-## Sources
-export AbstractSource, Source, source_expand, regular_spherical_coefficients, self_test, constant_source, point_source, plane_source, regular_spherical_source, (*), (+)
+## RegularSources
+export AbstractSource, RegularSource, source_expand, regular_spherical_coefficients, self_test, constant_source, point_source, plane_source, regular_spherical_source, (*), (+)
 export PlaneSource
 
 ## Main simulation and results
@@ -54,6 +58,7 @@ using ProgressMeter
 
 
 # Generic machinery common to all physical models
+include("types.jl")
 include("shapes/shapes.jl")
 
 include("physics/special_functions.jl") # Special functions missing from Base library

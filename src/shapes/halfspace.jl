@@ -14,6 +14,9 @@ Halfspace(normal::AbstractVector{T}, origin::AbstractVector{T} = zeros(T,length(
 Halfspace(normal::NTuple{Dim,T}, origin::AbstractVector{T} = zeros(T,Dim)) where {T,Dim} = Halfspace{T,Dim}(normal ./ norm(normal), origin)
 
 name(shape::Halfspace) = "Halfspace"
+function Symmetry(shape::Halfspace{T,Dim}) where {T,Dim}
+    return (abs(dot(shape.normal,azimuthalnormal(Dim))) == one(T)) ? PlanarAzimuthalSymmetry{Dim}() : PlanarSymmetry{Dim}()
+end
 
 volume(shape::Halfspace) = Inf
 outer_radius(hs::Halfspace{T}) where T = T(Inf)

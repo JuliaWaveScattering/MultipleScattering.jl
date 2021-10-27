@@ -3,6 +3,8 @@ Abstract idea which defines the external boundary of object.
 """
 abstract type Shape{T<:AbstractFloat,Dim} end
 
+Symmetry(s::Shape{T,Dim}) where {T,Dim} = WithoutSymmetry{Dim}()
+
 """
     origin(shape::Shape)::SVector
 

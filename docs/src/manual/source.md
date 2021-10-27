@@ -1,11 +1,11 @@
-# Sources
+# RegularSources
 
 ```@meta
 DocTestSetup = quote
     using MultipleScattering
 end
 ```
-[`Source`](@ref) is a `struct` which represents any source, also called an incident wave. See [Source](@ref source_base) for a list of relevant types and functions.
+[`RegularSource`](@ref) is a `struct` which represents any source, also called an incident wave. See [RegularSource](@ref source_base) for a list of relevant types and functions.
 
 ## Acoustics
 
@@ -86,9 +86,9 @@ where `field_apply` is applied to the wave field at every point, the default is 
 
 To define a new source you will need to understand the internals below.
 
-## Source internals
+## RegularSource internals
 
-The `struc` [`Source`](@ref) has three fields: `medium`, `field`, and `coef`, explained with examples below:
+The `struc` [`RegularSource`](@ref) has three fields: `medium`, `field`, and `coef`, explained with examples below:
 ```jldoctest intro
 julia> plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0,0.0]);
 
@@ -101,7 +101,7 @@ julia> plane_wave.field(x,ω) # the value of the field
 0.5403023058681398 + 0.8414709848078965im
 ```
 
-To calculate the scattering from a particle due to a source, we need the coefficients $a_n(\mathbf x_0, \omega) = $ Source.coefficients(n,x0,ω). We use these coefficients to represent the source in a radial coordinate system. That is, for any origin $\mathbf x_0$, we need to represent the incident wave $u_{\text{in}}(\mathbf x)$ using a series or regular waves
+To calculate the scattering from a particle due to a source, we need the coefficients $a_n(\mathbf x_0, \omega) = $ RegularSource.coefficients(n,x0,ω). We use these coefficients to represent the source in a radial coordinate system. That is, for any origin $\mathbf x_0$, we need to represent the incident wave $u_{\text{in}}(\mathbf x)$ using a series or regular waves
 
 $u_{\text{in}}(\mathbf x) = \sum_n a_n(\mathbf x_0, \omega) \mathrm v_n(\mathbf x - \mathbf x_0),$  
 

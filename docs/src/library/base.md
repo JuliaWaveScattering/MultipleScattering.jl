@@ -39,9 +39,9 @@ CapsuleParticle
 iscongruent(::AbstractParticle,::AbstractParticle)
 ```
 
-## [Source](@id source_base)
+## [RegularSource](@id source_base)
 
-Source types and functions for all physical mediums.
+RegularSource types and functions for all physical mediums.
 
 ```@autodocs
 Modules = [MultipleScattering]

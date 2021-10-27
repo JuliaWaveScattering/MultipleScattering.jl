@@ -17,7 +17,7 @@
     @test circle == show_and_eval(circle)
     @test particle == show_and_eval(particle)
 
-    # Currently can't do this with FrequencySimulations because of Source type
+    # Currently can't do this with FrequencySimulations because of RegularSource type
     @test show(devnull, simulation) == nothing
 
 end

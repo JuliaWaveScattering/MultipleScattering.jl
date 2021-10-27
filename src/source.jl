@@ -67,53 +67,56 @@ function PlaneSource(medium::PhysicalMedium{T,Dim,FieldDim};
     PlaneSource(medium,direction,position,amplitude)
 end
 
+Symmetry(s::PlaneSource{T,Dim}) where {T,Dim} = (abs(dot(s.direction,azimuthalnormal(Dim))) == norm(s.direction)) ? PlanarAzimuthalSymmetry{Dim}() : PlanarSymmetry{Dim}()
 
 """
-    Source(medium::P, field::Function, coef::Function)
+    RegularSource(medium::P, field::Function, coef::Function)
 
-Is a struct type which describes the source field that drives/forces the whole system. It is also described as an incident wave. It has three fields `Source.medium`, `Source.field`, and `Source.coef`.
+Is a struct type which describes the source field that drives/forces the whole system. It is also known as an incident wave. It has three fields `RegularSource.medium`, `RegularSource.field`, and `RegularSource.coef`.
 
 The source field at the position 'x' and angular frequency 'ω' is given by
 ```julia-repl
 x = [1.0,0.0]
 ω = 1.0
-Source.field(x,ω)
+RegularSource.field(x,ω)
 ```
 
-The field `Source.coef`
+The field `RegularSource.coef`
 regular_basis_function(medium::Acoustic{T,2}, ω::T)
 """
-struct Source{T<:AbstractFloat,P<:PhysicalMedium} <: AbstractSource{T,P}
+struct RegularSource{T<:AbstractFloat,P<:PhysicalMedium,S<:AbstractSymmetry} <: AbstractSource{T,P}
     medium::P
     "Use: field(x,ω)"
     field::Function
     "Use: coefficients(n,x,ω)"
     coefficients::Function
     # Enforce that the Types are the same
-    function Source{T,P}(medium::P,field::Function,coefficients::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
-        s = new{T,P}(medium,field,coefficients)
+    function RegularSource{T,P,S}(medium::P,field::Function,coefficients::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim},S<:AbstractSymmetry{Dim}}
+        s = new{T,P,S}(medium,field,coefficients)
         self_test(s)
         return s
     end
 end
 
-function Source(medium::P,field::Function,coefficients::Function) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
-    return Source{T,P}(medium,field,coefficients)
+function RegularSource(medium::P,field::Function,coefficients::Function; symmetry::AbstractSymmetry{Dim} = WithoutSymmetry{Dim}()) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim}}
+    return RegularSource{T,P,typeof(symmetry)}(medium,field,coefficients)
 end
 
+Symmetry(reg::RegularSource{T,P,S}) where {T,P,S} = S()
+
 """
-    regular_spherical_coefficients(source::Source)
+    regular_spherical_coefficients(source::RegularSource)
 
 return a function which can calculate the coefficients of a regular spherical wave basis.
 """
-function regular_spherical_coefficients(source::Source)
+function regular_spherical_coefficients(source::RegularSource)
     source.coefficients
 end
 
 """
 Check that the source functions return the correct types
 """
-function self_test(source::Source{T,P}) where {P,T}
+function self_test(source::RegularSource{T,P}) where {P,T}
     ω = one(T)
 
     # choose rand postion, hopefully not the source position/origin
@@ -136,11 +139,11 @@ function self_test(source::Source{T,P}) where {P,T}
     return true
 end
 
-field(s::Source) = s.field
-field(s::Source{T},x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
+field(s::RegularSource) = s.field
+field(s::RegularSource{T},x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
 
 function constant_source(medium::P, num::Complex{T} = zero(Float64) * im) where {P,T}
-    return Source{T,P}(medium, (x,ω) -> num, (order,x,ω) -> [num])
+    return RegularSource{T,P}(medium, (x,ω) -> num, (order,x,ω) -> [num])
 end
 
 """
@@ -148,7 +151,10 @@ end
 
 ``c_n = ```regular_coefficients[n]`, ``x_o=```position`, and let ``v_n(kx)`` represent the regular spherical basis with wavenumber ``k`` at position ``x``. The above returns a `source` where `source.field(x,ω) =```\\sum_n c_n v_n(kx -k x_0)``
 """
-function regular_spherical_source(medium::PhysicalMedium{T,Dim},regular_coefficients::AbstractVector{CT}; amplitude::Union{T,Complex{T}} = one(T), position::AbstractArray{T} = SVector(zeros(T,Dim)...)) where {T,Dim,CT<:Union{T,Complex{T}}}
+function regular_spherical_source(medium::PhysicalMedium{T,Dim},regular_coefficients::AbstractVector{CT};
+        symmetry::AbstractSymmetry{Dim} = WithoutSymmetry{Dim}(),
+        amplitude::Union{T,Complex{T}} = one(T),
+        position::AbstractArray{T} = SVector(zeros(T,Dim)...)) where {T,Dim,CT<:Union{T,Complex{T}}}
 
     coeff_order = basislength_to_basisorder(typeof(medium),length(regular_coefficients))
 
@@ -169,11 +175,11 @@ function regular_spherical_source(medium::PhysicalMedium{T,Dim},regular_coeffici
         return amplitude .* sum(regular_coefficients[n] .* V[n,1:len2] for n in 1:len1)
     end
 
-    return Source(medium, source_field, source_coef)
+    return RegularSource(medium, source_field, source_coef; symmetry = symmetry)
 end
 
 """
-    source_expand(Source, centre; basis_order = 4)
+    source_expand(RegularSource, centre; basis_order = 4)
 
 Returns a function of `(x,ω)` which approximates the value of the source at `(x,ω)`. That is, the source is written in terms of a regular basis expansion centred at `centre`.
 """
@@ -191,26 +197,30 @@ function source_expand(source::AbstractSource{T}, centre::AbstractVector{T}; bas
 end
 
 import Base.(+)
-function +(s1::Source{T,P},s2::Source{T,P})::Source{T,P} where {P,T}
+function +(s1::RegularSource{T,P},s2::RegularSource{T,P})::RegularSource{T,P} where {P,T}
     if s1.medium != s2.medium
         error("Can not add sources from different physical mediums.")
     end
     field(x,ω) = s1.field(x,ω) + s2.field(x,ω)
     coef(n,centre,ω) = s1.coefficients(n,centre,ω) + s2.coefficients(n,centre,ω)
 
-    Source{T,P}(s1.medium,field,coef)
+    sym1 = Symmetry(s1)
+    sym2 = Symmetry(s2)
+    S = typeof(Symmetry(sym1,sym2))
+
+    RegularSource{T,P,S}(s1.medium,field,coef)
 end
 
 import Base.(*)
-function *(a,s::Source{T,P})::Source{T,P} where {P,T}
+function *(a,s::RegularSource{T,P,S})::RegularSource{T,P,S} where {P,T,S}
     if typeof(one(Complex{T})*a) != Complex{T}
-        error("Multiplying source by $a would cause source type to change, please explicitly cast $a to same type as Source ($T)")
+        error("Multiplying source by $a would cause source type to change, please explicitly cast $a to same type as RegularSource ($T)")
     end
 
     field(x,ω) = a * s.field(x,ω)
     coef(n,centre,ω) = a .* s.coefficients(n,centre,ω)
 
-    Source{T,P}(s.medium,field,coef)
+    RegularSource{T,P,S}(s.medium,field,coef)
 end
 
-*(s::Source,a) = *(a,s)
+*(s::RegularSource,a) = *(a,s)

@@ -7,7 +7,7 @@ end
 ```
 [`Particle`](@ref) is a `struct` which define a scatterer, obstacle, or simply particle, which can scatter waves. See [Particle](@ref base_particle) for a list of relevant types and functions.
 
-A `Particle` have two fields: `medium` and `shape`. The `medium` defines what kind of waves can propagate inside `Particle`, and what type of `Source` can be used to scatter waves from `Particle`. One example `medium` is [Acoustic](@ref). The `shape` completely defines the geometry and position of the particle, see [Shapes](@ref) for details.
+A `Particle` have two fields: `medium` and `shape`. The `medium` defines what kind of waves can propagate inside `Particle`, and what type of `RegularSource` can be used to scatter waves from `Particle`. One example `medium` is [Acoustic](@ref). The `shape` completely defines the geometry and position of the particle, see [Shapes](@ref) for details.
 
 For an example we can define a circular particle with acoustics medium:
 

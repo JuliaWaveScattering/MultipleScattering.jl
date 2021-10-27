@@ -11,7 +11,7 @@ After building, you can [`run`](@ref) the simulation to get a [`FrequencySimulat
 mutable struct FrequencySimulation{T<:AbstractFloat,Dim,P<:PhysicalMedium} <: Simulation{T,Dim}
     "Vector of particles, can be of different types."
     particles::AbstractParticles
-    "Source wave, where source.medium is the background medium of the simulation."
+    "RegularSource wave, where source.medium is the background medium of the simulation."
     source::AbstractSource{T,P}
 end
 

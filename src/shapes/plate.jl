@@ -15,6 +15,9 @@ Plate(normal::AbstractVector{T}, width::T, origin::AbstractVector{T} = zeros(T,l
 Plate(normal::NTuple{Dim,T}, width::T, origin::AbstractVector{T} = zeros(T,Dim)) where {T,Dim} = Plate{T,Dim}(normal ./ norm(normal), width, origin)
 
 name(shape::Plate) = "Plate"
+function Symmetry(shape::Plate{T,Dim}) where {T,Dim}
+    return (abs(dot(shape.normal,azimuthalnormal(Dim))) == one(T)) ? PlanarAzimuthalSymmetry{Dim}() : PlanarSymmetry{Dim}()
+end
 
 volume(shape::Plate) = Inf
 outer_radius(hs::Plate{T}) where T = T(Inf)

@@ -39,7 +39,7 @@
     @test_throws(DimensionMismatch,PlaneSource(a3_host; direction = direction))
     @test_throws(DimensionMismatch,PlaneSource(a3_host; amplitude = [1.0,2.0]))
 
-    # Test equivalence between plane-Sources
+    # Test equivalence between plane-sources
     psource = PlaneSource(a2_host; direction = direction, position =  position, amplitude = amplitude)
 
     source = plane_source(a2_host; direction = direction, position =  position, amplitude = amplitude)
