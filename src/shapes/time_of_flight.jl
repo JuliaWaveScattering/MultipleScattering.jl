@@ -1,46 +1,49 @@
 """
-A shape where anything inside could cause a disturbance at the listener position
-from a planar wavefront parallel to the y axis starting at the listener. Also
-everything inside has a positive `x` coordinate.
+A shape which contains all particles, with ``x > x_0``, necessary to simulate a plane-wave scattering from an infinite medium, for a reciever at the focal point, for time ``t < D / c``, where ``c`` is the sound speed of the background medium, and ``D`` is some chosen focal distance.
 
-More precisely, if the listener is at (l_x,l_y) then the interior of the shape
+More precisely, if the focal point is at ``(x_f,y_f)`` then the interior of the shape
 is defined as
-x-l_x+sqrt((x-l_x)^2+(y-l_y)^2)<time and x>0
+``y^2 < D^2 + 2(x_f - D)x - x_f^2``  and ``x > x_0``
+where ``D`` is the focal distance.
 """
-struct TimeOfFlight{T <: AbstractFloat} <: Shape{T,2}
-    listener_position::Vector{T}
-    time::T
+struct TimeOfFlightPlaneWaveToPoint{T <: AbstractFloat,Dim} <: Shape{T,Dim}
+    focal_point::Vector{T}
+    focal_distance::T
+    minimum_x::T
 end
 
-TimeOfFlight(pos::AbstractVector{T}, time::T) where T <:AbstractFloat = TimeOfFlight(Vector{T}(pos), time)
+TimeOfFlightPlaneWaveToPoint(pos::AbstractVector{T}, time::T) where T <:AbstractFloat = TimeOfFlightPlaneWaveToPoint(Vector{T}(pos), time)
 
-name(shape::TimeOfFlight) = "Time of flight from planar source"
+name(shape::TimeOfFlightPlaneWaveToPoint) = "Time of flight from planar source to the focal point"
 
-# Let T = shape.time, xr = shape.listener_position[1], yr = shape.listener_position[2]
-# and assume all particles are placed in x>0.
-# Let (x,y) be a point on the curved part of the shape, then
-# x - xr + sqrt((x - xr)^2 + (y - yr)^2) == T => x == T/2 + xr - (y - yr)^2/(2T)
-# then the area = 2*Integrate[ T/2 + xr - (y - yr)^2/(2T), {y,yr, yr + sqrt(T^2 + 2xr*T)}]
-function volume(shape::TimeOfFlight{T}) where T <: AbstractFloat
+# NOTE: this needs to be redone
+function volume(shape::TimeOfFlightPlaneWaveToPoint{T}) where T <: AbstractFloat
     l_x = shape.listener_position[1]
     return 2/(3*shape.time)*(shape.time^2 + 2*l_x*shape.time)^(3//2)
 end
 
 import Base.issubset
-function issubset(circle::Sphere{T,2}, shape::TimeOfFlight{T}) where T
-    l_to_p = origin(circle) - shape.listener_position
-    return (origin(circle)[1] > 0) && (l_to_p[1] + norm(l_to_p) <= (shape.time - 2circle.radius))
+function issubset(sphere::Sphere{T,Dim}, shape::TimeOfFlightPlaneWaveToPoint{T,Dim}) where {T, Dim}
+    return (origin(sphere)[1] > shape.minimum_x) && (norm(origin(sphere) - shape.focal_point) <= shape.focal_distance - origin(sphere)[1]  - T(2) * outer_radius(sphere))
 end
 
-function bounding_box(shape::TimeOfFlight{T}) where T <: AbstractFloat
-    t = shape.time
-    l = shape.listener_position
-    x_max = max(t/2 + l[1], zero(T))
-    return Box([SVector(zero(T), l[2] - sqrt(t^2 + 2t*l[1])), SVector(x_max, l[2] + sqrt(t^2 + 2t*l[1]))])
+function bounding_box(shape::TimeOfFlightPlaneWaveToPoint{T,Dim}) where {T,Dim}
+    D = shape.focal_distance
+    xf = shape.focal_point
+    x_min = shape.minimum_x
+    x_max = (x_min + D) / T(2)
+
+    centre = zeros(Dim)
+    centre[1] = (x_min + x_max) / T(2)
+
+    dimensions = ones(Dim) * T(2) * sqrt(D^2 + 2 * (xf - D) * x0 - xf^2 )
+    dimensions[1] = x_max - x_min
+
+    return Box(centre, dimensions)
 end
 
 
-function boundary_functions(shape::TimeOfFlight)
+function boundary_functions(shape::TimeOfFlightPlaneWaveToPoint{T,2}) where T
 
     function x(τ)
         check_boundary_coord_range(τ)

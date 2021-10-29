@@ -7,32 +7,32 @@ More precisely, if the listener is at (l_x,l_y) then the interior of the shape
 is defined as
 sqrt((x-l_x)^2+(y-l_y)^2)<time and x>0
 """
-struct TimeOfFlightFromPoint{T <: AbstractFloat} <: Shape{T,2}
+struct TimeOfFlightPointWaveToPoint{T <: AbstractFloat} <: Shape{T,2}
     listener_position::Vector{T}
     time::T
 end
 
-name(shape::TimeOfFlightFromPoint) = "Time of flight from point source"
+name(shape::TimeOfFlightPointWaveToPoint) = "Time of flight from point source"
 
-function volume(shape::TimeOfFlightFromPoint)
+function volume(shape::TimeOfFlightPointWaveToPoint)
     θ = 2acos(-shape.listener_position[1] / shape.time)
     return shape.time^2 * (θ - sin(θ))/2
 end
 
 import Base.issubset
-function issubset(circle::Sphere{T,2}, shape::TimeOfFlightFromPoint) where T
+function issubset(circle::Sphere{T,2}, shape::TimeOfFlightPointWaveToPoint) where T
     (origin(circle)[1] - circle.radius) > 0 &&
     norm(origin(circle) - shape.listener_position) < (shape.time - 2circle.radius)
 end
 
-function bounding_box(shape::TimeOfFlightFromPoint{T}) where T <: AbstractFloat
+function bounding_box(shape::TimeOfFlightPointWaveToPoint{T}) where T <: AbstractFloat
     box_height = 2sqrt(shape.time^2 - shape.listener_position[1]^2)
     box_width = max(shape.time + shape.listener_position[1], zero(T))
     return Box([SVector(zero(T), -box_height/2), SVector(box_width, box_height/2)])
 end
 
 
-function boundary_functions(shape::TimeOfFlightFromPoint)
+function boundary_functions(shape::TimeOfFlightPointWaveToPoint)
 
     function x(t)
         check_boundary_coord_range(t)

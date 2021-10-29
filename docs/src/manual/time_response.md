@@ -123,7 +123,7 @@ time_response = frequency_to_time(freq_response; t_vec = t_vec, discrete_impulse
 ![](../assets/triangle_time_response.png)
 
 ## Scattering example
-As an example, we will make a reflective lens out of particles. To achieve this we will place the particles into a region with the shape [`TimeOfFlight`](@ref).
+As an example, we will make a reflective lens out of particles. To achieve this we will place the particles into a region with the shape [`TimeOfFlightPlaneWaveToPoint`](@ref).
 
 First we choose the properties of the lens:
 ```julia
@@ -135,7 +135,7 @@ outertime = 34.8
 innertime = 34.0
 
 # Generate particles which are at most outertime away from our listener
-outershape = TimeOfFlight(x, outertime)
+outershape = TimeOfFlightPlaneWaveToPoint(x, outertime)
 outerparticles = random_particles(Acoustic(2; ρ=0.0, c=0.0), Circle(p_radius);
         region_shape = outershape,
         volume_fraction = volfrac,
@@ -143,7 +143,7 @@ outerparticles = random_particles(Acoustic(2; ρ=0.0, c=0.0), Circle(p_radius);
 );
 
 # Filter out particles which are less than innertime away
-innershape = TimeOfFlight(x, innertime + 4*p_radius); # the + 4*p_radius is to account for double the particle diameter
+innershape = TimeOfFlightPlaneWaveToPoint(x, innertime + 4*p_radius); # the + 4*p_radius is to account for double the particle diameter
 particles = filter(p -> p⊈innershape, outerparticles);
 
 plot(particles)

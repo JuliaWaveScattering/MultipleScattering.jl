@@ -111,26 +111,26 @@ plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", yguid
 The convergence of the time response, for time `0<t<34`, is much faster. In fact, less than 100 particles are needed to accurately approximate the backscattering from an infinite halfspace. The reason we don't show these as log plots is because there is a small constant error (about `0.01%`) due to the discrete Fourier transform. This error is caused by the Gibbs phenomena and by assuming the backscattering is periodic (when it is not). Both these errors are well understood and can be controlled.
 
 ## Calculate backscattering only from near-surface particles
-This last step is about efficiency. We want to only include particle which contribute to the backscattering for short time intervals. To do this we created a region called `TimeOfFlight(listener,time)`, where every particle in this shape takes less than `time` for their first scattered wave (due to an incident plane wave) to return to the `listener.`  More precisely, if `listener = (lx,ly)`, then every point `(x,y)` inside this shape satisfies:
+This last step is about efficiency. We want to only include particle which contribute to the backscattering for short time intervals. To do this we created a region called `TimeOfFlightPlaneWaveToPoint(listener,time)`, where every particle in this shape takes less than `time` for their first scattered wave (due to an incident plane wave) to return to the `listener.`  More precisely, if `listener = (lx,ly)`, then every point `(x,y)` inside this shape satisfies:
 `x-lx+((x-lx)^2+(y-ly)^2)^(1/2)<time` and `x>0`.
 
 For example, look at the largest quantity of particle we used
 
 ```julia
 listener_position = [-10.,0.]
-shape = TimeOfFlight(listener_position,80.0)
+shape = TimeOfFlightPlaneWaveToPoint(listener_position,80.0)
 scatter([listener_position[1]],[listener_position[2]]);
 annotate!([(listener_position[1], listener_position[2] -max_width/10., "Receiver")])
 plot!.(particles);
 plot!(shape)
 ```
-![Shows the particles in the shape TimeOfFlight](time_of_flight_shape.png)
+![Shows the particles in the shape TimeOfFlightPlaneWaveToPoint](time_of_flight_shape.png)
 
-For time `0<t<80` the backscattering from these particles is the same as an infinite halfspace filled with particles. To achieve this result we need only the particles inside the shape `TimeOfFlight` (region with the red outline). The particles outside this shape were unnecessary. To see this inaction:
+For time `0<t<80` the backscattering from these particles is the same as an infinite halfspace filled with particles. To achieve this result we need only the particles inside the shape `TimeOfFlightPlaneWaveToPoint` (region with the red outline). The particles outside this shape were unnecessary. To see this inaction:
 ```julia
 times = 40.:15.:80.
 near_surface_simulations = map(times) do t
-    shape = TimeOfFlight(receiver,t) # choose a material with particles only in the near surface region
+    shape = TimeOfFlightPlaneWaveToPoint(receiver,t) # choose a material with particles only in the near surface region
     ps = filter(p -> p ⊆ shape, particles) # select particles that are inside shape
     run(FrequencySimulation(ps, source), x, ωs) # calculate backscattering
 end
@@ -146,6 +146,6 @@ for i in 1:length(times)
 end
 gui()
 ```
-![Response from particles in the shapes TimeOfFlight](time_of_flight_response.png)
+![Response from particles in the shapes TimeOfFlightPlaneWaveToPoint](time_of_flight_response.png)
 
 Note the incident pulse has a thickness of about `10` in time, which is why the `time of flight 40` diverges from the other curves slightly before time `40`, and likewise for the other curves.

@@ -13,9 +13,9 @@ The package provides three basic shapes. You can plot them using:
 ```jldoctest intro; output = false
 rectangle = Box([[0.0,-1.0],[1.0,2.0]])
 circle = Sphere([-1.0,0.0],1.0)
-timeofflight = TimeOfFlight([1.0,0.0],3.0)
+timeofflight = TimeOfFlightPlaneWaveToPoint([1.0,0.0],3.0)
 # output
-TimeOfFlight{Float64}([1.0, 0.0], 3.0)
+TimeOfFlightPlaneWaveToPoint{Float64}([1.0, 0.0], 3.0)
 ```
 ```julia
 using Plots;
@@ -25,4 +25,4 @@ plot!(timeofflight, linecolor = :blue)
 ```
 ![Plot the three shapes](../assets/shapes.png)
 
-The `Box` and `TimeOfFlight` are usually region where particles are placed. Time of flight is a shape which contains shapes from a half space which take at most `t` time to reach from the listener. The `Circle` is also used to define circular particles.
+The `Box` and `TimeOfFlightPlaneWaveToPoint` are usually region where particles are placed. Time of flight is a shape which contains shapes from a half space which take at most `t` time to reach from the listener. The `Circle` is also used to define circular particles.
