@@ -66,26 +66,26 @@
         end
     end
 
-    # @testset "Time of flight" begin
-    #     time_of_flight = TimeOfFlightPlaneWaveToPoint([-10.0,0.0],40.0)
-    #     time_of_flight_bounding_box = bounding_box(time_of_flight)
-    #     ratio = volume(time_of_flight) / volume(time_of_flight_bounding_box)
-    #     # Geometric arguments dictate that the ratio must be between 0.5 and 1.0
-    #     @test ratio > 0.5
-    #     @test ratio < 1.0
-    #     @test name(time_of_flight) == "Time of flight from planar source"
-    #
-    #     @testset "Boundary functions" begin
-    #         # This a nice shape because the dimensions form a Pythagorean triple
-    #         x, y = boundary_functions(TimeOfFlightPlaneWaveToPoint([-3.0,0.0],8.0))
-    #         @test x.(0:0.125:1) ≈ [0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 1.0, 0.75, 0.0]
-    #         @test y.(0:0.125:1) ≈ [-4.0, -2.0, 0.0, 2.0, 4.0, 2.0, 0.0, -2.0, -4.0]
-    #         @test_throws(DomainError,x(-eps(Float64)))
-    #         @test_throws(DomainError,x(1.0 + eps(Float64)))
-    #         @test_throws(DomainError,y(-eps(Float64)))
-    #         @test_throws(DomainError,y(1.0 + eps(Float64)))
-    #     end
-    # end
+    @testset "Time of flight" begin
+        time_of_flight = TimeOfFlightPlaneWaveToPoint([-10.0,0.0],40.0, 0.0)
+        time_of_flight_bounding_box = bounding_box(time_of_flight)
+        ratio = volume(time_of_flight) / volume(time_of_flight_bounding_box)
+        # Geometric arguments dictate that the ratio must be between 0.5 and 1.0
+        @test ratio > 0.5
+        @test ratio < 1.0
+        @test name(time_of_flight) == "Time of flight from planar source"
+
+        @testset "Boundary functions" begin
+            # This a nice shape because the dimensions form a Pythagorean triple
+            x, y = boundary_functions(TimeOfFlightPlaneWaveToPoint([-3.0,0.0],8.0, 0.0))
+            @test x.(0:0.125:1) ≈ [0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 1.0, 0.75, 0.0]
+            @test y.(0:0.125:1) ≈ [-4.0, -2.0, 0.0, 2.0, 4.0, 2.0, 0.0, -2.0, -4.0]
+            @test_throws(DomainError,x(-eps(Float64)))
+            @test_throws(DomainError,x(1.0 + eps(Float64)))
+            @test_throws(DomainError,y(-eps(Float64)))
+            @test_throws(DomainError,y(1.0 + eps(Float64)))
+        end
+    end
 
     @testset "Time of flight from point" begin
         time_of_flight = TimeOfFlightPointWaveToPoint([-10.0,0.0],40.0)

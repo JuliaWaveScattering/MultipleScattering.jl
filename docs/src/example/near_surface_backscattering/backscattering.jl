@@ -98,7 +98,7 @@ plot!(num_particles[1:(M-1)], differences, xlabel = "number of particles", yguid
 savefig("compare_convergence.png")
 
 ## Using near surface backscattering
-shape = TimeOfFlightPlaneWaveToPoint(receiver,80.0)
+shape = TimeOfFlightPlaneWaveToPoint(receiver,80.0,0.0)
 scatter([receiver[1]],[receiver[2]]);
 annotate!([(receiver[1], receiver[2] -max_width/10., "Receiver")])
 plot!(particles);
@@ -108,7 +108,7 @@ savefig("time_of_flight_shape.png")
 
 times = 40.:15.:80.
 near_surface_simulations = map(times) do t
-    shape = TimeOfFlightPlaneWaveToPoint(receiver,t) # choose a material with particles only in the near surface region
+    shape = TimeOfFlightPlaneWaveToPoint(receiver,t,0.0) # choose a material with particles only in the near surface region
     ps = filter(p -> p ⊆ shape, particles) # select particles that are inside shape
     run(FrequencySimulation(ps, source), x, ωs) # calculate backscattering
 end

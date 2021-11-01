@@ -1,9 +1,9 @@
 """
-A shape which contains all particles, with ``x > x_0``, necessary to simulate a plane-wave scattering from an infinite medium, for a reciever at the focal point, for time ``t < D / c``, where ``c`` is the sound speed of the background medium, and ``D`` is some chosen focal distance.
+A shape which contains all particles,``x > x_0``, necessary to simulate a plane-wave scattering from an infinite medium, for a reciever at the focal point, for time ``t < D / c``, where ``c`` is the sound speed of the background medium, and ``D`` is some chosen focal distance. The plane-wave travels towards the positive direction of the ``x`` axis.
 
 More precisely, if the focal point is at ``(x_f,y_f)`` then the interior of the shape
 is defined as
-``y^2 < D^2 + 2(x_f - D)x - x_f^2``  and ``x > x_0``
+``(y - y_f)^2 < (D + x_0)^2 - x_f^2 - 2(D + x_0 - x_f)x``  and ``x > min(x_0, x_f)``
 where ``D`` is the focal distance.
 """
 struct TimeOfFlightPlaneWaveToPoint{T <: AbstractFloat,Dim} <: Shape{T,Dim}
@@ -18,8 +18,15 @@ name(shape::TimeOfFlightPlaneWaveToPoint) = "Time of flight from planar source t
 
 # NOTE: this needs to be redone
 function volume(shape::TimeOfFlightPlaneWaveToPoint{T}) where T <: AbstractFloat
-    l_x = shape.listener_position[1]
-    return 2/(3*shape.time)*(shape.time^2 + 2*l_x*shape.time)^(3//2)
+
+    D = shape.focal_distance
+    xf = shape.focal_point
+    x_min = shape.minimum_x
+    x_max = (x_min + x_f + D) / T(2)
+
+    a = D + x_min + xf
+    b = D + x_min - xf
+    return 2/3*(sqrt(b*(a - 2*x_min)^3) - sqrt(b*(a - 2*x_max)^3))
 end
 
 import Base.issubset
@@ -31,12 +38,12 @@ function bounding_box(shape::TimeOfFlightPlaneWaveToPoint{T,Dim}) where {T,Dim}
     D = shape.focal_distance
     xf = shape.focal_point
     x_min = shape.minimum_x
-    x_max = (x_min + D) / T(2)
+    x_max = (x_min + x_f + D) / T(2)
 
     centre = zeros(Dim)
     centre[1] = (x_min + x_max) / T(2)
 
-    dimensions = ones(Dim) * T(2) * sqrt(D^2 + 2 * (xf - D) * x0 - xf^2 )
+    dimensions = ones(Dim) * T(2) * sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*x_min)
     dimensions[1] = x_max - x_min
 
     return Box(centre, dimensions)
@@ -45,26 +52,31 @@ end
 
 function boundary_functions(shape::TimeOfFlightPlaneWaveToPoint{T,2}) where T
 
+    D = shape.focal_distance
+    xf = shape.focal_point
+    x_min = shape.minimum_x
+    x_max = (x_min + x_f + D) / T(2)
+
     function x(τ)
         check_boundary_coord_range(τ)
-        if τ <= 1//2
-            return zero(τ)
+
+        if τ <= 1//3
+            return (1 - 3*τ)*x_min + 3*τ*x_max
+        elseif τ <= 2//3
+            return (3*τ - 1)*x_min + (2 - 3*τ)*x_max
         else
-            t = shape.time
-            l = shape.listener_position
-            y_sq = (4*(3//4-τ))^2*(t^2 + 2t*l[1])
-            return l[1] + (t^2-y_sq)/(2t)
+            return x_min
         end
     end
 
     function y(τ)
         check_boundary_coord_range(τ)
-        t = shape.time
-        l = shape.listener_position
-        if τ <= 1//2
-            return l[2] + 4*(τ-1//4)*sqrt(t^2 + 2t*l[1])
+        if τ <= 1//3
+            return y_f + sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*((1 - 3*τ)*x_min + 3*τ*x_max)
+        elseif τ <= 2//3
+            return y_f - sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*((3*τ - 1)*x_min + 3*(2//3 - τ)*x_max))
         else
-            return l[2] + 4*(3//4-τ)*sqrt(t^2 + 2t*l[1])
+            return y_f + (6*τ - 5)*sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*x_min)
         end
     end
 

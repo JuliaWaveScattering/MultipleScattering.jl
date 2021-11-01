@@ -108,10 +108,10 @@ function boundary_functions(rect::Box{T,2}) where T
 
     function y(t)
         check_boundary_coord_range(t)
-        if     t <= 1//4 x = bottomleft(rect)[2]
-        elseif t <= 2//4 x = bottomleft(rect)[2] + 4*(t-1//4) * h
-        elseif t <= 3//4 x = topright(rect)[2]
-        else             x = topright(rect)[2] - 4*(t-3//4) * h
+        if     t <= 1//4 y = bottomleft(rect)[2]
+        elseif t <= 2//4 y = bottomleft(rect)[2] + 4*(t-1//4) * h
+        elseif t <= 3//4 y = topright(rect)[2]
+        else             y = topright(rect)[2] - 4*(t-3//4) * h
         end
     end
 
