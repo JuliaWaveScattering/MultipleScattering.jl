@@ -14,8 +14,9 @@ The package provides three basic shapes. You can plot them using:
 rectangle = Box([[0.0,-1.0],[1.0,2.0]])
 circle = Sphere([-1.0,0.0],1.0)
 timeofflight = TimeOfFlightPlaneWaveToPoint([1.0,0.0],3.0)
+
 # output
-TimeOfFlightPlaneWaveToPoint{Float64}([1.0, 0.0], 3.0)
+TimeOfFlightPlaneWaveToPoint{Float64,2}([1.0, 0.0], 3.0, 0.0)
 ```
 ```julia
 using Plots;
