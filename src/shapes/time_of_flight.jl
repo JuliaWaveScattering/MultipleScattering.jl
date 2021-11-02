@@ -7,12 +7,12 @@ is defined as
 where ``D`` is the focal distance.
 """
 struct TimeOfFlightPlaneWaveToPoint{T <: AbstractFloat,Dim} <: Shape{T,Dim}
-    focal_point::Vector{T}
+    focal_point::AbstractVector{T}
     focal_distance::T
     minimum_x::T
 end
 
-TimeOfFlightPlaneWaveToPoint(pos::AbstractVector{T}, time::T) where T <:AbstractFloat = TimeOfFlightPlaneWaveToPoint(Vector{T}(pos), time)
+TimeOfFlightPlaneWaveToPoint(focal_point::AbstractVector{T},  focal_distance::T;  minimum_x::T = zero(T)) where T <:AbstractFloat = TimeOfFlightPlaneWaveToPoint{T,length(focal_point)}(focal_point, focal_distance, minimum_x)
 
 name(shape::TimeOfFlightPlaneWaveToPoint) = "Time of flight from planar source to the focal point"
 
@@ -20,9 +20,9 @@ name(shape::TimeOfFlightPlaneWaveToPoint) = "Time of flight from planar source t
 function volume(shape::TimeOfFlightPlaneWaveToPoint{T}) where T <: AbstractFloat
 
     D = shape.focal_distance
-    xf = shape.focal_point
+    xf = shape.focal_point[1]
     x_min = shape.minimum_x
-    x_max = (x_min + x_f + D) / T(2)
+    x_max = (x_min + xf + D) / T(2)
 
     a = D + x_min + xf
     b = D + x_min - xf
@@ -36,12 +36,14 @@ end
 
 function bounding_box(shape::TimeOfFlightPlaneWaveToPoint{T,Dim}) where {T,Dim}
     D = shape.focal_distance
-    xf = shape.focal_point
+    xf = shape.focal_point[1]
+    y_f = shape.focal_point[2]
     x_min = shape.minimum_x
-    x_max = (x_min + x_f + D) / T(2)
+    x_max = (x_min + xf + D) / T(2)
 
     centre = zeros(Dim)
     centre[1] = (x_min + x_max) / T(2)
+    centre[2] = y_f
 
     dimensions = ones(Dim) * T(2) * sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*x_min)
     dimensions[1] = x_max - x_min
@@ -53,9 +55,10 @@ end
 function boundary_functions(shape::TimeOfFlightPlaneWaveToPoint{T,2}) where T
 
     D = shape.focal_distance
-    xf = shape.focal_point
+    xf = shape.focal_point[1]
+    y_f = shape.focal_point[2]
     x_min = shape.minimum_x
-    x_max = (x_min + x_f + D) / T(2)
+    x_max = (x_min + xf + D) / T(2)
 
     function x(τ)
         check_boundary_coord_range(τ)
@@ -71,8 +74,9 @@ function boundary_functions(shape::TimeOfFlightPlaneWaveToPoint{T,2}) where T
 
     function y(τ)
         check_boundary_coord_range(τ)
+
         if τ <= 1//3
-            return y_f + sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*((1 - 3*τ)*x_min + 3*τ*x_max)
+            return y_f + sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*((1 - 3*τ)*x_min + 3*τ*x_max))
         elseif τ <= 2//3
             return y_f - sqrt((D + x_min)^2 - xf^2 - 2*(D + x_min - xf)*((3*τ - 1)*x_min + 3*(2//3 - τ)*x_max))
         else
