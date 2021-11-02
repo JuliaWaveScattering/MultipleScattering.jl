@@ -1,18 +1,19 @@
 using MultipleScattering
 using Plots; pyplot()
+using Random
 
 function box_size_convergence(m=4, volfrac = 0.05,
     radius = 1.0, times = [20.0,30.0,40.0,50.0,60.0,70.0], k_arr=collect(LinRange(0.01,1.0,100)) )
 
     listener_position = [-10.0,0.0]
-    bigshape = TimeOfFlight(listener_position,maximum(times))
+    bigshape = TimeOfFlightPlaneWaveToPoint(listener_position,maximum(times))
 
     seed = MersenneTwister(1).seed
     allparticles = random_particles(volfrac, radius, bigshape; seed = seed)
 
     simulations = map(times) do t
         println("Calculating response with particles at a maximum of $t away")
-        shape = TimeOfFlight(listener_position,t)
+        shape = TimeOfFlightPlaneWaveToPoint(listener_position,t)
         particles = filter(p->p⊆shape, allparticles)
         return FrequencySimulation(particles, k_arr; seed=seed, hankel_order=m)
     end

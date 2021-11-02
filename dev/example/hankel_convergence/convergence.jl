@@ -1,11 +1,12 @@
 using MultipleScattering
 using Plots; pyplot()
+using Random
 
 function hankel_order_convergence(m=[0,1,2,3,4,5,6,7,8,9,10], volfrac = 0.1,
     radius = 1.0, maxtime = 40.0, k_arr=collect(LinRange(0.01,1.0,100)) )
 
     listener_position = [-10.0,0.0]
-    shape = TimeOfFlight(listener_position,maxtime)
+    shape = TimeOfFlightPlaneWaveToPoint(listener_position,maxtime)
 
     seed = MersenneTwister(1).seed
     particles = random_particles(volfrac, radius, shape; seed = seed)
