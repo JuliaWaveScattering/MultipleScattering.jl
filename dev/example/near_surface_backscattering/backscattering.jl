@@ -5,9 +5,8 @@
 #
 # ## Generate a large material filled with particles.
 #
-using MultipleScattering
+using MultipleScattering, LinearAlgebra
 using Plots
-pyplot(linewidth=2)
 
 host_medium = Acoustic(1.0, 1.0, 2)
 
@@ -26,9 +25,11 @@ particles = random_particles(particle_medium, particle_shape; region_shape = sha
 
 # We send an incoming harmonic plane wave and receive the backscattering at `x`:
 x = [-10.,0.]
-source =  plane_source(host_medium; position = x,
-        direction = [1.0,0.],
-        amplitude = 1.0)
+source =  plane_source(host_medium;
+    position = x,
+    direction = [1.0,0.],
+    amplitude = 1.0
+)
 
 plot(particles)
 scatter!([x[1]],[x[2]], lab="")
@@ -37,11 +38,12 @@ plot!(shape, linecolor = :red)
 
 # ## Calculate backscattering for different quantity of particles
 # We will shave off particles on the right of this group of particles (above), and then calculate the backscattered waves for a range of angular frequencies `ωs`.
-ωs = collect(0.01:0.01:1.)
-widths = 10.:5.:max_width
+ωs = collect(0.008:0.008:1.)
+t_to_ω(ωs)
+widths = 10.:5.0:max_width
 num_particles = zeros(length(widths))
 
-#This part below my take a while!
+#This part below my take a while! Uncomment to run
 results = map(eachindex(widths)) do i
     bottomleft = [0.,-widths[i]]
     topright = [widths[i],widths[i]]
@@ -54,12 +56,12 @@ results = map(eachindex(widths)) do i
     run(simulation, x, ωs)
 end
 
-#save("results.jld", "$(typeof(results))",results)
-#save("num_particles.jld", "$(typeof(num_particles))",num_particles)
+save("results.jld2", "$(typeof(results))",results)
+save("num_particles.jld2", "$(typeof(num_particles))",num_particles)
 
 #To load results uncomment
-    # results = first(values(load("results.jld")))
-    # num_particles = first(values(load("num_particles.jld")))
+    results = first(values(load("results.jld2")))
+    num_particles = first(values(load("num_particles.jld2")))
 
 backscattered_waves = field.(results)
 
@@ -73,15 +75,19 @@ plot_converge = plot(num_particles[1:(M-1)], differences,
 )
 savefig("freq_convergence.png")
 
-time_simulations = frequency_to_time.(results)
+gauss_impulse = GaussianImpulse(maximum(ωs) * 0.8)
+
 receiver = results[1].x[1]
 times = 2*(widths .- receiver[1]) # time it takes for an incident plane wave to reach the furthest particles and then return to the receiver
+
+time_simulations = frequency_to_time.(results; impulse = gauss_impulse)
 
 plot()
 for i in [1,3,6,9,12,13]
     plot!(time_simulations[i],label="$(num_particles[i]) particles"
-        , xlims=(0,maximum(times)+10.), ylims=(-0.2,0.1)
-        , xticks = [0.; 30.; times]
+        # , xlims=(0,maximum(times)+10.)
+        # , ylims=(-0.2,0.2)
+        , xticks = [0.; 20.; times]
     )
 end
 gui()
