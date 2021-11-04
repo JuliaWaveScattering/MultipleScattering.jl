@@ -31,7 +31,7 @@ end
 
 import Base.issubset
 function issubset(sphere::Sphere{T,Dim}, shape::TimeOfFlightPlaneWaveToPoint{T,Dim}) where {T, Dim}
-    return (origin(sphere)[1] > shape.minimum_x) && (norm(origin(sphere) - shape.focal_point) <= shape.focal_distance - origin(sphere)[1]  - T(2) * outer_radius(sphere))
+    return (origin(sphere)[1] > shape.minimum_x) && (norm(origin(sphere) - shape.focal_point) <= shape.focal_distance - (origin(sphere)[1] - shape.minimum_x)  - T(2) * outer_radius(sphere))
 end
 
 function bounding_box(shape::TimeOfFlightPlaneWaveToPoint{T,Dim}) where {T,Dim}
