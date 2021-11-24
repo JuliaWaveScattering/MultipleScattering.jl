@@ -1,36 +1,32 @@
 """
-    PhysicalMedium{T<:AbstractFloat,Dim,FieldDim}
+    PhysicalMedium{Dim,FieldDim}
 
 An abstract type used to represent the physical medium, the dimension of
 the field, and the number of spatial dimensions.
 """
-abstract type PhysicalMedium{T<:AbstractFloat,Dim,FieldDim} end
+abstract type PhysicalMedium{Dim,FieldDim} end
 
 "Extract the dimension of the field of this physical property"
-field_dimension(p::PhysicalMedium{T,Dim,FieldDim}) where {T,Dim,FieldDim} = FieldDim
+field_dimension(p::PhysicalMedium{Dim,FieldDim}) where {Dim,FieldDim} = FieldDim
 
 "Extract the dimension of the field of this type of physical property"
-field_dimension(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}} = FieldDim
+field_dimension(p::Type{P}) where {Dim,FieldDim,P<:PhysicalMedium{Dim,FieldDim}} = FieldDim
 
 "Extract the dimension of the space that this physical property lives in"
-spatial_dimension(p::PhysicalMedium{T,Dim,FieldDim}) where {Dim,FieldDim,T} = Dim
+spatial_dimension(p::PhysicalMedium{Dim,FieldDim}) where {Dim,FieldDim} = Dim
 
 "Extract the dimension of the space that this type of physical property lives in"
-spatial_dimension(p::Type{P}) where {Dim,FieldDim,T,P<:PhysicalMedium{T,Dim,FieldDim}} = Dim
+spatial_dimension(p::Type{P}) where {Dim,FieldDim,P<:PhysicalMedium{Dim,FieldDim}} = Dim
 
 """
 A basis for regular functions, that is, smooth functions. A series expansion in this basis should converge to any regular function within a ball.
 """
-function regular_basis_function(medium::P, ω::T) where {P<:PhysicalMedium,T}
-    error("No regular basis function implemented for this physics type.")
-end
+regular_basis_function
 
 """
 Basis of outgoing wave. A series expansion in this basis should converge to any scattered field outside of a ball which contains the scatterer.
 """
-function outgoing_basis_function(medium::P, ω::T) where {P<:PhysicalMedium,T}
-    error("No outgoing basis function implmented for this physics type.")
-end
+outgoing_basis_function
 
 """
 the field inside an AbstractParticle a some given point x.
@@ -47,9 +43,9 @@ boundary_data
 
 
 """
-    estimate_regular_basis_order(medium::P, ω::Number, radius::Number; tol = 1e-6)
+    estimate_regular_basis_order(medium::PhysicalMedium, ω::Number, radius::Number; tol = 1e-6)
 """
-function estimate_regular_basisorder(medium::P, ω::Number, radius::Number; tol = 1e-6) where P<:PhysicalMedium
+function estimate_regular_basisorder(medium::PhysicalMedium, ω::Number, radius::Number; tol = 1e-6)
 
     @error "This is not complete"
 

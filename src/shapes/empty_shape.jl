@@ -1,16 +1,16 @@
 """
-    EmptyShape{T,Dim}
+    EmptyShape{Dim}
 
 An empty shape with no points.
 """
-struct EmptyShape{T,Dim} <: Shape{T,Dim} end
+struct EmptyShape{Dim} <: Shape{Dim} end
 
-EmptyShape(s::Shape{T,Dim}) where {T,Dim} = EmptyShape{T,Dim}()
+EmptyShape(s::Shape{Dim}) where {Dim} = EmptyShape{Dim}()
 
 name(shape::EmptyShape) = "EmptyShape"
 
-outer_radius(c::EmptyShape{T,Dim}) where {T,Dim} = zero(T)
-volume(shape::EmptyShape{T,Dim}) where {T,Dim} = zero(T)
+outer_radius(c::EmptyShape{Dim}) where {Dim} = 0
+volume(shape::EmptyShape{Dim}) where {Dim} = 0
 
 import Base.issubset
 issubset(c1::Shape, c2::EmptyShape) = false

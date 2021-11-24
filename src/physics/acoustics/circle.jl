@@ -1,11 +1,11 @@
-AcousticCircleParticle{T} = Particle{T,2,Acoustic{T,2},Sphere{T,2}}
+AcousticCircleParticle{T} = Particle{2,Acoustic{T,2},Sphere{T,2}}
 
 """
-    t_matrix(Particle{T,2,Acoustic{T,2},Sphere{T,2}}, Acoustic{T,2}, ω, order)
+    t_matrix(Particle{2,Acoustic{T,2},Sphere{T,2}}, Acoustic{T,2}, ω, order)
 
 The T-matrix for a 2D circlular acoustic particle in a 2D acoustic medium.
 """
-function t_matrix(p::Particle{T,2,Acoustic{T,2},Sphere{T,2}}, outer_medium::Acoustic{T,2}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
+function t_matrix(p::Particle{2,Acoustic{T,2},Sphere{T,2}}, outer_medium::Acoustic{T,2}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
     check_material(p, outer_medium)

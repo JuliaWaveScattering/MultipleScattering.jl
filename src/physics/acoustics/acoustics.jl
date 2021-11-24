@@ -6,7 +6,7 @@ Physical properties for a homogenous isotropic acoustic medium with wavespeed (c
 
 Simulations in this medium produce scalar (1D) fields in Dim dimensions.
 """
-struct Acoustic{T,Dim} <: PhysicalMedium{T,Dim,1}
+struct Acoustic{T,Dim} <: PhysicalMedium{Dim,1}
     ρ::T # Density
     c::Complex{T} # Phase velocity
 end
@@ -20,8 +20,8 @@ basislength_to_basisorder(::Type{Acoustic{T,3}},len::Int) where T = Int(sqrt(len
 basislength_to_basisorder(::Type{Acoustic{T,2}},len::Int) where T = Int(T(len - 1) / T(2.0))
 
 # Constructor which supplies the dimension without explicitly mentioning type
-Acoustic(ρ::T,c::Union{T,Complex{T}},Dim::Integer) where {T} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
-Acoustic(Dim::Integer; ρ::T = 0.0, c::Union{T,Complex{T}} = 0.0) where {T} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
+Acoustic(ρ::T,c::Union{T,Complex{T}},Dim::Integer) where {T<:Number} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
+Acoustic(Dim::Integer; ρ::T = 0.0, c::Union{T,Complex{T}} = 0.0) where {T<:Number} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
 
 import Base.show
 function show(io::IO, p::Acoustic)
@@ -43,12 +43,12 @@ Characteristic specific acoustic impedance (z₀) of medium
 """
 impedance(medium::Acoustic) = medium.ρ * medium.c
 
-function outgoing_radial_basis(medium::Acoustic{T,2}, ω::T, order::Integer, r::T) where {T}
+function outgoing_radial_basis(medium::Acoustic{T,2}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω/medium.c
     return hankelh1.(-order:order,k*r)
 end
 
-function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
+function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T<:Number}
     return function (order::Integer, x::AbstractVector{T})
         r, θ  = cartesian_to_radial_coordinates(x)
         k = ω/medium.c
@@ -56,13 +56,13 @@ function outgoing_basis_function(medium::Acoustic{T,2}, ω::T) where {T}
     end
 end
 
-function outgoing_radial_basis(medium::Acoustic{T,3}, ω::T, order::Integer, r::T) where {T}
+function outgoing_radial_basis(medium::Acoustic{T,3}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω/medium.c
     hs = shankelh1.(0:order,k*r)
     return  [hs[l+1] for l = 0:order for m = -l:l]
 end
 
-function outgoing_basis_function(medium::Acoustic{T,3}, ω::T) where {T}
+function outgoing_basis_function(medium::Acoustic{T,3}, ω::T) where {T<:Number}
     return function (order::Integer, x::AbstractVector{T})
         r, θ, φ  = cartesian_to_radial_coordinates(x)
         k = ω/medium.c
@@ -76,7 +76,7 @@ function outgoing_basis_function(medium::Acoustic{T,3}, ω::T) where {T}
     end
 end
 
-function outgoing_translation_matrix(medium::Acoustic{T,2}, order::Integer, ω::T, x::AbstractVector{T}) where {T}
+function outgoing_translation_matrix(medium::Acoustic{T,2}, order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
     translation_vec = outgoing_basis_function(medium, ω)(2order, x)
     N = basisorder_to_basislength(Acoustic{T,2},order)
     U = [translation_vec[n-m+N] for n in -order:order, m in -order:order]
@@ -84,7 +84,7 @@ function outgoing_translation_matrix(medium::Acoustic{T,2}, order::Integer, ω::
     return U
 end
 
-function outgoing_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::T, x::AbstractVector{T}) where {T}
+function outgoing_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
     us = outgoing_basis_function(medium, ω)(2*order,x)
     c = gaunt_coefficient
 
@@ -108,10 +108,10 @@ function outgoing_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::
 end
 
 # NOTE that medium in both functions below is only used to get c and to identify typeof(medium)
-regular_basis_function(p::Particle{T,Dim,Acoustic{T,Dim}}, ω::T) where {T,Dim} = regular_basis_function(ω/p.medium.c, p.medium)
-regular_basis_function(medium::Acoustic{T,Dim},  ω::Union{T,Complex{T}}) where {T,Dim} = regular_basis_function(ω/medium.c, medium)
+regular_basis_function(p::Particle{Dim,Acoustic{T,Dim}}, ω::T) where {Dim,T} = regular_basis_function(ω/p.medium.c, p.medium)
+regular_basis_function(medium::Acoustic{T,Dim},  ω::Union{T,Complex{T}}) where {Dim,T} = regular_basis_function(ω/medium.c, medium)
 
-function regular_radial_basis(medium::Acoustic{T,2}, ω::T, order::Integer, r::T) where {T}
+function regular_radial_basis(medium::Acoustic{T,2}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω/medium.c
     return besselj.(-order:order,k*r)
 end
@@ -125,7 +125,7 @@ function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::Acoustic{T,2}
     end
 end
 
-function regular_radial_basis(medium::Acoustic{T,3}, ω::T, order::Integer, r::T) where {T}
+function regular_radial_basis(medium::Acoustic{T,3}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω / medium.c
     js = sbesselj.(0:order,k*r)
 
@@ -145,7 +145,7 @@ function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::Acoustic{T,3}
     end
 end
 
-function regular_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::T, x::AbstractVector{T}) where {T}
+function regular_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
     vs = regular_basis_function(medium, ω)(2*order,x)
     c = gaunt_coefficient
 
@@ -167,11 +167,11 @@ end
 
 # Check for material properties that don't make sense or haven't been implemented
 """
-    check_material(p::Particle{T}, outer_medium::Acoustic{T})
+    check_material(p::Particle, outer_medium::Acoustic)
 
 Checks if wave scattering from the particle `p` is physically viable given the material properties of `p` and its surrounding medium `outer_medium`.
 """
-function check_material(p::Particle{T}, outer_medium::Acoustic{T}) where T <: AbstractFloat
+function check_material(p::Particle, outer_medium::Acoustic)
 
 if isnan(abs(p.medium.c)*p.medium.ρ)
     throw(DomainError("Particle's phase speed times density is not a number!"))
@@ -205,21 +205,21 @@ sound_hard(Dim::Integer) = sound_hard(Float64, Dim)
 
 See [`sound_hard`](@ref).
 """
-hard(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_hard(T, Dim)
+hard(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_hard(T, Dim)
 
 """
     rigid(host_medium::Acoustic)
 
 See [`sound_hard`](@ref).
 """
-rigid(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_hard(T, Dim)
+rigid(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_hard(T, Dim)
 
 """
     zero_neumann(host_medium::Acoustic)
 
 See [`sound_hard`](@ref).
 """
-zero_neumann(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_hard(T, Dim)
+zero_neumann(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_hard(T, Dim)
 
 
 """
@@ -239,28 +239,28 @@ sound_soft(Dim::Integer) = sound_soft(Float64, Dim)
 
 See [`sound_soft`](@ref).
 """
-soft(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_soft(T, Dim)
+soft(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_soft(T, Dim)
 
 """
     pressure_release(host_medium::Acoustic)
 
 See [`sound_soft`](@ref).
 """
-pressure_release(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_soft(T, Dim)
+pressure_release(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_soft(T, Dim)
 
 """
     zero_dirichlet(host_medium::Acoustic)
 
 See [`sound_soft`](@ref).
 """
-zero_dirichlet(host_medium::Acoustic{T,Dim}) where {T,Dim} = sound_soft(T, Dim)
+zero_dirichlet(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_soft(T, Dim)
 
 """
-    internal_field(x::AbstractVector, p::Particle{T,Dim,Acoustic{T,Dim}},  source::RegularSource, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
+    internal_field(x::AbstractVector, p::Particle{Dim,Acoustic{T,Dim}},  source::RegularSource, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
 
 The internal field for an acoustic particle in an acoustic medium. For a sphere and circular cylinder the result is exact, for everything else it is an approximation which assumes smooth fields.
 """
-function internal_field(x::AbstractVector{T}, p::Particle{T,Dim,Acoustic{T,Dim}}, source::RegularSource{T,Acoustic{T,Dim}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where {T,Dim}
+function internal_field(x::AbstractVector{T}, p::Particle{Dim,Acoustic{T,Dim}}, source::RegularSource{Acoustic{T,Dim}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where {Dim,T}
     if !(x ∈ p)
         @error "Point $x is not inside the particle with shape $(p.shape)"
     end

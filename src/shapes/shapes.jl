@@ -1,9 +1,11 @@
 """
 Abstract idea which defines the external boundary of object.
 """
-abstract type Shape{T<:AbstractFloat,Dim} end
+abstract type Shape{Dim} end
 
-Symmetry(s::Shape{T,Dim}) where {T,Dim} = WithoutSymmetry{Dim}()
+Symmetry(::Shape{Dim}) where {Dim} = WithoutSymmetry{Dim}()
+
+dim(::S) where {Dim,S<:Shape{Dim}} = Dim
 
 """
     origin(shape::Shape)::SVector
@@ -11,6 +13,13 @@ Symmetry(s::Shape{T,Dim}) where {T,Dim} = WithoutSymmetry{Dim}()
 Origin of shape, typically the center
 """
 origin(shape::Shape) = shape.origin
+
+"""
+    number_type(shape::Shape)::DataType
+
+Number type which is used to describe shape, defaults to the eltype of the origin vector.
+"""
+number_type(shape::Shape) = eltype(origin(shape))
 
 """
     iscongruent(p1::Shape, p2::Shape)::Bool
@@ -55,7 +64,7 @@ include("empty_shape.jl")
 returns `(x_vec, region_inds)` where `x_vec` is a vector of points that cover a box which bounds `Shape`, and `region_inds` is an array of linear indices such that `x_vec[region_inds]` are points contained `Shape`. For 3D we use `zres` instead of `yres`.
 
 """
-function points_in_shape(region::Shape{T,2};
+function points_in_shape(region::Shape{2};
         res::Number = 20, xres::Number = res, yres::Number = res,
         exclude_region::Shape = EmptyShape(region),
         kws...) where T
@@ -71,15 +80,15 @@ function points_in_shape(region::Shape{T,2};
     return x_vec, region_inds
 end
 
-function points_in_shape(region::Shape{T,3};
-        y::T = zero(T),
+function points_in_shape(region::Shape{3};
+        y = zero(number_type(region)),
         res::Number = 20, xres::Number = res, zres::Number = res,
-        exclude_region::Shape = EmptyShape(region)) where T
+        exclude_region::Shape = EmptyShape(region))
 
     box = bounding_box(region)
 
     #Size of the step in x and z direction
-    x_vec_step = [box.dimensions[1] / xres, zero(T), box.dimensions[3] / zres]
+    x_vec_step = [box.dimensions[1] / xres, zero(number_type(region)), box.dimensions[3] / zres]
 
     bl = corners(box)[1]
     x_vec = [SVector{3}(bl + x_vec_step .* [i,y,j]) for i = 0:xres, j = 0:zres][:]
@@ -90,14 +99,16 @@ end
 
 
 "Returns a set of points on the boundary of a 2D shape."
-function boundary_points(shape2D::Shape{T,2}, num_points::Int = 4; dr = zero(T)) where T
+function boundary_points(shape2D::Shape{2}, num_points::Int = 4; dr = 0)
+    T = number_type(shape2D)
     x, y = boundary_functions(shape2D)
     v(τ) = SVector(x(τ),y(τ)) + dr * (SVector(x(τ),y(τ)) - origin(shape2D))
     return [ v(τ) for τ in LinRange(zero(T),one(T),num_points+1)[1:end-1] ]
 end
 
 "Returns a set of points on the boundary of a 3D shape."
-function boundary_points(shape3D::Shape{T,3}, num_points::Int = 4; dr = zero(T)) where T
+function boundary_points(shape3D::Shape{3}, num_points::Int = 4; dr = 0)
+    T = number_type(shape3D)
     x, y, z = boundary_functions(shape3D)
     v(τ,s) = SVector(x(τ,s),y(τ,s),z(τ,s)) + dr * (SVector(x(τ,s),y(τ,s),z(τ,s)) - origin(shape3D))
     mesh = LinRange(zero(T),one(T),num_points+1)[1:end-1]
@@ -130,14 +141,14 @@ Name of a shape
 function name end
 
 """
-    outer_radius(shape::Shape{T})::T
+    outer_radius(shape::Shape)
 
 The radius of a circle which completely contains the shape
 """
 function outer_radius end
 
 """
-    volume(shape::Shape{T})::T
+    volume(shape::Shape)
 
 Volume of a shape
 """

@@ -12,8 +12,7 @@
 
         # Check types comparisons work as user would expect
         @test typeof(homog_particles) <: AbstractParticles
-        @test typeof(homog_particles) <: AbstractParticles{Float64}
-        @test typeof(homog_particles) <: AbstractParticles{Float64,2}
+        @test typeof(homog_particles) <: AbstractParticles{2}
 
         circle = Sphere((0.0,0.0),1.0)
         rect = Box((2.0,2.0),(3.0,2.0))
@@ -21,18 +20,17 @@
 
         # Check types comparisons work as user would expect
         @test typeof(diff_shape_particles) <: AbstractParticles
-        @test typeof(diff_shape_particles) <: AbstractParticles{Float64}
-        @test typeof(diff_shape_particles) <: AbstractParticles{Float64,2}
+        @test typeof(diff_shape_particles) <: AbstractParticles{2}
 
         a2 = Acoustic(1.0,1.0,2)
         a3 = Acoustic(1.0,1.0,3)
         sphere = Sphere((0.0,0.0,0.0),1.0)
 
         circular_particle = Particle(a2,circle)
-        @test typeof(circular_particle) <: Particle{Float64,2}
+        @test typeof(circular_particle) <: Particle{2}
 
         spherical_particle = Particle(a3,sphere)
-        @test typeof(spherical_particle) <: AbstractParticle{Float64,3}
+        @test typeof(spherical_particle) <: AbstractParticle{3}
 
         # Dimension mismatch throws error
         @test_throws MethodError Particle(a3,circle)
@@ -41,10 +39,10 @@
         # This is a valid vector of valid particles, but not of type Particles
         # because the dimensions don't match
         invalid_particles = [circular_particle, spherical_particle]
-        @test_throws TypeError invalid_particles::(Vector{Pt} where {Dim, Pt <: AbstractParticle{Float64,Dim}})
+        @test_throws TypeError invalid_particles::(Vector{Pt} where {Dim, Pt <: AbstractParticle{Dim}})
 
         # does not throw an error
-        diff_shape_particles::(Vector{Pt} where {Dim, Pt <: AbstractParticle{Float64,Dim}})
+        diff_shape_particles::(Vector{Pt} where {Dim, Pt <: AbstractParticle{Dim}})
         @test true
 
     end
@@ -124,6 +122,6 @@ end
     a_out = Acoustic(3.0,3.0,2)
     a = Acoustic(1.0,1.0,2)
     concen_particles = [ Particle(a_out,circle_out),Particle(a,circle_in)]
-    @test typeof(CapsuleParticle(concen_particles...)) <: AbstractParticle{Float64,2}
+    @test typeof(CapsuleParticle(concen_particles...)) <: AbstractParticle{2}
 
 end

@@ -7,7 +7,7 @@ More precisely, if the listener is at (l_x,l_y) then the interior of the shape
 is defined as
 sqrt((x-l_x)^2+(y-l_y)^2)<time and x>0
 """
-struct TimeOfFlightPointWaveToPoint{T <: AbstractFloat} <: Shape{T,2}
+struct TimeOfFlightPointWaveToPoint{T <: AbstractFloat} <: Shape{2}
     listener_position::Vector{T}
     time::T
 end
@@ -20,15 +20,15 @@ function volume(shape::TimeOfFlightPointWaveToPoint)
 end
 
 import Base.issubset
-function issubset(circle::Sphere{T,2}, shape::TimeOfFlightPointWaveToPoint) where T
+function issubset(circle::Sphere{2}, shape::TimeOfFlightPointWaveToPoint)
     (origin(circle)[1] - circle.radius) > 0 &&
     norm(origin(circle) - shape.listener_position) < (shape.time - 2circle.radius)
 end
 
-function bounding_box(shape::TimeOfFlightPointWaveToPoint{T}) where T <: AbstractFloat
+function bounding_box(shape::TimeOfFlightPointWaveToPoint)
     box_height = 2sqrt(shape.time^2 - shape.listener_position[1]^2)
-    box_width = max(shape.time + shape.listener_position[1], zero(T))
-    return Box([SVector(zero(T), -box_height/2), SVector(box_width, box_height/2)])
+    box_width = max(shape.time + shape.listener_position[1], 0)
+    return Box([SVector(zero(box_width), -box_height/2), SVector(box_width, box_height/2)])
 end
 
 

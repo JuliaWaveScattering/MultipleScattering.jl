@@ -1,15 +1,15 @@
 
-random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shape::Shape{T,Dim}; kws...) where {T<:AbstractFloat,Dim} = random_particles(particle_medium, [particle_shape]; kws...)
+random_particles(particle_medium::PhysicalMedium{Dim}, particle_shape::Shape{Dim}; kws...) where {T<:AbstractFloat,Dim} = random_particles(particle_medium, [particle_shape]; kws...)
 
 
-function random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shapes::Vector{S};
-        num_particles::Int = length(particle_shapes), volume_fraction::T = zero(T),
-        region_shape::Shape{T,Dim} = Box(zeros(T,Dim), ones(T,Dim) .* T(10)*sum(outer_radius.(particle_shapes))),
-        current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[],
+function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shapes::Vector{S};
+        num_particles::Integer = length(particle_shapes), volume_fraction = 0,
+        region_shape::Shape{Dim} = Box(fill(10*sum(outer_radius.(particle_shapes)),Dim)),
+        current_particles::AbstractParticles{Dim} = AbstractParticle{Dim}[],
         kws...
-) where {T<:AbstractFloat,Dim, S<:Shape{T,Dim}}
+) where {T<:AbstractFloat,Dim, S<:Shape{Dim}}
 
-    particles = if volume_fraction == zero(T)
+    particles = if volume_fraction == 0
         num_each = Int(round(num_particles / length(particle_shapes)))
         for s in particle_shapes
             add_particles = random_particles(particle_medium, s, region_shape, num_each; current_particles = current_particles, kws...)
@@ -47,8 +47,8 @@ end
 # f1(; a = [2])
 # a
 
-# function random_particles(particle_medium::PhysicalMedium{T,Dim}, particle_shape::Shape{T,Dim};
-#         region_shape::Shape{T,Dim} = Rectangle(zeros(T,2), T(10)*outer_radius(particle_shape), T(10)*outer_radius(particle_shape)),
+# function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shape::Shape{Dim};
+#         region_shape::Shape{Dim} = Rectangle(zeros(T,2), T(10)*outer_radius(particle_shape), T(10)*outer_radius(particle_shape)),
 #         num_particles::Int = 0, volume_fraction::T = zero(T), kws...) where {T<:AbstractFloat,Dim}
 #
 #     if volume_fraction == zero(T)
@@ -63,8 +63,8 @@ end
 # end
 
 function random_particles(particle_medium::P, particle_shape::S,
-    region_shape::Shape{T,Dim}, volfrac::AbstractFloat; kws...
-) where {T,Dim,P<:PhysicalMedium{T,Dim},S<:Shape{T,Dim}}
+    region_shape::Shape{Dim}, volfrac::AbstractFloat; kws...
+) where {Dim,P<:PhysicalMedium{Dim},S<:Shape{Dim}}
 
     N = Int(round(volfrac * volume(region_shape) / volume(particle_shape)))
     return random_particles(particle_medium, particle_shape, region_shape, N; kws...)
@@ -86,13 +86,13 @@ or does not lies completely in box.
 
 When passing particle_shapes::Vector{Shape} we assume each element is equally likely to occur. Repeating the same shape will lead to it being placed more often.
 """
-function random_particles(particle_medium::P, particle_shape::S, region_shape::Shape{T,Dim}, N::Integer;
+function random_particles(particle_medium::P, particle_shape::S, region_shape::Shape{Dim}, N::Integer;
         seed=Random.make_seed(),
         verbose::Bool = false,
-        separation_ratio::T = T(1.005), # Min distance between particle centres relative to their outer radiuses.
+        separation_ratio = 1.005, # Min distance between particle centres relative to their outer radiuses.
         max_attempts_to_place_particle::Int = 3000, # Maximum number of attempts to place a particle
-        current_particles::Vector{AbstractParticle{T,Dim}} = AbstractParticle{T,Dim}[] # Particles already present.
-) where {T<:AbstractFloat,Dim,P<:PhysicalMedium{T,Dim},S<:Shape{T,Dim}}
+        current_particles::AbstractParticles{Dim} = AbstractParticle{Dim}[] # Particles already present.
+) where {Dim,P<:PhysicalMedium{Dim},S<:Shape{Dim}}
 
     # Check volume fraction is not impossible
     volfrac = N * volume(particle_shape) / volume(region_shape)
@@ -123,7 +123,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
 
     # Allocate memory for particles
     L = length(current_particles)
-    particles = Vector{Particle{T,Dim,P,S}}(undef, N + L)
+    particles = Vector{Particle{Dim,P,S}}(undef, N + L)
     particles[1:L] = current_particles
 
     for n = L+1:L+N
@@ -134,7 +134,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
 
             outside_box = true
             while outside_box
-                x = (box.dimensions ./ 2) .* (1 .- 2 .* rand(randgen,T,Dim)) + origin(box)
+                x = (box.dimensions ./ 2) .* (1 .- 2 .* rand(randgen,typeof(origin(box)))) + origin(box)
                 particles[n] = Particle(particle_medium, congruent(particle_shape, x))
                 outside_box = !(particles[n] ⊆ region_shape)
             end

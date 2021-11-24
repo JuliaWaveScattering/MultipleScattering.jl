@@ -18,7 +18,7 @@ end
 end
 
 
-@recipe function plot(shape::Shape{T,2}) where T
+@recipe function plot(shape::Shape{2})
 
     grid --> false
     xguide --> "x"
@@ -33,7 +33,7 @@ end
 
 end
 
-@recipe function plot(shape::Shape{T,3}) where T
+@recipe function plot(shape::Shape{3})
 
     println("Only the (x,z) coordinates of this shape will be drawn")
 

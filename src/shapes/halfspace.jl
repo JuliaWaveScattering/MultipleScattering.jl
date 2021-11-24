@@ -3,7 +3,7 @@
 
 A halfspace defined by all the points ``\\mathbf x`` that satify ``(\\mathbf x - \\mathbf o) \\cdot \\mathbf n < 0`` where ``\\mathbf n`` is the unit normal and ``\\mathbf o`` is the origin.
 """
-struct Halfspace{T,Dim} <: Shape{T,Dim}
+struct Halfspace{T,Dim} <: Shape{Dim}
     normal::SVector{Dim,T} # outward pointing normal vector
     origin::SVector{Dim,T}
 end
