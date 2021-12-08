@@ -1,5 +1,3 @@
-import StaticArrays: SVector
-
 @testset "Impulse operations" begin
 
     # test adding analytic impulses

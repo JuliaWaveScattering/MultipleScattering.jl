@@ -64,7 +64,7 @@ end
 Returns a particle shaped like a sphere or circle, when the particle shape is not given and with the specified `radius`.
 """
 function Particle(medium::P, radius) where {Dim, P <: PhysicalMedium{Dim}}
-    Particle{Dim,P,Sphere{Dim}}(medium,Sphere(Dim,radius))
+    Particle{Dim,P,Sphere{typeof(radius),Dim}}(medium,Sphere(Dim,radius))
 end
 
 function CapsuleParticle(p1::Particle{Dim,P,S},p2::Particle{Dim,P,S}) where {Dim,S<:Shape,P<:PhysicalMedium}

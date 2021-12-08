@@ -7,8 +7,8 @@
 
         @test o ∈ rectangle
         @test (o+[0.0,3.1]) ∉ rectangle
-        @test iscongruent(rectangle, congruent(rectangle, SVector(3.0,4.0)))
-        @test rectangle ≅ congruent(rectangle, SVector(3.0,4.0)) # test infix
+        @test iscongruent(rectangle, congruent(rectangle, [3.0,4.0]))
+        @test rectangle ≅ congruent(rectangle, [3.0,4.0]) # test infix
 
         smaller_rectangle = Box(o, [1.0, 2.0])
         @test smaller_rectangle ⊆ rectangle
@@ -41,8 +41,8 @@
         @test outer_radius(circle) == radius
         @test o ∈ circle
         @test (o+[0.0,radius+0.1]) ∉ circle
-        @test iscongruent(circle, congruent(circle,SVector(3.0,4.0)))
-        @test circle ≅ congruent(circle,SVector(3.0,4.0))
+        @test iscongruent(circle, congruent(circle,[3.0,4.0]))
+        @test circle ≅ congruent(circle,[3.0,4.0])
         @test volume(circle) ≈ 12.566370614359172
 
         smaller_circle = Sphere(o, radius-2)
@@ -98,13 +98,13 @@
 
     @testset "Sphere" begin
         radius = 4.2
-        o = SVector(3.4, -2.1, 2.0)
+        o = [3.4, -2.1, 2.0]
         sphere = Sphere(o, radius)
         @test name(sphere) == "Sphere"
         @test outer_radius(sphere) == radius
         @test o ∈ sphere
         @test (o+[0.0,radius+0.1,0.0]) ∉ sphere
-        @test iscongruent(sphere, congruent(sphere,SVector(3.0,4.0,1.0)))
+        @test iscongruent(sphere, congruent(sphere,[3.0,4.0,1.0]))
         @test volume(sphere) ≈ 310.33908869221415
 
         smaller_sphere = Sphere(o, radius-2)

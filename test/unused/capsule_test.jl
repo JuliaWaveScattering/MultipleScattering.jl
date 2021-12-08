@@ -1,6 +1,4 @@
 import Base.Test: @testset, @test, @test_throws
-import StaticArrays: SVector
-
 using MultipleScattering
 
 concen_particles1 = [
@@ -19,7 +17,7 @@ ps = [CapsuleParticle(concen_particles2...), CapsuleParticle(concen_particles1..
 medium = Acoustic(0.8, 0.5 + 0.0im,2)
 
 ps = [CapsuleParticle(concen_particles1...)]
-source = plane_source(medium, SVector(-3.0,0.0), SVector(1.0,0.0), 1.)
+source = plane_source(medium, [-3.0,0.0], [1.0,0.0], 1.)
 sim = FrequencySimulation(ps, source)
 
 using Plots; #pyplot()
@@ -61,7 +59,7 @@ ps = [concen; ps]
 plot(ps)
 
 ω = 1.4
-source_position = SVector(0.0,-3.0)
+source_position = [0.0,-3.0]
 amplitude = 1.0
 source = point_source(medium, source_position, amplitude)
 sim = FrequencySimulation(ps, source)

@@ -18,7 +18,7 @@ struct PlaneSource{T<:Real,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{P}
     position::SVector{Dim,T}
     amplitude::SVector{FieldDim,Complex{T}}
     # Check that P has same Dim and FieldDim
-    function PlaneSource(medium::P, direction, position, amplitude) where {Dim,FieldDim,P<:PhysicalMedium{Dim,FieldDim}}
+    function PlaneSource(medium::P, direction::AbstractArray, position = SVector(zeros(eltype(direction),Dim)...), amplitude = SVector{FieldDim}(ones(eltype(direction),FieldDim))) where {Dim,FieldDim,P<:PhysicalMedium{Dim,FieldDim}}
 
         normw = sqrt(sum(direction .^2)) # note if direction is complex this is different from norm(direction)
         if !(normw ≈ 1)
@@ -47,9 +47,9 @@ field(s::PlaneSource{T,Dim,1}) where {T, Dim} = function (x::AbstractArray{T}, �
 field(s::PlaneSource{T}, x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
 
 function PlaneSource(medium::P;
-        direction = vcat(SVector(1), SVector{Dim-1}(zeros(Int,Dim-1))),
-        position = zeros(Int,Dim),
-        amplitude = SVector{FieldDim}(ones(Int,FieldDim))
+        direction = vcat(SVector(1), SVector{Dim-1}(zeros(Float64,Dim-1))),
+        position = zeros(eltype(direction),Dim),
+        amplitude = SVector{FieldDim}(ones(eltype(direction),FieldDim))
     ) where {Dim,FieldDim,P<:PhysicalMedium{Dim,FieldDim}}
 
     PlaneSource(medium,direction,position,amplitude)

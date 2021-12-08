@@ -3,8 +3,8 @@
 
         # Fake results, with mean 4.0, standard deviation 2.0 and skew 0.0
         fields = [2.0, 4.0, 6.0]
-        results_freq = [FrequencySimulationResult(reshape([complex(f)],1,1),[SVector(0.0)],[0.0]) for f in fields]
-        results_time = [TimeSimulationResult(reshape([f],1,1),[SVector(0.0)],[0.0]) for f in fields]
+        results_freq = [FrequencySimulationResult(reshape([complex(f)],1,1),[[0.0]],[0.0]) for f in fields]
+        results_time = [TimeSimulationResult(reshape([f],1,1),[[0.0]],[0.0]) for f in fields]
 
         moments_freq = statistical_moments(results_freq, 3)
         @test moments_freq[1][1,1] ≈ 4.0 &&

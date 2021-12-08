@@ -1,5 +1,4 @@
 import Test: @testset, @test, @test_throws
-import StaticArrays: SVector
 
 using MultipleScattering
 using LinearAlgebra

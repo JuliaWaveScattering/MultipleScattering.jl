@@ -15,8 +15,8 @@
 
         # show(sim);
 
-        result = run(sim, SVector(1.0,2.0), 0.1)
-        result = run(particles, source, SVector(1.0,2.0), 0.1)
+        result = run(sim, [1.0,2.0], 0.1)
+        result = run(particles, source, [1.0,2.0], 0.1)
         result = 3.2*result + result*4.0im + 0.3+4.0im # changes result.field
         3.2 + result
 
@@ -37,7 +37,7 @@
         particles = [Particle(a_p,s1), Particle(a_p,s2)]
         source = plane_source(a; position = [0.0,0.0,0.0], direction = [0.0,0.0,1.0])
 
-        x = SVector(-3.0,2.0,3.0)
+        x = [-3.0,2.0,3.0]
         ω = 0.1
         sim = FrequencySimulation(particles,source)
         result = run(particles, source, x, ω)

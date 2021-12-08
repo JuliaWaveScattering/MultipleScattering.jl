@@ -25,14 +25,14 @@
     xs = [centre + 0.1 .* [cos(τ),sin(τ)] for τ = 0.0:0.3:1.5]
     @test norm([field(s3,x,ω) - s3_expand(x,ω) for x in xs]) < 1e-7*norm([field(s3,x,ω) for x in xs])
 
-    source = plane_source(a2_host; position = SVector(-10.0,0.0), direction = SVector(1.0,0.0), amplitude = 1.0)
+    source = plane_source(a2_host; position = [-10.0,0.0], direction = [1.0,0.0], amplitude = 1.0)
     s_expand = source_expand(source, centre; basis_order = 4)
     @test norm([field(source,x,ω) - s_expand(x,ω) for x in xs]) < 2e-9*norm([field(source,x,ω) for x in xs])
 
     # Test DimensionMismatch between 3D and 2D
 
-    direction = SVector(-10.0,1.0)
-    position = SVector(rand(2)...)
+    direction = [-10.0,1.0]
+    position = [rand(2)...]
     amplitude = rand() + rand() * im
 
     a3_host = Acoustic(3, ρ = 1.3, c = 1.5 + 0.0im)
