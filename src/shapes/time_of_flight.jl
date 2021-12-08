@@ -6,13 +6,13 @@ is defined as
 ``(y - y_f)^2 < (D + x_0)^2 - x_f^2 - 2(D + x_0 - x_f)x``  and ``x > min(x_0, x_f)``
 where ``D`` is the focal distance.
 """
-struct TimeOfFlightPlaneWaveToPoint{T <: AbstractFloat,Dim} <: Shape{T,Dim}
+struct TimeOfFlightPlaneWaveToPoint{T <: AbstractFloat,Dim} <: Shape{Dim}
     focal_point::AbstractVector{T}
     focal_distance::T
     minimum_x::T
 end
 
-TimeOfFlightPlaneWaveToPoint(focal_point::AbstractVector{T},  focal_distance::T;  minimum_x::T = zero(T)) where T <:AbstractFloat = TimeOfFlightPlaneWaveToPoint{T,length(focal_point)}(focal_point, focal_distance, minimum_x)
+TimeOfFlightPlaneWaveToPoint(focal_point::AbstractVector{T},  focal_distance::T;  minimum_x::T = zero(eltype(focal_point))) where T <:AbstractFloat = TimeOfFlightPlaneWaveToPoint{T,length(focal_point)}(focal_point, focal_distance, minimum_x)
 
 name(shape::TimeOfFlightPlaneWaveToPoint) = "Time of flight from planar source to the focal point"
 

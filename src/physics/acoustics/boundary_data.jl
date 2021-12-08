@@ -1,9 +1,11 @@
-function boundary_data(shape1::Shape{T}, inside_medium::Acoustic{T,Dim}, outside_medium::Acoustic{T,Dim},
-        sim::FrequencySimulation{T,Dim,P}, ωs::Vector{T};
-        dr = T(10)^(3*Dim) * eps(T), kws...) where {T<:AbstractFloat,Dim,P<:Acoustic{T,Dim}}
+function boundary_data(shape1::Shape{Dim}, inside_medium::Acoustic{TI,Dim}, outside_medium::Acoustic{TO,Dim},
+        sim::FrequencySimulation, ωs::Vector;
+        dr = 10^(3*Dim) * eps(number_type(shape1)), kws...) where {Dim,TI,TO}
 
     in_m = inside_medium
     out_m = outside_medium
+
+    T = number_type(shape1)
 
     # points just inside particles
     inside1_points = boundary_points(shape1; dr = - dr - 10*eps(T))[:]

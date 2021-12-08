@@ -3,7 +3,7 @@
 
 Create 2D [`Acoustic`](@ref) point [`RegularSource`](@ref) (zeroth Hankel function of first type)
 """
-function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{T,Acoustic{T,2}} where T <: AbstractFloat
+function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{Acoustic{T,2}} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{2,T}(source_position)
@@ -23,11 +23,11 @@ function point_source(medium::Acoustic{T,2}, source_position::AbstractVector, am
         return (amp(ω)*im)/4 * [hankelh1(-n,k*r) * exp(-im*n*θ) for n = -order:order]
     end
 
-    return RegularSource{T,Acoustic{T,2},WithoutSymmetry{2}}(medium, source_field, source_coef)
+    return RegularSource{Acoustic{T,2},WithoutSymmetry{2}}(medium, source_field, source_coef)
 end
 
 # If we replaced 3 with Dim below this could should work for all dimensions! Test carefully after changing.
-function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{T,Acoustic{T,3}} where T <: AbstractFloat
+function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{Acoustic{T,3}} where T <: AbstractFloat
 
     # Convert to SVector for efficiency and consistency
     source_position = SVector{3,T}(source_position)
@@ -56,13 +56,13 @@ function point_source(medium::Acoustic{T,3}, source_position, amplitude::Union{T
         return amp(ω) * U[1,:]
     end
 
-    return RegularSource{T,Acoustic{T,3},WithoutSymmetry{3}}(medium, source_field, source_coef)
+    return RegularSource{Acoustic{T,3},WithoutSymmetry{3}}(medium, source_field, source_coef)
 end
 
 
 function plane_source(medium::Acoustic{T,Dim}; position::AbstractArray{T} = SVector(zeros(T,Dim)...),
         direction = SVector(one(T), zeros(T,Dim-1)...),
-        amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{T,Acoustic{T,Dim}} where {T, Dim}
+        amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{Acoustic{T,Dim}} where {T, Dim}
 
     plane_source(medium, position, direction, amplitude)
 end
@@ -72,7 +72,7 @@ end
 
 Create an [`Acoustic`](@ref) planar wave [`RegularSource`](@ref)
 """
-function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::RegularSource{T,Acoustic{T,2}} where {T}
+function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(one(T),zero(T)), amplitude::Union{T,Complex{T}} = one(T))::RegularSource{Acoustic{T,2}} where {T}
 
     # Convert to SVector for efficiency and consistency
     position = SVector(position...)
@@ -99,7 +99,7 @@ function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T}, directi
         source_field(centre,ω) * [exp(im * n *(T(pi)/2 -  θ)) for n = -order:order]
     end
 
-    return RegularSource{T,Acoustic{T,2},S}(medium, source_field, source_coef)
+    return RegularSource{Acoustic{T,2},S}(medium, source_field, source_coef)
 end
 
 function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T}, direction::AbstractArray{T} = SVector(zero(T),zero(T),one(T)), amplitude::Union{T,Complex{T}} = one(T)) where {T}
@@ -135,10 +135,10 @@ function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T}, directi
         for l = 0:order for m = -l:l]
     end
 
-    return RegularSource{T,Acoustic{T,3},S}(medium, source_field, source_coef)
+    return RegularSource{Acoustic{T,3},S}(medium, source_field, source_coef)
 end
 
-function regular_spherical_coefficients(psource::PlaneSource{T,Dim,1,Acoustic{T,Dim}}) where {T,Dim}
+function regular_spherical_coefficients(psource::PlaneSource{T,Dim,1,Acoustic{T,Dim}}) where {Dim,T}
 
     source = plane_source(psource.medium;
         amplitude = psource.amplitude[1],

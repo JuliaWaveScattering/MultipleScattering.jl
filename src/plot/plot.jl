@@ -40,21 +40,21 @@ end
 
 
 "Plot the field for a particular wavenumber"
-@recipe function plot(sim::FrequencySimulation{T,3}, ω::T;
+@recipe function plot(sim::FrequencySimulation{3}, ω::Number;
         res=10, xres=res, yres=res,
         y = :auto,
         field_apply=real,
         region_shape = :auto,
         bounds = :auto,
-        exclude_region = EmptyShape{T,3}(),
-        drawparticles=false) where {T}
+        exclude_region = EmptyShape{3}(),
+        drawparticles=false)
 
     # If user wants us to, generate bounding rectangle around particles
     region_shape = (region_shape != :auto) ? region_shape :
         if isempty(sim.particles)
             if bounds == :auto
                 @warn "What region to plot? For example, use keyword bounds = Box([[-1.0,-1.0],[1.0,1.0]])"
-                Box([[-one(T),-one(T)],[one(T),one(T)]])
+                Box([[-1,-1],[1,1]])
             else bounds
             end
         else
@@ -108,13 +108,13 @@ end
 
 
 "Plot the field for a particular wavenumber"
-@recipe function plot(sim::FrequencySimulation{T,2}, ω::T;
+@recipe function plot(sim::FrequencySimulation{2}, ω::Number;
         res=10, xres=res, yres=res,
         field_apply=real,
         region_shape = :auto,
         bounds = :auto,
-        exclude_region = EmptyShape{T,2}(),
-        drawparticles=false) where {T}
+        exclude_region = EmptyShape{2}(),
+        drawparticles=false)
 
     # If user wants us to, generate bounding rectangle around particles
     region_shape = (region_shape != :auto) ? region_shape :

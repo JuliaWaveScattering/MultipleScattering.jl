@@ -5,7 +5,7 @@ abstract type SimulationResult{T,Dim,FieldDim} end
 """
 Struct to hold results of a FrequencySimulation
 """
-struct FrequencySimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T,Dim,FieldDim}
+struct FrequencySimulationResult{T<:Real,Dim,FieldDim} <: SimulationResult{T,Dim,FieldDim}
     "Values of field through space (rows) and angular frequencies (columns)"
     field::Matrix{SVector{FieldDim,Complex{T}}}
     "Positions"

@@ -10,7 +10,7 @@ Suppose we want to define a new shape, which is very much like a rectangle.
 ```julia
 using MultipleScattering
 
-struct MyRectangle{T} <: Shape{T,2}
+struct MyRectangle{T} <: Shape{2}
     origin::Vector{T}
     width::T
     height::T

@@ -3,7 +3,7 @@
 
 Returns a finite T-matrix, with size depending on `order`, for a specific `particle` within a `medium` with specific physical properties.
 """
-function t_matrix(p::AbstractParticle{T,Dim}, medium::PhysicalMedium{T,Dim}, ω::T, order::Integer)::AbstractMatrix{T} where {T<:AbstractFloat,Dim}
+function t_matrix(p::AbstractParticle{Dim}, medium::PhysicalMedium{Dim}, ω::T, order::Integer)::AbstractMatrix{T} where {T<:AbstractFloat,Dim}
 
     error("T-matrix function is not yet written for $(name(p.medium)) $(name(p.shape)) in a $(name(medium)) medium")
 end

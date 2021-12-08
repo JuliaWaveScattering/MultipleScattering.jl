@@ -4,6 +4,7 @@ import StaticArrays: SVector
 using MultipleScattering
 using LinearAlgebra
 using Plots
+import Statistics: mean
 
 include("special_functions.jl")
 
