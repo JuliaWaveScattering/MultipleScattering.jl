@@ -4,19 +4,19 @@ Object we can scatter waves off
 Subtypes will contain information about shape and material properties. Most
 crucially, they will implement the [`t_matrix`](@ref) function
 """
-abstract type AbstractParticle{T,Dim} end
+abstract type AbstractParticle{Dim} end
 
 """
     Particle(medium::PhysicalMedium, shape::Shape)
 
-Create particle with inner medium and shape (types and dimension must agree).
+Create particle with inner medium and shape (dimensions must agree).
 """
-struct Particle{T<:AbstractFloat,Dim,P<:PhysicalMedium,S<:Shape} <: AbstractParticle{T,Dim}
+struct Particle{Dim,P<:PhysicalMedium,S<:Shape} <: AbstractParticle{Dim}
     medium::P
     shape::S
-    # Enforce that the Dims and Types are all the same
-    function Particle{T,Dim,P,S}(medium::P,shape::S) where {T,Dim,FieldDim,P<:PhysicalMedium{T,Dim,FieldDim},S<:Shape{T,Dim}}
-        new{T,Dim,P,S}(medium,shape)
+    # Enforce that the Dims are all the same
+    function Particle{Dim,P,S}(medium::P,shape::S) where {Dim,FieldDim,P<:PhysicalMedium{Dim,FieldDim},S<:Shape{Dim}}
+        new{Dim,P,S}(medium,shape)
     end
 end
 
@@ -36,26 +36,26 @@ end
 
 A particle within another particle, both with the same shape type and origin.
 """
-struct CapsuleParticle{T<:AbstractFloat,Dim,P<:PhysicalMedium,S<:Shape} <: AbstractParticle{T,Dim}
-    outer::Particle{T,Dim,P,S}
-    inner::Particle{T,Dim,P,S}
+struct CapsuleParticle{Dim,P<:PhysicalMedium,S<:Shape} <: AbstractParticle{Dim}
+    outer::Particle{Dim,P,S}
+    inner::Particle{Dim,P,S}
     # Enforce that particles are concentric
-    function CapsuleParticle{T,Dim,P,S}(p2::Particle{T,Dim,P,S},p1::Particle{T,Dim,P,S}) where {T,Dim,P<:PhysicalMedium{T,Dim},S<:Shape}
+    function CapsuleParticle{Dim,P,S}(p2::Particle{Dim,P,S},p1::Particle{Dim,P,S}) where {Dim,P<:PhysicalMedium{Dim},S<:Shape}
         if origin(p1) != origin(p2) error("outer and inner particles should share the same origin") end
         if outer_radius(p1) >= outer_radius(p2)
-            new{T,Dim,P,S}(p1,p2)
+            new{Dim,P,S}(p1,p2)
         else
-            new{T,Dim,P,S}(p2,p1)
+            new{Dim,P,S}(p2,p1)
         end
     end
 end
 
 # Shorthand for all Vectors of particles
-AbstractParticles{T<:AbstractFloat,Dim} = Vector{Pt} where Pt<:AbstractParticle{T,Dim}
+AbstractParticles{Dim} = Vector{Pt} where Pt<:AbstractParticle{Dim}
 
 # Convenience constructor which does not require explicit types/parameters
-function Particle(medium::P,s::S) where {Dim,T,P<:PhysicalMedium{T,Dim},S<:Shape{T,Dim}}
-    Particle{T,Dim,P,S}(medium,s)
+function Particle(medium::P,s::S) where {Dim,P<:PhysicalMedium{Dim},S<:Shape{Dim}}
+    Particle{Dim,P,S}(medium,s)
 end
 
 """
@@ -63,12 +63,12 @@ end
 
 Returns a particle shaped like a sphere or circle, when the particle shape is not given and with the specified `radius`.
 """
-function Particle(medium::P, radius::T) where {T, Dim, P <: PhysicalMedium{T,Dim}}
-    Particle{T,Dim,P,Sphere{T,Dim}}(medium,Sphere(Dim,radius))
+function Particle(medium::P, radius) where {Dim, P <: PhysicalMedium{Dim}}
+    Particle{Dim,P,Sphere{Dim}}(medium,Sphere(Dim,radius))
 end
 
-function CapsuleParticle(p1::Particle{T,Dim,P,S},p2::Particle{T,Dim,P,S}) where {T,Dim,S<:Shape,P<:PhysicalMedium}
-    CapsuleParticle{T,Dim,P,S}(p1,p2)
+function CapsuleParticle(p1::Particle{Dim,P,S},p2::Particle{Dim,P,S}) where {Dim,S<:Shape,P<:PhysicalMedium}
+    CapsuleParticle{Dim,P,S}(p1,p2)
 end
 
 shape(p::Particle) = p.shape
@@ -79,7 +79,7 @@ origin(p::AbstractParticle) = origin(shape(p))
 
 boundary_points(p::AbstractParticle, num_points::Int = 3; kws...) = boundary_points(shape(p),num_points; kws...)
 
-CircleParticle{T,P} = Particle{T,2,P,Sphere{T,2}}
+CircleParticle{T,P} = Particle{2,P,Sphere{T,2}}
 
 outer_radius(p::AbstractParticle) = outer_radius(shape(p))
 volume(p::AbstractParticle) = volume(shape(p))

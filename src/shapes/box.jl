@@ -3,7 +3,7 @@
 
 A [`Box`](@ref) for 2D and 3D with axis aligned sides, defined by dimensions and origin (at the center).
 """
-struct Box{T,Dim} <: Shape{T,Dim}
+struct Box{T,Dim} <: Shape{Dim}
     origin::SVector{Dim,T}
     dimensions::SVector{Dim,T}
 end
@@ -14,7 +14,7 @@ function Box(origin::AbstractVector{T}, dimensions::AbstractVector{T}) where T
     Box{T,Dim}(origin, dimensions)
 end
 
-function Box(origin::NTuple{Dim,T}, dimensions::NTuple{Dim,T}) where {T,Dim}
+function Box(origin::NTuple{Dim,T}, dimensions::NTuple{Dim,T}) where {Dim,T}
     Box{T,Dim}(origin, dimensions)
 end
 
@@ -47,8 +47,8 @@ function issubset(inner::Box, outer::Box)
 end
 
 import Base.in
-function in(x::AbstractVector, b::Box{T})::Bool where T
-    all(abs.(x .- b.origin) .<= b.dimensions ./ T(2))
+function in(x::AbstractVector, b::Box)::Bool
+    all(abs.(x .- b.origin) .<= b.dimensions ./ 2)
 end
 
 import Base.(==)

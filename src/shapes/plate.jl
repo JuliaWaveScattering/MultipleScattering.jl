@@ -3,7 +3,7 @@
 
 A plate defined by all the points ``\\mathbf x`` that satify ``|(\\mathbf x - \\mathbf o) \\cdot \\mathbf n| < w /2`` where ``\\mathbf n`` is the unit normal, ``\\mathbf o`` is the origin, and ``w`` is the width.
 """
-struct Plate{T,Dim} <: Shape{T,Dim}
+struct Plate{T,Dim} <: Shape{Dim}
     normal::SVector{Dim,T} # a unit vector which is orthogonal to the plate
     width::T # the width
     origin::SVector{Dim,T}
@@ -29,29 +29,29 @@ outer_radius(hs::Plate{T}) where T = T(Inf)
 # end
 
 import Base.in
-function in(x::AbstractVector{T}, p::Plate)::Bool where T
-    abs(dot(x - p.origin, p.normal)) < p.width / T(2)
+function in(x::AbstractVector, p::Plate)::Bool
+    abs(dot(x - p.origin, p.normal)) < p.width / 2
 end
 
 import Base.(==)
-function ==(h1::Plate{T}, h2::Plate{T}) where T
+function ==(h1::Plate, h2::Plate)
     h1.origin == h2.origin &&
     h1.width == h2.width &&
     h1.normal == h2.normal
 end
 
 import Base.isequal
-function isequal(h1::Plate{T}, h2::Plate{T}) where T
+function isequal(h1::Plate, h2::Plate)
     isequal(h1.origin, h2.origin) &&
     isequal(h1.width, h2.width) &&
     isequal(h1.normal, h2.normal)
 end
 
-function iscongruent(h1::Plate{T}, h2::Plate{T}) where T
+function iscongruent(h1::Plate, h2::Plate)
     (h1.normal  == h2.normal) && (h1.width  == h2.width)
 end
 
-function congruent(h::Plate{T}, x) where T
+function congruent(h::Plate, x)
     Plate(h.normal, h.width, x)
 end
 

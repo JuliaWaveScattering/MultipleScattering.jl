@@ -13,7 +13,7 @@
     s2 = plane_source(a2; position = source_position, direction = [1.0,0.0])
 
     # NOTE: should use the function regular_spherical_source, but for 2D one of the translation matrices has not been implemented yet
-    s3 = RegularSource{Float64,Acoustic{Float64,2},RadialSymmetry{2}}(a2, (x,ω) -> norm(x)+1.0im, (order,centre,ω) -> [1.0+1.0im for m = -order:order])
+    s3 = RegularSource{Acoustic{Float64,2},RadialSymmetry{2}}(a2, (x,ω) -> norm(x)+1.0im, (order,centre,ω) -> [1.0+1.0im for m = -order:order])
 
     sources2D = [s1,s2,s3]
 

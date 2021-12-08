@@ -1,9 +1,9 @@
 """
-    t_matrix(Particle{T,3,Acoustic{T,3},Sphere{T,3}}, Acoustic{T,3}, ω, order)
+    t_matrix(Particle{3,Acoustic{T,3},Sphere{T,3}}, Acoustic{T,3}, ω, order)
 
 The T-matrix for a 3D spherical acoustic particle in a 3D acoustic medium.
 """
-function t_matrix(p::Particle{T,3,Acoustic{T,3},Sphere{T,3}}, outer_medium::Acoustic{T,3}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
+function t_matrix(p::Particle{3,Acoustic{T,3},Sphere{T,3}}, outer_medium::Acoustic{T,3}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     # Check for material properties that don't make sense or haven't been implemented
     check_material(p, outer_medium)
