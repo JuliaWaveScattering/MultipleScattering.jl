@@ -26,7 +26,7 @@
         # run simulation over a region rather than a specif set of x points
         ω = 0.1
         region = bounding_box([p.shape for p in particles])
-        result = run(particles, source, region, [ω]; res=10)
+        result = run(particles, source, region, [ω]; res=10, only_scattered_waves = true)
 
         # 3D acoustics
         s1 = Sphere((1.0,-1.0,2.0),1.0)
