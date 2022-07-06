@@ -14,6 +14,14 @@ Plate(normal::AbstractVector{T}, width::T, origin::AbstractVector{T} = zeros(T,l
 
 Plate(normal::NTuple{Dim,T}, width::T, origin::AbstractVector{T} = zeros(T,Dim)) where {T,Dim} = Plate{T,Dim}(normal ./ norm(normal), width, origin)
 
+function Shape(p::Plate{T,Dim};
+        addtodimensions = zero(T),
+        vector_translation = zeros(T,Dim)
+    ) where {T,Dim}
+
+    return Plate(p.normal, p.width + addtodimensions, p.origin + vector_translation)
+end
+
 name(shape::Plate) = "Plate"
 function Symmetry(shape::Plate{T,Dim}) where {T,Dim}
     return (abs(dot(shape.normal,azimuthalnormal(Dim))) == one(T)) ? PlanarAzimuthalSymmetry{Dim}() : PlanarSymmetry{Dim}()

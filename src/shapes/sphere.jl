@@ -26,6 +26,13 @@ outer_radius(sphere::Sphere) = sphere.radius
 volume(shape::Sphere{T,3}) where T = 4//3 * π * shape.radius^3
 volume(shape::Sphere{T,2}) where T = π * shape.radius^2
 
+function Shape(sp::Sphere{T,Dim};
+        addtodimensions::T = 0.0,
+        vector_translation::AbstractVector{T} = zeros(T,Dim)
+    ) where {T,Dim}
+    Sphere(sp.origin + vector_translation, sp.radius + addtodimensions)
+end
+
 # bounding_box(sphere::Sphere{T,3}; kws...) where T = bounding_box(Circle(sphere; kws...))
 function bounding_box(sphere::Sphere)
     return Box(origin(sphere), fill(2*sphere.radius, dim(sphere)))

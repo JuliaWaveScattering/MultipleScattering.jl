@@ -1,4 +1,41 @@
 @testset "Shape" begin
+    @testset "general properties" begin
+        shapetypes = [
+            Box, Halfspace, Plate, Sphere
+        ]
+        shapes3D = [
+            Box([2.0, 3.0, 4.0]),
+            Halfspace([0.0,0.0,1.0]),
+            Plate([0.0,0.0,1.0],2.0),
+            Sphere([1.0,2.0,3.0],2.0)
+        ]
+        shapes2D = [
+            Box([2.0, 3.0]),
+            Halfspace([1.0,0.0]),
+            Plate([1.0,0.0],1.0),
+            Sphere([1.0,2.0],1.0)
+        ]
+        shapes2D = map(shapes2D) do s
+            Shape(s;
+                addtodimensions = 2.1,
+                vector_translation = [1.0,1.0]
+            )
+        end
+        bitvec = typeof.(shapes2D) .<: shapetypes
+        @test sum(bitvec) == length(shapes2D)
+
+        shapes3D = map(shapes3D) do s
+            Shape(s;
+                addtodimensions = 1.1,
+                vector_translation = [1.0,1.0,1.0]
+            )
+        end
+        bitvec = typeof.(shapes3D) .<: shapetypes
+        @test sum(bitvec) == length(shapes3D)
+
+    end
+
+
     @testset "2D Box" begin
         rectangle = Box([[0.0,0.0], [2.0, 3.0]])
         o = origin(rectangle)

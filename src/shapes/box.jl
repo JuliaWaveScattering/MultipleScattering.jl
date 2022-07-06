@@ -34,6 +34,13 @@ Box(dimensions::AbstractVector{T}) where T = Box(zeros(T,length(dimensions)),dim
 
 Rectangle(bottomleft::Union{AbstractVector{T},NTuple{2,T}}, topright::Union{AbstractVector{T},NTuple{2,T}}) where T = Box([bottomleft,topright])
 
+function Shape(b::Box{T,Dim};
+        addtodimensions = zeros(T,Dim),
+        vector_translation::AbstractVector{T} = zeros(T,Dim)
+    ) where {T,Dim}
+    Box(b.origin + vector_translation, b.dimensions .+ addtodimensions)
+end
+
 name(shape::Box) = "Box"
 name(shape::Box{T,2}) where T = "Rectangle"
 

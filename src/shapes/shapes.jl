@@ -22,6 +22,13 @@ Number type which is used to describe shape, defaults to the eltype of the origi
 number_type(shape::Shape) = eltype(origin(shape))
 
 """
+    Shape(shape::Shape; addtodimensions = 0.0, vector_translation = zeros(...), kws...)
+
+Alter the shape depending on the keywords.
+"""
+Shape(shape::Shape) = shape
+
+"""
     iscongruent(p1::Shape, p2::Shape)::Bool
     ≅(p1::Shape, p2::Shape)::Bool
 

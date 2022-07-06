@@ -13,6 +13,15 @@ Halfspace(normal::AbstractVector{T}, origin::AbstractVector{T} = zeros(T,length(
 
 Halfspace(normal::NTuple{Dim,T}, origin::AbstractVector{T} = zeros(T,Dim)) where {T,Dim} = Halfspace{T,Dim}(normal ./ norm(normal), origin)
 
+function Shape(h::Halfspace{T,Dim};
+        addtodimensions = zero(T),
+        vector_translation = zeros(T,Dim)
+    ) where {T,Dim}
+
+    return Halfspace(h.normal, h.origin + h.normal .* addtodimensions + vector_translation)
+end
+
+
 name(shape::Halfspace) = "Halfspace"
 function Symmetry(shape::Halfspace{T,Dim}) where {T,Dim}
     return (abs(dot(shape.normal,azimuthalnormal(Dim))) == one(T)) ? PlanarAzimuthalSymmetry{Dim}() : PlanarSymmetry{Dim}()
