@@ -21,7 +21,10 @@
                 vector_translation = [1.0,1.0]
             )
         end
-        bitvec = typeof.(shapes2D) .<: shapetypes
+        # bitvec = typeof.(shapes2D) .<: shapetypes
+        bitvec = [
+            typeof(shapes2D[i]) <: shapetypes[i]
+        for i in eachindex(shapes2D)]
         @test sum(bitvec) == length(shapes2D)
 
         shapes3D = map(shapes3D) do s
@@ -30,7 +33,10 @@
                 vector_translation = [1.0,1.0,1.0]
             )
         end
-        bitvec = typeof.(shapes3D) .<: shapetypes
+        # bitvec = typeof.(shapes3D) .<: shapetypes
+        bitvec = [
+            typeof(shapes3D[i]) <: shapetypes[i]
+        for i in eachindex(shapes3D)]
         @test sum(bitvec) == length(shapes3D)
 
     end
