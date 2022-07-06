@@ -16,7 +16,7 @@
             Sphere([1.0,2.0],1.0)
         ]
         shapes2D = map(shapes2D) do s
-            Shape(s;
+            MultipleScattering.Shape(s;
                 addtodimensions = 2.1,
                 vector_translation = [1.0,1.0]
             )
@@ -25,7 +25,7 @@
         @test sum(bitvec) == length(shapes2D)
 
         shapes3D = map(shapes3D) do s
-            Shape(s;
+            MultipleScattering.Shape(s;
                 addtodimensions = 1.1,
                 vector_translation = [1.0,1.0,1.0]
             )
