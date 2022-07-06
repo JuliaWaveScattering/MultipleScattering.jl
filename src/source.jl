@@ -123,8 +123,8 @@ end
 field(s::RegularSource) = s.field
 field(s::RegularSource, x::AbstractArray, ω::Number) = field(s)(x,ω)
 
-function constant_source(medium::P, num::Complex = zero(Float64) * im) where {P}
-    return RegularSource{P}(medium, (x,ω) -> num, (order,x,ω) -> [num])
+function constant_source(medium::P, num::Number = zero(Float64) * im) where {P}
+    return RegularSource(medium, (x,ω) -> num, (order,x,ω) -> [num])
 end
 
 """
