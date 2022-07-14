@@ -62,9 +62,11 @@ end
 
 function plane_source(medium::Acoustic{T,Dim}; position::AbstractArray{T} = SVector(zeros(T,Dim)...),
         direction = SVector(one(T), zeros(T,Dim-1)...),
-        amplitude::Union{T,Complex{T},Function} = one(T))::RegularSource{Acoustic{T,Dim}} where {T, Dim}
+        amplitude::Union{T,Complex{T},Function} = one(T),
+        kws...
+    )::RegularSource{Acoustic{T,Dim}} where {T, Dim}
 
-    plane_source(medium, position, direction, amplitude)
+    plane_source(medium, position, direction, amplitude; kws...)
 end
 
 """
