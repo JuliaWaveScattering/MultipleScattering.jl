@@ -98,7 +98,7 @@ function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T},
     end
 
     function source_field(x,ω)
-        if causal && dot(centre - position,direction) < 0
+        if causal && dot(x - position,direction) < 0
             zero(Complex{T})
         else
             amp(ω)*exp(im*ω/medium.c*dot(x-position, direction))
@@ -138,7 +138,7 @@ function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T},
     end
                     
     function source_field(x,ω)
-        if causal && dot(centre - position,direction) < 0
+        if causal && dot(x - position,direction) < 0
             zero(Complex{T})
         else
             amp(ω)*exp(im*ω/medium.c*dot(x-position, direction))
