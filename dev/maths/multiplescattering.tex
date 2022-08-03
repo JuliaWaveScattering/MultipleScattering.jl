@@ -182,15 +182,15 @@ Taking $\vec r = \vec v + \vec r_j$, we can then write the wave arriving at (or 
 \[
 u^{j}_\mathrm{ex}(\vec v) = u_\mathrm{inc}(\vec v) + \sum_n f_n \sum_{i \not = j} \mathrm u_n(k \vec v + k \vec r_j - k \vec r_i),
 \]
-where we used~\eqref{eqn:incident-periodic}. Now we assume that $\vec v$ is close to the boundary of particle in the unit cell (which is needed to apply boundary conditions), so that $|\vec v | < |\vec r_j -  \vec r_i|$ for $j \not = i$, which allows us to write the above as a series of regular spherical waves centred at $\vec r_j$ in the form
+where we used~\eqref{eqn:incident-periodic}. Now we assume that $\vec v$ is close to the boundary of particle in the unit cell (which is needed to apply boundary conditions), so that $|\vec v | < |\vec r_j -  \vec r_i|$ for $j \not = i$, which allows us to use~\eqref{eq:translation_spherical_waves}${}_3$ to write the above as a series of regular spherical waves centred at $\vec r_j$ in the form
 \[
 u^{j}_\mathrm{ex}(\vec v) = \sum_{n_1} g_{n_1} \mathrm v_{n_1}(\vec r) + \sum_n f_n \sum_{i \not = j} \sum_{n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i) \mathrm v_{n_1}(k \vec v).
 \]
 Using the T-matrix formulation, we can now link the scattering coefficients $f_n$ to the coefficients of the regular wave above to get
 \begin{equation}
-  f_{n'} =  \sum_{n_1} T_{n' n_1} g_{n_1} + \sum_{n n_1} f_n \sum_{i \not = j} T_{n' n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i).
+  f_{n'} =  \sum_{n_1} T_{n' n_1} g_{n_1} + \sum_{n n_1} f_n \sum_{i \not = j} T_{n' n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i),
 \end{equation}
-The main issue is how to truncate the series $ \sum_j \mathcal U_{n n_1}( k \vec r_j)$ in $j$, but I think this would work quite well.
+which can be solved for $f_n$. The main issue is how to truncate the series $ \sum_j \mathcal U_{n n_1}( k \vec r_j)$ in $j$, but I think this would work quite well.
 
 \printbibliography
 
