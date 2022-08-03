@@ -166,26 +166,32 @@ where $\cdot ^{\mathrm T}$ is the transpose operation. The above then leads to a
 
 Here we consider a unit cell filled with particles that is repeated periodically. The particles can take any positions within the cell.
 
-Let us start with the simplest case of just one particle centred at $\vec r_1$. We assume there are identical particles centered at the positions $\vec r_1 \in \mathcal P$.
-% where $m \in \mathbb Z$, $p = 1, 2, \ldots, P$, and $\vec v_p \in \mathbb R^d$.
+Let us start with the simplest case of identical particles centered at the positions $\vec r_1 \in \mathcal P$, where $\mathcal P$ is some countable set of vectors we define later.
+% where $m \in \mathbbZ$, $p = 1, 2, \ldots, P$, and $\vec v_p \in \mathbb R^d$.
 
-The total field is again given by~\eqref{eqn:total_discrete_wave}, with $\vec r_i \in \mathcal P$. However, if we assume the source is periodic with
+The total field is again given by~\eqref{eqn:total_discrete_wave}. However, if we assume the source is periodic with
 \begin{equation}\label{eqn:incident-periodic}
   u_\mathrm{inc}(\vec r) = u_\mathrm{inc}(\vec r + \vec r_1), \quad \text{for every} \;\; \vec r_1 \in \mathcal P,
 \end{equation}
-then, due to symmetry, the scattering coefficients are the same $f_n := f^i_n$, and as a result the total field is given by
+then, due to symmetry, the scattering coefficients of every particles is the same $f_n := f^i_n$, and as a result the total field is given by
 \[
-u(\vec r) = u_\mathrm{inc}(\vec r) + \sum_n f_n \sum_{m p } \mathrm u_n(k \vec r - k \vec r_1 - k m \vec v_p).
+u(\vec r) = u_\mathrm{inc}(\vec r) + \sum_n f_n \sum_{i} \mathrm u_n(k \vec r - k \vec r_i).
 \]
 
-Taking $\vec r = \vec v + \vec r_1 + m_1 \vec v_{p_1}$, we can then write the wave arriving at (or exciting) the particle at $\vec r_1 + m_1 \vec v_{p_1}$ in the form
+Taking $\vec r = \vec v + \vec r_j$, we can then write the wave arriving at (or exciting) the particle at $\vec r_j$ in the form
 \[
-u^{m_1 p_1}_\mathrm{ex}(\vec v) = u_\mathrm{inc}(\vec v + \vec r_1) + \sum_n f_n \sum_{m \not = m_1, p \not = p_1} \mathrm u_n(k \vec v + k m_1 \vec v_{p_1} - k m \vec v_p),
+u^{j}_\mathrm{ex}(\vec v) = u_\mathrm{inc}(\vec v) + \sum_n f_n \sum_{i \not = j} \mathrm u_n(k \vec v + k \vec r_j - k \vec r_i),
 \]
-where we used~\eqref{eqn:incident-periodic}. Writing the above as a series of regular spherical waves cented at  then leads to
+where we used~\eqref{eqn:incident-periodic}. Now we assume that $\vec v$ is restricted to the unit cell so that $|\vec v | < |\vec r_j -  \vec r_i|$ for $j \not = i$, which allows us to write the above as a series of regular spherical waves centred at $\vec r_j$ in the form
 \[
-u^{m_1 p_1}_\mathrm{ex}(\vec v) = \sum_{n_1} g_{n_1} \mathrm v_{n_1}(\vec r) + \sum_n f_n \sum_{m \not = m_1, p \not = p_1} \sum_{n_1} \mathcal U_{n n_1}() \mathrm u_n(k \vec v + k m_1 \vec v_{p_1} - k m \vec v_p),
+u^{j}_\mathrm{ex}(\vec v) = \sum_{n_1} g_{n_1} \mathrm v_{n_1}(\vec r) + \sum_n f_n \sum_{i \not = j} \sum_{n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i) \mathrm v_{n_1}(k \vec v).
 \]
+Using the T-matrix formulation, we can now link the scattering coefficients $f_n$ to the coefficients of the regular wave above to get
+\begin{equation}
+  f_{n'} =  \sum_{n_1} T_{n' n_1} g_{n_1} + \sum_{n n_1} f_n \sum_{i \not = j} T_{n' n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i).
+\end{equation}
+The main issue is how to truncate the series $ \sum_j \mathcal U_{n n_1}( k \vec r_j)$ in $j$, but I think this would work quite well.
+
 \printbibliography
 
 \end{document}
