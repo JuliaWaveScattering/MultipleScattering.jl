@@ -60,37 +60,25 @@ function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ω::Number;
     run(sim,[x],[ω]; kws...)
 end
 
-# Function to check if particles are overlapping
-function isoverlapping(Origins,Radii)
-    NbParticles = length(Radii)
-    overlappingPairs = Vector{Int64}[]
-    for i=1:NbParticles
-      for j=i+1:NbParticles
+# Function to check if particles are overlapping: return pairs of overlapping particles
+function overlapping_pairs(Origins,Radii)
+    nb_particles = length(Radii)
+    output = Vector{Int64}[]
+    for i=1:nb_particles
+      for j=i+1:nb_particles
           if norm(Origins[i] - Origins[j]) < (Radii[i] + Radii[j])
-                push!(overlappingPairs,[i,j])
+                push!(output,[i,j])
           end
       end
     end
 
-    if !isempty(overlappingPairs)
-        NbOverlaps = size(overlappingPairs,1)
-        @error("Particles are overlapping ($NbOverlaps overlaps).")
-        for l = 1:min(NbOverlaps,30)
-            i = overlappingPairs[l][1]; oi = Origins[i]
-            j = overlappingPairs[l][2]; oj = Origins[j]
-            println("Particles $i centered at $oi and $j centered at $oj are overlapping \n")
-        end
-        return true
-    else
-        return false
-    end
+    return output
 end
 
-function isoverlapping(P::AbstractParticles)
-    NbParticles = length(P)
-    Origins = [origin(P[i]) for i=1:NbParticles]
-    Radii = [outer_radius(P[i]) for i=1:NbParticles]
-    isoverlapping(Origins,Radii)
+function overlapping_pairs(P::AbstractParticles)
+    Origins = origin.(P)
+    Radii = outer_radius.(P)
+    overlapping_pairs(Origins,Radii)
 end
 
 # Main run function, all other run functions use this
@@ -98,11 +86,19 @@ function run(sim::FrequencySimulation, x_vec::Vector{V}, ω::Number;
         basis_order::Integer = 5,
         only_scattered_waves::Bool = false, kws...) where V<:AbstractVector
 
-    # Check that the particles are not overlapping
-    if isoverlapping(sim.particles)
+    # Return an error if any particles are overlapping
+    overlapping_pairs_vec = overlapping_pairs(sim.particles)
+    if !isempty(overlapping_pairs_vec)
+        nb_overlaps = size(overlapping_pairs_vec,1)
+        @error("Particles are overlapping ($nb_overlaps overlaps).")
+        for l = 1:min(nb_overlaps,30)
+            i = overlapping_pairs_vec[l][1]; oi = origin(sim.particles[i])
+            j = overlapping_pairs_vec[l][2]; oj = origin(sim.particles[j])
+            println("Particles $i centered at $oi and $j centered at $oj are overlapping \n")
+        end
         return
     end
-        
+
     Dim = spatial_dimension(sim)
     FieldDim = field_dimension(sim)
 

@@ -31,7 +31,7 @@ export AbstractSource, RegularSource, source_expand, regular_spherical_coefficie
 export PlaneSource
 
 ## Main simulation and results
-export Simulation, run, isoverlapping, TimeSimulation, forcing, field
+export Simulation, run, overlapping_pairs, TimeSimulation, forcing, field
 export SimulationResult, FrequencySimulation, FrequencySimulationResult, size
 
 
