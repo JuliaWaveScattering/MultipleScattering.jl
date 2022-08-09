@@ -75,10 +75,10 @@ function overlapping_pairs(Origins,Radii)
     return output
 end
 
-function overlapping_pairs(P::AbstractParticles)
-    Origins = origin.(P)
-    Radii = outer_radius.(P)
-    overlapping_pairs(Origins,Radii)
+function overlapping_pairs(p::AbstractParticles)
+    origins = origin.(p)
+    radii = outer_radius.(p)
+    overlapping_pairs(origins,radii)
 end
 
 # Main run function, all other run functions use this
@@ -90,13 +90,7 @@ function run(sim::FrequencySimulation, x_vec::Vector{V}, ω::Number;
     overlapping_pairs_vec = overlapping_pairs(sim.particles)
     if !isempty(overlapping_pairs_vec)
         nb_overlaps = size(overlapping_pairs_vec,1)
-        @error("Particles are overlapping ($nb_overlaps overlaps).")
-        for l = 1:min(nb_overlaps,30)
-            i = overlapping_pairs_vec[l][1]; oi = origin(sim.particles[i])
-            j = overlapping_pairs_vec[l][2]; oj = origin(sim.particles[j])
-            println("Particles $i centered at $oi and $j centered at $oj are overlapping \n")
-        end
-        return
+        error("Error: particles are overlapping ($nb_overlaps overlaps). The function overlapping_pairs(p::AbstractParticles) can be used to obtain the list of overlapping pairs.")
     end
 
     Dim = spatial_dimension(sim)
