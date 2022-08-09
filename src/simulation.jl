@@ -61,12 +61,12 @@ function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ω::Number;
 end
 
 # Function to check if particles are overlapping: return pairs of overlapping particles
-function overlapping_pairs(Origins,Radii)
-    nb_particles = length(Radii)
+function overlapping_pairs(origins,radii)
+    nb_particles = length(radii)
     output = Vector{Int64}[]
     for i=1:nb_particles
       for j=i+1:nb_particles
-          if norm(Origins[i] - Origins[j]) < (Radii[i] + Radii[j])
+          if norm(origins[i] - origins[j]) < (radii[i] + radii[j])
                 push!(output,[i,j])
           end
       end
