@@ -1,6 +1,6 @@
 # Two particles
 
-Define two particles with the first centred at [1.0,-2.0], with radius 1.0, sound speed 2.0 and density 10.0.
+Define two particles with the first centred at [1.0,-4.0], with radius 1.0, sound speed 20.0, and density 10.0. The second particle is centered at [3.0,3.0], with radius 3.0, sound speed 1.0, and density 0.1.
 ```julia
 using MultipleScattering
 using Plots
@@ -22,7 +22,7 @@ plot(simulation)
 ```
 ![Plot against frequency](plot_simulation.png)
 
-The above used an incident plane with the default position at [0.0, 0.0] and x direction. To change these defaults use:
+The above used an incident plane with the default position at [0.0, 0.0] and was simultated in the x direction. To change these defaults use:
 ```julia
 x = [[-10.0,-10.0]]
 source = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0,1.0], position = [0.0,0.0]);
