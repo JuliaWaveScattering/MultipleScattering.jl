@@ -148,12 +148,10 @@ function regular_spherical_source(medium::PhysicalMedium{Dim},regular_coefficien
     function source_coef(order,centre,ω)
         k = ω / medium.c
 
-        V = regular_translation_matrix(medium, max(order,coeff_order), ω, centre - position)
+        # for the translation matrix below, order is the number columns and coeff_order is the number rows
+        V = regular_translation_matrix(medium, order, coeff_order, ω, centre - position)
 
-        len2 = basisorder_to_basislength(typeof(medium),order)
-        len1 = length(regular_coefficients)
-
-        return amplitude .* sum(regular_coefficients[n] .* V[n,1:len2] for n in 1:len1)
+        return amplitude .* (transpose(V) * regular_coefficients)
     end
 
     return RegularSource(medium, source_field, source_coef; symmetry = symmetry)
