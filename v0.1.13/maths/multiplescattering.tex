@@ -1,0 +1,197 @@
+\documentclass[ 12pt, a4paper]{article}
+% Use the option doublespacing or reviewcopy to obtain double line spacing
+% \documentclass[doublespacing]{elsart}
+
+\usepackage[utf8]{inputenc}
+\usepackage[backend = biber, maxcitenames=2,uniquelist=minyear]{biblatex}
+
+\AtEveryBibitem{\clearfield{number}}
+\AtEveryBibitem{\clearfield{doi}}
+\AtEveryBibitem{\clearfield{url}}
+\AtEveryBibitem{\clearfield{issn}}
+\AtEveryBibitem{\clearfield{isbn}}
+
+\addbibresource{references.bib}
+
+\usepackage{color,graphicx,tikz}
+\usetikzlibrary{positioning,arrows}
+% The amssymb package provides various useful mathematical symbols
+\usepackage{mathtools,amssymb,amsmath,mathdots}
+\usepackage[mathscr]{eucal} %just for the font \mathscr
+\usepackage{setspace}
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\input{macros}
+
+\begin{document}
+
+\title{Multiple scattering of waves}
+\author{
+Artur L. Gower$^{a}$,\\
+\footnotesize{$^{a}$ School of Mathematics, University of Manchester, Oxford Road, Manchester, M13 9PL,UK}
+}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+Here we show and deduce the T-matrix and a general multiple scattering formulation which can be adapted to acoustics, electromagnetism, and elasticity. For details on each specific physical medium see the other documents.
+\end{abstract}
+
+\noindent
+{\textit{Keywords:} Multiple scattering, T-matrix, Scattering matrix}
+
+\section{Using a T-matrix}
+A T-matrix denotes how one single particle scatters waves~\parencite{ganesh_far-field_2010,ganesh_algorithm_2017}.
+
+For convenience and generality we denote:
+\begin{equation}
+\begin{aligned}
+    & \mathrm u_{n}(k\rv) = \text{outgoing spherical waves},
+    \label{eqn:outgoing_waves_and_regular_waves}
+    \\
+    & \mathrm v_{n}(k\rv)= \text{regular spherical waves},
+ \end{aligned}
+\end{equation}
+where $n$ denotes a multi index which depends on the dimension and if the waves are scalar or vector fields.
+
+Any incident wave and scattered wave\footnote{For the scattered wave we need only use outgoing spherical waves when measuring the field outside of a sphere which completely encompasses the particle.}, centred at the same coordinate axis, can be written as
+\begin{align}
+  & \ui = \sum_{n} g_n \mathrm v_{n}(k\rv),
+  \\
+  & \us = \sum_{n} f_n \mathrm u_{n}(k\rv).
+\end{align}
+The T-matrix is an infinite matrix such that
+\begin{equation}
+  f_n = \sum_{n'} T_{nn'} g_{n'}.
+\end{equation}
+Such a matrix $T$ exists when scattering is a linear operation (elastic scattering).
+
+We can also estimate the field inside the particle by assuming that the field is smooth and continuous. This approximation is exact for homogeneous spheres and cylinders, but not for a \href{acoustics.pdf}{Circular cylindrical capsule}.
+
+Assume the field inside the particle can be described by a regular spherical series:
+\begin{equation}
+  \vi = \sum_n b_n \mathrm v_n(k_o \rv),
+\end{equation}
+where $k_o$ if the particles wavenumber. Now if we assume that the total field is continuous everywhere so that $\ui + \us = \vi$ on the boundary of the particle. If the field was smooth enough, we could analytically extend the field $\vi$ to a spherical boundary, with radius $a$, which contains the particle. Let's take this as an assumption and equate $\ui + \us = \vi$ for $r=a$. Due to orthogonality of the angular components of the basis functions this will result in
+\begin{equation}
+   g_n \mathrm v_{n}(k\rv) + f_n \mathrm u_{n}(k\rv) = b_n \mathrm v_n(k_o \rv), \quad \text{for} \;\; |\rv| = a
+\end{equation}
+using the T-matrix we can then write $g_n = T_{nm}^{-1} f_m$, which substituted above leads to
+\begin{equation}
+    b_n = \frac{1}{\mathrm v_n(k_o \rv)}[ \mathrm v_{n}(k\rv) T_{nm}^{-1} f_m + \mathrm u_{n}(k\rv) f_n], \quad \text{for} \;\; |\rv| = a.
+\end{equation}
+
+\section{General multiple scattering}
+
+For multiple scattering in higher dimensions and for vector wave equations we use the notation given in \cite{gower2020effective}.
+
+For a point $\rv$, outside of the circumscribed spheres of all particles, we can write the total field $u(\rv)$ as a sum of the incident wave $\ui(\rv)$ and all scattered waves in the form~\cite{Kristensson2015a,Kristensson2016,Linton+Martin2006}
+\begin{equation} \label{eqn:total_discrete_wave}
+    u(\rv) = \ui(\rv) + \us(\rv), \quad \us(\rv) =  \sum_{i=1}^N \sum_n f_n^i \mathrm u_n (k \rv - k \rv_i),
+\end{equation}
+where we assumed $ |\rv - \rv_i| > a_i $ for $i=1,2,\ldots N$, the $f_n^i$ are coefficients we need to determine, where again:
+\begin{equation}
+\left\{\begin{aligned}
+    & \mathrm u_{n}(k\rv) = \text{outgoing spherical waves},
+    \label{eqn:outgoing_waves_and_regular_waves}
+    \\
+    & \mathrm v_{n}(k\rv)= \text{regular spherical waves},
+ \end{aligned}\right.
+\end{equation}
+where $n$ denotes a multi index which depends on the dimension and if the waves are scalar or vector fields.
+
+In general, we can write the multiple scattering system in the form:
+\begin{equation}\label{eqn:multiple-scattering-general}
+   \alpha_n^i=g_{n}^i
+    +\sum_{\substack{j=1\\j\neq i}}^N \sum_{n' n''}\mathcal{U}_{n''n}(k\rv_i - k\rv_j)T_{n''n'}^j \alpha_{n'}^j,
+\end{equation}
+for $i=1,2,\ldots,N$, where $f_n^i = \sum_{n'} T^i_{nn'}\alpha_{n'}^i$ and $\mathcal{U}_{nn'}$ is a translation matrix \cite{Bostrom+Kristensson+Strom1991,Friedman+Russek1954}. Let $\rv'=\rv+\dv$, then
+the translation matrices for a translation $\dv$ can be defined by the property~\cite{Bostrom+Kristensson+Strom1991}
+  \begin{equation}\label{eq:translation_spherical_waves}
+ \left\{\begin{aligned}
+   &\mathrm{v}_n(k\rv')=\sum_{n'}\mathcal{V}_{nn'}(k\dv)\mathrm{v}_{n'}(k\rv),\quad \text{ for all }\dv
+   \\
+ &\mathrm{u}_n(k\rv')=\sum_{n'}\mathcal{V}_{nn'}(k\dv)\mathrm{u}_{n'}(k\rv),\quad |\rv|>|\dv|
+ \\
+   &\mathrm{u}_n(k\rv')=\sum_{n'}\mathcal{U}_{nn'}(k\dv)\mathrm{v}_{n'}(k\rv),\quad |\rv|<|\dv|
+   \\
+ \end{aligned}\right.
+ \end{equation}
+
+\subsection{Turning equations into code}
+For easy implementation we need the functions:
+\[
+\psi_\inc \mapsto g_n^j \quad \text{and} \quad \text{particle} \mapsto T_{nn'}^j.
+\]
+
+For efficient implementation we rewrite~\eqref{eqn:multiple-scattering-general} as a matrix equation. Let
+\begin{align}
+  &(\vec \alpha_j)_n =  \alpha_n^j, \quad (\vec g_j)_n =  g_n^j,
+  \\
+  &(\vec T_j)_{nn'} = T_{nn'}^j, \quad (\vec {\mathcal U}_{j \ell})_{n'n} = \mathcal U_{n'n}(k \rv_j - k\rv_\ell),
+  % H_{n'-n}(k R_{\ell j})\ee^{\ii(n'-n)\Theta_{\ell j}},
+\end{align}
+
+ Then
+\begin{equation}
+ \sum_{\ell}(\delta_{j \ell} +  (\delta_{j \ell}-1) \vec {\mathcal U}_{j \ell}^{\mathrm T} \vec T_\ell) \vec \alpha_\ell  =  \vec g_j,
+\end{equation}
+where $\cdot ^{\mathrm T}$ is the transpose operation. The above then leads to a block matrix equation:
+\begin{equation}
+  \begin{bmatrix}
+    \vec I & - \vec {\mathcal U}_{1 2}^{\mathrm T}\vec T_2 & \cdots & - \vec {\mathcal U}_{1 (N-1)}^{\mathrm T} \vec T_{N-1} & - \vec {\mathcal U}_{1 N}^{\mathrm T} \vec T_N \\
+    - \vec {\mathcal U}_{2 1}^{\mathrm T} \vec T_1 & \vec I &  - \vec {\mathcal U}_{2 3}^{\mathrm T} \vec T_3 & \cdots & - \vec {\mathcal U}_{2 N}^{\mathrm T} \vec T_N \\
+     & \vdots & & & \vdots \\
+     - \vec {\mathcal U}_{N 1}^{\mathrm T} \vec T_1  & \cdots & \cdots & -  \vec {\mathcal U}_{N (N-1)}^{\mathrm T} \vec T_{N-1} & \vec I
+  \end{bmatrix}
+  \begin{bmatrix}
+    \vec \alpha_1 \\
+    \vec \alpha_2 \\
+    \vdots \\
+    \vec \alpha_N
+  \end{bmatrix}
+   = \begin{bmatrix}
+     \vec g_1 \\
+     \vdots \\
+     \vec g_N
+   \end{bmatrix}
+\end{equation}
+
+\section{Periodic multiple scattering}
+
+Here we consider a unit cell filled with particles that is repeated periodically. The particles can take any positions within the cell.
+
+Let us start with the simplest case of identical particles centered at the positions $\vec r_1 \in \mathcal P$, where $\mathcal P$ is some countable set of vectors we define later.
+% where $m \in \mathbbZ$, $p = 1, 2, \ldots, P$, and $\vec v_p \in \mathbb R^d$.
+
+The total field is again given by~\eqref{eqn:total_discrete_wave}. However, if we assume the source is periodic with
+\begin{equation}\label{eqn:incident-periodic}
+  u_\mathrm{inc}(\vec r) = u_\mathrm{inc}(\vec r + \vec r_1), \quad \text{for every} \;\; \vec r_1 \in \mathcal P,
+\end{equation}
+then, due to symmetry, the scattering coefficients of every particles is the same $f_n := f^i_n$, and as a result the total field is given by
+\[
+u(\vec r) = u_\mathrm{inc}(\vec r) + \sum_n f_n \sum_{i} \mathrm u_n(k \vec r - k \vec r_i).
+\]
+
+Taking $\vec r = \vec v + \vec r_j$, we can then write the wave arriving at (or exciting) the particle at $\vec r_j$ in the form
+\[
+u^{j}_\mathrm{ex}(\vec v) = u_\mathrm{inc}(\vec v) + \sum_n f_n \sum_{i \not = j} \mathrm u_n(k \vec v + k \vec r_j - k \vec r_i),
+\]
+where we used~\eqref{eqn:incident-periodic}. Now we assume that $\vec v$ is close to the boundary of particle in the unit cell (which is needed to apply boundary conditions), so that $|\vec v | < |\vec r_j -  \vec r_i|$ for $j \not = i$, which allows us to use~\eqref{eq:translation_spherical_waves}${}_3$ to write the above as a series of regular spherical waves centred at $\vec r_j$ in the form
+\[
+u^{j}_\mathrm{ex}(\vec v) = \sum_{n_1} g_{n_1} \mathrm v_{n_1}(\vec r) + \sum_n f_n \sum_{i \not = j} \sum_{n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i) \mathrm v_{n_1}(k \vec v).
+\]
+Using the T-matrix formulation, we can now link the scattering coefficients $f_n$ to the coefficients of the regular wave above to get
+\begin{equation}
+  f_{n'} =  \sum_{n_1} T_{n' n_1} g_{n_1} + \sum_{n n_1} f_n \sum_{i \not = j} T_{n' n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i),
+\end{equation}
+which can be solved for $f_n$. The main issue is how to truncate the series $ \sum_j \mathcal U_{n n_1}( k \vec r_j)$ in $j$, but I think this would work quite well.
+
+\printbibliography
+
+\end{document}
