@@ -1,7 +1,5 @@
 # Simple random particles example
 
-```
-
 ## Define particle properties
 Define the volume fraction of particles, the region to place the particles, and their radius
 ```julia
