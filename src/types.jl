@@ -13,6 +13,18 @@ A type used to describe materials and incident waves which share no common symme
 struct WithoutSymmetry{Dim} <: AbstractSymmetry{Dim} end
 
 """
+An incident plane-wave and infinite cylinder material will result in all fields being cylindrical Bessel waves with a phase.
+"""
+abstract type AbstractTranslationSymmetry{Dim} <: AbstractSymmetry{Dim} end
+
+"""
+    TranslationSymmetry
+
+A type used to describe materials and incident waves that both share a translation symmetry.
+"""
+struct TranslationSymmetry{Dim} <: AbstractTranslationSymmetry{Dim} end
+
+"""
 An incident plane-wave and halfspace material will result in all fields being plane-waves.
 """
 abstract type AbstractPlanarSymmetry{Dim} <: AbstractSymmetry{Dim} end
@@ -79,6 +91,8 @@ Symmetry(T1,T2) = Symmetry(Symmetry(T1),Symmetry(T2))
 
 Symmetry(sym1::AbstractSymmetry{Dim},sym2::AbstractSymmetry{Dim}) where Dim = WithoutSymmetry{Dim}()
 Symmetry(sym1::S,sym2::S) where S<:AbstractSymmetry = sym1
+
+Symmetry(sym1::AbstractTranslationSymmetry{Dim},sym2::AbstractTranslationSymmetry{Dim}) where Dim = PlanarSymmetry{Dim}()
 
 Symmetry(sym1::AbstractPlanarSymmetry{Dim},sym2::AbstractPlanarSymmetry{Dim}) where Dim = PlanarSymmetry{Dim}()
 Symmetry(sym1::PlanarAzimuthalSymmetry{Dim},sym2::PlanarAzimuthalSymmetry{Dim}) where Dim = PlanarAzimuthalSymmetry{Dim}()
