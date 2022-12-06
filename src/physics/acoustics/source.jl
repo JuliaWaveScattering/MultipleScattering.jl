@@ -77,7 +77,8 @@ Create an [`Acoustic`](@ref) planar wave [`RegularSource`](@ref)
 function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T},
         direction::AbstractArray{T} = SVector(one(T),zero(T)),
         amplitude::Union{T,Complex{T}} = one(T);
-        causal::Bool = false
+        causal::Bool = false,
+        beam_width::T = T(Inf)
     )::RegularSource{Acoustic{T,2}} where {T}
 
     # Convert to SVector for efficiency and consistency
@@ -98,14 +99,14 @@ function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T},
     end
 
     function source_field(x,ω)
-        if causal && dot(x - position,direction) < 0
+        if causal && dot(x - position,direction) < 0 # return zero if outside width
             zero(Complex{T})
         else
             amp(ω)*exp(im*ω/medium.c*dot(x-position, direction))
         end
     end
 
-    function source_coef(order,centre,ω)
+    function source_coef(order,centre,ω) # if centre is outside width, return zeros for the coefficients
         # Jacobi-Anger expansion
         θ = atan(direction[2],direction[1])
         source_field(centre,ω) * [exp(im * n *(T(pi)/2 -  θ)) for n = -order:order]
@@ -117,7 +118,8 @@ end
 function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T},
             direction::AbstractArray{T} = SVector(zero(T),zero(T),one(T)),
             amplitude::Union{T,Complex{T}} = one(T);
-            causal::Bool = false
+            causal::Bool = false,
+            beam_width::T = T(Inf)
         ) where {T}
 
     # Convert to SVector for efficiency and consistency
