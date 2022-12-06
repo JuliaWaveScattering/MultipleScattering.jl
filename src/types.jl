@@ -23,7 +23,6 @@ abstract type AbstractTranslationSymmetry{Dim} <: AbstractSymmetry{Dim} end
 A type used to describe materials and incident waves that both share a translation symmetry.
 """
 struct TranslationSymmetry{Dim} <: AbstractTranslationSymmetry{Dim} end
-TranslationSymmetry() = TranslationSymmetry{3}()
 
 """
 An incident plane-wave and halfspace material will result in all fields being plane-waves.
