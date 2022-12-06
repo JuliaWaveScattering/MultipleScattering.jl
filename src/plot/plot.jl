@@ -137,7 +137,7 @@ end
     # rectangle with them
     p_xlims = plotattributes[:xlims]
     p_ylims = plotattributes[:ylims]
-    bounds = Box([[T(p_xlims[1]),T(p_ylims[1])], [T(p_xlims[2]),T(p_ylims[2])]])
+    bounds = Box([[p_xlims[1],p_ylims[1]], [p_xlims[2],p_ylims[2]]])
 
     region_shape = (bounds ⊆ region_shape) ? bounds : region_shape
 
