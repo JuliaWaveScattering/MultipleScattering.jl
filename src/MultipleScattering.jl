@@ -4,7 +4,7 @@ module MultipleScattering
 
 ## Symmetries
 export Symmetry, AbstractSymmetry, AbstractPlanarSymmetry, AbstractAzimuthalSymmetry
-export WithoutSymmetry, PlanarSymmetry, PlanarAzimuthalSymmetry, AzimuthalSymmetry, RadialSymmetry
+export WithoutSymmetry, PlanarSymmetry, PlanarAzimuthalSymmetry, AzimuthalSymmetry, RadialSymmetry, TranslationSymmetry
 
 ## Shapes
 export Shape, Circle, Sphere, Rectangle, Box, EmptyShape, Halfspace, Plate, TimeOfFlightPlaneWaveToPoint, TimeOfFlightPointWaveToPoint
