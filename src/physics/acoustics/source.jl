@@ -99,15 +99,15 @@ function plane_source(medium::Acoustic{T,2}, position::AbstractArray{T},
     end
 
     function source_field(x,ω)
-        if (causal && dot(x - position,direction) < 0) ||
-        (beam_width < T(Inf) && norm((x - position) - dot(x - position, direction)*direction) > beam_width/2)
+        x_width = norm((x - position) - dot(x - position, direction)*direction)
+        if (causal && dot(x - position,direction) < 0) || x_width > beam_width/2
             zero(Complex{T})
         else
             amp(ω)*exp(im*ω/medium.c*dot(x-position, direction))
         end
     end
 
-    function source_coef(order,centre,ω) # if centre is outside width, return zeros for the coefficients
+    function source_coef(order,centre,ω) 
         # Jacobi-Anger expansion
         θ = atan(direction[2],direction[1])
         source_field(centre,ω) * [exp(im * n *(T(pi)/2 -  θ)) for n = -order:order]
@@ -141,8 +141,8 @@ function plane_source(medium::Acoustic{T,3}, position::AbstractArray{T},
     end
 
     function source_field(x,ω)
-        if (causal && dot(x - position,direction) < 0) ||
-            (beam_width < T(Inf) && norm((x - position) - dot(x - position, direction)*direction) > beam_width/2)
+        x_width = norm((x - position) - dot(x - position, direction)*direction)
+        if (causal && dot(x - position,direction) < 0) || x_width > beam_width/2
             zero(Complex{T})
         else
             amp(ω)*exp(im*ω/medium.c*dot(x - position, direction))
