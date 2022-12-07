@@ -22,9 +22,11 @@ abstract type AbstractTranslationSymmetry{Dim} <: AbstractSymmetry{Dim} end
 
 A type used to describe materials and incident waves that both share a translation symmetry.
 """
-struct TranslationSymmetry{Dim,T} <: AbstractTranslationSymmetry{Dim} 
+struct TranslationSymmetry{Dim,T} <: AbstractTranslationSymmetry{Dim}
     direction::SVector{Dim,T}
 end
+
+TranslationSymmetry{Dim}(vector::AbstractVector{T}) where {Dim,T} = TranslationSymmetry{Dim,T}(vector)
 
 """
 An incident plane-wave and halfspace material will result in all fields being plane-waves.
@@ -98,8 +100,8 @@ function Symmetry(sym1::TranslationSymmetry{Dim},sym2::TranslationSymmetry{Dim})
     if abs(dot(sym1.direction,sym2.direction)) > 0
         PlanarSymmetry{Dim}()
     else sym1
-    end    
-end    
+    end
+end
 
 Symmetry(sym1::AbstractPlanarSymmetry{Dim},sym2::AbstractPlanarSymmetry{Dim}) where Dim = PlanarSymmetry{Dim}()
 Symmetry(sym1::PlanarAzimuthalSymmetry{Dim},sym2::PlanarAzimuthalSymmetry{Dim}) where Dim = PlanarAzimuthalSymmetry{Dim}()
