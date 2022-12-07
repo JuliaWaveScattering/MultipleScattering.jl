@@ -1,5 +1,5 @@
 
-random_particles(particle_medium::PhysicalMedium{Dim}, particle_shape::Shape{Dim}; kws...) where {T<:AbstractFloat,Dim} = random_particles(particle_medium, [particle_shape]; kws...)
+random_particles(particle_medium::PhysicalMedium{Dim}, particle_shape::Shape{Dim}; kws...) where {Dim} = random_particles(particle_medium, [particle_shape]; kws...)
 
 
 function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shapes::Vector{S};
@@ -7,7 +7,7 @@ function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shapes:
         region_shape::Shape{Dim} = Box(fill(10*sum(outer_radius.(particle_shapes)),Dim)),
         current_particles::AbstractParticles{Dim} = AbstractParticle{Dim}[],
         kws...
-) where {T<:AbstractFloat,Dim, S<:Shape{Dim}}
+) where {Dim, S<:Shape{Dim}}
 
     particles = if volume_fraction == 0
         num_each = Int(round(num_particles / length(particle_shapes)))

@@ -74,7 +74,7 @@ returns `(x_vec, region_inds)` where `x_vec` is a vector of points that cover a 
 function points_in_shape(region::Shape{2};
         res::Number = 20, xres::Number = res, yres::Number = res,
         exclude_region::Shape = EmptyShape(region),
-        kws...) where T
+        kws...)
 
     rect = bounding_box(region)
 
