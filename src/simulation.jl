@@ -154,6 +154,8 @@ vector of floats.
 """
 function run(s::FrequencySimulation) throw(MethodError(run, (s,))) end
 
+run(sim::FrequencySimulation, region::Shape, ω::AbstractFloat; kws...) = run(sim, region, [ω]; kws...)
+
 """
     run(sim::FrequencySimulation, region::Shape;
         res=20, xres=res, yres=res, basis_order=5)
@@ -163,8 +165,8 @@ Run the simulation `sim` for a grid of positions in region and for angular frequ
 Frequency can be a float or vector of floats. The resolution of the grid points is defined
 by xres and yres.
 """
-function run(sim::FrequencySimulation{Dim}, region::Shape, ω_vec::AbstractVector;
-            kws...) where {Dim}
+function run(sim::FrequencySimulation, region::Shape, ω_vec::AbstractVector;
+            kws...)
 
     x_vec, inds = points_in_shape(region; kws...)
     # x_vec is a square grid of points and x_vec[inds] are the points in the region.
