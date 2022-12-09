@@ -1,7 +1,7 @@
 name = "MultipleScattering"
 uuid = "80a8ab25-5750-5d93-a6d7-4adc97cdd5fb"
 author = ["Artur L. Gower", "Jonathan Deakin"]
-version = "0.1.13"
+version = "0.1.14"
 
 [deps]
 GSL = "92c85e6c-cbff-5e0c-80f7-495c94daaecd"
