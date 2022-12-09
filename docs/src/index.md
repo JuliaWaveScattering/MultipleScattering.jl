@@ -10,10 +10,10 @@ The library uses the multipole method to solve the Helmholtz equation
 Install Julia v1.0 or later, then run
 
 ```julia
-using Pkg
-Pkg.clone("https://github.com/JuliaWaveScattering/MultipleScattering.jl.git")
-using MultipleScattering
+] # to enter the package mode
+add MultipleScattering
 ```
+Press backspace to exit the package mode.
 
 ## Manual
 
