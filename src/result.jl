@@ -14,7 +14,7 @@ struct FrequencySimulationResult{T<:Real,Dim,FieldDim} <: SimulationResult{T,Dim
     ω::Vector{T}
 end
 
-function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}},AbstractMatrix{A}}, x::AbstractVector{V}, ω::AbstractVector{T}) where {T, A<:AbstractVector{Complex{T}}, V<:AbstractVector{T}}
+function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}},AbstractMatrix{A} where A<:AbstractVector{Complex{T}}}, x::AbstractVector{V}, ω::AbstractVector{T}) where {T, V<:AbstractVector{T}}
 
     if size(field,2) == 1 # if field is a vector we cast it to a Matrix
         field = reshape(field, size(field,1), size(field,2))
@@ -46,7 +46,7 @@ struct TimeSimulationResult{T<:AbstractFloat,Dim,FieldDim} <: SimulationResult{T
     t::Vector{T}
 end
 
-function TimeSimulationResult(time_field::Union{AbstractArray{T},AbstractArray{AbstractVector{T}}}, x::AbstractVector{V}, t::AbstractVector{T}) where {T,V<:AbstractVector{T}}
+function TimeSimulationResult(time_field::Union{AbstractArray{T}, AbstractMatrix{A} where A<:AbstractVector{T}}, x::AbstractVector{V}, t::AbstractVector{T}) where {T,V<:AbstractVector{T}}
 
     if typeof(time_field) <: AbstractVector # if field is a vector we cast it to a Matrix
         time_field = reshape(time_field, size(time_field,1), size(time_field,2))
