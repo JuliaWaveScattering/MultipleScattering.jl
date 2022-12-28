@@ -46,7 +46,8 @@ If you have the package `Plots` installed you can plot the particles. Note that 
 using Plots; pyplot();
 plot(particles)
 ```
-!!! note Most things in this package can be plotted just by typing `plot(thing)`. However you need to have `Plots` installed, and you may need to use the backend `pyplot()`. See [Plotting](@ref) for details on plotting.
+!!! note
+    Most things in this package can be plotted just by typing `plot(thing)`. However you need to have `Plots` installed, and you may need to use the backend `pyplot()`. See [Plotting](@ref) for details on plotting.
 ![Plot of response against wavenumber](../example/intro/two_particles.png)
 
 
