@@ -45,7 +45,7 @@ julia> plot(plane_wave, ω; region_shape = plot_domain, y = 0.0) # in 3d current
 Another useful source is the point source. In any dimension we consider the point source to be the zero order of the [`outgoing_basis_function`](@ref), which are the basis for all outgoing waves.
 
 The point source for 2D is $u_{\text{in}}(x,y) = \frac{\mathrm i A}{4} \mathrm H_0^{(1)}(k \|(x-x_0,y-y_0)\|)$ and for
-for 3D it is $u_{\text{in}}(x,y) = \frac{A}{4 \pi} \frac{e^{i k  \| x -  x_0\|)}{\| x -  x_0\|}$ where $A$ is the amplitude,  $\mathbf x_0$ is the origin of the point source, and $\mathrm H_0^{(1)}$ is the Hankel function of the first kind.
+for 3D it is $u_{\text{in}}(x,y) = \frac{A}{4 \pi} \frac{e^{i k  \| x -  x_0\|)}}{\| x -  x_0\|}$ where $A$ is the amplitude,  $\mathbf x_0$ is the origin of the point source, and $\mathrm H_0^{(1)}$ is the Hankel function of the first kind.
 
 ```jldoctest intro
 julia> x0 = [0.0,-1.2, 0.0];
