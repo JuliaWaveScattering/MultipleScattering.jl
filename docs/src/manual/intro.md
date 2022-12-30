@@ -11,7 +11,7 @@ DocTestSetup = quote
 end
 ```
 
-```julia
+```jldoctest intro
 using MultipleScattering
 spatial_dim = 2; # could also be 3, but then all 2D vectors below would need to be 3D
 host_medium = Acoustic(spatial_dim; ρ = 1.0, c = 1.0); # density ρ = 1.0 and soundspeed c = 1.0
@@ -21,7 +21,7 @@ At this step we have restricted the physics to acoustics, that is, solutions to 
 ### [RegularSource wave](@id into_source)
 
 The host medium will determine the types of waves that can propagate. For example an incident plane wave $\mathrm e^{ \mathrm i k x}$ there is a convenient constructor
-```julia
+```jldoctest intro
 source = plane_source(host_medium; direction = [1.0, 0.0]);
 ```
 
@@ -34,7 +34,7 @@ We generally call the incident wave a source. See [RegularSources](@ref) for det
 ### [Particles](@id into_particles)
 
 Next, we define some particles to scatter an acoustic wave. We choose two filled circles, the first centred at [-2, 2] with radius 2 and the second at [-2, -2] with radius 0.5,
-```julia
+```jldoctest intro
 particle_medium =  Acoustic(spatial_dim; ρ = 10.0, c = 2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
 p1 = Particle(particle_medium, Sphere([-2.0, 2.0], 2.0));
 p2 = Particle(particle_medium, Sphere([-2.0, -2.0], 0.5));
@@ -56,12 +56,12 @@ plot(particles)
 ### Simulation and results
 
 Once we know the medium, the particles, and the have these three components, we can build our `FrequencySimulation` object
-```julia
+```jldoctest intro
 simulation = FrequencySimulation(particles, source);
 ```
 
 To get numerical results, we run our simulation for specific positions and angular frequencies,
-```julia
+```jldoctest intro
 x = [[-10.0, 0.0], [0.0, 0.0]];
 max_ω = 1.0;
 ωs = 0.01:0.01:max_ω;
