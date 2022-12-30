@@ -14,7 +14,7 @@ For acoustics, any wave field $u_{\text{in}}(x,y)$ that satisfies $\nabla^2 u_{\
 Two commonly used sources are a plane wave and point source. These can then be added together to create more complicated sources, like immitating a finite sized transducer / source.
 
 For a plane-wave of the form $u_{\text{in}}(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$, where $A$ is the amplitude, $\mathbf n = (n_1,n_2,n_2)$ is unit vector which points in the direction of propagation, and $\mathbf x_0 = (x_0,y_0,z_0)$ is the initially position (or origin) of the source, we can use
-```jldoctest intro
+```jldoctest intro; output = false
 using MultipleScattering;
 
 dimension = 3;
@@ -42,7 +42,7 @@ Another useful source is the point source. In any dimension we consider the poin
 The point source for 2D is $u_{\text{in}}(x,y) = \frac{\mathrm i A}{4} \mathrm H_0^{(1)}(k \|(x-x_0,y-y_0)\|)$ and for
 for 3D it is $u_{\text{in}}(x,y) = \frac{A}{4 \pi} \frac{e^{i k  \| x -  x_0\|)}}{\| x -  x_0\|}$ where $A$ is the amplitude,  $\mathbf x_0$ is the origin of the point source, and $\mathrm H_0^{(1)}$ is the Hankel function of the first kind.
 
-```jldoctest intro
+```jldoctest intro; output = false
 x0 = [0.0,-1.2, 0.0];
 point_wave = point_source(medium, x0, A);
 ```
@@ -89,8 +89,7 @@ plane_wave.medium # the physical medium
 x = [1.0, 1.0]; ω = 1.0;
 plane_wave.field(x,ω) # the value of the field
 
-#output
-
+# output
 0.5403023058681398 + 0.8414709848078965im
 ```
 
@@ -118,8 +117,7 @@ x = x0 + 0.1*rand(2); basis_order = 10;
 vs = regular_basis_function(medium, ω);
 source.field(x, ω) ≈ sum(source.coefficients(basis_order, x0, ω) .* vs(basis_order, x - x0))
 
-#output
-
+# output
 true
 ```
 
@@ -128,7 +126,6 @@ The package also supplies a convenience function `source_expand`, which represen
 source2 = source_expand(source, x0; basis_order = 10);
 source.field(x, ω) ≈ source2(x, ω)
 
-#output
-
+# output
 true
 ```
