@@ -15,6 +15,8 @@ Two commonly used sources are a plane wave and point source. These can then be a
 
 For a plane-wave of the form $u_{\text{in}}(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$, where $A$ is the amplitude, $\mathbf n = (n_1,n_2,n_2)$ is unit vector which points in the direction of propagation, and $\mathbf x_0 = (x_0,y_0,z_0)$ is the initially position (or origin) of the source, we can use
 ```julia
+julia> using MultipleScattering
+
 julia> dimension = 3;
 
 julia> medium = Acoustic(dimension; ρ = 1.0, c = 1.0);
@@ -57,7 +59,9 @@ julia> plot(point_wave, ω; region_shape = plot_domain)
 ```
 ![Plot point wave](../assets/point-wave.png)
 
-**_NOTE:_** Because the point source has a singularity at $x_0$ it is best to avoid plotting, and evaluating the field, close to $x_0$. 
+!!! note
+    Because the point source has a singularity at $x_0$ it is best to avoid plotting, and evaluating the field, close to $x_0$.
+    
 > This can be achieved by using `run(point_wave, ω; region_shape = plot_domain, exclude_region=some_region)` or `plot(point_wave, ω; region_shape = plot_domain, exclude_region=some_region)` both of which rely on the function [`points_in_shape`](@ref).
 
 ## Creating new sources
