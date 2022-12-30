@@ -11,6 +11,7 @@ Shape is an abstract type which represents the shape of particles, and also the 
 ## Existing shapes
 The package provides three basic shapes. You can plot them using:
 ```jldoctest intro; output = false
+using MultipleScattering
 rectangle = Box([[0.0,-1.0],[1.0,2.0]])
 circle = Sphere([-1.0,0.0],1.0)
 timeofflight = TimeOfFlightPlaneWaveToPoint([1.0,0.0],3.0)
