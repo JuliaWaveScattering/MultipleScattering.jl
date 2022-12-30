@@ -11,7 +11,7 @@ A `Particle` have two fields: `medium` and `shape`. The `medium` defines what ki
 
 For an example we can define a circular particle with acoustics medium:
 ```jldoctest intro; output = false
-using MultipleScattering
+using MultipleScattering;
 
 mymedium = Acoustic(2; ρ = 10.0, c = 2.0); # 2D acoustics with density ρ = 10.0 and soundspeed c = 2.0
 myshape = Sphere([-2.0, 2.0], 2.0);
@@ -44,7 +44,7 @@ particles = random_particles(mymedium, myshape;
     seed = 1
 );
 
-using Plots
+using Plots;
 
 plot(particles)
 plot!(circle, linecolor = :red)
