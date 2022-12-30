@@ -14,8 +14,8 @@ This package calculates all scattering in the frequency domain, and we call the 
 ## [Intro](@id impulse_intro)
 
 As an example, let use a plane-wave source $\mathrm e^{\mathrm i \omega x}$ and measure the response at origin of the source $x = (0,0)$,
-```julia
-using MultipleScattering
+```jldoctest time
+using MultipleScattering;
 
 plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0], position = [0.0, 0.0]);
 x = [[0.0, 0.0]];
@@ -26,14 +26,14 @@ time_response = frequency_to_time(freq_response; t_vec = t_vec);
 typeof(time_response)
 
 # output
-
 TimeSimulationResult{Float64,2,1}
 ```
 where we specified the times `t_vec` to calculate `time_response`. If no `t_vec` is given, the default times would be `t_vec = ω_to_t(ωs)` which is the standard choice for the Discrete Fourier Transform.  
 
 Let us have a look at these responses:
 ```julia
-using Plots
+using Plots;
+
 p1 = plot(freq_response, xlims = (0, 2), ylims = (0.0, 1.5), field_apply = real);
 p2 = plot(time_response);
 plot(p1, p2)
@@ -48,19 +48,18 @@ We can alter the response, in time and frequency, by specifying an impulse funct
 
 The simplest way to avoid unwanted lobes (and Gibbs phenomena) is to use a Gaussian impulse function:
 ```jldoctest time
-maxω = maximum(ωs)
-gauss_impulse = GaussianImpulse(maxω)
+maxω = maximum(ωs);
+gauss_impulse = GaussianImpulse(maxω);
 typeof(gauss_impulse)
 
 # output
-
 ContinuousImpulse{Float64}
 ```
 The argument `maxω` passed to [`GaussianImpulse`](@ref) will return an Gaussian impulse which will (mostly) avoid the lobes given by calculating only `ω <= maxω`. The Gaussian impulse in frequency and time is
 ```julia
-ωs_all = -2.0:0.01:2.0
-p1 = plot(ω -> real(gauss_impulse.in_freq(ω)), ωs_all, title="Gaussian in frequency")
-p2 = plot(gauss_impulse.in_time, t_vec, title="Gaussian in time")
+ωs_all = -2.0:0.01:2.0;
+p1 = plot(ω -> real(gauss_impulse.in_freq(ω)), ωs_all, title="Gaussian in frequency");
+p2 = plot(gauss_impulse.in_time, t_vec, title="Gaussian in time");
 plot(p1, p2)
 ```
 ![A Gaussian impulse](../assets/gauss_impulse.png)
@@ -78,7 +77,7 @@ plot(p1, p2)
 
 There are still some lobes present because again `freq_response` only calculates `ω<=1.0`,  but this time the drop is much less pronounced, which we can demonstrate with a plot of $\hat \phi(\mathbf 0, \omega)$:  
 ```julia
-φs = field(freq_response)[:] .* gauss_impulse.in_freq.(ωs)
+φs = field(freq_response)[:] .* gauss_impulse.in_freq.(ωs);
 plot(ωs, real.(φs), title="Frequency response φ")
 ```
 ![Compare the Gaussian impulse](../assets/freq_gauss.png)
@@ -87,23 +86,22 @@ plot(ωs, real.(φs), title="Frequency response φ")
 
 The only impulse the package provides is the Gaussian, both its discrete [`DiscreteGaussianImpulse`](@ref) and analytic form [`GaussianImpulse`](@ref). But all this is not necessary to use your own defined impulse function. You only need to define an impulse sampled in frequency. For example suppose we want a triangle impulse in frequency:
 ```jldoctest time; output = false
-# we need only define for ω > 0.
-triangle_freq(ω) = 5 - 5*ω
+# we need only define for ω > 0.0
+triangle_freq(ω) = 5 - 5*ω;
 
 # we only need the sampled frequency response.
-in_freq = triangle_freq.(ωs)
+in_freq = triangle_freq.(ωs);
 
 # as we have specified in_freq we do not need to specify in_time.
-in_time = 0.0*t_vec
+in_time = 0.0*t_vec;
 
-discrete_impulse = DiscreteImpulse(t_vec, in_time, ωs, in_freq)
+discrete_impulse = DiscreteImpulse(t_vec, in_time, ωs, in_freq);
 
 time_response = frequency_to_time(freq_response; t_vec = t_vec, discrete_impulse = discrete_impulse);
 
 typeof(time_response)
 
 # output
-
 TimeSimulationResult{Float64,2,1}
 ```
 ```julia
@@ -113,14 +111,16 @@ plot(time_response)
 
 Alternatively, we can attempt to produce a triangle wave in the time domain, for which there is a convenient constructor:
 ```julia
-triangle_time(t) = (abs(t/15) < 1) ? 1 - abs(t/15) : 0.0
+triangle_time(t) = (abs(t/15) < 1) ? 1 - abs(t/15) : 0.0;
 
-in_time = triangle_time.(t_vec)
+in_time = triangle_time.(t_vec);
 
 # the function DiscreteImpulse below will calculate in_freq
-discrete_impulse = DiscreteImpulse(t_vec, in_time, ωs)
+discrete_impulse = DiscreteImpulse(t_vec, in_time, ωs);
 
 time_response = frequency_to_time(freq_response; t_vec = t_vec, discrete_impulse = discrete_impulse);
+
+plot!(time_response)
 ```
 ![](../assets/triangle_time_response.png)
 
@@ -129,12 +129,12 @@ As an example, we will make a reflective lens out of particles. To achieve this 
 
 First we choose the properties of the lens:
 ```julia
-p_radius = 0.1
-volfrac = 0.3
+p_radius = 0.1;
+volfrac = 0.3;
 
-x = [-10.0; 0.0]
-outertime = 34.8
-innertime = 34.0
+x = [-10.0; 0.0];
+outertime = 34.8;
+innertime = 34.0;
 
 # Generate particles which are at most outertime away from our listener
 outershape = TimeOfFlightPlaneWaveToPoint(x, outertime)
@@ -154,7 +154,7 @@ plot(particles)
 
 Next we simulate an impulse plane-wave starting at $x = -10$:
 ```julia
-ωs = LinRange(0.01, 2.0, 100)
+ωs = LinRange(0.01, 2.0, 100);
 
 plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0], position = x);
 sim = FrequencySimulation(particles, plane_wave);
@@ -162,9 +162,9 @@ sim = FrequencySimulation(particles, plane_wave);
 freq_response = run(sim, x, ωs);
 
 t_vec = -10.:0.2:81.
-time_response = frequency_to_time(freq_response; t_vec=t_vec, impulse = GaussianImpulse(1.5; σ = 1.0))
+time_response = frequency_to_time(freq_response; t_vec=t_vec, impulse = GaussianImpulse(1.5; σ = 1.0));
 
-xticks = [0.0, 20.0, 34.0, 40.0, 60.0, 80.0]
+xticks = [0.0, 20.0, 34.0, 40.0, 60.0, 80.0];
 plot(time_response, title="Time response from lens", label="", xticks=xticks)
 ```
 ![](../assets/lens-response.png)
