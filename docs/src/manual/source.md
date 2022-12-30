@@ -14,26 +14,34 @@ For acoustics, any wave field $u_{\text{in}}(x,y)$ that satisfies $\nabla^2 u_{\
 Two commonly used sources are a plane wave and point source. These can then be added together to create more complicated sources, like immitating a finite sized transducer / source.
 
 For a plane-wave of the form $u_{\text{in}}(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$, where $A$ is the amplitude, $\mathbf n = (n_1,n_2,n_2)$ is unit vector which points in the direction of propagation, and $\mathbf x_0 = (x_0,y_0,z_0)$ is the initially position (or origin) of the source, we can use
-```jldoctest intro; output = false
-using MultipleScattering;
+```jldoctest intro
+julia> using MultipleScattering;
 
-dimension = 3;
-medium = Acoustic(dimension; ρ = 1.0, c = 1.0);
-A = 1.0;
-n = [1.0, 1.0, 1.0];
-x0 = [1.0, 0.0, 0.0];
-plane_wave = plane_source(medium; amplitude = A, direction = n, position = x0);
+julia> dimension = 3;
+
+julia> medium = Acoustic(dimension; ρ = 1.0, c = 1.0);
+
+julia> A = 1.0;
+
+julia> n = [1.0, 1.0, 1.0];
+
+julia> x0 = [1.0, 0.0, 0.0];
+
+julia> plane_wave = plane_source(medium; amplitude = A, direction = n, position = x0);
+
 ```
 
 We can plot this source wave one frequency ω by using
 ```julia
-ω = 1.0;
-plot_origin = zeros(3); plot_dimensions = 2 .* ones(3);
-plot_domain = Box(plot_origin, plot_dimensions);
+julia> ω = 1.0;
 
-using Plots; pyplot();
+julia> plot_origin = zeros(3); plot_dimensions = 2 .* ones(3);
 
-plot(plane_wave, ω; region_shape = plot_domain, y = 0.0) # in 3d currently only x-z slices are plotted for a given fixed y
+julia> plot_domain = Box(plot_origin, plot_dimensions);
+
+julia> using Plots; pyplot();
+
+julia> plot(plane_wave, ω; region_shape = plot_domain, y = 0.0) # in 3d currently only x-z slices are plotted for a given fixed y
 ```
 ![Plot plane wave](../assets/plane-wave.png)
 
@@ -42,12 +50,14 @@ Another useful source is the point source. In any dimension we consider the poin
 The point source for 2D is $u_{\text{in}}(x,y) = \frac{\mathrm i A}{4} \mathrm H_0^{(1)}(k \|(x-x_0,y-y_0)\|)$ and for
 for 3D it is $u_{\text{in}}(x,y) = \frac{A}{4 \pi} \frac{e^{i k  \| x -  x_0\|)}}{\| x -  x_0\|}$ where $A$ is the amplitude,  $\mathbf x_0$ is the origin of the point source, and $\mathrm H_0^{(1)}$ is the Hankel function of the first kind.
 
-```jldoctest intro; output = false
-x0 = [0.0,-1.2, 0.0];
-point_wave = point_source(medium, x0, A);
+```jldoctest intro
+julia> x0 = [0.0,-1.2, 0.0];
+
+julia> point_wave = point_source(medium, x0, A);
+
 ```
 ```julia
-plot(point_wave, ω; region_shape = plot_domain)
+julia> plot(point_wave, ω; region_shape = plot_domain)
 ```
 ![Plot point wave](../assets/point-wave.png)
 
@@ -61,18 +71,21 @@ plot(point_wave, ω; region_shape = plot_domain)
 The easiest way to create new sources is to just sum together predefined sources:
 
 ```julia
-source = (3.0 + 1.0im) * point_wave + plane_wave;
-plot(source, ω; bounds = plot_domain)
+julia> source = (3.0 + 1.0im) * point_wave + plane_wave;
+
+julia> plot(source, ω; bounds = plot_domain)
 ```
 ![Plot combined source wave](../assets/combined-source.png)
 
 For example, we can use this to create a finite emitter/transducer source,
 ```jldoctest intro
-xs = LinRange(-0.7, 0.7, 30);
-source = sum(xs) do x point_source(medium, [x, 0.0, -1.1]) end;
+julia> xs = LinRange(-0.7, 0.7, 30);
+
+julia> source = sum(xs) do x point_source(medium, [x, 0.0, -1.1]) end;
+
 ```
 ```julia
-plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, res = 40)
+julia> plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, res = 40)
 ```
 ![Plot point wave](../assets/transducer-source.png)
 
@@ -84,12 +97,13 @@ To define a new source you will need to understand the internals below.
 
 The `struct` [`RegularSource`](@ref) has three fields: `medium`, `field`, and `coef`, explained with examples below:
 ```jldoctest intro
-plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0]);
-plane_wave.medium # the physical medium
-x = [1.0, 1.0]; ω = 1.0;
-plane_wave.field(x,ω) # the value of the field
+julia> plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0]);
 
-# output
+julia> plane_wave.medium # the physical medium
+
+julia> x = [1.0, 1.0]; ω = 1.0;
+
+julia> plane_wave.field(x,ω) # the value of the field
 0.5403023058681398 + 0.8414709848078965im
 ```
 
@@ -109,23 +123,26 @@ For the second case, we use a spherical coordinates with $r = \| \mathbf x\|$ an
 
 Both the inbuilt plane and point sources have functions `coef` which satisfy the above identity, for example
 ```jldoctest intro
-using LinearAlgebra, SpecialFunctions;
-medium = Acoustic(2.0, 0.1, 2);
-source = plane_source(medium);
-x0 = [1.0,1.0]; ω = 0.9;
-x = x0 + 0.1*rand(2); basis_order = 10;
-vs = regular_basis_function(medium, ω);
-source.field(x, ω) ≈ sum(source.coefficients(basis_order, x0, ω) .* vs(basis_order, x - x0))
+julia> using LinearAlgebra, SpecialFunctions;
 
-# output
+julia> medium = Acoustic(2.0, 0.1, 2);
+
+julia> source = plane_source(medium);
+
+julia> x0 = [1.0,1.0]; ω = 0.9;
+
+julia> x = x0 + 0.1*rand(2); basis_order = 10;
+
+julia> vs = regular_basis_function(medium, ω);
+
+julia> source.field(x, ω) ≈ sum(source.coefficients(basis_order, x0, ω) .* vs(basis_order, x - x0))
 true
 ```
 
 The package also supplies a convenience function `source_expand`, which represents the source in terms of regular waves, for example:  
 ```jldoctest intro
-source2 = source_expand(source, x0; basis_order = 10);
-source.field(x, ω) ≈ source2(x, ω)
+julia> source2 = source_expand(source, x0; basis_order = 10);
 
-# output
+julia> source.field(x, ω) ≈ source2(x, ω)
 true
 ```
