@@ -6,7 +6,7 @@ DocTestSetup = quote
 end
 ```
 
-This package calculates all scattering in the frequency domain, and we call the resulting field the frequency response $\hat u(\mathbf x,\omega)$, which satisfies $\nabla^2 \hat u(\mathbf x,\omega) + k^2 \hat u(\mathbf x,\omega) = 0$, where $k = \omega/c$. We can transform the frequency response $\hat u(\mathbf x,\omega)$ into a time response $u(\mathbf x,t)$ using a Fourier transform, where $u(\mathbf x,t)$ satisfies $\nabla^2 u(\mathbf x,t) - \frac{1}{c^2}  \frac{\partial^2}{\partial t^2}u(\mathbf x,t) = 0$. For a minimal example see [Results in time](@ref), or see [Technical details](@ref impulse_details) for more maths.
+This package calculates all scattering in the frequency domain, and we call the resulting field the frequency response $\hat u(\mathbf x,\omega)$, which satisfies $\nabla^2 \hat u(\mathbf x,\omega) + k^2 \hat u(\mathbf x,\omega) = 0$, where $k = \dfrac{\omega}{c}$. We can transform the frequency response $\hat u(\mathbf x,\omega)$ into a time response $u(\mathbf x,t)$ using a Fourier transform, where $u(\mathbf x,t)$ satisfies $\nabla^2 u(\mathbf x,t) - \frac{1}{c^2}  \frac{\partial^2}{\partial t^2}u(\mathbf x,t) = 0$. For a minimal example see [Results in time](@ref), or see [Technical details](@ref impulse_details) for more maths.
 
 !!! note
     The package assumes the time response $u(\mathbf x,t)$ is always real, this simplifies the Fourier transform.
@@ -14,12 +14,14 @@ This package calculates all scattering in the frequency domain, and we call the 
 ## [Intro](@id impulse_intro)
 
 As an example, let use a plane-wave source $\mathrm e^{\mathrm i \omega x}$ and measure the response at origin of the source $x = (0,0)$,
-```jldoctest time
-plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0,0.0], position = [0.0,0.0]);
-x = [[0.0,0.0]];
-ωs = LinRange(0.0,1.0,100);
+```julia
+using MultipleScattering
+
+plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0], position = [0.0, 0.0]);
+x = [[0.0, 0.0]];
+ωs = LinRange(0.0, 1.0, 100);
 freq_response = run(plane_wave, x, ωs);
-t_vec = LinRange(-20.0,80.,110);
+t_vec = LinRange(-20.0, 80.0, 110);
 time_response = frequency_to_time(freq_response; t_vec = t_vec);
 typeof(time_response)
 
@@ -32,9 +34,9 @@ where we specified the times `t_vec` to calculate `time_response`. If no `t_vec`
 Let us have a look at these responses:
 ```julia
 using Plots
-p1 = plot(freq_response, xlims = (0,2), ylims = (0.,1.5), field_apply = real);
+p1 = plot(freq_response, xlims = (0, 2), ylims = (0.0, 1.5), field_apply = real);
 p2 = plot(time_response);
-plot(p1,p2)
+plot(p1, p2)
 ```
 ![A discrete delta impulse](../assets/sinc_impulse.png)
 
@@ -59,7 +61,7 @@ The argument `maxω` passed to [`GaussianImpulse`](@ref) will return an Gaussian
 ωs_all = -2.0:0.01:2.0
 p1 = plot(ω -> real(gauss_impulse.in_freq(ω)), ωs_all, title="Gaussian in frequency")
 p2 = plot(gauss_impulse.in_time, t_vec, title="Gaussian in time")
-plot(p1,p2)
+plot(p1, p2)
 ```
 ![A Gaussian impulse](../assets/gauss_impulse.png)
 
@@ -70,7 +72,7 @@ To use this impulse we simply:
 gauss_time_response = frequency_to_time(freq_response; t_vec = t_vec, impulse = gauss_impulse);
 p1 = plot(time_response);
 p2 = plot(gauss_time_response);
-plot(p1,p2)
+plot(p1, p2)
 ```
 ![Compare the Gaussian impulse](../assets/compare_gauss_impulse.png)
 
@@ -130,7 +132,7 @@ First we choose the properties of the lens:
 p_radius = 0.1
 volfrac = 0.3
 
-x = [-10.0;0.0]
+x = [-10.0; 0.0]
 outertime = 34.8
 innertime = 34.0
 
@@ -152,9 +154,9 @@ plot(particles)
 
 Next we simulate an impulse plane-wave starting at $x = -10$:
 ```julia
-ωs = LinRange(0.01,2.0,100)
+ωs = LinRange(0.01, 2.0, 100)
 
-plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0,0.0], position = x);
+plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0], position = x);
 sim = FrequencySimulation(particles, plane_wave);
 
 freq_response = run(sim, x, ωs);
@@ -162,7 +164,7 @@ freq_response = run(sim, x, ωs);
 t_vec = -10.:0.2:81.
 time_response = frequency_to_time(freq_response; t_vec=t_vec, impulse = GaussianImpulse(1.5; σ = 1.0))
 
-xticks = [0.,20.,34.,40.0,60.,80.]
+xticks = [0.0, 20.0, 34.0, 40.0, 60.0, 80.0]
 plot(time_response, title="Time response from lens", label="", xticks=xticks)
 ```
 ![](../assets/lens-response.png)
