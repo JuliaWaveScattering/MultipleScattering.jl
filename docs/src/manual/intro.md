@@ -12,6 +12,7 @@ end
 ```
 
 ```julia
+using MultipleScattering
 spatial_dim = 2; # could also be 3, but then all 2D vectors below would need to be 3D
 host_medium = Acoustic(spatial_dim; ρ = 1.0, c = 1.0); # density ρ = 1.0 and soundspeed c = 1.0
 ```
