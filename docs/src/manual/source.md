@@ -26,7 +26,7 @@ plane_wave = plane_source(medium; amplitude = A, direction = n, position = x0);
 ```
 
 We can plot this source wave one frequency ω by using
-```jldoctest intro
+```julia
 ω = 1.0;
 plot_origin = zeros(3); plot_dimensions = 2 .* ones(3);
 plot_domain = Box(plot_origin, plot_dimensions);
@@ -60,7 +60,7 @@ plot(point_wave, ω; region_shape = plot_domain)
 
 The easiest way to create new sources is to just sum together predefined sources:
 
-```jldoctest intro
+```julia
 source = (3.0 + 1.0im) * point_wave + plane_wave;
 plot(source, ω; bounds = plot_domain)
 ```
@@ -90,6 +90,7 @@ x = [1.0, 1.0]; ω = 1.0;
 plane_wave.field(x,ω) # the value of the field
 
 #output
+
 0.5403023058681398 + 0.8414709848078965im
 ```
 
@@ -118,6 +119,7 @@ vs = regular_basis_function(medium, ω);
 source.field(x, ω) ≈ sum(source.coefficients(basis_order, x0, ω) .* vs(basis_order, x - x0))
 
 #output
+
 true
 ```
 
@@ -127,5 +129,6 @@ source2 = source_expand(source, x0; basis_order = 10);
 source.field(x, ω) ≈ source2(x, ω)
 
 #output
+
 true
 ```
