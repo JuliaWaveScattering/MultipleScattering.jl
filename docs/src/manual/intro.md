@@ -11,10 +11,13 @@ DocTestSetup = quote
 end
 ```
 
-```jldoctest intro; output = false
+```jldoctest intro
 using MultipleScattering
 spatial_dim = 2; # could also be 3, but then all 2D vectors below would need to be 3D
-host_medium = Acoustic(spatial_dim; ρ = 1.0, c = 1.0); # density ρ = 1.0 and soundspeed c = 1.0
+host_medium = Acoustic(spatial_dim; ρ = 1.0, c = 1.0) # density ρ = 1.0 and soundspeed c = 1.0
+
+# output
+Acoustic(1.0, 1.0 + 0.0im, 2)
 ```
 At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y,\omega) + k^2 u(x,y,\omega) = 0$, where $k = \dfrac{\omega}{c}$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
 
@@ -23,6 +26,9 @@ At this step we have restricted the physics to acoustics, that is, solutions to 
 The host medium will determine the types of waves that can propagate. For example an incident plane wave $\mathrm e^{ \mathrm i k x}$ there is a convenient constructor
 ```jldoctest intro; output = false
 source = plane_source(host_medium; direction = [1.0, 0.0]);
+
+# output
+
 ```
 
 !!! note 
@@ -39,6 +45,9 @@ particle_medium =  Acoustic(spatial_dim; ρ = 10.0, c = 2.0); # 2D acoustic part
 p1 = Particle(particle_medium, Sphere([-2.0, 2.0], 2.0));
 p2 = Particle(particle_medium, Sphere([-2.0, -2.0], 0.5));
 particles = [p1, p2];
+
+# output
+
 ```
 See [Shapes](@ref) and [Particles](@ref) for details on different shapes and particles.
 
@@ -58,6 +67,9 @@ plot(particles)
 Once we know the medium, the particles, and the have these three components, we can build our `FrequencySimulation` object
 ```jldoctest intro; output = false
 simulation = FrequencySimulation(particles, source);
+
+# output
+
 ```
 
 To get numerical results, we run our simulation for specific positions and angular frequencies,
@@ -66,6 +78,9 @@ x = [[-10.0, 0.0], [0.0, 0.0]];
 max_ω = 1.0;
 ωs = 0.01:0.01:max_ω;
 result = run(simulation, x, ωs);
+
+# output
+
 ```
 
 We can plot the time-harmonic response across the frequencies `ωs` wavenumbers and at the location (-10,0) by typing:
