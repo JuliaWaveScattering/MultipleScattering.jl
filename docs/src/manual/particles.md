@@ -14,6 +14,7 @@ For an example we can define a circular particle with acoustics medium:
 particle_medium =  Acoustic(2; ρ=10.0, c=2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
 
 ```jldoctest intro; output = false
+using MultipleScattering
 mymedium = Acoustic(2; ρ=10.0, c=2.0); # 2D acoustics with density ρ = 10.0 and soundspeed c = 2.0
 myshape = Sphere([-2.0,2.0], 2.0);
 p1 = Particle(mymedium, myshape);
