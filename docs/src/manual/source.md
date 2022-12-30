@@ -15,7 +15,7 @@ Two commonly used sources are a plane wave and point source. These can then be a
 
 For a plane-wave of the form $u_{\text{in}}(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$, where $A$ is the amplitude, $\mathbf n = (n_1,n_2,n_2)$ is unit vector which points in the direction of propagation, and $\mathbf x_0 = (x_0,y_0,z_0)$ is the initially position (or origin) of the source, we can use
 ```jldoctest intro
-using MultipleScattering
+using MultipleScattering;
 
 dimension = 3;
 medium = Acoustic(dimension; ρ = 1.0, c = 1.0);
@@ -46,7 +46,7 @@ for 3D it is $u_{\text{in}}(x,y) = \frac{A}{4 \pi} \frac{e^{i k  \| x -  x_0\|)}
 x0 = [0.0,-1.2, 0.0];
 point_wave = point_source(medium, x0, A);
 ```
-```jldoctest intro
+```julia
 plot(point_wave, ω; region_shape = plot_domain)
 ```
 ![Plot point wave](../assets/point-wave.png)
