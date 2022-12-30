@@ -100,6 +100,7 @@ The `struct` [`RegularSource`](@ref) has three fields: `medium`, `field`, and `c
 julia> plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0]);
 
 julia> plane_wave.medium # the physical medium
+Acoustic(1.0, 1.0 + 0.0im, 2)
 
 julia> x = [1.0, 1.0]; ω = 1.0;
 
