@@ -1,7 +1,7 @@
 
 "Plot the field for a particular wavenumber"
 @recipe function plot(sim::FrequencySimulation{3}, ω::Number;
-        res=10, xres=res, yres=res,
+        resolution = 10, res = resolution, xres=res, yres=res,
         y = :auto,
         field_apply=real,
         region_shape = :auto,
@@ -73,7 +73,7 @@ end
 
 "Plot the field for a particular wavenumber"
 @recipe function plot(sim::FrequencySimulation{2}, ω::Number;
-        res=10, xres=res, yres=res,
+        resolution = 10, res = resolution, xres=res, yres=res,
         field_apply=real,
         region_shape = :auto,
         bounds = :auto,
