@@ -97,7 +97,7 @@ Next we place a point source in the centre and plot the result, while excluding 
 point_wave = point_source(Acoustic(2; ρ = 1.0, c = 1.0), [0.0, 0.0]);
 sim = FrequencySimulation(polydisperse_particles, point_wave);
 plot(sim, ω;
-        res = 20,
+        resolution = 20,
         exclude_region = Circle(0.1),
         drawparticles = true
 )

@@ -63,7 +63,7 @@ julia> plot(point_wave, ω; region_shape = plot_domain)
 
 !!! note
     Because the point source has a singularity at $x_0$ it is best to avoid plotting, and evaluating the field, close to $x_0$.
-    
+
 > This can be achieved by using `run(point_wave, ω; region_shape = plot_domain, exclude_region=some_region)` or `plot(point_wave, ω; region_shape = plot_domain, exclude_region=some_region)` both of which rely on the function [`points_in_shape`](@ref).
 
 ## Creating new sources
@@ -85,7 +85,7 @@ julia> source = sum(xs) do x point_source(medium, [x, 0.0, -1.1]) end;
 
 ```
 ```julia
-julia> plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, res = 40)
+julia> plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, resolution = 40)
 ```
 ![Plot point wave](../assets/transducer-source.png)
 

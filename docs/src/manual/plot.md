@@ -80,8 +80,8 @@ Continuing from [Field - Harmonic two gaps](@ref), we can plot how an impulse pl
 pyplot(size = (450,300))
 ωs = LinRange(0.0,2.0,300)[2:end] # avoid using ω = 0
 
-# We use a lower resolution (res = 50) as this is a heavier calculation
-result = run(particles, source, region, ωs; res = 50)
+# We use a lower resolution (resolution = 50) as this is a heavier calculation
+result = run(particles, source, region, ωs; resolution = 50)
 
 # Calculate time response over rect
 t_max = 0.75 .* real(region.width / host_medium.c)
