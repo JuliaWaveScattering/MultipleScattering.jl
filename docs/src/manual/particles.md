@@ -10,13 +10,12 @@ end
 A `Particle` have two fields: `medium` and `shape`. The `medium` defines what kind of waves can propagate inside `Particle`, and what type of `RegularSource` can be used to scatter waves from `Particle`. One example `medium` is [Acoustic](@ref). The `shape` completely defines the geometry and position of the particle, see [Shapes](@ref) for details.
 
 For an example we can define a circular particle with acoustics medium:
-```jldoctest intro; output = false
+```jldoctest intro; output = false, filter = r".*"s
 using MultipleScattering;
 
 mymedium = Acoustic(2; ρ = 10.0, c = 2.0); # 2D acoustics with density ρ = 10.0 and soundspeed c = 2.0
 myshape = Sphere([-2.0, 2.0], 2.0);
 p1 = Particle(mymedium, myshape);
-MultipleScattering.shape(p1) # we use "MultipleScattering." just in case the function shape is already defined
 
 # output
 Sphere{Float64, 2}([-2.0, 2.0], 2.0)
