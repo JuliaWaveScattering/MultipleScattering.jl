@@ -19,7 +19,7 @@ p1 = Particle(mymedium, myshape);
 MultipleScattering.shape(p1) # we use "MultipleScattering." just in case the function shape is already defined
 
 # output
-Sphere{Float64,2}([-2.0, 2.0], 2.0)
+Sphere{Float64, 2}([-2.0, 2.0], 2.0)
 ```
 
 ## Placing particles in a region
@@ -38,9 +38,9 @@ mymedium = Acoustic(2; ρ = 10.0, c = 2.0);
 
 # Generate particles inside circle
 volfrac = 0.2;
-particles = random_particles(mymedium, myshape; 
-    region_shape = circle, 
-    volume_fraction = volfrac, 
+particles = random_particles(mymedium, myshape;
+    region_shape = circle,
+    volume_fraction = volfrac,
     seed = 1
 );
 
@@ -96,7 +96,7 @@ Next we place a point source in the centre and plot the result, while excluding 
 ω = 0.4;
 point_wave = point_source(Acoustic(2; ρ = 1.0, c = 1.0), [0.0, 0.0]);
 sim = FrequencySimulation(polydisperse_particles, point_wave);
-plot(sim, ω; 
+plot(sim, ω;
         res = 20,
         exclude_region = Circle(0.1),
         drawparticles = true

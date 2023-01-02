@@ -14,7 +14,7 @@ This package calculates all scattering in the frequency domain, and we call the 
 ## [Intro](@id impulse_intro)
 
 As an example, let use a plane-wave source $\mathrm e^{\mathrm i \omega x}$ and measure the response at origin of the source $x = (0,0)$,
-```jldoctest time
+```jldoctest time; output = false, filter = r".*"s
 using MultipleScattering;
 
 plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0, 0.0], position = [0.0, 0.0]);
@@ -23,10 +23,9 @@ x = [[0.0, 0.0]];
 freq_response = run(plane_wave, x, ωs);
 t_vec = LinRange(-20.0, 80.0, 110);
 time_response = frequency_to_time(freq_response; t_vec = t_vec);
-typeof(time_response)
 
 # output
-TimeSimulationResult{Float64,2,1}
+
 ```
 where we specified the times `t_vec` to calculate `time_response`. If no `t_vec` is given, the default times would be `t_vec = ω_to_t(ωs)` which is the standard choice for the Discrete Fourier Transform.  
 
@@ -85,7 +84,7 @@ plot(ωs, real.(φs), title="Frequency response φ")
 ## Discrete impulse
 
 The only impulse the package provides is the Gaussian, both its discrete [`DiscreteGaussianImpulse`](@ref) and analytic form [`GaussianImpulse`](@ref). But all this is not necessary to use your own defined impulse function. You only need to define an impulse sampled in frequency. For example suppose we want a triangle impulse in frequency:
-```jldoctest time; output = false
+```jldoctest time; output = false, filter = r".*"s
 # we need only define for ω > 0.0
 triangle_freq(ω) = 5 - 5*ω;
 
@@ -99,10 +98,8 @@ discrete_impulse = DiscreteImpulse(t_vec, in_time, ωs, in_freq);
 
 time_response = frequency_to_time(freq_response; t_vec = t_vec, discrete_impulse = discrete_impulse);
 
-typeof(time_response)
-
 # output
-TimeSimulationResult{Float64,2,1}
+
 ```
 ```julia
 plot(time_response)

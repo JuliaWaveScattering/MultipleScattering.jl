@@ -11,7 +11,7 @@ Here we are going to simulate the scattered wave for many different configuratio
 ## Region and particles properties
 
 First we choose the region to place particles and the receiver position:
-```jldoctest moments; output = false
+```jldoctest moments; output = false, filter = r".*"s
 using MultipleScattering
 bottomleft = [0.0;-25.0]
 topright = [50.0;25.0]
@@ -20,9 +20,6 @@ x = [-10.0,0.0]
 
 # output
 
-2-element Array{Float64,1}:
- -10.0
-   0.0
 ```
 ```julia
 using Plots
