@@ -114,10 +114,12 @@ $$u_{\text{in}}(\mathbf x) = \sum_n a_n (\mathbf x_0, \omega) \mathrm v_n (\math
 
 where for the scalar wave equation:
 
-$$ \mathrm v_{n} (\mathbf x) = \begin{cases}
+$$ 
+\mathrm v_{n} (\mathbf x) = \begin{cases}
    \mathrm J_{n}(k r) \mathrm e^{\mathrm i \theta n} & \text{for } \mathbf x \in \mathbb R^2, \\
    \mathrm j_{\ell}(k r) \mathrm Y_{\ell}^m (\hat{\mathbf x}) & \text{for } \mathbf x \in \mathbb R^3, \\
-\end{cases} $$
+\end{cases} 
+$$
 
 where for the first case $(r,\theta)$ are the polar coordinates and $n$ sums over $-N,-N+1, \cdots, N$, where $N$ is the basis order, and $\mathrm J_n$ is a Bessel function.
 For the second case, we use a spherical coordinates with $r = \| \mathbf x\|$ and $\hat{\mathbf x} = \mathbf x/\|\mathbf x\|$, $n$ denotes the multi-index $n=\{\ell,m\}$ with summation over $\ell = 0, 1, \cdots,N$ and $m=-\ell,-\ell+1,\ell$, $\mathrm j_\ell$ is a spherical Bessel function, and $\mathrm Y_\ell^m$ is a spherical harmonic.
