@@ -61,7 +61,6 @@ function time_to_frequency(timres::TimeSimulationResult{T,Dim,FieldDim};
         for i in 1:size(freq_field,1), j in 1:size(freq_field,3)]
     end
 
-
     return FrequencySimulationResult(permutedims(freq_field,(2,1)), deepcopy(timres.x), ω_vec)
 end
 

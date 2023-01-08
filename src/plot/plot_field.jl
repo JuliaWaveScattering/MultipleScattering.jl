@@ -202,7 +202,7 @@ end
     seriestype --> seriestype
     aspect_ratio --> 1.0
 
-    if seriestype == :contour
+    if seriestype != :surface
 
         # We should really check here to see if x and y have the right structure
         x = unique(x)
@@ -215,9 +215,7 @@ end
         x, y, field_apply.(transpose(reshape(field(timres)[x_indices,t_index],n_y,n_x)))
 
     else
-
         (x, y, field_apply.(field(timres)[x_indices,t_index]))
-
     end
 
 end
