@@ -49,7 +49,7 @@ for x = radius-2*d_particle:-d_particle:-mouth_length-radius]
 X = [cavity_up; cavity_down; cavity_right; mouth_connect_down; mouth_connect_up; mouth_up; mouth_down];
 X = [x - [cavity_length/2,cavity_radius/2-0.5] for x in X];
 ```
-We finally define the resonator
+Now we can define the resonator:
 ```julia
 particle_medium =  Acoustic(2; ρ = 0., c = 0.);
 Resonator = [
@@ -59,7 +59,8 @@ plot(Resonator)
 savefig("Resonator.png")
 ```
 ![Resonator](Resonator.png)
-We then generate the scattered field for incoming plane waves at different frequencies.
+
+Next we calculate the scattered field for an incoming plane wave at different frequencies.
 
 ```julia
 host_medium = Acoustic(2; ρ=1.0, c=1.0); # medium of the background, 2 is the dimension of the setting.
