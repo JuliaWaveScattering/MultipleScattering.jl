@@ -109,7 +109,7 @@ For all examples see [here](docs/src/example/README.md).
 | ![Helmholtz resonator](docs/src/example/helmholtz-resonator/plot_2.png)    |  ![field in random particles](docs/src/example/random_particles/plot_field.png)   |
 | [Choosing basis order](docs/src/example/hankel_convergence/README.md)   | [Particles in a circle](docs/src/example/particles_in_circle/README.md)  |
 | ![Basis order convergence](docs/src/example/hankel_convergence/plot_hankel_convergence.png)   | ![The field with particles](docs/src/example/particles_in_circle/plot_field.png)  |
-| [Times response lens](@ref lens_example)   | [Statistical moments](docs/src/example/moments/README.md)   |
+| [Times response lens](https://juliawavescattering.github.io/MultipleScattering.jl/dev/manual/time_response/#lens_example)   | [Statistical moments](docs/src/example/moments/README.md)   |
 | ![Times response lens](docs/src/assets/lens-particles.png)   | ![random particles](docs/src/example/moments/plot_moments.png)  |
 
 
