@@ -6,7 +6,9 @@
 *A Julia library for simulating, processing, and plotting multiple scattering of waves.*
 
 The library focuses on multipole methods (addition translation theorems) to solve the inhomogeneous Helmholtz equation
-(time-harmonic waves). Multipole methods are particularly efficient at solving scattering from particles in an infinite domain. This library is configured to use T-matrices (also known as scattering matrices) to represent scattering from particles with any shape and properties (currently implemented for acoustics). The package is setup to deal with different spatial dimensions and types of waves which satisfy Helmholtz equation's, e.g. acoustics, electromagnetism, elasticity. For details on some of the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
+(time-harmonic waves). Multipole methods are particularly efficient at solving scattering from particles in an infinite domain. This library is configured to use T-matrices (also known as scattering matrices) to represent scattering from particles with any shape and properties (currently implemented for acoustics).
+
+The package is setup to deal with different spatial dimensions and types of waves which satisfy Helmholtz equation's, e.g. acoustics, electromagnetism, elasticity. For details on some of the maths see [Martin (1995)](https://pdfs.semanticscholar.org/8bd3/38ec62affc5c89592a9d6d13f1ee6a7d7e53.pdf) and [Gower et al. (2017)](https://arxiv.org/abs/1712.05427).
 
 <!-- If you are here to learn about
 [Near Surface Backscattering](example/near_surface_backscattering), then [click here](example/near_surface_backscattering) to see an example. For details on the maths see [Gower et al. (2018)](https://arxiv.org/abs/1801.05490). To see how to take the [moments](example/moments) of the backscattering [click here](example/moments). -->
@@ -23,13 +25,13 @@ julia> using MultipleScattering
 ```
 ## Documentation
 
-- [**master**][docs-dev-url] &mdash; *documentation of the in-development version.*
+- [**Latest Documentation**][docs-dev-url] &mdash; *documentation of the in-development version.*
 
 ## Simple example
-Define the properties of your host medium, for example
+Define the properties of your host medium:
 ```julia
 dimension = 2 # could also be 3, but then all 2D vectors need to be 3D vectors
-host_medium = Acoustic(dimension; ρ=1.0, c=1.0); # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
+host_medium = Acoustic(dimension; ρ = 1.0, c = 1.0); # 2D acoustic medium with density ρ = 1.0 and soundspeed c = 1.0
 ```
 An acoustic medium in 2D with density 1 and wavespeed 1.
 
@@ -60,11 +62,11 @@ result = run(simulation, x, ω)
 ```
 
 ### Plot
-The package also provides recipes to be used with the `Plots` package for
-plotting simulations after they have been run.
-In our above simulation we ran the simulation for 100 different wavenumbers, and
-measured the response at the location (-10,0).
-We can plot the time-harmonic response across these wavenumbers by typing:
+The package also provides recipes to be used with the `Plots` package for plotting simulations after they have been run.
+
+In our above simulation we ran the simulation for 100 different wavenumbers, and measured the response at the location (-10,0).
+
+To plot the time-harmonic response across these wavenumbers type:
 ```julia
 using Plots
 plot(result)
@@ -78,11 +80,9 @@ plot(simulation,ω)
 ```
 ![Plot real part of acoustic field](docs/src/example/intro/plot_field.png)
 
-This measures the field at lots of points in the domain, so we can get an
-understanding of what is happening for one particular angular frequency.
+This shows the field over a spatial domain for one particular angular frequency `ω`.
 
-Note: most things in the package can be plotted by typing `plot(thing)` if you
-need an insight into a specific part of your simulation.
+Note: most things in the package can be plotted by typing `plot(thing)` if you need an insight into a specific part of your simulation.
 
 To calculate an incident plane wave pulse in time use:
 ```julia
@@ -99,18 +99,28 @@ plot(time_result)
 ![Plot real part of acoustic field](docs/src/example/intro/plot_gauss_result.png)
 
 ## More examples
-There are a lot of defaults implicit in this basic example.
-Almost every part of the problem can be controlled, for example we can manually
-construct the set of particles, define their positions, radii and give them
-specific material properties. For all examples see [here](docs/src/example/README.md).
+One way to learn the different features of this package is through the following examples.
+
+For all examples see [here](docs/src/example/README.md).
+
+| Examples     |  |
+| ----------- | ----------- |
+| [Helmholtz resonator](docs/src/example/helmholtz-resonator/resonator.md)   |   [Random particles](docs/src/example/random_particles/README.md)  |
+| ![Helmholtz resonator](docs/src/example/helmholtz-resonator/plot_2.png)    |  ![field in random particles](docs/src/example/random_particles/plot_field.png)   |
+| [Choosing basis order](docs/src/example/hankel_convergence/README.md)   | [Particles in a circle](docs/src/example/particles_in_circle/README.md)  |
+| ![Basis order convergence](docs/src/example/hankel_convergence/plot_hankel_convergence.png)   | ![The field with particles](docs/src/example/particles_in_circle/plot_field.png)  |
+| [Times response lens](@ref lens_example)   | [Statistical moments](docs/src/example/moments/README.md)   |
+| ![Times response lens](docs/src/assets/lens-particles.png)   | ![random particles](docs/src/example/moments/plot_moments.png)  |
+
+
+
 
 ## Acknowledgements and contributing
-This library was restructured from one written by
+This library was originally restructured from one written by
 [Artur L Gower](https://arturgower.github.io/) and
 [Jonathan Deakin](http://jonathan.thedeakin.net).
-Please contribute, if nothing else, criticism is welcome.
-We are relatively new to Julia, and this is our first package, if anything is
-untoward or even non-standard, please let us know.
+
+Contributions are welcome, and the aim is to expand this package to elasticity and electromagnetism.
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 [docs-dev-url]: https://JuliaWaveScattering.github.io/MultipleScattering.jl/dev

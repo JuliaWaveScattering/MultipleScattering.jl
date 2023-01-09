@@ -121,7 +121,7 @@ plot!(time_response)
 ```
 ![](../assets/triangle_time_response.png)
 
-## Scattering example
+## [Lens example](@id lens_example)
 As an example, we will make a reflective lens out of particles. To achieve this we will place the particles into a region with the shape [`TimeOfFlightPlaneWaveToPoint`](@ref).
 
 First we choose the properties of the lens:
