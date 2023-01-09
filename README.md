@@ -98,10 +98,10 @@ plot(time_result)
 ```
 ![Plot real part of acoustic field](docs/src/example/intro/plot_gauss_result.png)
 
-## More examples
+## Examples
 One way to learn the different features of this package is through the following examples.
 
-For all examples see [here](docs/src/example/README.md).
+<!-- For all examples see [here](docs/src/example/README.md). -->
 
 | Examples     |  |
 | ----------- | ----------- |
