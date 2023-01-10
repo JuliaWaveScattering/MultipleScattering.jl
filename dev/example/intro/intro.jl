@@ -8,7 +8,6 @@ w_arr = collect(0.1:0.01:1.)
 simulation = FrequencySimulation(particles, w_arr)
 
 using Plots
-pyplot()
 plot(simulation)
 
 savefig("plot_simulation.png")

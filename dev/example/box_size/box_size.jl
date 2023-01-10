@@ -1,5 +1,5 @@
 using MultipleScattering
-using Plots; pyplot()
+using Plots;
 using Random
 using LinearAlgebra
 
