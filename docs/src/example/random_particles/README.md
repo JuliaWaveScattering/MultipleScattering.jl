@@ -1,5 +1,7 @@
 # Simple random particles example
 
+```
+
 ## Define particle properties
 Define the volume fraction of particles, the region to place the particles, and their radius
 ```julia
@@ -56,3 +58,4 @@ And plot the whole field inside the region_shape `bounds` for a specific wavenum
 ![Plot real part of acoustic field](plot_field.png)
 ## Things to try
 - Try changing the volume fraction, particle radius and ω values we evaluate
+

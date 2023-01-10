@@ -49,8 +49,8 @@ result = run(sim, region, list_ω, basis_order=5,only_scattered_waves=true; res=
 
 
 # generate the plots of the fields
-pyplot()
-pyplot(size = (300,300))
+# pyplot()
+# pyplot(size = (300,300))
 for p=1:3 # loop on the different frequencies
     plot(result,list_ω[p]; seriestype = :contour,c=:balance) # clim=(-5.0,5.0)
     colormap("RdBu")
