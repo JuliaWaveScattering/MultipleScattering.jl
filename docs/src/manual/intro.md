@@ -52,14 +52,13 @@ See [Shapes](@ref) and [Particles](@ref) for details on different shapes and par
 
 If you have the package `Plots` installed you can plot the particles. Note that although they appear hollow, we consider them to filled with the same homogenous material.
 ```julia
-julia> using Plots; pyplot();
+julia> using Plots;
 
 julia> plot(particles)
 ```
 !!! note
     Most things in this package can be plotted just by typing `plot(thing)`. However you need to have `Plots` installed, and you may need to use the backend `pyplot()`. See [Plotting](@ref) for details on plotting.
 ![Plot of response against wavenumber](../example/intro/two_particles.png)
-
 
 
 ### Simulation and results
