@@ -84,7 +84,7 @@ gr(size = (450,300))
 result = run(particles, source, region, ωs; res = 50)
 
 # Calculate time response over rect
-t_max = 0.75 .* real(region.width / host_medium.c)
+t_max = 0.75 .* real(region.dimensions[1] / host_medium.c)
 ts = LinRange(0.0,t_max,75)
 impulse = GaussianImpulse(maximum(ωs)*0.6)
 timres = frequency_to_time(result; t_vec = ts, impulse = impulse)
@@ -94,11 +94,11 @@ minc = round(10*minimum(field(timres)))/10
 
 # timres = TimeSimulationResult(timres.field .+ max_c/100.0 , timres.x, timres.t)
 
-ylims =  (-region.height/2,region.height/2)
+ylimits =  (-region.dimensions[2]/2,region.dimensions[2]/2)
 anim = @animate for t in ts
     plot(timres,t, seriestype=:heatmap,
       clim = (minc, maxc),
-      leg = false, ylims = ylims
+      leg = false, ylims = ylimits
     )
     plot!(particles)
     plot!(frame = :none, title="", xguide ="",yguide ="")
@@ -143,7 +143,7 @@ maxc = round(10*maximum(real.(field(result))))/10
 minc = round(10*minimum(real.(field(result))))/10
 
 anim = @animate for t in ts
-    plot(result,ω; seriestype = :contour, phase_time=t, clim=(minc,maxc), c=:balance)
+    plot(result,ω; seriestype = :heatmap, phase_time=t, clim=(minc,maxc), c=:balance)
     plot!(simulation)
     plot!(colorbar=false, title="",axis=false, xguide ="",yguide ="")
 end
