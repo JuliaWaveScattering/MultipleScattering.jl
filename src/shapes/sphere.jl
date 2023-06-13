@@ -1,18 +1,39 @@
 """
+All abstract spheres will have an origin and a radius 
+"""
+
+abstract type AbstractSphere{Dim} <: Shape{Dim} end
+
+"""
     Sphere([origin=zeros(),] radius)
 
 A [`Shape`](@ref) where boundary is a fixed distance from the origin. In 2D this is a circle, in 3D the usual sphere, and in higher dimensions if difficult to visualise.
 """
-struct Sphere{T,Dim} <: Shape{Dim}
+
+struct Sphere{T,Dim} <: AbstractSphere{Dim}
     origin::SVector{Dim,T}
     radius::T
+end
+
+"""
+    SphericalHelmholtz([origin=zeros(),] radius, appeture)
+
+A [`Shape`](@ref) which represents a 2D thin-walled isotropic Helmholtz resonator.
+"""
+
+struct SphericalHelmholtz{T,Dim} <: AbstractSphere{Dim}
+    origin::SVector{Dim,T}
+    radius::T
+    appeture::T
 end
 
 # Alternate constructors, where type is inferred naturally
 Sphere(origin::NTuple{Dim}, radius::T) where {T,Dim} = Sphere{T,Dim}(origin, radius)
 Sphere(origin::AbstractVector, radius::T) where {T} = Sphere{T,length(origin)}(origin, radius)
+SphericalHelmholtz(origin::NTuple{2}, radius::T, appeture::T) where {T} = SphericalHelmholtz{T,2}(origin, radius, appeture)
 
 Sphere(Dim, radius::T) where {T} = Sphere{T,Dim}(zeros(T,Dim), radius)
+SphericalHelmholtz(radius::T, appeture::T) where {T} = SphericalHelmholtz{T,2}(zeros(T,2), radius, appeture)
 
 Circle(origin::Union{AbstractVector{T},NTuple{2,T}}, radius::T) where T <: AbstractFloat = Sphere{T,2}(origin, radius::T)
 Circle(radius::T) where T <: AbstractFloat = Sphere(2, radius::T)
@@ -20,11 +41,12 @@ Sphere(radius::T) where {T} = Sphere{T,3}(zeros(T,3), radius)
 
 name(shape::Sphere) = "Sphere"
 name(shape::Sphere{T,2}) where T = "Circle"
-Symmetry(shape::Sphere{T,Dim}) where {T,Dim} = RadialSymmetry{Dim}()
+name(shape::SphericalHelmholtz) = "SphericalHelmholtz"
+Symmetry(shape::AbstractSphere{Dim}) where {Dim} = RadialSymmetry{Dim}()
 
-outer_radius(sphere::Sphere) = sphere.radius
-volume(shape::Sphere{T,3}) where T = 4//3 * π * shape.radius^3
-volume(shape::Sphere{T,2}) where T = π * shape.radius^2
+outer_radius(sphere::AbstractSphere) = sphere.radius
+volume(shape::AbstractSphere{3}) = 4//3 * π * shape.radius^3
+volume(shape::AbstractSphere{2}) = π * shape.radius^2
 
 function Shape(sp::Sphere{T,Dim};
         addtodimensions::T = 0.0,
@@ -34,50 +56,50 @@ function Shape(sp::Sphere{T,Dim};
 end
 
 # bounding_box(sphere::Sphere{T,3}; kws...) where T = bounding_box(Circle(sphere; kws...))
-function bounding_box(sphere::Sphere)
+function bounding_box(sphere::AbstractSphere)
     return Box(origin(sphere), fill(2*sphere.radius, dim(sphere)))
 end
 
 import Base.in
-function in(x::AbstractVector, sphere::Sphere)::Bool
+function in(x::AbstractVector, sphere::AbstractSphere)::Bool
     norm(origin(sphere) .- x) <= sphere.radius
 end
 
 import Base.issubset
-function issubset(inner_sphere::Sphere, outer_sphere::Sphere)
+function issubset(inner_sphere::AbstractSphere, outer_sphere::AbstractSphere)
     norm(origin(outer_sphere) - origin(inner_sphere)) <= outer_sphere.radius - inner_sphere.radius
 end
 
-function issubset(sphere::Sphere, box::Box)
+function issubset(sphere::AbstractSphere, box::Box)
     sphere_box = bounding_box(sphere)
     return issubset(sphere_box,box)
 end
 
-function issubset(box::Box, sphere::Sphere)
+function issubset(box::Box, sphere::AbstractSphere)
     issubset(Sphere(origin(box),outer_radius(box)), sphere)
 end
 
 import Base.(==)
-function ==(c1::Sphere, c2::Sphere)
+function ==(c1::AbstractSphere, c2::AbstractSphere)
     c1.origin == c2.origin &&
     c1.radius == c2.radius
 end
 
 import Base.isequal
-function isequal(c1::Sphere, c2::Sphere)
+function isequal(c1::AbstractSphere, c2::AbstractSphere)
     isequal(c1.origin, c2.origin) &&
     isequal(c1.radius, c2.radius)
 end
 
-function iscongruent(s1::Sphere, s2::Sphere)
+function iscongruent(s1::AbstractSphere, s2::AbstractSphere)
     s1.radius == s2.radius
 end
 
-function congruent(s::Sphere, x)
+function congruent(s::AbstractSphere, x)
     Sphere(x, s.radius)
 end
 
-function Circle(sphere::Sphere; y = sphere.origin[2])
+function Circle(sphere::AbstractSphere; y = sphere.origin[2])
     if abs(y - sphere.origin[2]) > sphere.radius
         return EmptyShape(sphere)
     else
@@ -86,27 +108,27 @@ function Circle(sphere::Sphere; y = sphere.origin[2])
     end
 end
 
-# boundary_functions(sphere::Sphere; kws...) = boundary_functions(Circle(sphere; kws...))
+# boundary_functions(sphere::AbstractSphere; kws...) = boundary_functions(Circle(sphere; kws...))
 
 
 
-function boundary_functions(sphere::Sphere{T,3}) where T
+function boundary_functions(sphere::AbstractSphere{3})
 
-    function x(t,s=T(0))
+    function x(t,s=0)
         check_boundary_coord_range(t)
         check_boundary_coord_range(s)
 
         sphere.radius * sin(t * π) * cos(s * 2π) + origin(sphere)[1]
     end
 
-    function y(t,s=T(0))
+    function y(t,s=0)
         check_boundary_coord_range(t)
         check_boundary_coord_range(s)
 
         sphere.radius * sin(t * π) * sin(s * 2π) + origin(sphere)[2]
     end
 
-    function z(t,s=T(0))
+    function z(t,s=0)
         check_boundary_coord_range(t)
         check_boundary_coord_range(s)
 
@@ -116,7 +138,7 @@ function boundary_functions(sphere::Sphere{T,3}) where T
     return x, y, z
 end
 
-function boundary_functions(circle::Sphere{T,2}) where T
+function boundary_functions(circle::AbstractSphere{2})
 
     function x(t)
         check_boundary_coord_range(t)
