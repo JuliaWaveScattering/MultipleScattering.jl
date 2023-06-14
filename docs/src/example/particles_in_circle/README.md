@@ -37,7 +37,7 @@ big_particle_simulation = FrequencySimulation([big_particle], source)
 using Plots
 height = 300
 #gr(size=(1.4*height,height))
-# pyplot(leg=false, size=(1.4*height,height))
+pyplot(leg=false, size=(1.4*height,height))
 
 ω = 0.5
 #plot(big_particle_simulation, ω; res=15, bounds = box);
