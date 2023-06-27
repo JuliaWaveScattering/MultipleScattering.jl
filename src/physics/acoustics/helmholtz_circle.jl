@@ -6,6 +6,11 @@ The T-matrix for a 2D circlular Helmholtz resonator in a 2D acoustic medium.
 function t_matrix(p::Particle{2,Acoustic{T,2},SphericalHelmholtz{T,2}}, outer_medium::Acoustic{T,2}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     M = basis_order
+    ε = p.shape.aperture
+    γe = 0.5772156649
+    ak = outer_radius(p)*ω/outer_medium.c
+    Qsum = sum([(besselj(m, ak)*diffhankelh1(m, ak) + diffbesselj(m, ak)*hankelh1(m, ak))^2/(diffbesselj(m, ak)*diffhankelh1(m, ak)) for m in -2M:2M])
+    hε = (4im / pi) * (γe - 1im*pi/2 + log(ε/4)) - Qsum / 2
 
     # Check for material properties that don't make sense or haven't been implemented
     check_material(p, outer_medium)
@@ -17,10 +22,6 @@ function t_matrix(p::Particle{2,Acoustic{T,2},SphericalHelmholtz{T,2}}, outer_me
     "Returns a ratio used in multiple scattering which reflects the material properties of the particles"
     function Zn(m::Integer)::Complex{T}
         m = T(abs(m))
-        ak = outer_radius(p)*ω/outer_medium.c
-        ε = p.shape.aperture
-        γe = 0.5772156649
-        hε = (4im / pi) * (γe - 1im*pi/2 + log(ε)) - sum([(besselj(m, ak)*diffhankelh1(m, ak) + diffbesselj(m, ak)*hankelh1(m, ak))*besselj(m, ak)/diffbesselj(m, ak) for m in -M:M])
 
         # set the scattering strength and type
         numer = diffbesselj(m, ak)
