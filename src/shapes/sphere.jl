@@ -16,7 +16,7 @@ struct Sphere{T,Dim} <: AbstractSphere{Dim}
 end
 
 """
-    SphericalHelmholtz([origin=zeros(),] radius, appeture)
+    SphericalHelmholtz([origin=zeros(),] radius, aperture)
 
 A [`Shape`](@ref) which represents a 2D thin-walled isotropic Helmholtz resonator.
 """
@@ -24,16 +24,16 @@ A [`Shape`](@ref) which represents a 2D thin-walled isotropic Helmholtz resonato
 struct SphericalHelmholtz{T,Dim} <: AbstractSphere{Dim}
     origin::SVector{Dim,T}
     radius::T
-    appeture::T
+    aperture::T
 end
 
 # Alternate constructors, where type is inferred naturally
 Sphere(origin::NTuple{Dim}, radius::T) where {T,Dim} = Sphere{T,Dim}(origin, radius)
 Sphere(origin::AbstractVector, radius::T) where {T} = Sphere{T,length(origin)}(origin, radius)
-SphericalHelmholtz(origin::NTuple{2}, radius::T, appeture::T) where {T} = SphericalHelmholtz{T,2}(origin, radius, appeture)
+SphericalHelmholtz(origin::NTuple{2}, radius::T, aperture::T) where {T} = SphericalHelmholtz{T,2}(origin, radius, aperture)
 
 Sphere(Dim, radius::T) where {T} = Sphere{T,Dim}(zeros(T,Dim), radius)
-SphericalHelmholtz(radius::T, appeture::T) where {T} = SphericalHelmholtz{T,2}(zeros(T,2), radius, appeture)
+SphericalHelmholtz(radius::T, aperture::T) where {T} = SphericalHelmholtz{T,2}(zeros(T,2), radius, aperture)
 
 Circle(origin::Union{AbstractVector{T},NTuple{2,T}}, radius::T) where T <: AbstractFloat = Sphere{T,2}(origin, radius::T)
 Circle(radius::T) where T <: AbstractFloat = Sphere(2, radius::T)
