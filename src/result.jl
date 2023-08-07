@@ -111,7 +111,7 @@ function +(s::SimulationResult,a)::SimulationResult
         error("Summing SimulationResult with $a would cause SimulationResult.field to change its type.")
     end
 
-    return typeof(s)(s.field .+ a, s.x, getfield(s,3))
+    return typeof(s)([f .+ a for f in s.field], s.x, getfield(s,3))
 end
 +(a,s1::SimulationResult) = +(s1::SimulationResult,a)
 
@@ -121,7 +121,7 @@ function *(a,s::SimulationResult)::SimulationResult
         error("Multiplying SimulationResult by $a would cause the field of SimulationResult to change type.")
     end
 
-    return typeof(s)(s.field .* a, s.x, getfield(s,3))
+    return typeof(s)([f .* a for f in s.field], s.x, getfield(s,3))
 end
 
 *(s::SimulationResult,a) = *(a,s)
