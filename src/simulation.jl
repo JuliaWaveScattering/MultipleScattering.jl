@@ -60,10 +60,38 @@ function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ω::Number;
     run(sim,[x],[ω]; kws...)
 end
 
+# Function to check if particles are overlapping: return pairs of overlapping particles
+function overlapping_pairs(origins,radii)
+    nb_particles = length(radii)
+    output = Vector{Int64}[]
+    for i=1:nb_particles
+      for j=i+1:nb_particles
+          if norm(origins[i] - origins[j]) < (radii[i] + radii[j])
+                push!(output,[i,j])
+          end
+      end
+    end
+
+    return output
+end
+
+function overlapping_pairs(p::AbstractParticles)
+    origins = origin.(p)
+    radii = outer_radius.(p)
+    overlapping_pairs(origins,radii)
+end
+
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation, x_vec::Vector{V}, ω::Number;
         basis_order::Integer = 5,
         only_scattered_waves::Bool = false, kws...) where V<:AbstractVector
+
+    # Return an error if any particles are overlapping
+    overlapping_pairs_vec = overlapping_pairs(sim.particles)
+    if !isempty(overlapping_pairs_vec)
+        nb_overlaps = size(overlapping_pairs_vec,1)
+        error("Error: particles are overlapping ($nb_overlaps overlaps). The function overlapping_pairs(p::AbstractParticles) can be used to obtain the list of overlapping pairs.")
+    end
 
     Dim = spatial_dimension(sim)
     FieldDim = field_dimension(sim)
