@@ -6,6 +6,10 @@ Below are papers and notes that explain the theory behind this package.
 
 These short notes introduce the T-matrix, which defines how a particle scatters waves, and shows how it used in multiple scattering from many particles.
 
+## [Multiple Scattering in the context of acoustics](acoustics.pdf)
+
+These notes present the T-matrix construction in the context of acoustics, giving insight into the previous notes. 
+
 ## [Discrete Fourier Transform](DiscreteFourier.pdf)
 
 These notes give details on Green’s functions and Fourier transforms. We mostly

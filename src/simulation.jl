@@ -60,10 +60,38 @@ function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ω::Number;
     run(sim,[x],[ω]; kws...)
 end
 
+# Function to check if particles are overlapping: return pairs of overlapping particles
+function overlapping_pairs(origins,radii)
+    nb_particles = length(radii)
+    output = Vector{Int64}[]
+    for i=1:nb_particles
+      for j=i+1:nb_particles
+          if norm(origins[i] - origins[j]) < (radii[i] + radii[j])
+                push!(output,[i,j])
+          end
+      end
+    end
+
+    return output
+end
+
+function overlapping_pairs(p::AbstractParticles)
+    origins = origin.(p)
+    radii = outer_radius.(p)
+    overlapping_pairs(origins,radii)
+end
+
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation, x_vec::Vector{V}, ω::Number;
         basis_order::Integer = 5,
         only_scattered_waves::Bool = false, kws...) where V<:AbstractVector
+
+    # Return an error if any particles are overlapping
+    overlapping_pairs_vec = overlapping_pairs(sim.particles)
+    if !isempty(overlapping_pairs_vec)
+        nb_overlaps = size(overlapping_pairs_vec,1)
+        error("Error: particles are overlapping ($nb_overlaps overlaps). The function overlapping_pairs(p::AbstractParticles) can be used to obtain the list of overlapping pairs.")
+    end
 
     Dim = spatial_dimension(sim)
     FieldDim = field_dimension(sim)
@@ -154,6 +182,8 @@ vector of floats.
 """
 function run(s::FrequencySimulation) throw(MethodError(run, (s,))) end
 
+run(sim::FrequencySimulation, region::Shape, ω::AbstractFloat; kws...) = run(sim, region, [ω]; kws...)
+
 """
     run(sim::FrequencySimulation, region::Shape;
         res=20, xres=res, yres=res, basis_order=5)
@@ -163,8 +193,8 @@ Run the simulation `sim` for a grid of positions in region and for angular frequ
 Frequency can be a float or vector of floats. The resolution of the grid points is defined
 by xres and yres.
 """
-function run(sim::FrequencySimulation{Dim}, region::Shape, ω_vec::AbstractVector;
-            kws...) where {Dim}
+function run(sim::FrequencySimulation, region::Shape, ω_vec::AbstractVector;
+            kws...)
 
     x_vec, inds = points_in_shape(region; kws...)
     # x_vec is a square grid of points and x_vec[inds] are the points in the region.

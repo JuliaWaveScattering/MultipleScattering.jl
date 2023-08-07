@@ -53,26 +53,26 @@ end
         simres = run(sim, x_vec, ω_vec)
         # choose an impulse which does nothing and so can be inverted
         discrete_impulse = DiscreteTimeDiracImpulse(0.0, t_vec, ω_vec)
-        timres = frequency_to_time(simres; method=:dft, discrete_impulse = discrete_impulse)
-        simres2 = time_to_frequency(timres; method=:dft, discrete_impulse = discrete_impulse)
+        timres = frequency_to_time(simres; method=:DFT, discrete_impulse = discrete_impulse)
+        simres2 = time_to_frequency(timres; method=:DFT, discrete_impulse = discrete_impulse)
 
         @test norm(field(simres) - field(simres2)) / norm(field(simres)) < 1e-14
-        timres2 = frequency_to_time(simres2; method=:dft, impulse = TimeDiracImpulse(0.0));
+        timres2 = frequency_to_time(simres2; method=:DFT, impulse = TimeDiracImpulse(0.0));
         @test norm(field(timres2) - field(timres))/norm(field(timres)) < 1e-14
 
     # test impulse consistency by seeing if we get the same result when going from freq to time, and when going from time to freq.
         impulse = GaussianImpulse(maximum(ω_vec))
-        timres2 = frequency_to_time(simres; method=:dft, impulse = impulse)
-        simres2 = time_to_frequency(timres; method=:dft, impulse = impulse)
+        timres2 = frequency_to_time(simres; method=:DFT, impulse = impulse)
+        simres2 = time_to_frequency(timres; method=:DFT, impulse = impulse)
         # invert without an impulse
-        timres3 = frequency_to_time(simres2; method=:dft, discrete_impulse = discrete_impulse)
+        timres3 = frequency_to_time(simres2; method=:DFT, discrete_impulse = discrete_impulse)
         @test norm(field(timres2) - field(timres3))/norm(field(timres2)) < 1e-14
 
     # Compare dft and trapezoidal integration
         ω_vec = 0.0:0.1:100.01 # need a high frequency to match a delta impluse function!
         simres = run(sim, x_vec, ω_vec)
         timres1 = frequency_to_time(simres; method=:trapezoidal, impulse = TimeDiracImpulse(0.0))
-        timres2 = frequency_to_time(simres; method=:dft, discrete_impulse = DiscreteTimeDiracImpulse(0.0, ω_to_t(simres.ω)))
+        timres2 = frequency_to_time(simres; method=:DFT, discrete_impulse = DiscreteTimeDiracImpulse(0.0, ω_to_t(simres.ω)))
         @test norm(field(timres1) - field(timres2))/norm(field(timres1)) < 0.02
 
         ω_vec = 0.0:0.0001:2.01 # need a high sampling to match a delta impluse function!
@@ -82,7 +82,7 @@ end
 
         simres = run(sim, x_vec, ω_vec)
         timres1 = frequency_to_time(simres; t_vec = t_vec, method=:trapezoidal, impulse = impulse)
-        timres2 = frequency_to_time(simres; t_vec = t_vec, method=:dft, impulse = impulse)
+        timres2 = frequency_to_time(simres; t_vec = t_vec, method=:DFT, impulse = impulse)
         @test norm(field(timres1) - field(timres2))/norm(field(timres1)) < 2e-5
         # plot(timres1.t, [field(timres1)[1,:]-field(timres2)[1,:]])
 end
@@ -129,4 +129,25 @@ end
     predict_impulse = predict_impulse .- mean(predict_impulse[1:2])
 
     @test norm(predict_impulse - impulse_response[300:600]) < 1e-12*norm(impulse_response[300:600])
+end
+
+
+
+@testset "Vector field frequency to time" begin
+
+   ## test invertablity
+    FieldDim = 4 # a 4D vector field in a 6 dimensional space!
+    Dim = 6
+    x = [rand(Dim) for i = 1:20]
+    t = LinRange(0.0,1.0,25)
+
+    fs = [rand(FieldDim) for i = 1:20, j = 1:25]
+    timeres = TimeSimulationResult(fs,x,t)
+    simres = time_to_frequency(timeres)
+
+    timeres2 = frequency_to_time(simres)
+    norm.(field(timeres2) - field(timeres))
+
+    @test timeres2.t == timeres.t
+    @test norm(norm.(field(timeres2) - field(timeres))) / norm(norm.(field(timeres))) < 1e-13
 end

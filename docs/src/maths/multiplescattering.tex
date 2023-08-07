@@ -86,14 +86,13 @@ using the T-matrix we can then write $g_n = T_{nm}^{-1} f_m$, which substituted 
     b_n = \frac{1}{\mathrm v_n(k_o \rv)}[ \mathrm v_{n}(k\rv) T_{nm}^{-1} f_m + \mathrm u_{n}(k\rv) f_n], \quad \text{for} \;\; |\rv| = a.
 \end{equation}
 
-\section{Multiple scattering in general}
+\section{General multiple scattering}
 
 For multiple scattering in higher dimensions and for vector wave equations we use the notation given in \cite{gower2020effective}.
 
 For a point $\rv$, outside of the circumscribed spheres of all particles, we can write the total field $u(\rv)$ as a sum of the incident wave $\ui(\rv)$ and all scattered waves in the form~\cite{Kristensson2015a,Kristensson2016,Linton+Martin2006}
-\begin{equation}
+\begin{equation} \label{eqn:total_discrete_wave}
     u(\rv) = \ui(\rv) + \us(\rv), \quad \us(\rv) =  \sum_{i=1}^N \sum_n f_n^i \mathrm u_n (k \rv - k \rv_i),
-    \label{eqn:total_discrete_wave}
 \end{equation}
 where we assumed $ |\rv - \rv_i| > a_i $ for $i=1,2,\ldots N$, the $f_n^i$ are coefficients we need to determine, where again:
 \begin{equation}
@@ -124,10 +123,10 @@ the translation matrices for a translation $\dv$ can be defined by the property~
  \end{aligned}\right.
  \end{equation}
 
-\subsection{Turing equations into code}
+\subsection{Turning equations into code}
 For easy implementation we need the functions:
 \[
-\psi_\inc \mapsto g^m_j \quad \text{and} \quad \text{particle} \mapsto T^{nm}_j.
+\psi_\inc \mapsto g_n^j \quad \text{and} \quad \text{particle} \mapsto T_{nn'}^j.
 \]
 
 For efficient implementation we rewrite~\eqref{eqn:multiple-scattering-general} as a matrix equation. Let
@@ -163,6 +162,35 @@ where $\cdot ^{\mathrm T}$ is the transpose operation. The above then leads to a
    \end{bmatrix}
 \end{equation}
 
+\section{Periodic multiple scattering}
+
+Here we consider a unit cell filled with particles that is repeated periodically. The particles can take any positions within the cell.
+
+Let us start with the simplest case of identical particles centered at the positions $\vec r_1 \in \mathcal P$, where $\mathcal P$ is some countable set of vectors we define later.
+% where $m \in \mathbbZ$, $p = 1, 2, \ldots, P$, and $\vec v_p \in \mathbb R^d$.
+
+The total field is again given by~\eqref{eqn:total_discrete_wave}. However, if we assume the source is periodic with
+\begin{equation}\label{eqn:incident-periodic}
+  u_\mathrm{inc}(\vec r) = u_\mathrm{inc}(\vec r + \vec r_1), \quad \text{for every} \;\; \vec r_1 \in \mathcal P,
+\end{equation}
+then, due to symmetry, the scattering coefficients of every particles is the same $f_n := f^i_n$, and as a result the total field is given by
+\[
+u(\vec r) = u_\mathrm{inc}(\vec r) + \sum_n f_n \sum_{i} \mathrm u_n(k \vec r - k \vec r_i).
+\]
+
+Taking $\vec r = \vec v + \vec r_j$, we can then write the wave arriving at (or exciting) the particle at $\vec r_j$ in the form
+\[
+u^{j}_\mathrm{ex}(\vec v) = u_\mathrm{inc}(\vec v) + \sum_n f_n \sum_{i \not = j} \mathrm u_n(k \vec v + k \vec r_j - k \vec r_i),
+\]
+where we used~\eqref{eqn:incident-periodic}. Now we assume that $\vec v$ is close to the boundary of particle in the unit cell (which is needed to apply boundary conditions), so that $|\vec v | < |\vec r_j -  \vec r_i|$ for $j \not = i$, which allows us to use~\eqref{eq:translation_spherical_waves}${}_3$ to write the above as a series of regular spherical waves centred at $\vec r_j$ in the form
+\[
+u^{j}_\mathrm{ex}(\vec v) = \sum_{n_1} g_{n_1} \mathrm v_{n_1}(\vec r) + \sum_n f_n \sum_{i \not = j} \sum_{n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i) \mathrm v_{n_1}(k \vec v).
+\]
+Using the T-matrix formulation, we can now link the scattering coefficients $f_n$ to the coefficients of the regular wave above to get
+\begin{equation}
+  f_{n'} =  \sum_{n_1} T_{n' n_1} g_{n_1} + \sum_{n n_1} f_n \sum_{i \not = j} T_{n' n_1} \mathcal U_{n n_1}( k \vec r_j - k \vec r_i),
+\end{equation}
+which can be solved for $f_n$. The main issue is how to truncate the series $ \sum_j \mathcal U_{n n_1}( k \vec r_j)$ in $j$, but I think this would work quite well.
 
 \printbibliography
 

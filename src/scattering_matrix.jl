@@ -19,7 +19,7 @@ function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles,
             return zeros(Complex{T}, N, N)
         else
             x_lj = origin(particles[j]) .- origin(particles[l])
-            U = outgoing_translation_matrix(medium, basis_order, ω, x_lj)
+            U = outgoing_translation_matrix(medium, basis_order, basis_order, ω, x_lj)
             return - transpose(U) * t_matrices[l]
         end
     end

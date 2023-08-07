@@ -7,7 +7,7 @@ Below are examples of plotting the whole field in frequency (harmonic wave) and 
 ## Field - Harmonic two gaps
 ```julia
 using MultipleScattering
-using Plots; pyplot(size = (800,300))
+using Plots; gr(size = (800,300))
 
 radius = 1
 ω = 2.0
@@ -35,12 +35,12 @@ source =  plane_source(host_medium; direction = [1.0,0.0])
 result = run(particles, source, region, [ω]; res=100)
 
 plot(result,ω;
-    field_apply = abs, seriestype = :contour,
+    field_apply = abs, seriestype = :heatmap,
     title = "Absolute value"
   );
 p1 = plot!(particles, ylims = (-15.0,15.0));  
 plot(result,ω;
-    field_apply = real, seriestype = :contour,
+    field_apply = real, seriestype = :heatmap,
     title = "Real part"
 );
 p2 = plot!(particles, ylims = (-15.0,15.0));
@@ -54,7 +54,7 @@ plot(p1, p2)
 Continuing from [Field - Harmonic two gaps](@ref), the previous example, we can plot how the harmonic field oscillates in time. That is, to get the harmonic field at time $t$ we just multiple the field by $\mathrm e^{-\mathrm i \omega t}$ for every $\mathbf x$. For example, the plane wave $\mathrm e^{\mathrm i x k}$ would become $\mathrm e^{\mathrm i x k -\mathrm i \omega t}$.   
 
 ```julia
-pyplot(size = (450,300))
+gr(size = (450,300))
 
 ts = LinRange(0.,2pi/ω,30)
 
@@ -62,7 +62,7 @@ maxc = round(10*maximum(real.(field(result))))/10
 minc = round(10*minimum(real.(field(result))))/10
 
 anim = @animate for t in ts
-    plot(result,ω; seriestype = :contour,
+    plot(result,ω; seriestype = :heatmap,
         phase_time=t, clim=(minc,maxc),
         ylims = (-15.0,15.0) , c=:balance
     )
@@ -77,14 +77,14 @@ end
 Continuing from [Field - Harmonic two gaps](@ref), we can plot how an impulse plave-wave in time passes through two gaps. See [Time response](@ref) for more details on the code used below.
 
 ```julia
-pyplot(size = (450,300))
+gr(size = (450,300))
 ωs = LinRange(0.0,2.0,300)[2:end] # avoid using ω = 0
 
-# We use a lower resolution (res = 50) as this is a heavier calculation
+# We use a lower resolution (resolution = 50) as this is a heavier calculation
 result = run(particles, source, region, ωs; res = 50)
 
 # Calculate time response over rect
-t_max = 0.75 .* real(region.width / host_medium.c)
+t_max = 0.75 .* real(region.dimensions[1] / host_medium.c)
 ts = LinRange(0.0,t_max,75)
 impulse = GaussianImpulse(maximum(ωs)*0.6)
 timres = frequency_to_time(result; t_vec = ts, impulse = impulse)
@@ -94,11 +94,11 @@ minc = round(10*minimum(field(timres)))/10
 
 # timres = TimeSimulationResult(timres.field .+ max_c/100.0 , timres.x, timres.t)
 
-ylims =  (-region.height/2,region.height/2)
+ylimits =  (-region.dimensions[2]/2,region.dimensions[2]/2)
 anim = @animate for t in ts
-    plot(timres,t,seriestype=:contour,
+    plot(timres,t, seriestype=:heatmap,
       clim = (minc, maxc),
-      leg = false, ylims = ylims
+      leg = false, ylims = ylimits
     )
     plot!(particles)
     plot!(frame = :none, title="", xguide ="",yguide ="")
@@ -112,7 +112,7 @@ end
 
 ```julia
 using MultipleScattering
-using Plots; pyplot()
+using Plots;
 
 num_particles = 70
 radius = 1.0
@@ -143,7 +143,7 @@ maxc = round(10*maximum(real.(field(result))))/10
 minc = round(10*minimum(real.(field(result))))/10
 
 anim = @animate for t in ts
-    plot(result,ω; seriestype = :contour, phase_time=t, clim=(minc,maxc), c=:balance)
+    plot(result,ω; seriestype = :heatmap, phase_time=t, clim=(minc,maxc), c=:balance)
     plot!(simulation)
     plot!(colorbar=false, title="",axis=false, xguide ="",yguide ="")
 end

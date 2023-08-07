@@ -28,6 +28,8 @@ makedocs(
         "Examples" =>
         [
             "example/README.md",
+            "example/helmholtz-resonator/resonator.md",
+            "example/particles_in_circle/README.md",
             "example/box_size/README.md",
             "example/hankel_convergence/README.md",
             "example/moments/README.md",

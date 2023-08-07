@@ -10,16 +10,19 @@ Shape is an abstract type which represents the shape of particles, and also the 
 
 ## Existing shapes
 The package provides three basic shapes. You can plot them using:
-```jldoctest intro; output = false
-rectangle = Box([[0.0,-1.0],[1.0,2.0]])
-circle = Sphere([-1.0,0.0],1.0)
-timeofflight = TimeOfFlightPlaneWaveToPoint([1.0,0.0],3.0)
+```jldoctest intro; output = false, filter = r".*"s
+using MultipleScattering;
+
+rectangle = Box([[0.0, -1.0],[1.0, 2.0]]);
+circle = Sphere([-1.0, 0.0], 1.0);
+timeofflight = TimeOfFlightPlaneWaveToPoint([1.0, 0.0], 3.0)
 
 # output
-TimeOfFlightPlaneWaveToPoint{Float64,2}([1.0, 0.0], 3.0, 0.0)
+
 ```
 ```julia
 using Plots;
+
 plot(rectangle, linecolor = :red)
 plot!(circle, linecolor = :green)
 plot!(timeofflight, linecolor = :blue)

@@ -1,6 +1,5 @@
 using MultipleScattering
 using Plots
-pyplot()
 
 # define two particles to scatter the wave
 # the first is centered at [1.,-2.], with radius 1.0, sound speed 2. and density 10.

@@ -65,16 +65,16 @@ include("time_of_flight_from_point.jl")
 include("empty_shape.jl")
 
 """
-    points_in_shape(Shape; res = 20, xres = res, yres = res,
+    points_in_shape(Shape; resolution = 20, xres = resolution, yres = resolution,
              exclude_region = EmptyShape(region), kws...)
 
 returns `(x_vec, region_inds)` where `x_vec` is a vector of points that cover a box which bounds `Shape`, and `region_inds` is an array of linear indices such that `x_vec[region_inds]` are points contained `Shape`. For 3D we use `zres` instead of `yres`.
 
 """
 function points_in_shape(region::Shape{2};
-        res::Number = 20, xres::Number = res, yres::Number = res,
+        resolution::Number = 20, res::Number = resolution, xres::Number = res, yres::Number = res,
         exclude_region::Shape = EmptyShape(region),
-        kws...) where T
+        kws...)
 
     rect = bounding_box(region)
 
@@ -89,7 +89,8 @@ end
 
 function points_in_shape(region::Shape{3};
         y = zero(number_type(region)),
-        res::Number = 20, xres::Number = res, zres::Number = res,
+        resolution::Number = 20,
+        res::Number = resolution, xres::Number = res, zres::Number = res,
         exclude_region::Shape = EmptyShape(region))
 
     box = bounding_box(region)

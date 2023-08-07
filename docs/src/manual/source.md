@@ -14,7 +14,10 @@ For acoustics, any wave field $u_{\text{in}}(x,y)$ that satisfies $\nabla^2 u_{\
 Two commonly used sources are a plane wave and point source. These can then be added together to create more complicated sources, like immitating a finite sized transducer / source.
 
 For a plane-wave of the form $u_{\text{in}}(x,y) = A \mathrm e^{\mathrm i k \mathbf n \cdot (\mathbf x - \mathbf x_0)}$, where $A$ is the amplitude, $\mathbf n = (n_1,n_2,n_2)$ is unit vector which points in the direction of propagation, and $\mathbf x_0 = (x_0,y_0,z_0)$ is the initially position (or origin) of the source, we can use
-```julia
+
+```jldoctest intro
+julia> using MultipleScattering;
+
 julia> dimension = 3;
 
 julia> medium = Acoustic(dimension; ρ = 1.0, c = 1.0);
@@ -26,6 +29,7 @@ julia> n = [1.0, 1.0, 1.0];
 julia> x0 = [1.0, 0.0, 0.0];
 
 julia> plane_wave = plane_source(medium; amplitude = A, direction = n, position = x0);
+
 ```
 
 We can plot this source wave one frequency ω by using
@@ -51,6 +55,7 @@ for 3D it is $u_{\text{in}}(x,y) = \frac{A}{4 \pi} \frac{e^{i k  \| x -  x_0\|)}
 julia> x0 = [0.0,-1.2, 0.0];
 
 julia> point_wave = point_source(medium, x0, A);
+
 ```
 ```julia
 julia> plot(point_wave, ω; region_shape = plot_domain)
@@ -58,6 +63,7 @@ julia> plot(point_wave, ω; region_shape = plot_domain)
 ![Plot point wave](../assets/point-wave.png)
 
 > **_NOTE:_** Because the point source has a singularity at $x_0$ it is best to avoid plotting, and evaluating the field, close to $x_0$. 
+
 > This can be achieved by using `run(point_wave, ω; region_shape = plot_domain, exclude_region=some_region)` or `plot(point_wave, ω; region_shape = plot_domain, exclude_region=some_region)` both of which rely on the function [`points_in_shape`](@ref).
 
 ## Creating new sources
@@ -76,9 +82,10 @@ For example, we can use this to create a finite emitter/transducer source,
 julia> xs = LinRange(-0.7, 0.7, 30);
 
 julia> source = sum(xs) do x point_source(medium, [x, 0.0, -1.1]) end;
+
 ```
 ```julia
-julia> plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, res = 40)
+julia> plot(source, 4.0; y = 0.0, bounds = plot_domain, field_apply = abs, resolution = 40)
 ```
 ![Plot point wave](../assets/transducer-source.png)
 
@@ -89,7 +96,8 @@ To define a new source you will need to understand the internals below.
 ## RegularSource internals
 
 The `struct` [`RegularSource`](@ref) has three fields: `medium`, `field`, and `coef`, explained with examples below:
-```julia
+
+```jldoctest intro
 julia> plane_wave = plane_source(Acoustic(1.0, 1.0, 2); direction = [1.0,0.0]);
 
 julia> plane_wave.medium # the physical medium

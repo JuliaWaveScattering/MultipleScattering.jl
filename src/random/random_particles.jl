@@ -1,5 +1,5 @@
 
-random_particles(particle_medium::PhysicalMedium{Dim}, particle_shape::Shape{Dim}; kws...) where {T<:AbstractFloat,Dim} = random_particles(particle_medium, [particle_shape]; kws...)
+random_particles(particle_medium::PhysicalMedium{Dim}, particle_shape::Shape{Dim}; kws...) where {Dim} = random_particles(particle_medium, [particle_shape]; kws...)
 
 
 function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shapes::Vector{S};
@@ -7,7 +7,7 @@ function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shapes:
         region_shape::Shape{Dim} = Box(fill(10*sum(outer_radius.(particle_shapes)),Dim)),
         current_particles::AbstractParticles{Dim} = AbstractParticle{Dim}[],
         kws...
-) where {T<:AbstractFloat,Dim, S<:Shape{Dim}}
+) where {Dim, S<:Shape{Dim}}
 
     particles = if volume_fraction == 0
         num_each = Int(round(num_particles / length(particle_shapes)))
@@ -86,10 +86,10 @@ or does not lies completely in box.
 
 When passing particle_shapes::Vector{Shape} we assume each element is equally likely to occur. Repeating the same shape will lead to it being placed more often.
 """
-function random_particles(particle_medium::P, particle_shape::S, region_shape::Shape{Dim}, N::Integer;
+function random_particles(particle_medium::P, particle_shape::S, region_shape::Shape{Dim}, N::Int;
         seed=Random.make_seed(),
         verbose::Bool = false,
-        separation_ratio = 1.005, # Min distance between particle centres relative to their outer radiuses.
+        separation_ratio = 1.0, # Min distance between particle centres relative to their outer radiuses.
         max_attempts_to_place_particle::Int = 3000, # Maximum number of attempts to place a particle
         current_particles::AbstractParticles{Dim} = AbstractParticle{Dim}[] # Particles already present.
 ) where {Dim,P<:PhysicalMedium{Dim},S<:Shape{Dim}}

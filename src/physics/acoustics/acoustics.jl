@@ -76,16 +76,27 @@ function outgoing_basis_function(medium::Acoustic{T,3}, ω::T) where {T<:Number}
     end
 end
 
-function outgoing_translation_matrix(medium::Acoustic{T,2}, order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
-    translation_vec = outgoing_basis_function(medium, ω)(2order, x)
-    N = basisorder_to_basislength(Acoustic{T,2},order)
-    U = [translation_vec[n-m+N] for n in -order:order, m in -order:order]
+function outgoing_translation_matrix(medium::Acoustic{T,2}, in_order::Integer, out_order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
+    translation_vec = outgoing_basis_function(medium, ω)(in_order + out_order, x)
+    U = [
+        translation_vec[n-m + in_order + out_order + 1]
+    for n in -out_order:out_order, m in -in_order:in_order]
 
     return U
 end
 
-function outgoing_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
-    us = outgoing_basis_function(medium, ω)(2*order,x)
+function regular_translation_matrix(medium::Acoustic{T,2}, in_order::Integer, out_order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
+    translation_vec = regular_basis_function(medium, ω)(in_order + out_order, x)
+    V = [
+        translation_vec[n-m + in_order + out_order + 1]
+    for n in -out_order:out_order, m in -in_order:in_order]
+
+    return V
+end
+
+function outgoing_translation_matrix(medium::Acoustic{T,3}, in_order::Integer, out_order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
+
+    us = outgoing_basis_function(medium, ω)(in_order + out_order,x)
     c = gaunt_coefficient
 
     ind(order::Int) = basisorder_to_basislength(Acoustic{T,3},order)
@@ -97,12 +108,12 @@ function outgoing_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::
             cs = [c(T,l,m,dl,dm,l1,m1) for l1 = abs(l-dl):(l+dl) for m1 = -l1:l1]
             sum(us[i1:i2] .* cs)
         end
-    for dl = 0:order for dm = -dl:dl for l = 0:order for m = -l:l];
+    for dl = 0:in_order for dm = -dl:dl for l = 0:out_order for m = -l:l];
     # U = [
     #     [(l,m),(dl,dm)]
     # for dl = 0:order for dm = -dl:dl for l = 0:order for m = -l:l]
 
-    U = reshape(U, ((order+1)^2, (order+1)^2))
+    U = reshape(U, ((out_order+1)^2, (in_order+1)^2))
 
     return U
 end
@@ -145,22 +156,22 @@ function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::Acoustic{T,3}
     end
 end
 
-function regular_translation_matrix(medium::Acoustic{T,3}, order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
-    vs = regular_basis_function(medium, ω)(2*order,x)
+function regular_translation_matrix(medium::Acoustic{T,3}, in_order::Integer, out_order::Integer, ω::T, x::AbstractVector{T}) where {T<:Number}
+    vs = regular_basis_function(medium, ω)(in_order + out_order,x)
     c = gaunt_coefficient
 
     ind(order::Int) = basisorder_to_basislength(Acoustic{T,3},order)
     V = [
         begin
-            i1 = abs(l-dl) == 0 ? 1 : ind(abs(l-dl)-1) + 1
+            i1 = (abs(l-dl) == 0) ? 1 : ind(abs(l-dl)-1) + 1
             i2 = ind(l+dl)
 
             cs = [c(T,l,m,dl,dm,l1,m1) for l1 = abs(l-dl):(l+dl) for m1 = -l1:l1]
             sum(vs[i1:i2] .* cs)
         end
-    for dl = 0:order for dm = -dl:dl for l = 0:order for m = -l:l];
+    for dl = 0:in_order for dm = -dl:dl for l = 0:out_order for m = -l:l];
 
-    V = reshape(V, ((order+1)^2, (order+1)^2))
+    V = reshape(V, ((out_order+1)^2, (in_order+1)^2))
 
     return V
 end

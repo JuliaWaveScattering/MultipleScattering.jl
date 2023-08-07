@@ -23,7 +23,7 @@ function Box(boxcorners::Vector{S}) where S<:AbstractVector
     cs = hcat([abs.(c - centre) for c in boxcorners]...)
     dimensions = 2 .* abs.(boxcorners[1] - centre)
 
-    if dimensions != 2 .* abs.(boxcorners[2] - centre)
+    if !(dimensions ≈ 2 .* abs.(boxcorners[2] - centre))
         @error "expected $boxcorners to be a vector of corners of a $(length(boxcorners[1])) dimensional box, with sides aligned with the coordinate axis."
     end
 

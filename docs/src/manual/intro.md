@@ -12,68 +12,73 @@ end
 ```
 
 ```jldoctest intro
+julia> using MultipleScattering;
+
 julia> spatial_dim = 2; # could also be 3, but then all 2D vectors below would need to be 3D
 
-julia> host_medium = Acoustic(spatial_dim; ρ=1.0, c=1.0) # density ρ = 1.0 and soundspeed c = 1.0
+julia> host_medium = Acoustic(spatial_dim; ρ = 1.0, c = 1.0) # density ρ = 1.0 and soundspeed c = 1.0
 Acoustic(1.0, 1.0 + 0.0im, 2)
 ```
-At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y,\omega) + k^2 u(x,y,\omega) = 0$, where $k = \omega/c$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
+At this step we have restricted the physics to acoustics, that is, solutions to the Helmholtz equation: $\nabla^2 u(x,y,\omega) + k^2 u(x,y,\omega) = 0$, where $k = \dfrac{\omega}{c}$, $\omega$ is the angular frequency and $c$ the sound speed of the medium.
 
 ### [RegularSource wave](@id into_source)
 
 The host medium will determine the types of waves that can propagate. For example an incident plane wave $\mathrm e^{ \mathrm i k x}$ there is a convenient constructor
 ```jldoctest intro
-julia> source = plane_source(host_medium; direction = [1.0,0.0]);
+julia> source = plane_source(host_medium; direction = [1.0, 0.0]);
+
 ```
-!!! note
-    Often $\mathrm e^{ \mathrm i k x - \mathrm i \omega t}$ is considered to be a harmonic plane-wave travelling along the $x-$axis. We omit the part $ - \mathrm i \omega t$ as is common in frequency space.  
+
+!!! note 
+    Often $\mathrm e^{ \mathrm i k x - \mathrm i \omega t}$ is considered to be a harmonic plane-wave travelling along the $x-$axis. We omit the part $ - \mathrm i \omega t$ as is common in frequency space.
 
 
 We generally call the incident wave a source. See [RegularSources](@ref) for details, and see [Acoustic](@ref) for some functions for the `Acoustic` medium.
 
 ### [Particles](@id into_particles)
 
-Next, we define some particles to scatter an acoustic wave. We choose two filled circles, the first centred at [-2,2] with radius 2 and the second at [-2,-2] with radius 0.5,
+Next, we define some particles to scatter an acoustic wave. We choose two filled circles, the first centred at [-2, 2] with radius 2 and the second at [-2, -2] with radius 0.5,
 ```jldoctest intro
-julia> particle_medium =  Acoustic(spatial_dim; ρ=10.0, c=2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
+julia> particle_medium =  Acoustic(spatial_dim; ρ = 10.0, c = 2.0); # 2D acoustic particle with density ρ = 10.0 and soundspeed c = 2.0
 
-julia> p1 = Particle(particle_medium, Sphere([-2.0,2.0], 2.0));
+julia> p1 = Particle(particle_medium, Sphere([-2.0, 2.0], 2.0));
 
-julia> p2 = Particle(particle_medium, Sphere([-2.0,-2.0], 0.5));
+julia> p2 = Particle(particle_medium, Sphere([-2.0, -2.0], 0.5));
 
-julia> particles = [p1,p2];
+julia> particles = [p1, p2];
+
 ```
 See [Shapes](@ref) and [Particles](@ref) for details on different shapes and particles.
 
 If you have the package `Plots` installed you can plot the particles. Note that although they appear hollow, we consider them to filled with the same homogenous material.
 ```julia
-julia> using Plots; pyplot();
+julia> using Plots;
 
-julia> plot(particles);
+julia> plot(particles)
 ```
 !!! note
-
     Most things in this package can be plotted just by typing `plot(thing)`. However you need to have `Plots` installed, and you may need to use the backend `pyplot()`. See [Plotting](@ref) for details on plotting.
 ![Plot of response against wavenumber](../example/intro/two_particles.png)
-
 
 
 ### Simulation and results
 
 Once we know the medium, the particles, and the have these three components, we can build our `FrequencySimulation` object
-```jldoctest intro
+```jldoctest intro; output = false
 julia> simulation = FrequencySimulation(particles, source);
+
 ```
 
 To get numerical results, we run our simulation for specific positions and angular frequencies,
-```jldoctest intro
-julia> x = [[-10.0,0.0], [0.0,0.0]];
+```jldoctest intro; output = false
+julia> x = [[-10.0, 0.0], [0.0, 0.0]];
 
 julia> max_ω = 1.0;
 
 julia> ωs = 0.01:0.01:max_ω;
 
 julia> result = run(simulation, x, ωs);
+
 ```
 
 We can plot the time-harmonic response across the frequencies `ωs` wavenumbers and at the location (-10,0) by typing:
