@@ -8,7 +8,7 @@ struct Box{T,Dim} <: Shape{Dim}
     dimensions::SVector{Dim,T}
 end
 
-function Box(origin::AbstractVector{T}, dimensions::AbstractVector{T}) where T
+function Box(origin::AbstractVector{T}, dimensions::AbstractVector{T}) where T <: AbstractFloat
     Dim = length(origin)
     Box{T,Dim}(origin, dimensions)
 end
@@ -17,7 +17,7 @@ function Box(origin::NTuple{Dim,T}, dimensions::NTuple{Dim,T}) where {Dim,T}
     Box{T,Dim}(origin, dimensions)
 end
 
-Box(dimensions::AbstractVector{T}) where T = Box(zeros(T,length(dimensions)),dimensions)
+Box(dimensions::AbstractVector{T}) where T <: AbstractFloat = Box(zeros(T,length(dimensions)),dimensions)
 
 """
     Box(points::Vector{v} where v <: AbstractVector)
