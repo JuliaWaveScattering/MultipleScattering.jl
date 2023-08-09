@@ -47,7 +47,6 @@
 
     end
 
-
     @testset "Comparisons" begin
 
         circle = Sphere((1.0,3.0),2.0)
@@ -83,7 +82,6 @@
         @test !isequal(p1,p1b)
 
     end
-
 
     @testset "Plot" begin
         # Just run it to see if we have any errors (yes thats a very low bar)

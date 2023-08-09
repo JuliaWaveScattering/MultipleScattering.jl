@@ -18,17 +18,19 @@ function Box(origin::NTuple{Dim,T}, dimensions::NTuple{Dim,T}) where {Dim,T}
     Box{T,Dim}(origin, dimensions)
 end
 
-function Box(boxcorners::Vector{S}) where S<:AbstractVector
-    centre = mean(boxcorners)
-    cs = hcat([abs.(c - centre) for c in boxcorners]...)
-    dimensions = 2 .* abs.(boxcorners[1] - centre)
+function Box(points::Vector{v} where v <: AbstractVector) 
+    ind = CartesianIndices(points[1])
+    xs = [p[i] for p in points, i in ind]
 
-    if !(dimensions ≈ 2 .* abs.(boxcorners[2] - centre))
-        @error "expected $boxcorners to be a vector of corners of a $(length(boxcorners[1])) dimensional box, with sides aligned with the coordinate axis."
-    end
+    xmin = minimum(xs; dims = 1)
+    xmax = maximum(xs; dims = 1)
 
-    Box(centre,dimensions)
+    c = (xmin + xmax)[:] ./ 2.0;
+    dims = (xmax - xmin)[:];
+
+    return Box(c,dims)
 end
+
 
 Box(dimensions::AbstractVector{T}) where T = Box(zeros(T,length(dimensions)),dimensions)
 

@@ -1,3 +1,13 @@
+# This file contains most all abstract types, or types that are widely used. 
+
+"""
+Object we can scatter waves off
+
+Subtypes will contain information about shape and material properties. Most
+crucially, they will implement the [`t_matrix`](@ref) function
+"""
+abstract type AbstractParticle{Dim} end
+
 """
     AbstractSymmetry
 
