@@ -8,7 +8,6 @@ struct Box{T,Dim} <: Shape{Dim}
     dimensions::SVector{Dim,T}
 end
 
-# Alternative constructor, where bottomleft and topright corners are specified
 function Box(origin::AbstractVector{T}, dimensions::AbstractVector{T}) where T
     Dim = length(origin)
     Box{T,Dim}(origin, dimensions)
@@ -18,6 +17,13 @@ function Box(origin::NTuple{Dim,T}, dimensions::NTuple{Dim,T}) where {Dim,T}
     Box{T,Dim}(origin, dimensions)
 end
 
+Box(dimensions::AbstractVector{T}) where T = Box(zeros(T,length(dimensions)),dimensions)
+
+"""
+    Box(points::Vector{v} where v <: AbstractVector)
+
+A [`Box`](@ref) for any dimension with axis aligned sides, that is a minimal cover for the points.
+"""
 function Box(points::Vector{v} where v <: AbstractVector) 
     ind = CartesianIndices(points[1])
     xs = [p[i] for p in points, i in ind]
@@ -30,9 +36,6 @@ function Box(points::Vector{v} where v <: AbstractVector)
 
     return Box(c,dims)
 end
-
-
-Box(dimensions::AbstractVector{T}) where T = Box(zeros(T,length(dimensions)),dimensions)
 
 Rectangle(bottomleft::Union{AbstractVector{T},NTuple{2,T}}, topright::Union{AbstractVector{T},NTuple{2,T}}) where T = Box([bottomleft,topright])
 
