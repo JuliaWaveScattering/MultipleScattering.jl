@@ -118,11 +118,11 @@ function +(s::SimulationResult,a::Union{Complex{T},T})::SimulationResult where T
 end
 
 function +(s::SimulationResult,a)::SimulationResult
-    if typeof(s.field .+ a) != typeof(s.field)
+    if typeof(s.field[1] .+ a) != typeof(s.field[1])
         error("Summing SimulationResult with $a would cause SimulationResult.field to change its type.")
     end
 
-    return typeof(s)([f + a for f in s.field], s.x, getfield(s,3))
+    return typeof(s)([f .+ a for f in s.field], s.x, getfield(s,3))
 end
 +(a,s1::SimulationResult) = +(s1::SimulationResult,a)
 
