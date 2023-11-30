@@ -64,8 +64,8 @@ big_result = run(big_particle_simulation, x, ωs)
 
 #plot(result, lab = "scattering from particles")
 #plot!(big_result,
-#    lab = "scattering from big particle",
-#    title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
+#  lab = "scattering from big particle",
+#  title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
 ```
 ![The response comparison](plot_response_compare.png)
 
