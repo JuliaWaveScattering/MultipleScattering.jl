@@ -108,7 +108,7 @@ function +(s1::SimulationResult,s2::SimulationResult)::SimulationResult
 end
 
 function +(s::SimulationResult,a::Union{Complex{T},T})::SimulationResult where T <: Number
-    if length(s.field) > 1
+    if length(s.field[1]) > 1
         error("Can not add a number to a vector field")
     elseif typeof(s.field[1] .+ a) != typeof(s.field[1])
         error("Summing SimulationResult with $a would cause SimulationResult.field to change its type.")

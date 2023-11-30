@@ -27,7 +27,6 @@ struct ScalarMedium{T,Dim} <: PhysicalMedium{Dim,1}
     c::Complex{T} # complex wavespeed
 end
 
-
 """
 A basis for regular functions, that is, smooth functions. A series expansion in this basis should converge to any regular function within a ball.
 """
@@ -62,7 +61,6 @@ basisorder_to_basislength(::Type{P}, order::Int) where P <: PhysicalMedium{2,1} 
 
 basislength_to_basisorder(::Type{P},len::Int) where P <: PhysicalMedium{3,1} = Int(sqrt(len) - 1)
 basislength_to_basisorder(::Type{P},len::Int) where P <: PhysicalMedium{2,1} = Int((len - 1) / 2.0)
-
 
 function outgoing_radial_basis(medium::PhysicalMedium{2,1}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω/medium.c
@@ -195,7 +193,6 @@ function regular_translation_matrix(medium::PhysicalMedium{3,1}, in_order::Integ
 
     return V
 end
-
 
 
 """
