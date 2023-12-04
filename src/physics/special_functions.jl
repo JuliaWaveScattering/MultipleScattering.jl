@@ -2,7 +2,8 @@ export sbesselj, shankelh1, diffsbessel, diffbessel
 export diffbesselj, diffhankelh1, diffsbesselj, diffshankelh1
 export gaunt_coefficient
 export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical_harmonic_index
-export spherical_harmonics
+
+export spherical_harmonics, spherical_harmonics_dθ
 export cartesian_to_radial_coordinates, radial_to_cartesian_coordinates
 export atan
 
@@ -163,6 +164,36 @@ function spherical_harmonics(l_max::Int, θ::Complex{T}, φ::Union{T,Complex{T}}
     throw(DomainError(θ, "Currently GLS.jl is used to calculate associated legendre polynomials, which only take real angles as arguments. Hopefully soon SpecialFunctions.jl will implement associated Legendre for complex arguments: https://github.com/JuliaMath/SpecialFunctions.jl/pull/175"))
 
 end
+
+
+"""
+    spherical_harmonics_dθ(l_max::Int, θ::T, φ::T)
+
+Returns a vector of all ``\\partial Y_{(l,m)}(\\theta,\\phi) / \\partial \\theta`` for all the degrees `l` and orders `m`.
+"""
+function spherical_harmonics_dθ(l_max::Int, θ::T, φ::T) where T <: AbstractFloat
+
+    c(l, m) = sqrt(Complex{T}(l^2 - m^2)) / sqrt(Complex{T}(4l^2 - 1))
+    Ys = spherical_harmonics(l_max+1, θ, φ)
+
+    lm_to_n = lm_to_spherical_harmonic_index
+
+    dY1s = [
+        (l == 0) ? zero(Complex{T}) : l * c(l + 1, m) * Ys[lm_to_n(l+1,m)] 
+    for l = 0:l_max for m = -l:l] ./ sin(θ)
+    
+    dY2s = [
+        (l == abs(m)) ? zero(Complex{T}) : (l + 1) * c(l, m) * Ys[lm_to_n(l-1,m)]
+    for l = 0:l_max for m = -l:l] ./ sin(θ)
+    
+    return dY1s - dY2s
+end    
+
+"""
+    spherical_harmonics_dθ(l_max::Int, θ::T, φ::T)
+
+Returns a vector of all the spherial harmonics ``Y_{(l,m)}(\\theta,\\phi)`` for all the degrees `l` and orders `m`.
+"""
 function spherical_harmonics(l_max::Int, θ::T, φ::T) where T <: AbstractFloat
 
     ls, ms = associated_legendre_indices(l_max)

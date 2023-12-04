@@ -171,7 +171,12 @@ function source_expand(source::AbstractSource, centre::AbstractVector{T}; basis_
         vs = regular_basis_function(source.medium, ω)
         regular_coefficients = regular_spherical_coefficients(source)
 
-        sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre))
+        res = sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre), dims = 1)[:]
+        if length(res) == 1
+            res = res[1]
+        end
+        
+        return res
     end
 end
 

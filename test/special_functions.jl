@@ -78,6 +78,7 @@ using Test, LinearAlgebra
 
         ls, ms = spherical_harmonics_indices(l_max)
         sphs = spherical_harmonics(l_max, θ, φ)
+        sphs_dθ = spherical_harmonics_dθ(l_max, θ, φ)
 
         @test maximum(i - lm_to_spherical_harmonic_index(ls[i],ms[i]) for i in eachindex(ls)) == 0
 
