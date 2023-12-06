@@ -6,6 +6,7 @@ export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical
 export spherical_harmonics, spherical_harmonics_dθ
 export cartesian_to_radial_coordinates, radial_to_cartesian_coordinates
 export cartesian_to_spherical_coordinates, spherical_to_cartesian_coordinates
+export spherical_to_cartesian_transform, cartesian_to_spherical_transform
 export spherical_to_cartesian_vector, cartesian_to_spherical_vector
 export atan
 
@@ -230,7 +231,10 @@ spherical_to_cartesian_coordinates(θ::AbstractVector) = radial_to_cartesian_coo
 spherical_to_cartesian_vector(v::AbstractVector,θ::AbstractVector) = spherical_to_cartesian_vector(SVector(v...),SVector(θ...))
 cartesian_to_spherical_vector(v::AbstractVector,x::AbstractVector) = cartesian_to_spherical_vector(SVector(v...),SVector(x...))
 
-function spherical_to_cartesian_vector(v::SVector{3}, rθφ::SVector{3})
+spherical_to_cartesian_transform(θ::AbstractVector) = spherical_to_cartesian_transform(SVector(θ...))
+cartesian_to_spherical_transform(x::AbstractVector) = cartesian_to_spherical_transform(SVector(x...))
+
+function spherical_to_cartesian_transform(rθφ::SVector{3})
     r, θ, φ = rθφ
     M = [
         [sin(θ) * cos(φ)  cos(θ) * cos(φ) -sin(θ) * sin(φ)];
@@ -238,19 +242,28 @@ function spherical_to_cartesian_vector(v::SVector{3}, rθφ::SVector{3})
         [cos(θ)  -sin(θ)  0]
     ]
 
-    return M * v
+    return M
+end   
+
+function cartesian_to_spherical_transform(xyz::SVector{3})
+    r, θ, φ = cartesian_to_spherical_coordinates(xyz)
+    M = [
+        [ sin(θ) * cos(φ)  sin(θ) * sin(φ)  cos(θ)];
+        [ cos(θ) * cos(φ)  cos(θ) * sin(φ)  -sin(θ)];
+        [-csc(θ) * sin(φ)  csc(θ) * cos(φ)  0]
+    ]
+
+    return M
+end   
+
+function spherical_to_cartesian_vector(v::SVector{3}, rθφ::SVector{3})
+
+    return spherical_to_cartesian_transform(rθφ) * v
 end   
 
 function cartesian_to_spherical_vector(v::SVector{3}, xyz::SVector{3}) 
 
-    r, θ, φ = cartesian_to_spherical_coordinates(xyz)
-    sv = [
-        [ sin(θ) * cos(φ)  sin(θ) * sin(φ)  cos(θ)];
-        [ cos(θ) * cos(φ)  cos(θ) * sin(φ)  -sin(θ)];
-        [-csc(θ) * sin(φ)  csc(θ) * cos(φ)  0]
-    ] * v
-
-    return sv
+    return cartesian_to_spherical_transform(xyz) * v
 end   
 
 function cartesian_to_radial_coordinates(x::SVector{3,CT}) where CT
