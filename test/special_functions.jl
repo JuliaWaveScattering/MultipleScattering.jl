@@ -164,6 +164,20 @@ using Test, LinearAlgebra
         xs = [rand(-1.01:0.1:1.0,3) + rand(-1.01:0.1:1.0,3)*im for i = 1:100]
         rθφs = cartesian_to_radial_coordinates.(xs)
         @test maximum(norm.(xs - radial_to_cartesian_coordinates.(rθφs))) < 2e-14
+        
+        
+        rθφs = cartesian_to_spherical_coordinates.(xs)
+        vs = [rand(-1.01:0.1:1.0,3) + rand(-1.01:0.1:1.0,3)*im for i = 1:100]
+
+        svs = [
+            cartesian_to_spherical_vector(vs[i],xs[i])
+        for i in eachindex(vs)]
+            
+        v2s = [
+            spherical_to_cartesian_vector(svs[i],rθφs[i])
+        for i in eachindex(vs)]
+
+        @test maximum(norm.(vs - v2s)) < 5e-14 
 
         xs = [rand(-1.01:0.1:1.0,3) for i = 1:100]
         rθφs = cartesian_to_radial_coordinates.(xs)
@@ -173,6 +187,7 @@ using Test, LinearAlgebra
 
         @test pi/2 < maximum(rθφ[3] for rθφ in rθφs) <= pi
         @test -pi <= minimum(rθφ[3] for rθφ in rθφs) < -pi/2
+
 
     # Test 2-dimensional transforms
         xs = [rand(-1.01:0.1:1.0,2) + rand(-1.01:0.1:1.0,2)*im for i = 1:100]

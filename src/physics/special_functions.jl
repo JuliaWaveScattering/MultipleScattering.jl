@@ -5,6 +5,8 @@ export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical
 
 export spherical_harmonics, spherical_harmonics_dθ
 export cartesian_to_radial_coordinates, radial_to_cartesian_coordinates
+export cartesian_to_spherical_coordinates, spherical_to_cartesian_coordinates
+export spherical_to_cartesian_vector, cartesian_to_spherical_vector
 export atan
 
 #NOTE spherical bessel and hankel functions soon coming to SpecialFunctions.jl https://github.com/JuliaMath/SpecialFunctions.jl/pull/196
@@ -54,7 +56,9 @@ end
 function diffsbesselj(n::Number,z::Number)
     return if n == 0
         - sbesselj(1,z) # case due to numerical stability
-    else
+    elseif z ≈ 0
+        (n == 1) ? typeof(z)(1/3) : typeof(z)(0)
+    else    
         sbesselj(n-1,z) - (n+1) * sbesselj(n,z) / z
     end
 end
@@ -217,8 +221,37 @@ function spherical_harmonics(l_max::Int, θ::T, φ::T) where T <: AbstractFloat
     return Ylm_vec
 end
 
-cartesian_to_radial_coordinates(x::Vector) = cartesian_to_radial_coordinates(SVector(x...))
-radial_to_cartesian_coordinates(θ::Vector) = radial_to_cartesian_coordinates(SVector(θ...))
+cartesian_to_radial_coordinates(x::AbstractVector) = cartesian_to_radial_coordinates(SVector(x...))
+radial_to_cartesian_coordinates(θ::AbstractVector) = radial_to_cartesian_coordinates(SVector(θ...))
+
+cartesian_to_spherical_coordinates(x::AbstractVector) = cartesian_to_radial_coordinates(x)
+spherical_to_cartesian_coordinates(θ::AbstractVector) = radial_to_cartesian_coordinates(θ)
+
+spherical_to_cartesian_vector(v::AbstractVector,θ::AbstractVector) = spherical_to_cartesian_vector(SVector(v...),SVector(θ...))
+cartesian_to_spherical_vector(v::AbstractVector,x::AbstractVector) = cartesian_to_spherical_vector(SVector(v...),SVector(x...))
+
+function spherical_to_cartesian_vector(v::SVector{3}, rθφ::SVector{3})
+    r, θ, φ = rθφ
+    M = [
+        [sin(θ) * cos(φ)  cos(θ) * cos(φ) -sin(θ) * sin(φ)];
+        [sin(θ) * sin(φ)  cos(θ) * sin(φ)  sin(θ) * cos(φ)];
+        [cos(θ)  -sin(θ)  0]
+    ]
+
+    return M * v
+end   
+
+function cartesian_to_spherical_vector(v::SVector{3}, xyz::SVector{3}) 
+
+    r, θ, φ = cartesian_to_spherical_coordinates(xyz)
+    sv = [
+        [ sin(θ) * cos(φ)  sin(θ) * sin(φ)  cos(θ)];
+        [ cos(θ) * cos(φ)  cos(θ) * sin(φ)  -sin(θ)];
+        [-csc(θ) * sin(φ)  csc(θ) * cos(φ)  0]
+    ] * v
+
+    return sv
+end   
 
 function cartesian_to_radial_coordinates(x::SVector{3,CT}) where CT
     r = sqrt(sum(x .^2)) # note this is, and should be, a complex number when x is a complex vector
