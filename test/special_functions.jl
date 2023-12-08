@@ -165,7 +165,6 @@ using Test, LinearAlgebra
         rθφs = cartesian_to_radial_coordinates.(xs)
         @test maximum(norm.(xs - radial_to_cartesian_coordinates.(rθφs))) < 2e-14
         
-        
         rθφs = cartesian_to_spherical_coordinates.(xs)
         vs = [rand(-1.01:0.1:1.0,3) + rand(-1.01:0.1:1.0,3)*im for i = 1:100]
 
@@ -177,7 +176,19 @@ using Test, LinearAlgebra
             spherical_to_cartesian_vector(svs[i],rθφs[i])
         for i in eachindex(vs)]
 
-        @test maximum(norm.(vs - v2s)) < 5e-14 
+        @test maximum(norm.(vs - v2s)) < 5e-14
+        
+        # In a Cartesian representation
+        rθφ = cartesian_to_spherical_coordinates(xs[1])
+        r, θ, φ = rθφ
+        
+        er = [cos(φ) * sin(θ), sin(φ) * sin(θ), cos(θ)]
+        eθ = [cos(φ) * cos(θ), sin(φ) * cos(θ), -sin(θ)]
+        eϕ = [-sin(φ), cos(φ), 0.0]
+
+        @test [1.0,0.0,0.0] - cartesian_to_spherical_vector(er,xs[1]) |> norm < 1e-14
+        @test [0.0,1.0,0.0] - cartesian_to_spherical_vector(eθ,xs[1]) |> norm < 1e-14
+        @test [-.0,0.0,1.0] - cartesian_to_spherical_vector(eϕ,xs[1]) |> norm < 1e-14
 
         xs = [rand(-1.01:0.1:1.0,3) for i = 1:100]
         rθφs = cartesian_to_radial_coordinates.(xs)

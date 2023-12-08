@@ -237,8 +237,8 @@ cartesian_to_spherical_transform(x::AbstractVector) = cartesian_to_spherical_tra
 function spherical_to_cartesian_transform(rθφ::SVector{3})
     r, θ, φ = rθφ
     M = [
-        [sin(θ) * cos(φ)  cos(θ) * cos(φ) -sin(θ) * sin(φ)];
-        [sin(θ) * sin(φ)  cos(θ) * sin(φ)  sin(θ) * cos(φ)];
+        [sin(θ) * cos(φ)  cos(θ) * cos(φ) -sin(φ)];
+        [sin(θ) * sin(φ)  cos(θ) * sin(φ)  cos(φ)];
         [cos(θ)  -sin(θ)  0]
     ]
 
@@ -250,7 +250,7 @@ function cartesian_to_spherical_transform(xyz::SVector{3})
     M = [
         [ sin(θ) * cos(φ)  sin(θ) * sin(φ)  cos(θ)];
         [ cos(θ) * cos(φ)  cos(θ) * sin(φ)  -sin(θ)];
-        [-csc(θ) * sin(φ)  csc(θ) * cos(φ)  0]
+        [-sin(φ)  cos(φ)  0]
     ]
 
     return M
