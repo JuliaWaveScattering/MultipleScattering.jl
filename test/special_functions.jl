@@ -80,6 +80,21 @@ using Test, LinearAlgebra
         sphs = spherical_harmonics(l_max, θ, φ)
         sphs_dθ = spherical_harmonics_dθ(l_max, θ, φ)
 
+        @test sphs_dθ[1] == Complex{Float64}(0)
+        
+        h = 1e5 * eps(Float64) 
+        θ1 = θ - h
+        sph1s = spherical_harmonics(l_max, θ1, φ)
+
+        θ2 = θ + h
+        sph2s = spherical_harmonics(l_max, θ2, φ)
+
+        sphs_dθ_approx = (sph2s - sph1s) ./ (2h)
+
+        @test maximum(abs.(sphs_dθ_approx - sphs_dθ)[2:end] ./ abs.(sphs_dθ[2:end])) < 1e-4
+        
+        spherical_harmonics_dθ(l_max::Int, θ::T, φ::T)
+
         @test maximum(i - lm_to_spherical_harmonic_index(ls[i],ms[i]) for i in eachindex(ls)) == 0
 
         # check special case l == abs(m)

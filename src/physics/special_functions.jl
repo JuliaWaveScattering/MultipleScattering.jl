@@ -141,7 +141,12 @@ function gaunt_coefficient(T::Type{<:AbstractFloat},l1::Int,m1::Int,l2::Int,m2::
 end
 gaunt_coefficient(l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int) = gaunt_coefficient(Float64,l1,m1,l2,m2,l3,m3)
 
-lm_to_spherical_harmonic_index(l::Int,m::Int)::Int = l^2 + m + l + 1
+function lm_to_spherical_harmonic_index(l::Int,m::Int)::Int
+    if l < abs(m)
+        error("The order m of a spherical harmonic must be great or equal than the degree l.")
+    end    
+    return l^2 + m + l + 1
+end    
 
 function spherical_harmonics_indices(l_max::Int)
     ls = [l for l in 0:l_max for m in -l:l]
@@ -185,13 +190,13 @@ function spherical_harmonics_dθ(l_max::Int, θ::T, φ::T) where T <: AbstractFl
 
     dY1s = [
         (l == 0) ? zero(Complex{T}) : l * c(l + 1, m) * Ys[lm_to_n(l+1,m)] 
-    for l = 0:l_max for m = -l:l] ./ sin(θ)
+    for l = 0:l_max for m = -l:l]
     
     dY2s = [
         (l == abs(m)) ? zero(Complex{T}) : (l + 1) * c(l, m) * Ys[lm_to_n(l-1,m)]
-    for l = 0:l_max for m = -l:l] ./ sin(θ)
+    for l = 0:l_max for m = -l:l] 
     
-    return dY1s - dY2s
+    return (dY1s - dY2s) ./ sin(θ)
 end    
 
 """
