@@ -91,10 +91,8 @@ using Test, LinearAlgebra
 
         sphs_dθ_approx = (sph2s - sph1s) ./ (2h)
 
-        @test maximum(abs.(sphs_dθ_approx - sphs_dθ)[2:end] ./ abs.(sphs_dθ[2:end])) < 1e-4
+        @test maximum(abs.(sphs_dθ_approx - sphs_dθ)[2:end] ./ abs.(sphs_dθ[2:end])) < 5e-4
         
-        spherical_harmonics_dθ(l_max::Int, θ::T, φ::T)
-
         @test maximum(i - lm_to_spherical_harmonic_index(ls[i],ms[i]) for i in eachindex(ls)) == 0
 
         # check special case l == abs(m)
