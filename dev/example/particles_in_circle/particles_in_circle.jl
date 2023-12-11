@@ -37,7 +37,7 @@ big_particle_simulation = FrequencySimulation([big_particle], source)
 using Plots
 height = 300
 #gr(size=(1.4*height,height))
-# pyplot(leg=false, size=(1.4*height,height))
+#pyplot(leg=false, size=(1.4*height,height))
 
 ω = 0.5
 #plot(big_particle_simulation, ω; res=15, bounds = box);
@@ -64,7 +64,7 @@ big_result = run(big_particle_simulation, x, ωs)
 
 #plot(result, lab = "scattering from particles")
 #plot!(big_result,
-#    lab = "scattering from big particle",
-#    title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
+#lab = "scattering from big particle",
+#title="Compare scattered wave from one big particle, \n and a circle filled with small particles")
 # ```
 # ![The response comparison](plot_response_compare.png)
