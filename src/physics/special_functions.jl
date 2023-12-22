@@ -1,5 +1,5 @@
 export sbesselj, shankelh1, diffsbessel, diffbessel
-export diffbesselj, diffhankelh1, diffsbesselj, diffshankelh1
+export diffbesselj, diffhankelh1, diffsbesselj, diffshankelh1, diff3sbesselj, diff2sbesselj, diff2shankelh1, diff3shankelh1
 export gaunt_coefficient
 export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical_harmonic_index
 
@@ -10,7 +10,7 @@ export spherical_to_cartesian_transform, cartesian_to_spherical_transform
 export spherical_to_cartesian_vector, cartesian_to_spherical_vector
 export atan
 
-#NOTE spherical bessel and hankel functions soon coming to SpecialFunctions.jl https://github.com/JuliaMath/SpecialFunctions.jl/pull/196
+#NOTE should use https://github.com/JuliaMath/Bessels.jl instead of SpecialFunctions.jl
 
 #NOTE atan(x,y) is defined here but will likely be added to base soon.
 
@@ -54,6 +54,31 @@ function diffsbessel(f::Function,n::Number,z::Number)
     return f(n-1,z) - (n+1) * f(n,z) / z
 end
 
+"""
+    diffsbessel(f::Function,m,x,n::Int)
+
+Differentiates 'n' times any spherical Bessel function 'f' of order 'm' and at the argument 'x'. Uses the formula 
+    
+``(1/z d/dz)^n (z^{m+1} f_m(z)) = z^{m-n+1} f_{m-n}``
+
+which leads to     
+
+``(1/z d/dz)^{n} (z^{m+1} f_m(z)) = (1/z d/dz)^{n-1} (1/z d/dz) (z^{m+1} f_m(z))``
+    
+"""
+function diffsbessel(f::Function,m::Number,z,n::Int)
+    if n == 0
+        return f(m, z)
+    elseif n > 0
+        n = n - 1
+        return diffsbessel(f,m,z)
+
+        
+    else
+        error("Can not differentiate a negative number of times")
+    end
+end
+
 function diffsbesselj(n::Number,z::Number)
     return if n == 0
         - sbesselj(1,z) # case due to numerical stability
@@ -62,6 +87,34 @@ function diffsbesselj(n::Number,z::Number)
     else    
         sbesselj(n-1,z) - (n+1) * sbesselj(n,z) / z
     end
+end
+
+function diff2sbesselj(n::Number,z::Number)
+    return if z ≈ 0
+        if n == 0 
+            -typeof(z)(1/3) 
+        elseif n == 2
+            -typeof(z)(2/15)
+        else       
+            typeof(z)(0)
+        end
+    else    
+        2sbesselj(n+1,z) / z + (n^2 - n - z^2) * sbesselj(n,z) / z^2
+    end
+end
+
+function diff2shankelh1(n::Number,z::Number)
+    return 2shankelh1(n+1,z) / z + (n^2 - n - z^2) * shankelh1(n,z) / z^2
+end
+
+function diff3sbesselj(n::Number,z::Number)
+    return ((-2 + n) * (-n + n^2 - z^2) * sbesselj(n,z) - 
+    z * (6 + n + n^2 - z^2) * sbesselj(n+1,z))/z^3
+end
+
+function diff3shankelh1(n::Number,z::Number)
+    return  ((-2 + n) * (-n + n^2 - z^2) * shankelh1(n,z) - 
+    z * (6 + n + n^2 - z^2) * shankelh1(n+1,z))/z^3
 end
 
 function diffshankelh1(n::Number,z::Number)
@@ -83,7 +136,6 @@ function diffbessel(f::Function,m::Number,z,n::Int)
         error("Can not differentiate a negative number of times")
     end
 end
-
 
 """
     diffhankelh1(m,x,n::Int)

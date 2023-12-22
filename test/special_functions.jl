@@ -30,7 +30,46 @@ using Test, LinearAlgebra
         @test 2 * diffsbessel(shankelh1,n,x) ≈ shankelh1(n-1, x) - (shankelh1(n, x) + x*shankelh1(n+1, x))/x
 
         xs = 0.01:0.9:11.0;
+        zs = xs + (collect(xs) .* 1im)
         n = 15; ns = 0:n
+
+        ε = eps(Float64) * 10^7
+
+        maxerror = [
+            abs(diffsbesselj(n,x) - (sbesselj(n,x+ε) - sbesselj(n,x-ε)) / (2ε)) / abs(diffsbesselj(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-4
+
+        maxerror = [
+            abs(diffshankelh1(n,x) - (shankelh1(n,x+ε) - shankelh1(n,x-ε)) / (2ε)) / abs(diffshankelh1(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-5
+
+        maxerror = [
+            abs(diff2sbesselj(n,x) - (diffsbesselj(n,x+ε) - diffsbesselj(n,x-ε)) / (2ε)) / abs(diff2sbesselj(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-4
+
+        maxerror = [
+            abs(diff2shankelh1(n,x) - (diffshankelh1(n,x+ε) - diffshankelh1(n,x-ε)) / (2ε)) / abs(diff2shankelh1(n,x))  
+        for n in ns, x in zs] |> maximum    
+    
+        @test maxerror < 1e-5
+        
+        maxerror = [
+            abs(diff3sbesselj(n,x) - (diff2sbesselj(n,x+ε) - diff2sbesselj(n,x-ε)) / (2ε)) / abs(diff3sbesselj(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-4
+
+        maxerror = [
+            abs(diff3shankelh1(n,x) - (diff2shankelh1(n,x+ε) - diff2shankelh1(n,x-ε)) / (2ε)) / abs(diff3shankelh1(n,x))  
+        for n in ns, x in zs] |> maximum    
+    
+        @test maxerror < 1e-5
 
         # Compare with spherical bessel from GSL, which can only accept real arguments..
         errs = map(xs) do x
