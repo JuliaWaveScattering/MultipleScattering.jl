@@ -54,30 +54,30 @@ function diffsbessel(f::Function,n::Number,z::Number)
     return f(n-1,z) - (n+1) * f(n,z) / z
 end
 
-"""
-    diffsbessel(f::Function,m,x,n::Int)
+# """
+#     diffsbessel(f::Function,m,x,n::Int)
 
-Differentiates 'n' times any spherical Bessel function 'f' of order 'm' and at the argument 'x'. Uses the formula 
+# Differentiates 'n' times any spherical Bessel function 'f' of order 'm' and at the argument 'x'. Uses the formula 
     
-``(1/z d/dz)^n (z^{m+1} f_m(z)) = z^{m-n+1} f_{m-n}``
+# ``(1/z d/dz)^n (z^{m+1} f_m(z)) = z^{m-n+1} f_{m-n}``
 
-which leads to     
+# which leads to     
 
-``(1/z d/dz)^{n} (z^{m+1} f_m(z)) = (1/z d/dz)^{n-1} (1/z d/dz) (z^{m+1} f_m(z))``
+# ``(1/z d/dz)^{n} (z^{m+1} f_m(z)) = (1/z d/dz)^{n-1} (1/z d/dz) (z^{m+1} f_m(z))``
     
-"""
-function diffsbessel(f::Function,m::Number,z,n::Int)
-    if n == 0
-        return f(m, z)
-    elseif n > 0
-        n = n - 1
-        return diffsbessel(f,m,z)
+# """
+# function diffsbessel(f::Function,m::Number,z,n::Int)
+#     if n == 0
+#         return f(m, z)
+#     elseif n > 0
+#         n = n - 1
+#         return diffsbessel(f,m,z)
 
         
-    else
-        error("Can not differentiate a negative number of times")
-    end
-end
+#     else
+#         error("Can not differentiate a negative number of times")
+#     end
+# end
 
 function diffsbesselj(n::Number,z::Number)
     return if n == 0

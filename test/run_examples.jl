@@ -13,7 +13,7 @@ using MultipleScattering, Test
 
     include(folder*"generate-READMEs.jl")
 
-    gernerate_README(examplestoconvert, folder)
+    generate_README(examplestoconvert, folder)
 
     @test true
 end

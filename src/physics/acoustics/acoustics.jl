@@ -146,9 +146,9 @@ function internal_field(x::AbstractVector{T}, p::Particle{Dim,Acoustic{T,Dim}}, 
         vos = regular_radial_basis(p.medium, ω, order, r)
         us = outgoing_radial_basis(source.medium, ω, order, r)
 
-        internal_coefs = (vs .* (inv(t_mat) * fs) + us .* fs) ./ vos
+        internal_coefs = (vs[:] .* (inv(t_mat) * fs) + us[:] .* fs) ./ vos[:]
         inner_basis = regular_basis_function(p, ω)
 
-        return sum(inner_basis(order, x-origin(p)) .* internal_coefs)
+        return inner_basis(order, x-origin(p)) * internal_coefs
     end
 end

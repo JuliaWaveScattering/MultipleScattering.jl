@@ -66,7 +66,7 @@ function internal_field(x::AbstractArray{T}, p::CapsuleParticle{2,Acoustic{T,2},
         coefs = - q0 * forces .* Ydn.(-Nh:Nh, a0*k1, a0*k1)
         basis = regular_basis_function(p.inner, ω)
 
-        return sum(basis(Nh,x-origin(p)) .* coefs)
+        return basis(Nh,x-origin(p)) * coefs
     else # calculate field in the mid region
         J_coefs = forces .* [
             q0*besselj(n, a0*k0)*diffhankelh1(n, a0*k1) - hankelh1(n, a0*k1)*diffbesselj(n, a0*k0)
@@ -78,8 +78,6 @@ function internal_field(x::AbstractArray{T}, p::CapsuleParticle{2,Acoustic{T,2},
 
         J_basis = regular_basis_function(p.outer, ω)
         H_basis = outgoing_basis_function(p.outer.medium, ω)
-        return sum(
-            J_basis(Nh,x-origin(p)) .* J_coefs .+ H_basis(Nh,x-origin(p)) .* H_coefs
-        )
+        return J_basis(Nh,x-origin(p)) * J_coefs + H_basis(Nh,x-origin(p)) * H_coefs
     end
 end

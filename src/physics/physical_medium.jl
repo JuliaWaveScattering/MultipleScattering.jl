@@ -64,21 +64,21 @@ basislength_to_basisorder(::Type{P},len::Int) where P <: PhysicalMedium{2,1} = I
 
 function outgoing_radial_basis(medium::PhysicalMedium{2,1}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω/medium.c
-    return hankelh1.(-order:order,k*r)
+    return transpose(hankelh1.(-order:order,k*r))
 end
 
 function outgoing_basis_function(medium::PhysicalMedium{2,1}, ω::T) where {T<:Number}
     return function (order::Integer, x::AbstractVector{T})
         r, θ  = cartesian_to_radial_coordinates(x)
         k = ω/medium.c
-        [hankelh1(m,k*r)*exp(im*θ*m) for m = -order:order]
+        [hankelh1(m,k*r)*exp(im*θ*m) for m = -order:order] |> transpose
     end
 end
 
 function outgoing_radial_basis(medium::PhysicalMedium{3,1}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω/medium.c
     hs = shankelh1.(0:order,k*r)
-    return  [hs[l+1] for l = 0:order for m = -l:l]
+    return  [hs[l+1] for l = 0:order for m = -l:l] |> transpose
 end
 
 function outgoing_basis_function(medium::PhysicalMedium{3,1}, ω::T) where {T<:Number}
@@ -91,7 +91,7 @@ function outgoing_basis_function(medium::PhysicalMedium{3,1}, ω::T) where {T<:N
 
         lm_to_n = lm_to_spherical_harmonic_index
 
-        return [hs[l+1] * Ys[lm_to_n(l,m)] for l = 0:order for m = -l:l]
+        return [hs[l+1] * Ys[lm_to_n(l,m)] for l = 0:order for m = -l:l] |> transpose
     end
 end
 
@@ -142,7 +142,7 @@ regular_basis_function(medium::PhysicalMedium{Dim,1}, ω::Union{T,Complex{T}}) w
 
 function regular_radial_basis(medium::PhysicalMedium{2,1}, ω::T, order::Integer, r::T) where {T<:Number}
     k = ω / medium.c
-    return besselj.(-order:order,k*r)
+    return transpose(besselj.(-order:order,k*r))
 end
 
 function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::PhysicalMedium{2,1}) where T
@@ -150,7 +150,7 @@ function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::PhysicalMediu
         r, θ  = cartesian_to_radial_coordinates(x)
         k = wavenumber
 
-        return [besselj(m,k*r)*exp(im*θ*m) for m = -order:order]
+        return [besselj(m,k*r)*exp(im*θ*m) for m = -order:order] |> transpose
     end
 end
 
@@ -158,7 +158,7 @@ function regular_radial_basis(medium::PhysicalMedium{3,1}, ω::T, order::Integer
     k = ω / medium.c
     js = sbesselj.(0:order,k*r)
 
-    return [js[l+1] for l = 0:order for m = -l:l]
+    return [js[l+1] for l = 0:order for m = -l:l] |> transpose
 end
 
 function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::PhysicalMedium{3,1}) where T
@@ -170,7 +170,7 @@ function regular_basis_function(wavenumber::Union{T,Complex{T}}, ::PhysicalMediu
 
         lm_to_n = lm_to_spherical_harmonic_index
 
-        return [js[l+1] * Ys[lm_to_n(l,m)] for l = 0:order for m = -l:l]
+        return [js[l+1] * Ys[lm_to_n(l,m)] for l = 0:order for m = -l:l] |> transpose
     end
 end
 

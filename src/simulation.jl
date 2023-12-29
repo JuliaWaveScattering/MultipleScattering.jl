@@ -244,7 +244,7 @@ function field(sim::FrequencySimulation{Dim,P}, ω::Number, x_vec::Vector{V}, a_
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i
             p = sim.particles[i]
-            sum(a_vec[:,i] .* basis(N, x-origin(p)))
+            basis(N, x-origin(p)) * a_vec[:,i]
         end
     end
     map(x_vec) do x

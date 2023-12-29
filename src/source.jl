@@ -141,7 +141,7 @@ function regular_spherical_source(medium::PhysicalMedium{Dim},regular_coefficien
 
     function source_field(x,ω)
         vs = regular_basis_function(medium, ω)(coeff_order,x-position)
-        return amplitude * sum(vs .* regular_coefficients)
+        return amplitude * (vs * regular_coefficients)
 
     end
 
@@ -171,7 +171,8 @@ function source_expand(source::AbstractSource, centre::AbstractVector{T}; basis_
         vs = regular_basis_function(source.medium, ω)
         regular_coefficients = regular_spherical_coefficients(source)
 
-        res = sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre), dims = 1)[:]
+        res = vs(basis_order, x - centre) * regular_coefficients(basis_order,centre,ω)
+        # res = sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre), dims = 1)[:]
         if length(res) == 1
             res = res[1]
         end
