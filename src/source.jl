@@ -123,7 +123,11 @@ end
 field(s::RegularSource) = s.field
 field(s::RegularSource, x::AbstractArray, ω::Number) = field(s)(x,ω)
 
-function constant_source(medium::P, num::Number = zero(Float64) * im) where {P}
+function constant_source(medium::PhysicalMedium{Dim,FieldDim}, num = zeros(Float64,FieldDim) .* im) where {Dim, FieldDim}
+    return RegularSource(medium, (x,ω) -> num, (order,x,ω) -> num)
+end
+
+function constant_source(medium::PhysicalMedium{Dim,1}, num = zero(Float64) .* im) where {Dim}
     return RegularSource(medium, (x,ω) -> num, (order,x,ω) -> [num])
 end
 

@@ -57,21 +57,34 @@ For convenience and generality we denote:
     & \mathrm v_{n}(k\rv)= \text{regular spherical waves},
  \end{aligned}
 \end{equation}
-where $n$ denotes a multi index which depends on the dimension and if the waves are scalar or vector fields.
+where $n$ denotes a multi index which depends on the dimension and if the waves are scalar or vector fields. For example, for scalar waves in three spatial dimensions we have 
+\begin{equation}
+  \begin{aligned}
+      & \mathrm u_{n}(k\rv) = \mathrm h^{(1)}_\ell(k r) \mathrm Y_n(\rvh),
+      \\
+      & \mathrm v_{n}(k\rv)= \mathrm j_\ell(k r) \mathrm Y_n(\rvh),
+   \end{aligned}
+  \end{equation}
+  where $n$ is a multi index $n=(\ell,m)$, with $\ell=0,1,2,3\ldots$ and $m=-\ell,-\ell+1,\ldots,-1,0,1,\ldots,\ell$. Here $\mathrm h_\ell^{(1)}(z)$ and $\mathrm{j}_\ell(z)$ are the spherical Hankel and Bessel functions respectively, and $\mathrm Y_n$ are the spherical harmonic basis functions that are orthonormal with respect to the standard inner product on the unit sphere~\cite{Edmonds1974}.
 
 Any incident wave and scattered wave\footnote{For the scattered wave we need only use outgoing spherical waves when measuring the field outside of a sphere which completely encompasses the particle.}, centred at the same coordinate axis, can be written as
 \begin{align}
+  \label{eqn:incident regular expansion}
   & \ui = \sum_{n} g_n \mathrm v_{n}(k\rv),
   \\
-  & \us = \sum_{n} f_n \mathrm u_{n}(k\rv).
+  & \us = \sum_{n} f_n \mathrm u_{n}(k\rv),
 \end{align}
+for vector waves, such as elastic waves, $f_n$ and $\mathrm u_{n}(k\rv)$ are both vectors for each $n$, with $f_n \mathrm u_{n}(k\rv)$ being the inner product between these two vectors, the same is true for $g_n$ and $\mathrm v_{n}(k\rv)$.  
+
 The T-matrix is an infinite matrix such that
 \begin{equation}
-  f_n = \sum_{n'} T_{nn'} g_{n'}.
+  f_n = \sum_{n'} T_{nn'} g_{n'},
 \end{equation}
+where for vector waves $T_{nn'}$ is a matrix multiplied with the vector $g_{n'}$.
 Such a matrix $T$ exists when scattering is a linear operation (elastic scattering).
 
-We can also estimate the field inside the particle by assuming that the field is smooth and continuous. This approximation is exact for homogeneous spheres and cylinders, but not for a \href{acoustics.pdf}{Circular cylindrical capsule}.
+\subsection{Interal field}
+We can also estimate the field inside the particle by assuming that the field is smooth and continuous. This approach is generally not true for vector wave equations, but is exact for homogeneous spheres and cylinders, but not for a \href{acoustics.pdf}{Circular cylindrical capsule}.
 
 Assume the field inside the particle can be described by a regular spherical series:
 \begin{equation}
@@ -94,20 +107,21 @@ For a point $\rv$, outside of the circumscribed spheres of all particles, we can
 \begin{equation} \label{eqn:total_discrete_wave}
     u(\rv) = \ui(\rv) + \us(\rv), \quad \us(\rv) =  \sum_{i=1}^N \sum_n f_n^i \mathrm u_n (k \rv - k \rv_i),
 \end{equation}
-where we assumed $ |\rv - \rv_i| > a_i $ for $i=1,2,\ldots N$, the $f_n^i$ are coefficients we need to determine, where again:
-\begin{equation}
-\left\{\begin{aligned}
-    & \mathrm u_{n}(k\rv) = \text{outgoing spherical waves},
-    \label{eqn:outgoing_waves_and_regular_waves}
-    \\
-    & \mathrm v_{n}(k\rv)= \text{regular spherical waves},
- \end{aligned}\right.
-\end{equation}
-where $n$ denotes a multi index which depends on the dimension and if the waves are scalar or vector fields.
+where we assumed $ |\rv - \rv_i| > a_i $ for $i=1,2,\ldots N$, the $f_n^i$ are coefficients we need to determine. 
+% where again:
+% \begin{equation}
+% \left\{\begin{aligned}
+%     & \mathrm u_{n}(k\rv) = \text{outgoing spherical waves},
+%     \label{eqn:outgoing_waves_and_regular_waves}
+%     \\
+%     & \mathrm v_{n}(k\rv)= \text{regular spherical waves},
+%  \end{aligned}\right.
+% \end{equation}
+% where $n$ denotes a multi index which depends on the dimension and if the waves are scalar or vector fields.
 
 In general, we can write the multiple scattering system in the form:
 \begin{equation}\label{eqn:multiple-scattering-general}
-   \alpha_n^i=g_{n}^i
+   \alpha_n^i = g_{n}^i
     +\sum_{\substack{j=1\\j\neq i}}^N \sum_{n' n''}\mathcal{U}_{n''n}(k\rv_i - k\rv_j)T_{n''n'}^j \alpha_{n'}^j,
 \end{equation}
 for $i=1,2,\ldots,N$, where $f_n^i = \sum_{n'} T^i_{nn'}\alpha_{n'}^i$ and $\mathcal{U}_{nn'}$ is a translation matrix \cite{Bostrom+Kristensson+Strom1991,Friedman+Russek1954}. Let $\rv'=\rv+\dv$, then
@@ -122,6 +136,11 @@ the translation matrices for a translation $\dv$ can be defined by the property~
    \\
  \end{aligned}\right.
  \end{equation}
+
+The coefficients $g_{n'}^i$ depend on the form of the incident wave. If we can use the representation~\eqref{eqn:incident regular expansion} then we have that  
+\[
+  g_{n}^i = \sum_{n'}\mathcal V_{n' n}(\rv_i) g_{n'}.
+\]
 
 \subsection{Turning equations into code}
 For easy implementation we need the functions:
