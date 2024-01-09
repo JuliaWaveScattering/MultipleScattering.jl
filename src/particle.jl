@@ -136,7 +136,7 @@ issubset(particle1::AbstractParticle, particle2::AbstractParticle) = issubset(sh
 
 
 # NOTE that medium in both functions below is only used to get c and to identify typeof(medium)
-regular_basis_function(p::Particle{Dim,P}, ω::T) where {Dim,T, P<:PhysicalMedium{Dim,1}} = regular_basis_function(ω / p.medium.c, p.medium)
+regular_basis_function(p::Particle{Dim,P}, ω::T) where {Dim,T, P<:PhysicalMedium{Dim}} = regular_basis_function(p.medium, ω)
 
 """
     estimate_regular_basis_order(medium::P, ω::Number, radius::Number; tol = 1e-6)
