@@ -23,6 +23,7 @@ ProgressMeter = "^1.3"
 RecipesBase = "1.0"
 SpecialFunctions = "^0.7, ^0.8, ^0.9, 0.10, 1, 2"
 StaticArrays = "^0.8, ^0.9, ^0.10, ^0.11, 0.12, ^1"
+Statistics = "1"
 WignerSymbols = "^1, 2"
 julia = "1"
 
