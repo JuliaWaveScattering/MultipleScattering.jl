@@ -106,12 +106,23 @@ function +(s1::SimulationResult,s2::SimulationResult)::SimulationResult
 
     return typeof(s1)(s1.field + s2.field, s1.x, getfield(s1,3))
 end
-function +(s::SimulationResult,a)::SimulationResult
-    if typeof(s.field .+ a) != typeof(s.field)
+
+function +(s::SimulationResult,a::Union{Complex{T},T})::SimulationResult where T <: Number
+    if length(s.field[1]) > 1
+        error("Can not add a number to a vector field")
+    elseif typeof(s.field[1] .+ a) != typeof(s.field[1])
         error("Summing SimulationResult with $a would cause SimulationResult.field to change its type.")
     end
 
-    return typeof(s)(s.field .+ a, s.x, getfield(s,3))
+    return typeof(s)([f .+ a for f in s.field], s.x, getfield(s,3))
+end
+
+function +(s::SimulationResult,a)::SimulationResult
+    if typeof(s.field[1] .+ a) != typeof(s.field[1])
+        error("Summing SimulationResult with $a would cause SimulationResult.field to change its type.")
+    end
+
+    return typeof(s)([f .+ a for f in s.field], s.x, getfield(s,3))
 end
 +(a,s1::SimulationResult) = +(s1::SimulationResult,a)
 
@@ -121,7 +132,7 @@ function *(a,s::SimulationResult)::SimulationResult
         error("Multiplying SimulationResult by $a would cause the field of SimulationResult to change type.")
     end
 
-    return typeof(s)(s.field .* a, s.x, getfield(s,3))
+    return typeof(s)([f .* a for f in s.field], s.x, getfield(s,3))
 end
 
 *(s::SimulationResult,a) = *(a,s)

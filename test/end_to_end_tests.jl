@@ -18,7 +18,6 @@
         result = run(sim, [1.0,2.0], 0.1)
         result = run(particles, source, [1.0,2.0], 0.1)
         result = 3.2*result + result*4.0im + 0.3+4.0im # changes result.field
-        3.2 + result
 
         @test field(result)[1] == result.field[1][1] # returns
         @test field(result,1,1) == result.field[1][1] # returns
