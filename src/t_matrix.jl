@@ -26,23 +26,9 @@ function get_t_matrices(medium::PhysicalMedium, particles::AbstractParticles, ω
     for p_i in eachindex(particles)
         p = particles[p_i]
 
-        # If we have calculated this T-matrix before, just point to that one
-        found = false
-        for cp_i in eachindex(unique_particles)
-            cp = unique_particles[cp_i]
-            if iscongruent(p, cp)
-                t_matrices[p_i] = unique_t_matrices[cp_i]
-                found = true
-                break
-            end
-        end
-
-        # Congruent particle was not found, we must calculate this t-matrix
-        if !found
-            t_matrices[p_i] = t_matrix(p, medium, ω, basis_order)
-            push!(unique_particles, particles[p_i])
-            push!(unique_t_matrices, t_matrices[p_i])
-        end
+        t_matrices[p_i] = t_matrix(p, medium, ω, basis_order)
+        push!(unique_particles, particles[p_i])
+        push!(unique_t_matrices, t_matrices[p_i])
 
     end
 
