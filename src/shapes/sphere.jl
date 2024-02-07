@@ -96,7 +96,7 @@ function isequal(c1::Sphere, c2::Sphere)
 end
 
 function isequal(c1::SphericalHelmholtz, c2::SphericalHelmholtz)
-    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius)
+    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius) && s1.aperture == s1.aperture
 end
 
 function iscongruent(s1::Sphere, s2::Sphere)
