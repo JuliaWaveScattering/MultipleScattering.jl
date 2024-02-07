@@ -80,23 +80,39 @@ function issubset(box::Box, sphere::AbstractSphere)
 end
 
 import Base.(==)
-function ==(c1::AbstractSphere, c2::AbstractSphere)
-    c1.origin == c2.origin &&
-    c1.radius == c2.radius
+==(c1::AbstractSphere, c2::AbstractSphere) = false
+
+function ==(c1::Sphere, c2::Sphere)
+    c1.origin == c2.origin && c1.radius == c2.radius
+end
+
+function ==(c1::SphericalHelmholtz, c2::SphericalHelmholtz)
+    c1.origin == c2.origin && c1.radius == c2.radius && c1.aperture == c2.aperture
 end
 
 import Base.isequal
-function isequal(c1::AbstractSphere, c2::AbstractSphere)
-    isequal(c1.origin, c2.origin) &&
-    isequal(c1.radius, c2.radius)
+function isequal(c1::Sphere, c2::Sphere)
+    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius)
 end
 
-function iscongruent(s1::AbstractSphere, s2::AbstractSphere)
+function isequal(c1::SphericalHelmholtz, c2::SphericalHelmholtz)
+    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius)
+end
+
+function iscongruent(s1::Sphere, s2::Sphere)
     s1.radius == s2.radius
 end
 
-function congruent(s::AbstractSphere, x)
+function iscongruent(s1::SphericalHelmholtz, s2::SphericalHelmholtz)
+    s1.radius == s2.radius && s1.aperture == s1.aperture
+end
+
+function congruent(s::Sphere, x)
     Sphere(x, s.radius)
+end
+
+function congruent(s::SphericalHelmholtz, x)
+    SphericalHelmholtz(x, s.radius, s.aperture)
 end
 
 function Circle(sphere::AbstractSphere; y = sphere.origin[2])
