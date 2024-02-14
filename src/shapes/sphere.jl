@@ -91,12 +91,20 @@ function ==(c1::SphericalHelmholtz, c2::SphericalHelmholtz)
 end
 
 import Base.isequal
+function isequal(c1::AbstractSphere, c2::AbstractSphere)
+    false
+end
+
 function isequal(c1::Sphere, c2::Sphere)
     isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius)
 end
 
 function isequal(c1::SphericalHelmholtz, c2::SphericalHelmholtz)
     isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius) && s1.aperture == s1.aperture
+end
+
+function iscongruent(c1::AbstractSphere, c2::AbstractSphere)
+    false
 end
 
 function iscongruent(s1::Sphere, s2::Sphere)
