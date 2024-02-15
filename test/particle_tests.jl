@@ -54,6 +54,7 @@
         circle_congruent = Sphere((4.0,7.0),2.0)
         rect = Box((1.0,2.0),(2.0,4.0))
         resonator = SphericalHelmholtz((1.0,3.0),2.0, 0.2)
+        resonator_dif_aperture = SphericalHelmholtz((1.0,3.0),2.0, 0.1)
         resonator_identical = SphericalHelmholtz((1.0,3.0), 2.0, 0.2)
         resonator_congruent = SphericalHelmholtz((4.0,7.0), 2.0, 0.2)
 
@@ -64,9 +65,10 @@
         p_different = Particle(a2, rect)
         p_congruent = Particle(a2,circle_congruent)
 
-        # Construct two resonator particles
+        # Construct three resonator particles
         pr = Particle(a2, resonator)
         pr_reference = pr
+        pr_dif_aperture = Particle(a2, resonator_dif_aperture)
         pr_identical = Particle(a2, resonator_identical)
         pr_different = p_different
         pr_congruent = Particle(a2, resonator_congruent)
@@ -75,6 +77,8 @@
         @test p == p_identical
         @test p != p_different
         @test !(p == p_different)
+        @test pr != pr_dif_aperture
+        @test !(pr == pr_dif_aperture)
         @test p != pr
         @test !(p == pr)
         @test iscongruent(p, p_congruent)
@@ -84,6 +88,7 @@
         @test pr != pr_different
         @test !(pr == pr_different)
         @test iscongruent(pr, pr_congruent)
+        @test !iscongruent(pr, pr_dif_aperture)
         @test !iscongruent(pr, pr_different)
 
         # Check that Julia fallback === works
