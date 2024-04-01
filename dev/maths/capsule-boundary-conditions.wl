@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
 (* ::Input:: *)
-(*(*$Assumptions ={ao>0,a[_]>0,ko>0,k[_]>0,c[_]>0,co>0, n \[Element] Integers};*)
+(*(**)
 (**)
 (*\[Psi]o = fo[n] BesselJ[Abs[n],ko r];*)
 (*\[Psi][s] = Ao[n]HankelH1[Abs[n],ko r];*)
@@ -14,17 +14,19 @@
 
 
 (* ::Input:: *)
-(*$Assumptions ={ao>0,a[_]>0,ko>0,k[_]>0,c[_]>0,co>0, n \[Element] Integers};*)
-(**)
 (*ClearAll[\[Psi]o,\[Psi],J,H]*)
 (*\[Psi]o = fo[n] Subscript[J, n][ko r];*)
 (*\[Psi][s] = Ao[n]Subscript[H, n][ko r];*)
 (*\[Psi][0] = f[0,n] Subscript[J, n][k[0] r];*)
 (*\[Psi][1] = f[1,n] Subscript[J, n][k[1] r] + A[1,n]Subscript[H, n][k[1] r];*)
 (*eqs = {\[Psi][1]  == \[Psi][0]/.r-> a[0],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][0],r]/\[Rho][0]/.r-> a[0], \[Psi][s] + \[Psi]o  == \[Psi][1]/.r-> a[1],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][s] + \[Psi]o ,r]/\[Rho]o/.r-> a[1]};*)
-(*subsol = Solve[eqs,{Ao[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]} //Simplify;*)
-(*Ao[n]/.subsol ;*)
 (**)
+(*subsol = Solve[eqs,{Ao[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]} //Simplify;*)
+
+
+(* ::Input:: *)
+(*(*The scattered wave*)*)
+(*Ao[n]/.subsol ;*)
 (*tmp = Apart@FullSimplify[%[[1]]/.{Inactive[BesselJ]:> J,Inactive[HankelH1]:> H, a[n_]:> Subscript[a, n], q[n_]:> Subscript[q, n], k[n_]:> Subscript[k, n]}];*)
 
 
@@ -192,7 +194,7 @@
 (*TagBox["*",*)
 (*"InactiveToken",*)
 (*BaseStyle->"Inactive",*)
-(*SyntaxForm->"*"]\)Subscript[a, 1]]);*)
+(*SyntaxForm->"*"]\)Subscript[a, 1]])*)
 (**)
 (*tmp ==tmp2 //Activate//Simplify*)
 (**)
@@ -211,20 +213,13 @@
 (*f[0,n]/.subsol [[1]]//Simplify;*)
 (*f[1,n]/.subsol [[1]]//Simplify;*)
 (*A[1,n]/.subsol [[1]]//Simplify;*)
-(**)
-(**)
-(*eqs2 = {\[Psi][1]  == \[Psi][0]/.r-> a[0],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][0],r]/\[Rho][0]/.r-> a[0], \[Psi][s] + \[Psi]o  == \[Psi][1]/.r-> a[1],D[\[Psi][1],r]/\[Rho][1]  == D[\[Psi][s] + \[Psi]o ,r]/\[Rho]o/.r-> a[1]};*)
-(*subsol2 = Solve[eqs2,{fo[n],f[0,n],f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]};*)
-(**)
-(**)
-(*Inactive[Yd][a[0] k[1],a[1] k[1]]//Activate*)
-(*Inactive[Yd][a[1] k[1],a[0] k[1]]//Activate*)
-(**)
 
 
 (* ::Input:: *)
-(*eqs2/.subsol2 //.{ qo-> \[Rho]o /ko ,  q[1]->\[Rho][1]/k[1] ,q[0] -> \[Rho][0]/k[0]}//Simplify;*)
-(**)
+(*eqs/.subsol//.{ qo-> \[Rho]o /ko ,  q[1]->\[Rho][1]/k[1] ,q[0] -> \[Rho][0]/k[0]}//Simplify*)
+
+
+(* ::Input:: *)
 (*denom = dq0 Subscript[J, n][a[0] k[0]] (dq Subscript[J, n][ko a[1]] Inactive[Ydd][a[1] k[1],a[0] k[1]] - Derivative[1][Subscript[J, n]][ko a[1]]Inactive[Yd][a[1] k[1],a[0] k[1]] )+Derivative[1][Subscript[J, n]][a[0] k[0]](dq Subscript[J, n][ko a[1]] Inactive[Yd][a[0] k[1],a[1] k[1]]+ Derivative[1][Subscript[J, n]][ko a[1]]Inactive[Y][a[1] k[1],a[0] k[1]]) ;*)
 (*force = Ao[n]  Yd[ko a[1],ko a[1]]/denom;*)
 (**)
@@ -238,12 +233,91 @@
 (*numer force == A[1,n]/.subsol2[[1]]/.{q[0] -> dq0 q[1],qo -> dq q[1] }//Activate//FullSimplify*)
 (**)
 (**)
-(*A[1,n]/.subsol2[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
-(*f[1,n]/.subsol2[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
-(*f[0,n]/.subsol2[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
+(*A[1,n]/.subsol[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
+(*f[1,n]/.subsol[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
+(*f[0,n]/.subsol[[1]]//.{q[0] -> q[1],k[0]-> k[1],qo -> dq q[1] }//Activate//FullSimplify*)
+(**)
+(**)
 
 
-(* ::InheritFromParent:: *)
+(* ::Subsection:: *)
+(*Capsule filled with void / air*)
+
+
+(* ::Input:: *)
+(*ClearAll[\[Psi]o,\[Psi],J,H]*)
+(*\[Psi]o = fo[n] Subscript[J, n][ko r];*)
+(*\[Psi][s] = Ao[n]Subscript[H, n][ko r];*)
+(*\[Psi][1] = f[1,n] Subscript[J, n][k[1] r] + A[1,n]Subscript[H, n][k[1] r];*)
+(*eqs = {\[Psi][1]  /.r-> a[0], \[Psi][s] + \[Psi]o  - \[Psi][1]/.r-> a[1],D[\[Psi][1],r]/\[Rho][1]  - D[\[Psi][s] + \[Psi]o ,r]/\[Rho]o/.r-> a[1]};*)
+(**)
+(*subsol = Solve[Thread[eqs==0],{Ao[n],f[1,n],A[1,n]}]  //Simplify;*)
+
+
+(* ::Input:: *)
+(*subN = {a[1]->2.0,a[0]->1.5,\[Rho]o->0.00001,\[Rho][1]->2.0,ko-> 0.0001,k[1] -> 2.0,Subscript[J, n][ko a[1]]->1.0,fo[n]->1, Subscript[H, n_][x_] ->HankelH1[n,x], Subscript[J, n_][x_] ->BesselJ[n,x], Derivative[1][Subscript[H, n_]][x_] ->D[HankelH1[n,x],x],Derivative[1][Subscript[J, n_]][x_] ->D[BesselJ[n,x],x]};*)
+(*subsol//.subN//Flatten;*)
+
+
+(* ::Input:: *)
+(*%/.n->#&/@Range[1,20,3]*)
+(**)
+
+
+(* ::Input:: *)
+(*(*Capsule with given forcing on boundary*)*)
+(*ClearAll[\[Psi]o,\[Psi],J,H]*)
+(*\[Psi]o = fo[n] Subscript[J, n][ko r];*)
+(*\[Psi][1] = f[1,n] Subscript[J, n][k[1] r] + A[1,n]Subscript[H, n][k[1] r];*)
+(*eqs = {\[Psi][1]  /.r-> a[0],  \[Psi]o  - \[Psi][1]/.r-> a[1]};*)
+(*subsol = Solve[Thread[eqs==0],{f[1,n],A[1,n]}] /.{\[Rho]o -> qo ko,\[Rho][1] -> q[1] k[1],\[Rho][0] -> q[0] k[0]} //Simplify*)
+(**)
+(*vars = {f[1,n],A[1,n]};*)
+(*M = Coefficient[eqs,#]&/@vars;*)
+(*M = Transpose@M;*)
+(*b =  eqs - M . vars //Simplify;*)
+(*M//MatrixForm*)
+
+
+(* ::Input:: *)
+(*subN = {a[1]->2.0,a[0]->1.5,k[1] -> 2.0,Subscript[J, n][ko a[1]]->1.0,fo[n]->1, Subscript[H, n_][x_] ->HankelH1[n,x], Subscript[J, n_][x_] ->BesselJ[n,x]};*)
+(*ns = Range[1,30,3];*)
+(*subsol//.subN//Flatten;*)
+(*subNsol=Flatten[%/.n->#&/@ns];*)
+(**)
+(*eqs//.subN/.n->#&/@ns;*)
+(*%/.subNsol*)
+
+
+(* ::Input:: *)
+(**)
+(*{Abs@f[1,n]Abs@BesselJ[n,a[1] k[1]],Abs@A[1,n]Abs@HankelH1[n,a[1] k[1]]}//.subN//Flatten;*)
+(*%/.n->#&/@ns;*)
+(*%/.Flatten@subNsol*)
+(**)
+
+
+(* ::Input:: *)
+(*(*Is the matrix system ill-posed?*)*)
+(*NM = M //.subN;*)
+(*Nb = b //.subN;*)
+(*ns = Range[1,70,6];*)
+(*{Abs@Det[NM/.n->#],SingularValueList[NM/.n->#]}&/@ns*)
+(**)
+(*(*If we numerically solve the system:*)*)
+(*sols =Flatten[ Thread[(vars/.subN/.n->#)->LinearSolve[NM/.n->#,Nb/.n->#]]&/@ns];*)
+(**)
+(**)
+
+
+(* ::Input:: *)
+(*eqs//.subN/.n->#&/@ns;*)
+(*%/.sols*)
+(**)
+
+
+(* ::Input:: *)
+(*subsol*)
 (**)
 
 
@@ -253,6 +327,12 @@
 
 (* ::InheritFromParent:: *)
 (**)
+
+
+Test a capsule filled with air
+
+
+
 
 
 (* ::Input:: *)
@@ -279,7 +359,7 @@
 (*capsule = tmp2;*)
 
 
-Test subtracting the frequency response of the capsule. 
+Test subtracting the frequency response of the capsule . 
 I'll assume the background is water, that there is Sunflower oil
 in the tube, and the tube itself is silica;
 
@@ -371,7 +451,7 @@ BaseStyle->"Inactive",
 SyntaxForm->"*"]\)1.`]/.subHJ/.n->1
 
 
-Test subtracting the frequency response of the capsule. 
+Test subtracting the frequency response of the capsule . 
 I'll assume the background is water, that there is Sunflower oil
 in the tube, and the tube itself is silica;
 
@@ -399,6 +479,10 @@ u[c,t] - u[0,t] = O[c t] + O[c^2]
 So the two are similar if the material in the tube is similar to 
 the background material.  
     
+
+
+
+
 
 
 
