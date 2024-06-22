@@ -1,7 +1,5 @@
 # Simple random particles example
 
-```
-
 ## Define particle properties
 Define the volume fraction of particles, the region to place the particles, and their radius
 ```julia
@@ -35,25 +33,25 @@ result = run(simulation, x, ωs)
 We use the `Plots` package to plot both the response at the listener position x
 
 ```julia
-    using Plots; #pyplot(linewidth = 2.0)
-    plot(result, field_apply=real) # plot result
-    plot!(result, field_apply=imag)
-    #savefig("plot_result.png")
+using Plots; #pyplot(linewidth = 2.0)
+plot(result, field_apply=real) # plot result
+plot!(result, field_apply=imag)
+#savefig("plot_result.png")
 ```
 ![Plot of response against wavenumber](plot_result.png)
 
 And plot the whole field inside the region_shape `bounds` for a specific wavenumber (`ω=0.8`)
 ```julia
-    bottomleft = [-15.,-max_width]
-    topright = [max_width,max_width]
-    bounds = Box([bottomleft,topright])
+bottomleft = [-15.,-max_width]
+topright = [max_width,max_width]
+bounds = Box([bottomleft,topright])
 
-    #plot(simulation,0.8; res=80, bounds=bounds)
-    #plot!(region_shape, linecolor=:red)
-    #plot!(simulation)
-    #scatter!([x[1]],[x[2]], lab="receiver")
+#plot(simulation,0.8; res=80, bounds=bounds)
+#plot!(region_shape, linecolor=:red)
+#plot!(simulation)
+#scatter!([x[1]],[x[2]], lab="receiver")
 
-    #savefig("plot_field.png")
+#savefig("plot_field.png")
 ```
 ![Plot real part of acoustic field](plot_field.png)
 ## Things to try
