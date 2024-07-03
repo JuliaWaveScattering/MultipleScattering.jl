@@ -255,13 +255,47 @@
 
 
 (* ::Input:: *)
-(*subN = {a[1]->2.0,a[0]->1.5,\[Rho]o->0.00001,\[Rho][1]->2.0,ko-> 0.0001,k[1] -> 2.0,Subscript[J, n][ko a[1]]->1.0,fo[n]->1, Subscript[H, n_][x_] ->HankelH1[n,x], Subscript[J, n_][x_] ->BesselJ[n,x], Derivative[1][Subscript[H, n_]][x_] ->D[HankelH1[n,x],x],Derivative[1][Subscript[J, n_]][x_] ->D[BesselJ[n,x],x]};*)
-(*subsol//.subN//Flatten;*)
+(*subN = {a[1]->2.0,a[0]->1.5,\[Rho]o->0.00001,\[Rho][1]->2.0,ko-> 0.0001,k[1] -> 2.0,Subscript[J, n][ko a[1]]->1.0, Subscript[H, n_][x_] ->HankelH1[n,x], Subscript[J, n_][x_] ->BesselJ[n,x], Derivative[1][Subscript[H, n_]][x_] ->D[HankelH1[n,x],x],Derivative[1][Subscript[J, n_]][x_] ->D[BesselJ[n,x],x]};*)
+(**)
+(**)
+(*\[Epsilon] = 10^-12;*)
+(*ns = Range[0,30,3];*)
+(**)
+(*subNsol1 = subsol//.subN/.{fo[n] -> 1 + RandomReal[\[Epsilon]] +RandomReal[\[Epsilon]] I} //Flatten;*)
+(*subNsol2 = subsol//.subN/.{fo[n] -> 1 + RandomReal[\[Epsilon]] +RandomReal[\[Epsilon]] I} //Flatten;*)
+(**)
+(**)
+(*Nsol1= Transpose[#/.Rule-> List][[2]]&/@(subNsol1/.n->#&/@ns);*)
+(*Nsol2= Transpose[#/.Rule-> List][[2]]&/@(subNsol2/.n->#&/@ns);*)
+(**)
+(*(*The difference appears to be substantial, but it is only the coefficient multiplying Jn which gets larger errors. And as Jn becomes very small the result may not be a large error in the field*)*)
+(*(Nsol1 - Nsol2)*)
 
 
 (* ::Input:: *)
-(*%/.n->#&/@Range[1,20,3]*)
+(*(*The scattered wave appears to be stable*)*)
 (**)
+(*#[[1]]&/@(Nsol1 - Nsol2);*)
+(*Abs[% *( HankelH1[#,ko a[1]//.subN]&/@ns)]*)
+(**)
+(**)
+(*(*The internal besselJ wave*)*)
+(*#[[2]]&/@(Nsol1 - Nsol2);*)
+(*Abs[% *( BesselJ[#,k[1] a[1]//.subN]&/@ns)]*)
+(**)
+(*(*The internal HankelH1 wave*)*)
+(*#[[3]]&/@(Nsol1 - Nsol2);*)
+(*Abs[% *( HankelH1[#,k[1] a[1]//.subN]&/@ns)]*)
+(**)
+
+
+(* ::Input:: *)
+(*Norm/@(Nsol1 - Nsol2)*)
+(**)
+
+
+(* ::Input:: *)
+(*subsol*)
 
 
 (* ::Input:: *)
@@ -281,16 +315,15 @@
 
 (* ::Input:: *)
 (*subN = {a[1]->2.0,a[0]->1.5,k[1] -> 2.0,Subscript[J, n][ko a[1]]->1.0,fo[n]->1, Subscript[H, n_][x_] ->HankelH1[n,x], Subscript[J, n_][x_] ->BesselJ[n,x]};*)
-(*ns = Range[1,30,3];*)
+(*ns = Range[1,40,3];*)
 (*subsol//.subN//Flatten;*)
 (*subNsol=Flatten[%/.n->#&/@ns];*)
 (**)
 (*eqs//.subN/.n->#&/@ns;*)
-(*%/.subNsol*)
+(*Norm/@(%/.subNsol)*)
 
 
 (* ::Input:: *)
-(**)
 (*{Abs@f[1,n]Abs@BesselJ[n,a[1] k[1]],Abs@A[1,n]Abs@HankelH1[n,a[1] k[1]]}//.subN//Flatten;*)
 (*%/.n->#&/@ns;*)
 (*%/.Flatten@subNsol*)
@@ -301,12 +334,10 @@
 (*(*Is the matrix system ill-posed?*)*)
 (*NM = M //.subN;*)
 (*Nb = b //.subN;*)
-(*ns = Range[1,70,6];*)
 (*{Abs@Det[NM/.n->#],SingularValueList[NM/.n->#]}&/@ns*)
 (**)
 (*(*If we numerically solve the system:*)*)
-(*sols =Flatten[ Thread[(vars/.subN/.n->#)->LinearSolve[NM/.n->#,Nb/.n->#]]&/@ns];*)
-(**)
+(*sols =Flatten[ Thread[(vars/.subN/.n->#)->LinearSolve[NM/.n->#,Nb/.n->#]]&/@ns]//Quiet;*)
 (**)
 
 
@@ -317,22 +348,37 @@
 
 
 (* ::Input:: *)
-(*subsol*)
+(*invM = Inverse[M]*)
+(*invM . b*)
+(*NinvM =invM //.subN;*)
+(*Nb = b //.subN;*)
+
+
+(* ::Input:: *)
+(*invsols =Flatten[ Thread[(vars/.subN/.n->#)->(-NinvM . (Nb + RandomReal[{10^-18,10^-15}])/.n->#)]&/@ns];*)
+(*Norm/@(eqs//.subN/.n->#&/@ns/.invsols)*)
 (**)
 
 
-(* ::InheritFromParent:: *)
+(* ::Input:: *)
 (**)
 
 
-(* ::InheritFromParent:: *)
+(* ::Input:: *)
+(*eqs//.subN/.n->#&/@ns/.invsols*)
 (**)
 
 
-Test a capsule filled with air
+(* ::Input:: *)
+(*Nx = -NinvM . Nb/.n-> 1*)
+(*M . Nx//.subN/.n-> 1*)
+(*b//.subN/.n-> 1*)
+(**)
+(**)
 
 
-
+(* ::Input:: *)
+(*#->#&/@ns*)
 
 
 (* ::Input:: *)
@@ -479,6 +525,10 @@ u[c,t] - u[0,t] = O[c t] + O[c^2]
 So the two are similar if the material in the tube is similar to 
 the background material.  
     
+
+
+
+
 
 
 

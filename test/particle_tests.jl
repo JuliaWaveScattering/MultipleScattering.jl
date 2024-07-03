@@ -53,10 +53,12 @@
         circle_identical = Sphere((1.0,3.0),2.0)
         circle_congruent = Sphere((4.0,7.0),2.0)
         rect = Box((1.0,2.0),(2.0,4.0))
-        resonator = SphericalHelmholtz((1.0,3.0),2.0, 0.2)
-        resonator_dif_aperture = SphericalHelmholtz((1.0,3.0),2.0, 0.1)
-        resonator_identical = SphericalHelmholtz((1.0,3.0), 2.0, 0.2)
-        resonator_congruent = SphericalHelmholtz((4.0,7.0), 2.0, 0.2)
+
+        resonator = SphericalHelmholtz((1.0,3.0),2.0, 0.2, 0.01, -1.3)
+        resonator_kws = SphericalHelmholtz((1.0,3.0),2.0; inner_radius = 0.2, aperture = 0.1, orientation = -1.3)
+        resonator_dif_aperture = SphericalHelmholtz((1.0,3.0),2.0; aperture = 0.1)
+        resonator_identical = SphericalHelmholtz((1.0,3.0), 2.0; orientation = -1.3, inner_radius = 0.2, aperture = 0.01)
+        resonator_congruent = SphericalHelmholtz((4.0,7.0), 2.0; orientation = -1.3, inner_radius = 0.2, aperture = 0.01)
 
         # Construct four particles, with two the same
         p = Particle(a2,circle)

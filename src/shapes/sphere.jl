@@ -24,16 +24,28 @@ A [`Shape`](@ref) which represents a 2D thin-walled isotropic Helmholtz resonato
 struct SphericalHelmholtz{T,Dim} <: AbstractSphere{Dim}
     origin::SVector{Dim,T}
     radius::T
+    inner_radius::T
     aperture::T
+    orientation::T
 end
 
 # Alternate constructors, where type is inferred naturally
 Sphere(origin::NTuple{Dim}, radius::T) where {T,Dim} = Sphere{T,Dim}(origin, radius)
 Sphere(origin::AbstractVector, radius::T) where {T} = Sphere{T,length(origin)}(origin, radius)
-SphericalHelmholtz(origin::NTuple{2}, radius::T, aperture::T) where {T} = SphericalHelmholtz{T,2}(origin, radius, aperture)
+SphericalHelmholtz(origin::NTuple{Dim}, radius::T, inner_radius::T, aperture::T, orientation::T) where {T, Dim} = SphericalHelmholtz{T,Dim}(origin, radius, inner_radius, aperture, orientation)
+
+SphericalHelmholtz(origin::NTuple{Dim}, radius::T; inner_radius::T = zero(T), aperture::T = zero(T), orientation::T = zero(T)) where {T, Dim} = SphericalHelmholtz{T,Dim}(origin, radius, inner_radius, aperture, orientation)
 
 Sphere(Dim, radius::T) where {T} = Sphere{T,Dim}(zeros(T,Dim), radius)
-SphericalHelmholtz(radius::T, aperture::T) where {T} = SphericalHelmholtz{T,2}(zeros(T,2), radius, aperture)
+
+function SphericalHelmholtz(Dim::Int, radius::T; 
+        origin::T = zeros(T,Dim), 
+        aperture::T = zero(T), 
+        inner_radius::T = zero(T),
+        orientation::T = zero(T)) where {T} 
+    
+    return SphericalHelmholtz{T,Dim}(origin, radius, inner_radius, aperture, orientation)
+end
 
 Circle(origin::Union{AbstractVector{T},NTuple{2,T}}, radius::T) where T <: AbstractFloat = Sphere{T,2}(origin, radius::T)
 Circle(radius::T) where T <: AbstractFloat = Sphere(2, radius::T)
@@ -87,7 +99,7 @@ function ==(c1::Sphere, c2::Sphere)
 end
 
 function ==(c1::SphericalHelmholtz, c2::SphericalHelmholtz)
-    c1.origin == c2.origin && c1.radius == c2.radius && c1.aperture == c2.aperture
+    c1.origin == c2.origin && c1.radius == c2.radius && c1.inner_radius == c2.inner_radius && c1.aperture == c2.aperture && c1.orientation == c2.orientation
 end
 
 import Base.isequal
@@ -112,7 +124,7 @@ function iscongruent(s1::Sphere, s2::Sphere)
 end
 
 function iscongruent(s1::SphericalHelmholtz, s2::SphericalHelmholtz)
-    s1.radius == s2.radius && s1.aperture == s2.aperture
+    s1.radius == s2.radius && s1.aperture == s2.aperture && s1.inner_radius == s2.inner_radius && s1.orientation == s2.orientation
 end
 
 function congruent(s::Sphere, x)
@@ -136,7 +148,7 @@ end
 
 
 
-function boundary_functions(sphere::AbstractSphere{3})
+function boundary_functions(sphere::Sphere{T,3}) where T
 
     function x(t,s=0)
         check_boundary_coord_range(t)
@@ -162,7 +174,22 @@ function boundary_functions(sphere::AbstractSphere{3})
     return x, y, z
 end
 
-function boundary_functions(circle::AbstractSphere{2})
+function boundary_functions(circle::Sphere{T,2}) where T
+
+    function x(t)
+        check_boundary_coord_range(t)
+        circle.radius * cos(2π * t) + origin(circle)[1]
+    end
+
+    function y(t)
+        check_boundary_coord_range(t)
+        circle.radius * sin(2π * t) + origin(circle)[2]
+    end
+
+    return x, y
+end
+
+function boundary_functions(circle::SphericalHelmholtz{T,2}) where T
 
     function x(t)
         check_boundary_coord_range(t)
