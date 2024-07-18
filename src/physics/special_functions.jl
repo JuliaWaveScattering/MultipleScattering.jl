@@ -215,16 +215,54 @@ function associated_legendre_indices(l_max::Int)
 end
 
 """
+`legendre_array(l_max::Int, z::Complex{T})`
+
+returns a vector of all associated legendre functions with degree `l <= l_max`. The degree and order (indices) of the elements of the vector are given by `spherical_harmonics_indices(l_max::Int)`.
+
+The associated legendre polynomials are taken from the package AssociatedLegendrePolynomials.jl.
+"""
+function legendre_array(l_max::Int, z::Complex{T}) where {T<:AbstractFloat}
+
+    leg_array = zeros(Complex{T}, (l_max + 1)^2)
+    ind = 0
+    for l in 0:l_max
+        for m in -l:l
+            ind += 1
+            if m < 0
+                leg_array[ind] = (-1)^m * factorial(l + m) * Plm(l, -m, z) / factorial(l - m)
+            else
+                leg_array[ind] = Plm(l, m, z)
+            end
+        end
+    end
+
+    return leg_array
+
+end
+
+
+"""
 `spherical_harmonics(l_max::Int, θ::T, φ::T)`
 
-returns a vector of all spherical harmonics with degree `l <= l_max`. The degree and order (indices) of the elements of the vector are given by `spherical_harmonics_indices(l_max::Int)`.
-
-The associated legendre polynomials are taken from the package GSL.jl.
+returns a vector of all spherical harmonics with degree `l <= l_max` and complex arguments. The degree and order (indices) of the elements of the vector are given by `spherical_harmonics_indices(l_max::Int)`.
 """
-function spherical_harmonics(l_max::Int, θ::Complex{T}, φ::Union{T,Complex{T}}) where T <: AbstractFloat
+function spherical_harmonics(l_max::Int, θ::Complex{T}, φ::Union{T,Complex{T}}) where {T<:AbstractFloat}
 
-    throw(DomainError(θ, "Currently GLS.jl is used to calculate associated legendre polynomials, which only take real angles as arguments. Hopefully soon SpecialFunctions.jl will implement associated Legendre for complex arguments: https://github.com/JuliaMath/SpecialFunctions.jl/pull/175"))
+    Plm_arr = legendre_array(l_max, cos(θ))
 
+    Ylm_vec = Vector{Complex{T}}(undef, (l_max + 1)^2)
+    Norm_factor = zero(T)
+
+    ind = 0
+    for l in 0:l_max
+        for m in -l:l
+            ind += 1
+            Norm_factor = sqrt(((2l + 1) * factorial(l - m)) / (4pi * factorial(l + m)))
+            Ylm_vec[ind] = Norm_factor * Plm_arr[ind] * exp(m * im * φ)
+        end
+    end
+
+    return Ylm_vec
 end
 
 
