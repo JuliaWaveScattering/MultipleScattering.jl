@@ -55,7 +55,7 @@ using SpecialFunctions: besselj, hankelh1
 using WignerSymbols, GSL
 using Random, LinearAlgebra, RecipesBase, Statistics
 using ProgressMeter
-using AssociatedLegendrePolynomials
+using AssociatedLegendrePolynomials: Plm, Nlm
 
 
 # Generic machinery common to all physical models
