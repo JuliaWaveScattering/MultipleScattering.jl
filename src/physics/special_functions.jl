@@ -3,6 +3,7 @@ export diffbesselj, diffhankelh1, diffsbesselj, diffshankelh1, diff3sbesselj, di
 export gaunt_coefficient
 export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical_harmonic_index
 
+export complex_legendre_array
 export spherical_harmonics, spherical_harmonics_dθ
 export cartesian_to_radial_coordinates, radial_to_cartesian_coordinates
 export cartesian_to_spherical_coordinates, spherical_to_cartesian_coordinates
@@ -215,13 +216,13 @@ function associated_legendre_indices(l_max::Int)
 end
 
 """
-`legendre_array(l_max::Int, z::Complex{T})`
+`complex_legendre_array(l_max::Int, z::Complex{T})`
 
 returns a vector of all associated legendre functions with degree `l <= l_max`. The degree and order (indices) of the elements of the vector are given by `spherical_harmonics_indices(l_max::Int)`.
 
 The associated legendre polynomials are taken from the package AssociatedLegendrePolynomials.jl.
 """
-function legendre_array(l_max::Int, z::Complex{T}) where {T<:AbstractFloat}
+function complex_legendre_array(l_max::Int, z::Union{T,Complex{T}}) where {T<:AbstractFloat}
 
     leg_array = zeros(Complex{T}, (l_max + 1)^2)
     ind = 0
@@ -229,9 +230,9 @@ function legendre_array(l_max::Int, z::Complex{T}) where {T<:AbstractFloat}
         for m in -l:l
             ind += 1
             if m < 0
-                leg_array[ind] = (-1)^m * factorial(l + m) * Plm(l, -m, z) / factorial(l - m)
+                leg_array[ind] = (-1)^m * Nlm(l, -m) * conj(Plm(l, -m, z))
             else
-                leg_array[ind] = Plm(l, m, z)
+                leg_array[ind] = Nlm(l, m) * Plm(l, m, z)
             end
         end
     end
@@ -242,23 +243,21 @@ end
 
 
 """
-`spherical_harmonics(l_max::Int, θ::T, φ::T)`
+`spherical_harmonics(l_max::Int, θ::Complex{T}, φ::Union{T,Complex{T}})`
 
-returns a vector of all spherical harmonics with degree `l <= l_max` and complex arguments. The degree and order (indices) of the elements of the vector are given by `spherical_harmonics_indices(l_max::Int)`.
+returns a vector of all spherical harmonics with degree `l <= l_max` with complex arguments. The degree and order (indices) of the elements of the vector are given by `spherical_harmonics_indices(l_max::Int)`.
 """
 function spherical_harmonics(l_max::Int, θ::Complex{T}, φ::Union{T,Complex{T}}) where {T<:AbstractFloat}
 
-    Plm_arr = legendre_array(l_max, cos(θ))
+    Plm_arr = complex_legendre_array(l_max, cos(θ))
 
     Ylm_vec = Vector{Complex{T}}(undef, (l_max + 1)^2)
-    Norm_factor = zero(T)
 
     ind = 0
     for l in 0:l_max
         for m in -l:l
             ind += 1
-            Norm_factor = sqrt(((2l + 1) * factorial(l - m)) / (4pi * factorial(l + m)))
-            Ylm_vec[ind] = Norm_factor * Plm_arr[ind] * exp(m * im * φ)
+            Ylm_vec[ind] = Plm_arr[ind] * exp(m * im * φ)
         end
     end
 
@@ -290,11 +289,11 @@ function spherical_harmonics_dθ(l_max::Int, θ::T, φ::T) where T <: AbstractFl
 end    
 
 """
-    spherical_harmonics_dθ(l_max::Int, θ::T, φ::T)
+    spherical_harmonics(l_max::Int, θ::T, φ::T)
 
-Returns a vector of all the spherial harmonics ``Y_{(l,m)}(\\theta,\\phi)`` for all the degrees `l` and orders `m`.
+Returns a vector of all the spherial harmonics ``Y_{(l,m)}(\\theta,\\phi)`` for all the degrees `l` and orders `m`. The degree and order (indices) of the elements of the vector are given by `spherical_harmonics_indices(l_max::Int)`.
 """
-function spherical_harmonics(l_max::Int, θ::T, φ::T) where T <: AbstractFloat
+function spherical_harmonics(l_max::Int, θ::T, φ::Union{T,Complex{T}}) where {T<:AbstractFloat}
 
     ls, ms = associated_legendre_indices(l_max)
     Plm_arr = sf_legendre_array(GSL_SF_LEGENDRE_SPHARM, l_max, cos(θ))[eachindex(ls)]

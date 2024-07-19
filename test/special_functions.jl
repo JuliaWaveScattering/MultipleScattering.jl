@@ -107,6 +107,19 @@ using Test, LinearAlgebra
 
         @test condon_phase .* sf_legendre_array(GSL_SF_LEGENDRE_SPHARM, l_max, x)[1:length(ls)] ≈ sph_factors .* Plm_arr
 
+        # test for the complex case
+        y = rand(1)[1] * 0.99
+        z = x + y*1im
+
+        # a few complex associated legendre functions
+        Plm_arr_complex = [1,conj(sqrt(1-z^2))/2,z,-sqrt(1-z^2),conj(1-z^2)/8,conj(z*sqrt(1-z^2))/2,(3z^2-1)/2,-3z*sqrt(1-z^2),3*(1-z^2)]
+
+        ls, ms = spherical_harmonics_indices(l_max)
+
+        norm_factors = sqrt.((2 .* ls .+ 1) ./ (4pi) .* factorial.(ls - ms) ./ factorial.(ls + ms))
+
+        @test complex_legendre_array(l_max, z) ≈ Plm_arr_complex .* norm_factors
+
     end
 
     @testset "Spherical harmonics" begin
@@ -168,6 +181,10 @@ using Test, LinearAlgebra
             end
             i += 1
         end
+
+        # Test complex argument spherical harmonics
+        sphs_complex = spherical_harmonics(l_max, θ+0.0im, φ)
+        @test sphs ≈ sphs_complex
 
     end
 
