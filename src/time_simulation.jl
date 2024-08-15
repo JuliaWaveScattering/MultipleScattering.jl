@@ -105,6 +105,12 @@ function firstnonzero(arr::AbstractArray{T}) where T <: AbstractFloat
 end
 
 """
+    frequency_to_time(field_mat::AbstractArray, ω_vec::AbstractVector,
+        t_vec::AbstractArray = ω_to_t(ω_vec);
+        method = :DFT,
+        impulse::ContinuousImpulse = TimeDiracImpulse(zero(T)),
+        discrete_impulse::DiscreteImpulse = continuous_to_discrete_impulse(impulse, t_vec, ω_vec))
+
 See also: [`DiscreteImpulse`](@ref), [`ContinuousImpulse`](@ref)
 
 Calculates the time response from the frequency response by approximating an
@@ -143,6 +149,13 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
 end
 
 """
+    function time_to_frequency(field_mat::AbstractArray, t_vec::AbstractVector,
+        ω_vec::AbstractArray = t_to_ω(t_vec);
+        method = :DFT,
+        impulse::ContinuousImpulse = TimeDiracImpulse(zero(T)),
+        discrete_impulse::DiscreteImpulse = continuous_to_discrete_impulse(impulse, t_vec, ω_vec)
+    )
+
 The inverse of the function frequency_to_time (only an exact inverse when using
 :DFT integration). We use the Fourier transform convention:
 F(ω) =  ∫ f(t)*exp(im*ω*t) dt
