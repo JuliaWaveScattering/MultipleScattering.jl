@@ -54,11 +54,16 @@
         circle_congruent = Sphere((4.0,7.0),2.0)
         rect = Box((1.0,2.0),(2.0,4.0))
 
-        resonator = SphericalHelmholtz((1.0,3.0),2.0, 0.2, 0.01, -1.3)
-        resonator_kws = SphericalHelmholtz((1.0,3.0),2.0; inner_radius = 0.2, aperture = 0.1, orientation = -1.3)
-        resonator_dif_aperture = SphericalHelmholtz((1.0,3.0),2.0; aperture = 0.1)
-        resonator_identical = SphericalHelmholtz((1.0,3.0), 2.0; orientation = -1.3, inner_radius = 0.2, aperture = 0.01)
-        resonator_congruent = SphericalHelmholtz((4.0,7.0), 2.0; orientation = -1.3, inner_radius = 0.2, aperture = 0.01)
+        iso_resonator = IsotropicHelmholtz((1.0, 3.0), 2.0, 0.2)
+        iso_resonator_dif_aperture = IsotropicHelmholtz((1.0, 3.0), 2.0, 0.1)
+        iso_resonator_identical = IsotropicHelmholtz((1.0, 3.0), 2.0, 0.2)
+        iso_resonator_congruent = IsotropicHelmholtz((4.0, 7.0), 2.0, 0.2)
+
+        resonator = Helmholtz((1.0, 3.0), 2.0, 0.2, 0.01, -1.3)
+        resonator_kws = Helmholtz((1.0, 3.0), 2.0; inner_radius=0.2, aperture=0.1, orientation=-1.3)
+        resonator_dif_aperture = Helmholtz((1.0, 3.0), 2.0; aperture=0.1)
+        resonator_identical = Helmholtz((1.0, 3.0), 2.0; orientation=-1.3, inner_radius=0.2, aperture=0.01)
+        resonator_congruent = Helmholtz((4.0, 7.0), 2.0; orientation=-1.3, inner_radius=0.2, aperture=0.01)
 
         # Construct four particles, with two the same
         p = Particle(a2,circle)
@@ -66,6 +71,14 @@
         p_identical = Particle(a2,circle_identical)
         p_different = Particle(a2, rect)
         p_congruent = Particle(a2,circle_congruent)
+
+        # Construct three isotropic resonator particles
+        p_iso_r = Particle(a2, iso_resonator)
+        p_iso_r_reference = p_iso_r
+        p_iso_r_dif_aperture = Particle(a2, iso_resonator_dif_aperture)
+        p_iso_r_identical = Particle(a2, iso_resonator_identical)
+        p_iso_r_different = p_different
+        p_iso_r_congruent = Particle(a2, iso_resonator_congruent)
 
         # Construct three resonator particles
         pr = Particle(a2, resonator)
@@ -83,9 +96,19 @@
         @test !(pr == pr_dif_aperture)
         @test p != pr
         @test !(p == pr)
+        @test p != p_iso_r
+        @test !(p == p_iso_r)
         @test iscongruent(p, p_congruent)
         @test !iscongruent(p, p_different)
         @test !iscongruent(p, pr)
+        @test p_iso_r == p_iso_r_identical
+        @test p_iso_r != p_iso_r_different
+        @test !(p_iso_r == p_iso_r_different)
+        @test p_iso_r != pr
+        @test !(p_iso_r == pr)
+        @test iscongruent(p_iso_r, p_iso_r_congruent)
+        @test !iscongruent(p_iso_r, p_iso_r_dif_aperture)
+        @test !iscongruent(p_iso_r, p_iso_r_different)
         @test pr == pr_identical
         @test pr != pr_different
         @test !(pr == pr_different)

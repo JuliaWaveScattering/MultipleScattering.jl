@@ -3,7 +3,7 @@
 
 The T-matrix for a 2D circlular Helmholtz resonator in a 2D acoustic medium.
 """
-function t_matrix(p::Particle{2,Acoustic{T,2},SphericalHelmholtz{T,2}}, outer_medium::Acoustic{T,2}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
+function t_matrix(p::Particle{2,Acoustic{T,2},IsotropicHelmholtz{T,2}}, outer_medium::Acoustic{T,2}, ω::T, basis_order::Integer)::Diagonal{Complex{T}} where T <: AbstractFloat
 
     M = basis_order
     ε = p.shape.aperture
