@@ -93,7 +93,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
         max_attempts_to_place_particle::Int = 3000, # Maximum number of attempts to place a particle
         current_particles::AbstractParticles{Dim} = AbstractParticle{Dim}[] # Particles already present.
 ) where {Dim,P<:PhysicalMedium{Dim},S<:Shape{Dim}}
-
+    
     # Check volume fraction is not impossible
     volfrac = N * volume(particle_shape) / volume(region_shape)
     max_packing = if length(current_particles) > 0
@@ -135,7 +135,12 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
             outside_box = true
             while outside_box
                 x = (box.dimensions ./ 2) .* (1 .- 2 .* rand(randgen,typeof(origin(box)))) + origin(box)
-                particles[n] = Particle(particle_medium, congruent(particle_shape, x))
+                if S == Helmholtz{Float64, 2}
+                    θ = 2π*rand(randgen)
+                    particles[n] = Particle(particle_medium, congruent(particle_shape, x, θ))
+                else
+                    particles[n] = Particle(particle_medium, congruent(particle_shape, x))
+                end
                 outside_box = !(particles[n] ⊆ region_shape)
             end
 
