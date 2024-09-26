@@ -173,6 +173,10 @@ function congruent(s::IsotropicHelmholtz, x)
     IsotropicHelmholtz(x, s.radius, s.aperture)
 end
 
+function congruent(s::Helmholtz, x, θ)
+    Helmholtz(x, s.radius, s.inner_radius, s.aperture, θ)
+end
+
 function Circle(sphere::AbstractSphere; y = sphere.origin[2])
     if abs(y - sphere.origin[2]) > sphere.radius
         return EmptyShape(sphere)
