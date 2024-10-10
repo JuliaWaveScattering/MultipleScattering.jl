@@ -65,7 +65,7 @@ function IsotropicHelmholtz(Dim::Int, radius::T;
 end
 
 function Helmholtz(Dim::Int, radius::T; 
-        origin::T = zeros(T,Dim), 
+        origin::AbstractVector{T} = zeros(T,Dim), 
         aperture::T = zero(T), 
         inner_radius::T = zero(T),
         orientation::T = zero(T)) where {T} 
@@ -231,16 +231,116 @@ function boundary_functions(circle::Sphere{T,2}) where T
     return x, y
 end
 
-function boundary_functions(circle::Helmholtz{T,2}) where T
+function boundary_functions(helm::Helmholtz{T,2}) where T
+
+    # width of the Helmholtz wall
+    w = helm.radius - helm.inner_radius
+
+    length_outer = 2pi*helm.radius - helm.aperture
+    length_inner = 2pi*helm.inner_radius - helm.aperture 
+    lengths = [0.0, w, length_outer, w, length_inner]
+    
+    length_total = sum(lengths)
+    cum_lengths = cumsum(lengths)
+
+    θ = helm.orientation
+    a = helm.aperture
+    xo = helm.origin
+
+    # Going to calculate the 4 points defining the aperture
+    vθ = [cos(θ), sin(θ)]
+    va = [-sin(θ), cos(θ)]
+    
+    b = sqrt(helm.inner_radius^2 - (a/2)^2)
+    ps = [
+        xo + b * vθ + a / 2 * va, 
+        xo + (b+w) * vθ + a / 2 * va, 
+        xo + (b+w) * vθ - a / 2 * va, 
+        xo + (b) * vθ - a / 2 * va
+    ]
+
+    # xs = hcat(ps...)[1,:]
+    # ys = hcat(ps...)[2,:]
+    # scatter(xs,ys)
+
+    # # c1 = Circle(helm.origin,helm.inner_radius)
+    # # c2 = Circle(helm.origin,helm.radius)
+
+    # # plot!(c1)
+    # # plot!(c2)
+
+    # x_fun = s -> ps[1][1] + s * cos(θ) 
+    # y_fun = s -> ps[1][2] + s * sin(θ) 
+
+    # plot!(x_fun, y_fun, 0.0, cum_lengths[2] - cum_lengths[1])
+
+
+    # θ1 = θ + a / (2*helm.radius) 
+    # x_fun = s -> xo[1] + helm.radius * cos(θ1 + s / helm.radius) 
+    # y_fun = s -> xo[2] + helm.radius * sin(θ1 + s / helm.radius) 
+
+    # plot!(x_fun, y_fun, 0.0, cum_lengths[3] - cum_lengths[2], linewidth = 2.0)
+
+    # x_fun = s -> ps[3][1] - s * cos(θ) 
+    # y_fun = s -> ps[3][2] - s * sin(θ) 
+
+    # plot!(x_fun, y_fun, 0.0, cum_lengths[4] - cum_lengths[3], linewidth = 2.0)
+
+    # θ1 = θ + a / (2*helm.inner_radius) 
+    # x_fun = s -> xo[1] + helm.inner_radius * cos(θ1 + s / helm.inner_radius) 
+    # y_fun = s -> xo[2] + helm.inner_radius * sin(θ1 + s / helm.inner_radius) 
+
+    # plot!(x_fun, y_fun, 0.0, cum_lengths[5] - cum_lengths[4], linewidth = 2.0, aspect_ratio = 1.0)
+
 
     function x(t)
         check_boundary_coord_range(t)
-        circle.radius * cos(2π * t) + origin(circle)[1]
+
+        # coord length
+        s = t * length_total
+
+        i = findlast(s .>= cum_lengths[1:4])
+        s = s - cum_lengths[i]
+
+        if i == 1
+            ps[1][1] + s * cos(θ)
+
+        elseif i == 2
+            θ1 = θ + a / (2*helm.radius)  
+            xo[1] + helm.radius * cos(θ1 + s / helm.radius) 
+
+        elseif i == 3 
+            ps[3][1] - s * cos(θ)    
+        else
+            θ1 = θ - a / (2*helm.inner_radius) 
+            xo[1] + helm.inner_radius * cos(θ1 - s / helm.inner_radius)
+        end    
     end
 
     function y(t)
         check_boundary_coord_range(t)
-        circle.radius * sin(2π * t) + origin(circle)[2]
+
+        # coord length
+        s = t * length_total
+
+        i = findlast(s .>= cum_lengths[1:4])
+        s = s - cum_lengths[i]
+        θ1 = θ + a / (2*helm.radius) 
+
+        if i == 1
+            ps[1][2] + s * sin(θ)
+
+        elseif i == 2
+            θ1 = θ + a / (2*helm.radius) 
+            xo[2] + helm.radius * sin(θ1 + s / helm.radius) 
+
+        elseif i == 3 
+            ps[3][2] - s * sin(θ)
+
+        else
+            θ1 = θ - a / (2*helm.inner_radius)
+            xo[2] + helm.inner_radius * sin(θ1 - s / helm.inner_radius)
+        end    
     end
 
     return x, y
