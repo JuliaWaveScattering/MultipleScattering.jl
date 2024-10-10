@@ -259,40 +259,6 @@ function boundary_functions(helm::Helmholtz{T,2}) where T
         xo + (b) * vθ - a / 2 * va
     ]
 
-    # xs = hcat(ps...)[1,:]
-    # ys = hcat(ps...)[2,:]
-    # scatter(xs,ys)
-
-    # # c1 = Circle(helm.origin,helm.inner_radius)
-    # # c2 = Circle(helm.origin,helm.radius)
-
-    # # plot!(c1)
-    # # plot!(c2)
-
-    # x_fun = s -> ps[1][1] + s * cos(θ) 
-    # y_fun = s -> ps[1][2] + s * sin(θ) 
-
-    # plot!(x_fun, y_fun, 0.0, cum_lengths[2] - cum_lengths[1])
-
-
-    # θ1 = θ + a / (2*helm.radius) 
-    # x_fun = s -> xo[1] + helm.radius * cos(θ1 + s / helm.radius) 
-    # y_fun = s -> xo[2] + helm.radius * sin(θ1 + s / helm.radius) 
-
-    # plot!(x_fun, y_fun, 0.0, cum_lengths[3] - cum_lengths[2], linewidth = 2.0)
-
-    # x_fun = s -> ps[3][1] - s * cos(θ) 
-    # y_fun = s -> ps[3][2] - s * sin(θ) 
-
-    # plot!(x_fun, y_fun, 0.0, cum_lengths[4] - cum_lengths[3], linewidth = 2.0)
-
-    # θ1 = θ + a / (2*helm.inner_radius) 
-    # x_fun = s -> xo[1] + helm.inner_radius * cos(θ1 + s / helm.inner_radius) 
-    # y_fun = s -> xo[2] + helm.inner_radius * sin(θ1 + s / helm.inner_radius) 
-
-    # plot!(x_fun, y_fun, 0.0, cum_lengths[5] - cum_lengths[4], linewidth = 2.0, aspect_ratio = 1.0)
-
-
     function x(t)
         check_boundary_coord_range(t)
 
@@ -325,7 +291,6 @@ function boundary_functions(helm::Helmholtz{T,2}) where T
 
         i = findlast(s .>= cum_lengths[1:4])
         s = s - cum_lengths[i]
-        θ1 = θ + a / (2*helm.radius) 
 
         if i == 1
             ps[1][2] + s * sin(θ)
