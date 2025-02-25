@@ -34,9 +34,6 @@ end
         @test L1 == 1
     end
 
-    # import EffectiveWaves: regular_translation_matrix
-    # import EffectiveWaves: outgoing_translation_matrix
-
     # Test 3D outgoing translation matrix
     ω = rand() + 0.1
     medium = Acoustic(3; ρ = 1.0, c = 1.0)
