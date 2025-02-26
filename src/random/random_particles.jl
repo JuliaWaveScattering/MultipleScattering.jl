@@ -87,7 +87,8 @@ or does not lies completely in box.
 When passing particle_shapes::Vector{Shape} we assume each element is equally likely to occur. Repeating the same shape will lead to it being placed more often.
 """
 function random_particles(particle_medium::P, particle_shape::S, region_shape::Shape{Dim}, N::Int;
-        seed=Random.make_seed(),
+        seed = -1,
+        randgen = (seed == -1) ? Random.MersenneTwister() : Random.MersenneTwister(seed),
         verbose::Bool = false,
         separation_ratio = 1.0, # Min distance between particle centres relative to their outer radiuses.
         max_attempts_to_place_particle::Int = 3000, # Maximum number of attempts to place a particle
@@ -105,7 +106,6 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
     end
 
     # Create pseudorandom device with specified seed
-    randgen = MersenneTwister(seed)
 
     box = bounding_box(region_shape)
 
