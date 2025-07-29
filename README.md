@@ -122,7 +122,7 @@ This library was originally restructured from one written by
 
 Contributions are welcome, and the aim is to expand this package to elasticity and electromagnetism.
 
-To cite this work please use:
+To cite this work first choose a version / release (ex: 0.21.1) then please use:
 
 Gower, Artur L., and J. Deakin. "MultipleScattering. jl: A Julia library for simulating, processing, and plotting multiple scattering of waves."  v0.1.21. Github. (2025): https://doi.org/10.5281/zenodo.1213225
 
