@@ -124,12 +124,12 @@ Contributions are welcome, and the aim is to expand this package to elasticity a
 
 To cite this work first choose a version / release (ex: 0.21.1) then please use:
 
-Gower, Artur L., and J. Deakin. "MultipleScattering. jl: A Julia library for simulating, processing, and plotting multiple scattering of waves."  v0.1.21. Github. (2025): https://doi.org/10.5281/zenodo.1213225
+Gower, Artur L., and J. Deakin. "MultipleScattering.jl" v0.1.21. Github. (2025): https://doi.org/10.5281/zenodo.1213225
 
 or for bibtex:
 
 @software{gower2020multiplescattering,
-  title={MultipleScattering. jl: A Julia library for simulating, processing, and plotting multiple scattering of waves},
+  title={MultipleScattering.jl},
   author={Gower, Artur L and Deakin, J},
   version={v0.21.1},
   doi={10.5281/zenodo.1213225},
