@@ -132,6 +132,7 @@ or for bibtex:
   title={MultipleScattering. jl: A Julia library for simulating, processing, and plotting multiple scattering of waves},
   author={Gower, Artur L and Deakin, J},
   version={v0.21.1},
+  doi={10.5281/zenodo.1213225},
   url={github.com/JuliaWaveScattering/MultipleScattering.jl},
   year={2025}
 }
