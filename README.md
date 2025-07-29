@@ -128,7 +128,7 @@ Gower, Artur L., and J. Deakin. "MultipleScattering.jl" v0.1.21. Github. (2025):
 
 or for bibtex:
 
-@software{gower2020multiplescattering,
+@software{gower2025multiplescattering,
   title={MultipleScattering.jl},
   author={Gower, Artur L and Deakin, J},
   version={v0.21.1},
