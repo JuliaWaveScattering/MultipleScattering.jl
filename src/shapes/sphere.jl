@@ -1,7 +1,6 @@
 """
 All abstract spheres will have an origin and a radius 
 """
-
 abstract type AbstractSphere{Dim} <: Shape{Dim} end
 
 """
@@ -9,7 +8,6 @@ abstract type AbstractSphere{Dim} <: Shape{Dim} end
 
 A [`Shape`](@ref) where boundary is a fixed distance from the origin. In 2D this is a circle, in 3D the usual sphere, and in higher dimensions if difficult to visualise.
 """
-
 struct Sphere{T,Dim} <: AbstractSphere{Dim}
     origin::SVector{Dim,T}
     radius::T
@@ -20,7 +18,6 @@ end
 
 A [`Shape`](@ref) which represents a 2D thin-walled isotropic Helmholtz resonator.
 """
-
 struct IsotropicHelmholtz{T,Dim} <: AbstractSphere{Dim}
     origin::SVector{Dim,T}
     radius::T
@@ -32,7 +29,6 @@ end
 
 A [`Shape`](@ref) which represents a general 2D Helmholtz resonator.
 """
-
 struct Helmholtz{T,Dim} <: AbstractSphere{Dim}
     origin::SVector{Dim,T}
     radius::T

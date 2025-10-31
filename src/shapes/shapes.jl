@@ -60,6 +60,7 @@ include("box.jl")
 include("sphere.jl")
 include("halfspace.jl")
 include("plate.jl")
+include("polygon.jl")
 include("time_of_flight.jl")
 include("time_of_flight_from_point.jl")
 include("empty_shape.jl")
@@ -78,7 +79,7 @@ function points_in_shape(region::Shape{2};
 
     rect = bounding_box(region)
 
-    #Size of the step in x and y direction
+    # Size of the step in x and y direction
     x_vec_step = rect.dimensions ./ [xres, yres]
     bl = bottomleft(rect)
     x_vec = [SVector{2}(bl + x_vec_step .* [i,j]) for i=0:xres, j=0:yres][:]

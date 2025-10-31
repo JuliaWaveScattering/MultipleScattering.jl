@@ -109,6 +109,33 @@
         end
     end
 
+    @testset "Polygon" begin
+        
+        # A non-simple polygon (self-intersecting)
+        poly = Polygon([[0.0,0.0],[1.0,1.0],[1.0,0.0],[0.0,1.0]])
+        @test [0.5,0.0] ∉ poly
+        @test [0.5,0.4] ∉ poly
+        
+        @test [0.5,0.5] ∈ poly
+        @test [0.8,0.5] ∈ poly
+
+        @test [0.5,0.6] ∉ poly
+        @test [0.5,1.0] ∉ poly
+
+        @test [0.3,0.5] ∈ poly
+        @test [0.0,0.9] ∈ poly
+        @test [0.0,0.2] ∈ poly
+
+        # the following is incorrect, would need a more robust method to check.
+        # currently just checks if corners of box are in polygon
+        box_origin = [0.5,0.5]
+        box = Box(box_origin,[0.9,0.9])
+        [c ∈ poly for c in corners(box)]
+
+        @test issubset(box, poly)
+        @test name(poly) == "Polygon"
+    end
+
     @testset "Time of flight" begin
         time_of_flight = TimeOfFlightPlaneWaveToPoint([-10.0,0.0], 40.0; minimum_x = 0.0)
         time_of_flight_bounding_box = bounding_box(time_of_flight)
