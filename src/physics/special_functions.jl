@@ -7,6 +7,9 @@ export complex_legendre_array
 export spherical_harmonics, spherical_harmonics_dθ
 export cartesian_to_radial_coordinates, radial_to_cartesian_coordinates
 export cartesian_to_spherical_coordinates, spherical_to_cartesian_coordinates
+
+export radial_to_cartesian_transform, cartesian_to_radial_transform
+export radial_to_cartesian_vector, cartesian_to_radial_vector
 export spherical_to_cartesian_transform, cartesian_to_spherical_transform
 export spherical_to_cartesian_vector, cartesian_to_spherical_vector
 export atan
@@ -348,7 +351,37 @@ function cartesian_to_spherical_transform(xyz::SVector{3})
     ]
 
     return M
+end
+
+function cartesian_to_radial_transform(xy::SVector{2})
+    r, θ = cartesian_to_radial_coordinates(xy)
+    M = [
+        [cos(θ)  sin(θ)];
+        [-sin(θ)  cos(θ)]
+    ]
+
+    return M
+end
+
+function radial_to_cartesian_transform(rθ::SVector{2})
+    r, θ = rθ
+    M = [
+        [cos(θ)  sin(θ)];
+        [-sin(θ)  cos(θ)]
+    ]
+
+    return M
 end   
+
+function radial_to_cartesian_vector(v::AbstractVector, θs::AbstractVector)
+
+    return radial_to_cartesian_transform(θs) * v
+end   
+
+function cartesian_to_radial_vector(v::AbstractVector, xs::AbstractVector) 
+
+    return cartesian_to_radial_transform(xs) * v
+end
 
 function spherical_to_cartesian_vector(v::SVector{3}, rθφ::SVector{3})
 
