@@ -366,8 +366,8 @@ end
 function radial_to_cartesian_transform(rθ::SVector{2})
     r, θ = rθ
     M = [
-        [cos(θ)  sin(θ)];
-        [-sin(θ)  cos(θ)]
+        [cos(θ)  -sin(θ)];
+        [sin(θ)  cos(θ)]
     ]
 
     return M
