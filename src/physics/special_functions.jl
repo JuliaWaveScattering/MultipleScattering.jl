@@ -321,6 +321,8 @@ end
 
 cartesian_to_radial_coordinates(x::AbstractVector) = cartesian_to_radial_coordinates(SVector(x...))
 radial_to_cartesian_coordinates(θ::AbstractVector) = radial_to_cartesian_coordinates(SVector(θ...))
+cartesian_to_radial_transform(x::AbstractVector) = cartesian_to_radial_transform(SVector(x...))
+radial_to_cartesian_transform(θ::AbstractVector) = radial_to_cartesian_transform(SVector(θ...))
 
 cartesian_to_spherical_coordinates(x::AbstractVector) = cartesian_to_radial_coordinates(x)
 spherical_to_cartesian_coordinates(θ::AbstractVector) = radial_to_cartesian_coordinates(θ)
