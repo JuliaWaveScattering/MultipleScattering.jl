@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Near-surface backscattering · MultipleScattering.jl</title><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.png" alt="MultipleScattering.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">MultipleScattering.jl</a></span></div><form class="docs-search" action="../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="../../../manual/intro/">Introduction</a></li><li><a class="tocitem" href="../../../manual/source/">RegularSources</a></li><li><a class="tocitem" href="../../../manual/shapes/">Shapes</a></li><li><a class="tocitem" href="../../../manual/particles/">Particles</a></li><li><a class="tocitem" href="../../../manual/time_response/">Time response</a></li><li><a class="tocitem" href="../../../manual/plot/">Plotting</a></li><li><a class="tocitem" href="../../../manual/new_types/">New particles</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../../library/base/">Base</a></li><li><a class="tocitem" href="../../../library/acoustics/">Acoustic</a></li><li><a class="tocitem" href="../../../library/random/">Random</a></li></ul></li><li><a class="tocitem" href="../../../maths/README/">Theory</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../../README/">Overview</a></li><li><a class="tocitem" href="../../helmholtz-resonator/resonator/">Helmholtz resonator</a></li><li><a class="tocitem" href="../../particles_in_circle/README/">Random particles in a circle</a></li><li><a class="tocitem" href="../../box_size/README/">Box size</a></li><li><a class="tocitem" href="../../hankel_convergence/README/">Convergence when increasing the number of Hankel functions</a></li><li><a class="tocitem" href="../../moments/README/">StatisticalMoments</a></li><li class="is-active"><a class="tocitem" href>Near-surface backscattering</a><ul class="internal"><li><a class="tocitem" href="#Generate-a-large-material-filled-with-particles."><span>Generate a large material filled with particles.</span></a></li><li><a class="tocitem" href="#Calculate-backscattering-for-different-quantity-of-particles"><span>Calculate backscattering for different quantity of particles</span></a></li><li><a class="tocitem" href="#Calculate-backscattering-in-time"><span>Calculate backscattering in time</span></a></li><li><a class="tocitem" href="#Calculate-backscattering-only-from-near-surface-particles"><span>Calculate backscattering only from near-surface particles</span></a></li></ul></li><li><a class="tocitem" href="../../random_particles/README/">Simple random particles example</a></li><li><a class="tocitem" href="../../time_response_single_particle/README/">Time response from single particle</a></li><li><a class="tocitem" href="../../two_particles/README/">Two particles</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Near-surface backscattering</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Near-surface backscattering</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/JuliaWaveScattering/MultipleScattering.jl/blob/master/docs/src/example/near_surface_backscattering/README.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Near-surface-backscattering"><a class="docs-heading-anchor" href="#Near-surface-backscattering">Near-surface backscattering</a><a id="Near-surface-backscattering-1"></a><a class="docs-heading-anchor-permalink" href="#Near-surface-backscattering" title="Permalink"></a></h1><p>Near-surface backscattering is a method of accurately calculating the backscattering from an infinite halfspace. For just the code see <a href="../backscattering.jl">backscattering.jl</a> First, let us see why it is difficult to approximate the scattering from a halfspace filled with particles. That is, let us find out how many particles are required before the backscattering converges.</p><h2 id="Generate-a-large-material-filled-with-particles."><a class="docs-heading-anchor" href="#Generate-a-large-material-filled-with-particles.">Generate a large material filled with particles.</a><a id="Generate-a-large-material-filled-with-particles.-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-a-large-material-filled-with-particles." title="Permalink"></a></h2><pre><code class="language-julia hljs">using MultipleScattering
+
+host_medium = Acoustic(1.0, 1.0, 2)
+
+radius = 0.8
+volfrac = 0.10
+max_width = 70.
+
+particle_medium = Acoustic(0.2, 0.1, 2)
+particle_shape = Circle(radius)
+
+bottomleft = [0.,-max_width]
+topright = [max_width,max_width]
+
+shape = Box([bottomleft,topright])
+particles = random_particles(particle_medium, particle_shape; region_shape = shape, volume_fraction = volfrac)</code></pre><p>We send an incoming harmonic plane wave and receive the backscattering at <code>x</code>:</p><pre><code class="language-julia hljs">using Plots
+pyplot(linewidth=2)
+
+x = [-10.,0.]
+source =  plane_source(host_medium; position = x,
+        direction = [1.0,0.],
+        amplitude = 1.0)
+
+plot(particles)
+scatter!([x[1]],[x[2]], lab=&quot;&quot;)
+annotate!([(x[1], x[2] -max_width/10., &quot;Receiver&quot;)])
+plot!(shape, linecolor = :red)</code></pre><p><img src="../big_box.png" alt="The largest quantity of particles used"/></p><h2 id="Calculate-backscattering-for-different-quantity-of-particles"><a class="docs-heading-anchor" href="#Calculate-backscattering-for-different-quantity-of-particles">Calculate backscattering for different quantity of particles</a><a id="Calculate-backscattering-for-different-quantity-of-particles-1"></a><a class="docs-heading-anchor-permalink" href="#Calculate-backscattering-for-different-quantity-of-particles" title="Permalink"></a></h2><p>We will shave off particles on the right of this group of particles (above), and then calculate the backscattered waves for a range of angular frequencies <code>ωs</code>.</p><pre><code class="language-julia hljs">ωs = collect(0.01:0.01:1.)
+widths = 10.:5.:max_width
+num_particles = zeros(length(widths))
+
+results = map(eachindex(widths)) do i
+    bottomleft = [0.,-widths[i]]
+    topright = [widths[i],widths[i]]
+    shape = Box([bottomleft, topright])
+
+    ps = filter(p -&gt; p ⊆ shape, particles) # select particles that are inside shape
+    num_particles[i] = Int(length(ps))
+
+    simulation = FrequencySimulation(ps, source)
+    run(simulation, x, ωs)
+end
+
+backscattered_waves = field.(results)
+
+M = length(backscattered_waves)
+bM = backscattered_waves[M] # backscattering from largest material
+differences = [norm(b - bM) for b in backscattered_waves[1:(M-1)]]./norm(bM)
+
+plot_converge = plot(num_particles[1:(M-1)], differences,
+    xlabel = &quot;number of particles&quot;, yguide =&quot;error %&quot;,
+    label=&quot;frequency convergence&quot;
+)</code></pre><p><img src="../freq_convergence.png" alt="The convergence of the response in frequency, when increasing the number of particles"/></p><p>The graph shows the rate of convergence, that is, how much the backscattering changes when including more particles (making the material deeper). The graph has not clearly converged, so we can only conclude that more than 400 particles are needed to accurately approximate the backscattering from an infinite halfspace.</p><p>We can accelerate this convergence by considering backscattering in time.</p><h2 id="Calculate-backscattering-in-time"><a class="docs-heading-anchor" href="#Calculate-backscattering-in-time">Calculate backscattering in time</a><a id="Calculate-backscattering-in-time-1"></a><a class="docs-heading-anchor-permalink" href="#Calculate-backscattering-in-time" title="Permalink"></a></h2><pre><code class="language-julia hljs">time_simulations = frequency_to_time.(results)
+receiver = results[1].x[1]
+times = 2*(widths .- receiver[1]) # time it takes for an incident plane wave to reach the furthest particles and then return to the receiver
+
+plot()
+for i in [1,3,6,9,12,13]
+    plot!(time_simulations[i],label=&quot;$(num_particles[i]) particles&quot;
+        , xlims=(0,maximum(times)+10.), ylims=(-0.2,0.1)
+        , xticks = [0.; 30.; times]
+    )
+end
+gui()</code></pre><p><img src="../time_response.png" alt="The responses in time for different quantity of particles"/></p><p>We see that the responses in time diverge from each other more and more as time goes by. Meaning that if we only calculate the response for a short amount of time <code>34</code>, then the convergence will be accelerated.</p><pre><code class="language-julia hljs">time_vec = 0.:pi:34.2
+time_results = frequency_to_time.(results; t_vec = time_vec, impulse = GaussianImpulse(maximum(ωs)))
+
+backscattered_waves = field.(time_results)
+bM = backscattered_waves[M] # backscattering from largest material
+differences = [norm(b - bM) for b in backscattered_waves[1:(M-1)]]./norm(bM)
+plot(plot_converge)
+plot!(num_particles[1:(M-1)], differences, xlabel = &quot;number of particles&quot;, yguide =&quot;error %&quot;, label=&quot;time convergence&quot;)</code></pre><p><img src="../compare_convergence.png" alt="Compare converges for responses in time and responses in frequency"/></p><p>The convergence of the time response, for time <code>0&lt;t&lt;34</code>, is much faster. In fact, less than 100 particles are needed to accurately approximate the backscattering from an infinite halfspace. The reason we don&#39;t show these as log plots is because there is a small constant error (about <code>0.01%</code>) due to the discrete Fourier transform. This error is caused by the Gibbs phenomena and by assuming the backscattering is periodic (when it is not). Both these errors are well understood and can be controlled.</p><h2 id="Calculate-backscattering-only-from-near-surface-particles"><a class="docs-heading-anchor" href="#Calculate-backscattering-only-from-near-surface-particles">Calculate backscattering only from near-surface particles</a><a id="Calculate-backscattering-only-from-near-surface-particles-1"></a><a class="docs-heading-anchor-permalink" href="#Calculate-backscattering-only-from-near-surface-particles" title="Permalink"></a></h2><p>This last step is about efficiency. We want to only include particle which contribute to the backscattering for short time intervals. To do this we created a region called <code>TimeOfFlightPlaneWaveToPoint(listener,time)</code>, where every particle in this shape takes less than <code>time</code> for their first scattered wave (due to an incident plane wave) to return to the <code>listener.</code>  More precisely, if <code>listener = (lx,ly)</code>, then every point <code>(x,y)</code> inside this shape satisfies: <code>x-lx+((x-lx)^2+(y-ly)^2)^(1/2)&lt;time</code> and <code>x&gt;0</code>.</p><p>For example, look at the largest quantity of particle we used</p><pre><code class="language-julia hljs">listener_position = [-10.,0.]
+shape = TimeOfFlightPlaneWaveToPoint(listener_position,80.0)
+scatter([listener_position[1]],[listener_position[2]]);
+annotate!([(listener_position[1], listener_position[2] -max_width/10., &quot;Receiver&quot;)])
+plot!.(particles);
+plot!(shape)</code></pre><p><img src="../time_of_flight_shape.png" alt="Shows the particles in the shape TimeOfFlightPlaneWaveToPoint"/></p><p>For time <code>0&lt;t&lt;80</code> the backscattering from these particles is the same as an infinite halfspace filled with particles. To achieve this result we need only the particles inside the shape <code>TimeOfFlightPlaneWaveToPoint</code> (region with the red outline). The particles outside this shape were unnecessary. To see this inaction:</p><pre><code class="language-julia hljs">times = 40.:15.:80.
+near_surface_simulations = map(times) do t
+    shape = TimeOfFlightPlaneWaveToPoint(receiver,t) # choose a material with particles only in the near surface region
+    ps = filter(p -&gt; p ⊆ shape, particles) # select particles that are inside shape
+    run(FrequencySimulation(ps, source), x, ωs) # calculate backscattering
+end
+
+time_near_simulations = frequency_to_time.(near_surface_simulations; impulse = GaussianImpulse(maximum(ωs)))
+
+plot()
+for i in 1:length(times)
+    plot!(time_near_simulations[i],label=&quot;time of flight $(times[i])&quot;
+        , xlims=(0,maximum(times)+10.), ylims=(-0.6,0.3)
+        , xticks = [0.; times], title=&quot;&quot;
+    )
+end
+gui()</code></pre><p><img src="../time_of_flight_response.png" alt="Response from particles in the shapes TimeOfFlightPlaneWaveToPoint"/></p><p>Note the incident pulse has a thickness of about <code>10</code> in time, which is why the <code>time of flight 40</code> diverges from the other curves slightly before time <code>40</code>, and likewise for the other curves.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../moments/README/">« StatisticalMoments</a><a class="docs-footer-nextpage" href="../../random_particles/README/">Simple random particles example »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 7 November 2025 15:27">Friday 7 November 2025</span>. Using Julia version 1.5.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
