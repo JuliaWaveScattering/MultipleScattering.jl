@@ -47,7 +47,6 @@
 
     end
 
-
     @testset "Comparisons" begin
 
         circle = Sphere((1.0,3.0),2.0)
@@ -55,24 +54,74 @@
         circle_congruent = Sphere((4.0,7.0),2.0)
         rect = Box((1.0,2.0),(2.0,4.0))
 
-        # Construct three particles, with two the same
+        iso_resonator = IsotropicHelmholtz((1.0, 3.0), 2.0, 0.2)
+        iso_resonator_dif_aperture = IsotropicHelmholtz((1.0, 3.0), 2.0, 0.1)
+        iso_resonator_identical = IsotropicHelmholtz((1.0, 3.0), 2.0, 0.2)
+        iso_resonator_congruent = IsotropicHelmholtz((4.0, 7.0), 2.0, 0.2)
+
+        resonator = Helmholtz((1.0, 3.0), 2.0, 0.2, 0.01, -1.3)
+        resonator_kws = Helmholtz((1.0, 3.0), 2.0; inner_radius=0.2, aperture=0.1, orientation=-1.3)
+        resonator_dif_aperture = Helmholtz((1.0, 3.0), 2.0; aperture=0.1)
+        resonator_identical = Helmholtz((1.0, 3.0), 2.0; orientation=-1.3, inner_radius=0.2, aperture=0.01)
+        resonator_congruent = Helmholtz((4.0, 7.0), 2.0; orientation=-1.3, inner_radius=0.2, aperture=0.01)
+
+        # Construct four particles, with two the same
         p = Particle(a2,circle)
         p_reference = p
         p_identical = Particle(a2,circle_identical)
-        p_different = Particle(a2,rect)
+        p_different = Particle(a2, rect)
         p_congruent = Particle(a2,circle_congruent)
+
+        # Construct three isotropic resonator particles
+        p_iso_r = Particle(a2, iso_resonator)
+        p_iso_r_reference = p_iso_r
+        p_iso_r_dif_aperture = Particle(a2, iso_resonator_dif_aperture)
+        p_iso_r_identical = Particle(a2, iso_resonator_identical)
+        p_iso_r_different = p_different
+        p_iso_r_congruent = Particle(a2, iso_resonator_congruent)
+
+        # Construct three resonator particles
+        pr = Particle(a2, resonator)
+        pr_reference = pr
+        pr_dif_aperture = Particle(a2, resonator_dif_aperture)
+        pr_identical = Particle(a2, resonator_identical)
+        pr_different = p_different
+        pr_congruent = Particle(a2, resonator_congruent)
 
         # Test comparison operators
         @test p == p_identical
         @test p != p_different
         @test !(p == p_different)
+        @test pr != pr_dif_aperture
+        @test !(pr == pr_dif_aperture)
+        @test p != pr
+        @test !(p == pr)
+        @test p != p_iso_r
+        @test !(p == p_iso_r)
         @test iscongruent(p, p_congruent)
         @test !iscongruent(p, p_different)
+        @test !iscongruent(p, pr)
+        @test p_iso_r == p_iso_r_identical
+        @test p_iso_r != p_iso_r_different
+        @test !(p_iso_r == p_iso_r_different)
+        @test p_iso_r != pr
+        @test !(p_iso_r == pr)
+        @test iscongruent(p_iso_r, p_iso_r_congruent)
+        @test !iscongruent(p_iso_r, p_iso_r_dif_aperture)
+        @test !iscongruent(p_iso_r, p_iso_r_different)
+        @test pr == pr_identical
+        @test pr != pr_different
+        @test !(pr == pr_different)
+        @test iscongruent(pr, pr_congruent)
+        @test !iscongruent(pr, pr_dif_aperture)
+        @test !iscongruent(pr, pr_different)
 
         # Check that Julia fallback === works
         @test p === p_reference
+        @test pr === pr_reference
         # Particles are immutable, so are compared at the bit levelS
         @test p === p_identical
+        @test pr === pr_identical
 
         # Construct two almost identical particles
         p1 = Particle(a, Sphere((0.0,0.0),1.0))
@@ -83,7 +132,6 @@
         @test !isequal(p1,p1b)
 
     end
-
 
     @testset "Plot" begin
         # Just run it to see if we have any errors (yes thats a very low bar)

@@ -47,7 +47,7 @@ end
 import Base.run
 
 run(particles::AbstractParticles, source::AbstractSource, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation(particles,source), x, ω; kws...)
-
+run(particle::AbstractParticle, source::AbstractSource, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation([particle],source), x, ω; kws...)
 run(source::AbstractSource, x::Union{Shape,Vector}, ω; kws...) = run(FrequencySimulation(source), x, ω; kws...)
 
 function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ωs::AbstractVector{<:Number}=eltype(x)[];
@@ -60,39 +60,67 @@ function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ω::Number;
     run(sim,[x],[ω]; kws...)
 end
 
+# Function to check if particles are overlapping: return pairs of overlapping particles
+function overlapping_pairs(origins,radii)
+    nb_particles = length(radii)
+    output = Vector{Int64}[]
+    for i=1:nb_particles
+      for j=i+1:nb_particles
+          if norm(origins[i] - origins[j]) < (radii[i] + radii[j])
+                push!(output,[i,j])
+          end
+      end
+    end
+
+    return output
+end
+
+function overlapping_pairs(p::AbstractParticles)
+    origins = origin.(p)
+    radii = outer_radius.(p)
+    overlapping_pairs(origins,radii)
+end
+
 # Main run function, all other run functions use this
 function run(sim::FrequencySimulation, x_vec::Vector{V}, ω::Number;
         basis_order::Integer = 5,
         only_scattered_waves::Bool = false, kws...) where V<:AbstractVector
 
+    # Return an error if any particles are overlapping
+    overlapping_pairs_vec = overlapping_pairs(sim.particles)
+    if !isempty(overlapping_pairs_vec)
+        nb_overlaps = size(overlapping_pairs_vec,1)
+        error("Error: particles are overlapping ($nb_overlaps overlaps). The function overlapping_pairs(p::AbstractParticles) can be used to obtain the list of overlapping pairs.")
+    end
+
     Dim = spatial_dimension(sim)
-    FieldDim = field_dimension(sim)
+    # FieldDim = field_dimension(sim)
 
     x_vec = [SVector{Dim}(x) for x in x_vec]
 
     # return just the source if there are no particles
-    if isempty(sim.particles)
+    field_vec = if isempty(sim.particles)
         f = field(sim.source)
-        field_vec = f.(x_vec,ω)
+        f.(x_vec,ω)
     else
         # Calculate the outgoing basis coefficients around each particle, this is where most of the maths happens
         a_vec = basis_coefficients(sim, ω; basis_order=basis_order)
 
         if only_scattered_waves # remove source wave
             sim = FrequencySimulation(sim.particles,
-                constant_source(sim.source.medium, 0)
+                constant_source(sim.source.medium)
             )
         end
 
         # Evaluate the total field at the requested x positions
-        field_vec = field(sim, ω, x_vec, a_vec)
+        field(sim, ω, x_vec, a_vec)
     end
 
     # Construct results object
-    T = real(eltype(field_vec))
-    field_vec = reshape(map(f->SVector{FieldDim,Complex{T}}(f), field_vec), :, 1)
-    return FrequencySimulationResult{T,Dim,FieldDim}(field_vec, x_vec, Vector([ω]))
-
+    # T = real(eltype(field_vec))
+    field_vec = reshape(map(f->SVector(f...), field_vec), :, 1)
+ 
+    return FrequencySimulationResult(field_vec, x_vec, Vector([ω]))
 end
 
 function run(sim::FrequencySimulation, x_vec::Vector{V}, ωs::AbstractArray=[];
@@ -194,7 +222,11 @@ function basis_coefficients(sim::FrequencySimulation{Dim,P}, ω::Number; basis_o
 
     # Get forcing vector from source, forms the right hand side of matrix equation to find basis_coefficients
     source_coefficient = regular_spherical_coefficients(sim.source)
-    forcing = reduce(vcat, [source_coefficient(basis_order,origin(p),ω) for p in sim.particles])
+    forcing = reduce(vcat, [source_coefficient(basis_order,origin(p),ω)[:] for p in sim.particles])
+    
+    # forcing = reduce(vcat, [
+    #     (source_coefficient(basis_order,origin(p),ω) |> transpose)[:]
+    # for p in sim.particles])
 
     # Find scattering coefficients by solving this forcing
     a = (S + I) \ forcing
@@ -207,16 +239,19 @@ function basis_coefficients(sim::FrequencySimulation{Dim,P}, ω::Number; basis_o
     return a
 end
 
-function field(sim::FrequencySimulation{Dim,P}, ω::Number, x_vec::Vector{V}, a_vec) where {Dim,P,T<:Number,V <: AbstractArray{T}}
+function field(sim::FrequencySimulation{Dim,P}, ω::Number, x_vec::Vector{V}, a_vec) where {Dim, P<:PhysicalMedium, T<:Number, V<:AbstractArray{T}}
 
     N = basislength_to_basisorder(P,size(a_vec,1))
     num_particles = length(sim.particles)
     basis = outgoing_basis_function(sim.source.medium, ω)
 
+    FieldDim = field_dimension(sim)
+
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i
             p = sim.particles[i]
-            sum(a_vec[:,i] .* basis(N, x-origin(p)))
+            # basis(N, x-origin(p)) * (reshape(a_vec[:,i],FieldDim,:) |> transpose)[:]
+            basis(N, x-origin(p)) * a_vec[:,i]
         end
     end
     map(x_vec) do x

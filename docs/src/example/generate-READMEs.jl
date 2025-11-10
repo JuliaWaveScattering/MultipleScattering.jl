@@ -1,6 +1,6 @@
 # find julia files to be converted into README.md
 
-function gernerate_README(examplestoconvert, folder)
+function generate_README(examplestoconvert, folder)
 
     ps = map(examplestoconvert) do str
         fs = filter(s -> split(s, ".")[end] == "jl", readdir(folder*str))

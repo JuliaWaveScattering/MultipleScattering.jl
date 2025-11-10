@@ -17,11 +17,11 @@ vector.
 """
 function get_t_matrices(medium::PhysicalMedium, particles::AbstractParticles, ω::AbstractFloat, basis_order::Integer)::Vector
 
-    t_matrices = Vector{AbstractMatrix}(undef,length(particles))
+    t_matrices = Vector{AbstractMatrix}(undef, length(particles))
 
     # Vector of particles unique up to congruence, and the respective T-matrices
-    unique_particles = Vector{AbstractParticle}(undef,0)
-    unique_t_matrices = Vector{AbstractMatrix}(undef,0)
+    unique_particles = Vector{AbstractParticle}(undef, 0)
+    unique_t_matrices = Vector{AbstractMatrix}(undef, 0)
 
     for p_i in eachindex(particles)
         p = particles[p_i]

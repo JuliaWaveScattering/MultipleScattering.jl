@@ -30,7 +30,46 @@ using Test, LinearAlgebra
         @test 2 * diffsbessel(shankelh1,n,x) ≈ shankelh1(n-1, x) - (shankelh1(n, x) + x*shankelh1(n+1, x))/x
 
         xs = 0.01:0.9:11.0;
+        zs = xs + (collect(xs) .* 1im)
         n = 15; ns = 0:n
+
+        ε = eps(Float64) * 10^7
+
+        maxerror = [
+            abs(diffsbesselj(n,x) - (sbesselj(n,x+ε) - sbesselj(n,x-ε)) / (2ε)) / abs(diffsbesselj(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-4
+
+        maxerror = [
+            abs(diffshankelh1(n,x) - (shankelh1(n,x+ε) - shankelh1(n,x-ε)) / (2ε)) / abs(diffshankelh1(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-5
+
+        maxerror = [
+            abs(diff2sbesselj(n,x) - (diffsbesselj(n,x+ε) - diffsbesselj(n,x-ε)) / (2ε)) / abs(diff2sbesselj(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-4
+
+        maxerror = [
+            abs(diff2shankelh1(n,x) - (diffshankelh1(n,x+ε) - diffshankelh1(n,x-ε)) / (2ε)) / abs(diff2shankelh1(n,x))  
+        for n in ns, x in zs] |> maximum    
+    
+        @test maxerror < 1e-5
+        
+        maxerror = [
+            abs(diff3sbesselj(n,x) - (diff2sbesselj(n,x+ε) - diff2sbesselj(n,x-ε)) / (2ε)) / abs(diff3sbesselj(n,x))
+        for n in ns, x in zs] |> maximum    
+
+        @test maxerror < 1e-4
+
+        maxerror = [
+            abs(diff3shankelh1(n,x) - (diff2shankelh1(n,x+ε) - diff2shankelh1(n,x-ε)) / (2ε)) / abs(diff3shankelh1(n,x))  
+        for n in ns, x in zs] |> maximum    
+    
+        @test maxerror < 1e-5
 
         # Compare with spherical bessel from GSL, which can only accept real arguments..
         errs = map(xs) do x
@@ -68,6 +107,19 @@ using Test, LinearAlgebra
 
         @test condon_phase .* sf_legendre_array(GSL_SF_LEGENDRE_SPHARM, l_max, x)[1:length(ls)] ≈ sph_factors .* Plm_arr
 
+        # test for the complex case
+        y = rand(1)[1] * 0.99
+        z = x + y*1im
+
+        # a few complex associated legendre functions
+        Plm_arr_complex = [1,conj(sqrt(1-z^2))/2,z,-sqrt(1-z^2),conj(1-z^2)/8,conj(z*sqrt(1-z^2))/2,(3z^2-1)/2,-3z*sqrt(1-z^2),3*(1-z^2)]
+
+        ls, ms = spherical_harmonics_indices(l_max)
+
+        norm_factors = sqrt.((2 .* ls .+ 1) ./ (4pi) .* factorial.(ls - ms) ./ factorial.(ls + ms))
+
+        @test complex_legendre_array(l_max, z) ≈ Plm_arr_complex .* norm_factors
+
     end
 
     @testset "Spherical harmonics" begin
@@ -78,7 +130,21 @@ using Test, LinearAlgebra
 
         ls, ms = spherical_harmonics_indices(l_max)
         sphs = spherical_harmonics(l_max, θ, φ)
+        sphs_dθ = spherical_harmonics_dθ(l_max, θ, φ)
 
+        @test sphs_dθ[1] == Complex{Float64}(0)
+        
+        h = 1e5 * eps(Float64) 
+        θ1 = θ - h
+        sph1s = spherical_harmonics(l_max, θ1, φ)
+
+        θ2 = θ + h
+        sph2s = spherical_harmonics(l_max, θ2, φ)
+
+        sphs_dθ_approx = (sph2s - sph1s) ./ (2h)
+
+        @test maximum(abs.(sphs_dθ_approx - sphs_dθ)[2:end] ./ abs.(sphs_dθ[2:end])) < 5e-4
+        
         @test maximum(i - lm_to_spherical_harmonic_index(ls[i],ms[i]) for i in eachindex(ls)) == 0
 
         # check special case l == abs(m)
@@ -115,6 +181,10 @@ using Test, LinearAlgebra
             end
             i += 1
         end
+
+        # Test complex argument spherical harmonics
+        sphs_complex = spherical_harmonics(l_max, θ+0.0im, φ)
+        @test sphs ≈ sphs_complex
 
     end
 
@@ -163,6 +233,31 @@ using Test, LinearAlgebra
         xs = [rand(-1.01:0.1:1.0,3) + rand(-1.01:0.1:1.0,3)*im for i = 1:100]
         rθφs = cartesian_to_radial_coordinates.(xs)
         @test maximum(norm.(xs - radial_to_cartesian_coordinates.(rθφs))) < 2e-14
+        
+        rθφs = cartesian_to_spherical_coordinates.(xs)
+        vs = [rand(-1.01:0.1:1.0,3) + rand(-1.01:0.1:1.0,3)*im for i = 1:100]
+
+        svs = [
+            cartesian_to_spherical_vector(vs[i],xs[i])
+        for i in eachindex(vs)]
+            
+        v2s = [
+            spherical_to_cartesian_vector(svs[i],rθφs[i])
+        for i in eachindex(vs)]
+
+        @test maximum(norm.(vs - v2s)) < 5e-14
+        
+        # In a Cartesian representation
+        rθφ = cartesian_to_spherical_coordinates(xs[1])
+        r, θ, φ = rθφ
+        
+        er = [cos(φ) * sin(θ), sin(φ) * sin(θ), cos(θ)]
+        eθ = [cos(φ) * cos(θ), sin(φ) * cos(θ), -sin(θ)]
+        eϕ = [-sin(φ), cos(φ), 0.0]
+
+        @test [1.0,0.0,0.0] - cartesian_to_spherical_vector(er,xs[1]) |> norm < 1e-14
+        @test [0.0,1.0,0.0] - cartesian_to_spherical_vector(eθ,xs[1]) |> norm < 1e-14
+        @test [-.0,0.0,1.0] - cartesian_to_spherical_vector(eϕ,xs[1]) |> norm < 1e-14
 
         xs = [rand(-1.01:0.1:1.0,3) for i = 1:100]
         rθφs = cartesian_to_radial_coordinates.(xs)
@@ -172,6 +267,7 @@ using Test, LinearAlgebra
 
         @test pi/2 < maximum(rθφ[3] for rθφ in rθφs) <= pi
         @test -pi <= minimum(rθφ[3] for rθφ in rθφs) < -pi/2
+
 
     # Test 2-dimensional transforms
         xs = [rand(-1.01:0.1:1.0,2) + rand(-1.01:0.1:1.0,2)*im for i = 1:100]

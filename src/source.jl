@@ -123,7 +123,11 @@ end
 field(s::RegularSource) = s.field
 field(s::RegularSource, x::AbstractArray, ω::Number) = field(s)(x,ω)
 
-function constant_source(medium::P, num::Number = zero(Float64) * im) where {P}
+function constant_source(medium::PhysicalMedium{Dim,FieldDim}, num = zeros(Float64,FieldDim) .* im) where {Dim, FieldDim}
+    return RegularSource(medium, (x,ω) -> num, (order,x,ω) -> num)
+end
+
+function constant_source(medium::PhysicalMedium{Dim,1}, num = zero(Float64) .* im) where {Dim}
     return RegularSource(medium, (x,ω) -> num, (order,x,ω) -> [num])
 end
 
@@ -141,7 +145,7 @@ function regular_spherical_source(medium::PhysicalMedium{Dim},regular_coefficien
 
     function source_field(x,ω)
         vs = regular_basis_function(medium, ω)(coeff_order,x-position)
-        return amplitude * sum(vs .* regular_coefficients)
+        return amplitude * (vs * regular_coefficients)
 
     end
 
@@ -171,7 +175,13 @@ function source_expand(source::AbstractSource, centre::AbstractVector{T}; basis_
         vs = regular_basis_function(source.medium, ω)
         regular_coefficients = regular_spherical_coefficients(source)
 
-        sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre))
+        res = vs(basis_order, x - centre) * regular_coefficients(basis_order,centre,ω)
+        # res = sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre), dims = 1)[:]
+        if length(res) == 1
+            res = res[1]
+        end
+        
+        return res
     end
 end
 

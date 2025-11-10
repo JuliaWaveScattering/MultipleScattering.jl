@@ -34,9 +34,6 @@ end
         @test L1 == 1
     end
 
-    # import EffectiveWaves: regular_translation_matrix
-    # import EffectiveWaves: outgoing_translation_matrix
-
     # Test 3D outgoing translation matrix
     ω = rand() + 0.1
     medium = Acoustic(3; ρ = 1.0, c = 1.0)
@@ -49,13 +46,13 @@ end
     vs = regular_basis_function(medium, ω)(4*order,r)
     us = outgoing_basis_function(medium, ω)(order,r + d)
 
-    @test maximum(abs.(U * vs - us) ./ abs.(us)) < 3e-6 # for linux: 4e-7
+    @test maximum(abs.(U * vs[:] - us[:]) ./ abs.(us[:])) < 3e-6 # for linux: 4e-7
 
     V = regular_translation_matrix(medium, 4*order, order, ω, d)
     v1s = regular_basis_function(medium, ω)(4*order,r)
     v2s = regular_basis_function(medium, ω)(order,r + d)
 
-    @test maximum(abs.(V * v1s - v2s) ./ abs.(v2s)) < 1e-8 # for linux: 4e-7
+    @test maximum(abs.(V * v1s[:] - v2s[:]) ./ abs.(v2s[:])) < 1e-8 # for linux: 4e-7
 
     # Test 2D outgoing translation matrix
     ω = rand() + 0.1
@@ -71,13 +68,13 @@ end
     vs = regular_basis_function(medium, ω)(larger_order,r)
     us = outgoing_basis_function(medium, ω)(order,r + d)
 
-    @test maximum(abs.(U * vs - us) ./ abs.(us)) < 1e-9
+    @test maximum(abs.(U * vs[:] - us[:]) ./ abs.(us[:])) < 1e-9
 
     V = regular_translation_matrix(medium, larger_order, order, ω, d)
     v1s = regular_basis_function(medium, ω)(larger_order,r)
     v2s = regular_basis_function(medium, ω)(order,r + d)
 
-    @test maximum(abs.(V * v1s - v2s) ./ abs.(v2s)) < 1e-10
+    @test maximum(abs.(V * v1s[:] - v2s[:]) ./ abs.(v2s[:])) < 1e-10
 
 end
 
