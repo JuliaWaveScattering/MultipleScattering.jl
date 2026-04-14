@@ -37,12 +37,12 @@ struct PlaneSource{T<:Real,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{P}
 end
 
 field(s::PlaneSource{T}) where T = function (x::AbstractArray{T}, ω::T)
-        s.amplitude * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
-    end
+    s.amplitude * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
+end
 
 field(s::PlaneSource{T,Dim,1}) where {T, Dim} = function (x::AbstractArray{T}, ω::T)
-        s.amplitude[1] * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
-    end
+    s.amplitude[1] * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
+end
 
 field(s::PlaneSource{T}, x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
 

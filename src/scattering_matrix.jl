@@ -16,7 +16,7 @@ function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles,
     # Faire: this could potentially return an MMatrix
     function S_block(j,l)
         if j == l
-            return zeros(Complex{T}, N, N)
+            return sparse(zeros(Complex{T}, N, N))
         else
             x_lj = origin(particles[j]) .- origin(particles[l])
             U = outgoing_translation_matrix(medium, basis_order, basis_order, ω, x_lj)
@@ -28,7 +28,7 @@ function scattering_matrix(medium::PhysicalMedium, particles::AbstractParticles,
     S_blocks = [S_block(j,l) for j in 1:P, l in 1:P]
 
     # Reshape S_blocks into big matrix
-    S = zeros(Complex{T}, P*N, P*N)
+    S = sparse(zeros(Complex{T}, P*N, P*N))
     for i in 1:P
         for j in 1:P
             S[((i-1)*N+1):(i*N), ((j-1)*N+1):(j*N)] .= S_blocks[i,j]

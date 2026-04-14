@@ -183,7 +183,7 @@ A version of the Gaunt coefficients which are used to write the product of two s
 
     gaunt_coefficient(l1,m1,l2,m2,l3,m3) = 4*π*im^{l2+l3-l1} Integral[Y_{l1,m1}*conj(Y_{l2,m2})*conj(Y_{l3,m3})]
 
-where the integral is over the solid angle.
+where the integral is over the solid angle. In the papers by Art Gower, this symbol is denoted by `c_{(l1,m1),(l2,m2)(l3,m3)}`.
 
 The most standard gaunt coefficients `G(l1,m1;l2,m2;l3)` are related through the identity:
 

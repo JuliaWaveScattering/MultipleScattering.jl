@@ -48,6 +48,7 @@ export scattering_matrix
 
 import Printf: @printf
 
+using SparseArrays: sparse
 using StaticArrays: SVector
 using OffsetArrays: OffsetArray
 
