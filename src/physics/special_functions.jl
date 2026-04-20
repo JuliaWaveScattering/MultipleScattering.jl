@@ -1,6 +1,6 @@
 export sbesselj, shankelh1, diffsbessel, diffbessel
 export diffbesselj, diffhankelh1, diffsbesselj, diffshankelh1, diff3sbesselj, diff2sbesselj, diff2shankelh1, diff3shankelh1
-export gaunt_coefficient
+export gaunt_coefficient, gaunt_cross_coefficient
 export associated_legendre_indices, spherical_harmonics_indices, lm_to_spherical_harmonic_index
 
 export complex_legendre_array
@@ -196,6 +196,18 @@ function gaunt_coefficient(T::Type{<:AbstractFloat},l1::Int,m1::Int,l2::Int,m2::
         wigner3j(T,l1,l2,l3,0,0,0) * wigner3j(T,l1,l2,l3,m1,-m2,-m3)
 end
 gaunt_coefficient(l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int) = gaunt_coefficient(Float64,l1,m1,l2,m2,l3,m3)
+
+"""
+    gaunt_cross_coefficient(l1,m1,l2,m2,l3,m3)
+
+    Similar to the Gaunt coefficient, but use for vector spherical harmonics, and specifically how one shear wave coverts to the other.
+"""
+function gaunt_cross_coefficient(T::Type{<:AbstractFloat},l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int)
+    # note the wigner3j has only one convention, and is highly symmetric.
+    return (one(T)*im)^(l2+l3-l1) * (-T(1))^m1 * sqrt(4pi*(2*l1+1)*(2*l2+1)*(2*l3+1)) *
+        wigner3j(T,l1,l2,l3,1,-1,0) * wigner3j(T,l1,l2,l3,m1,-m2,-m3)
+end
+gaunt_cross_coefficient(l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int) = gaunt_cross_coefficient(Float64,l1,m1,l2,m2,l3,m3)
 
 function lm_to_spherical_harmonic_index(l::Int,m::Int)::Int
     if l < abs(m)
