@@ -150,8 +150,6 @@ function regular_spherical_source(medium::PhysicalMedium{Dim},regular_coefficien
     end
 
     function source_coef(order,centre,ω)
-        k = ω / medium.c
-
         # for the translation matrix below, order is the number columns and coeff_order is the number rows
         V = regular_translation_matrix(medium, order, coeff_order, ω, centre - position)
 
