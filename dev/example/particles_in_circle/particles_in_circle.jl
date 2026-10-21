@@ -1,6 +1,6 @@
 # # Random particles in a circle
 
-# The code [particles_in_circle.jl](particles_in_circle.jl) compares the scattered wave from one big circle, with the scattered wave from a circle filled with small particles.
+# The code [`particles_in_circle.jl`](particles_in_circle.jl) compares the scattered wave from one big circle, with the scattered wave from a circle filled with small particles.
 
 # ```julia
 using MultipleScattering
