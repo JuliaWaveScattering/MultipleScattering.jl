@@ -123,7 +123,8 @@ using Test, LinearAlgebra
     end
 
     @testset "Spherical harmonics" begin
-        θ = rand(1)[1] * 0.99
+        # avoid θ close to 0, where calculating the spherical harmonics from cos(θ) loses precision
+        θ = 0.01 + rand(1)[1] * 0.98
         φ = rand(1)[1] * 0.99
 
         l_max = 8 # small l_max due to factorial formula below
@@ -133,8 +134,9 @@ using Test, LinearAlgebra
         sphs_dθ = spherical_harmonics_dθ(l_max, θ, φ)
 
         @test sphs_dθ[1] == Complex{Float64}(0)
-        
-        h = 1e5 * eps(Float64) 
+
+        # a step h large enough to avoid rounding errors, but small enough for the central difference to be accurate
+        h = 1e-6
         θ1 = θ - h
         sph1s = spherical_harmonics(l_max, θ1, φ)
 
@@ -143,7 +145,8 @@ using Test, LinearAlgebra
 
         sphs_dθ_approx = (sph2s - sph1s) ./ (2h)
 
-        @test maximum(abs.(sphs_dθ_approx - sphs_dθ)[2:end] ./ abs.(sphs_dθ[2:end])) < 5e-4
+        # compare with the largest derivative, as some of the derivatives can be close to zero
+        @test maximum(abs.(sphs_dθ_approx - sphs_dθ)) < 1e-7 * maximum(abs.(sphs_dθ))
         
         @test maximum(i - lm_to_spherical_harmonic_index(ls[i],ms[i]) for i in eachindex(ls)) == 0
 
