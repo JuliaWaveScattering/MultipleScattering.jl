@@ -46,15 +46,18 @@
         # Zero pressure (Dirichlet) boundary condition
         @test maximum(norm.(pressure_results[1].field - pressure_results[2].field)) < 1e-6 * mean(norm.(pressure_source_results[2].field))
 
+        # use a finite difference step dr large enough to avoid rounding errors in the displacement
         pressure_results, displace_results =  boundary_data(
             shape(particles[2]), particles[2].medium, medium, sim, ωs;
             min_basis_order = 8,
-            basis_order = 16
+            basis_order = 16,
+            dr = 1e-6
         )
         pressure_source_results, displace_source_results =  boundary_data(
             shape(particles[2]), particles[2].medium, medium, sim_source, ωs;
             basis_order = 6,
-            min_basis_order = 8
+            min_basis_order = 8,
+            dr = 1e-6
         );
 
         # Zero displacement (Neuman) boundary condition
