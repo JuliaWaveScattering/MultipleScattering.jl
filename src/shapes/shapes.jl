@@ -92,7 +92,8 @@ function points_in_shape(region::Shape{3};
         y = zero(number_type(region)),
         resolution::Number = 20,
         res::Number = resolution, xres::Number = res, zres::Number = res,
-        exclude_region::Shape = EmptyShape(region))
+        exclude_region::Shape = EmptyShape(region),
+        kws...)
 
     box = bounding_box(region)
 
@@ -164,7 +165,7 @@ Volume of a shape
 function volume end
 
 """
-    volume(shape::Shape)::NTuple{Function,Dim)
+    boundary_functions(shape::Shape)::NTuple{Dim,Function}
 
 Returns Tuple of Dim Functions which define outer boundary of shape when given boundary coordinate t∈[0,1]
 """

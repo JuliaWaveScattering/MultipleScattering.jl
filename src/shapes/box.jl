@@ -49,7 +49,7 @@ end
 name(shape::Box) = "Box"
 name(shape::Box{T,2}) where T = "Rectangle"
 
-outer_radius(r::Box) = sqrt(sum(r.dimensions .^ 2))
+outer_radius(r::Box) = norm(r.dimensions) / 2
 volume(box::Box) = prod(box.dimensions)
 
 import Base.issubset

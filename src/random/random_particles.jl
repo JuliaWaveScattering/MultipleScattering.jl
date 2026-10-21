@@ -9,58 +9,20 @@ function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shapes:
         kws...
 ) where {Dim, S<:Shape{Dim}}
 
-    particles = if volume_fraction == 0
-        num_each = Int(round(num_particles / length(particle_shapes)))
-        for s in particle_shapes
-            add_particles = random_particles(particle_medium, s, region_shape, num_each; current_particles = current_particles, kws...)
-            current_particles = [current_particles; add_particles]
-        end
-        current_particles
+    # Either the number of particles, or the volume fraction, for each shape
+    amount_each = if volume_fraction == 0
+        Int(round(num_particles / length(particle_shapes)))
     else
-        vol_each = volume_fraction / length(particle_shapes)
-        for s in particle_shapes
-            add_particles = random_particles(particle_medium, s, region_shape, vol_each; current_particles = current_particles, kws...)
-            current_particles = [current_particles; add_particles]
-        end
-        current_particles
+        volume_fraction / length(particle_shapes)
     end
 
-    return particles
+    for s in particle_shapes
+        add_particles = random_particles(particle_medium, s, region_shape, amount_each; current_particles = current_particles, kws...)
+        current_particles = [current_particles; add_particles]
+    end
+
+    return current_particles
 end
-
-# random_particles(particle_medium, particle_shapes)
-
-#
-# a = 1
-# function f1(; a = [])
-#     if volume_fraction != zero(T)
-#         volume_fraction_each = volume_fraction / length(particle_shapes)
-#         for s in particle_shapes
-#             b = a
-#             a = [a; b]
-#             println(a)
-#         end
-#         println(a)
-#     end
-#     println(a)
-# end
-# f1(; a = [2])
-# a
-
-# function random_particles(particle_medium::PhysicalMedium{Dim}, particle_shape::Shape{Dim};
-#         region_shape::Shape{Dim} = Rectangle(zeros(T,2), T(10)*outer_radius(particle_shape), T(10)*outer_radius(particle_shape)),
-#         num_particles::Int = 0, volume_fraction::T = zero(T), kws...) where {T<:AbstractFloat,Dim}
-#
-#     if volume_fraction == zero(T)
-#         if num_particles == 0 num_particles = 5 end
-#         random_particles(particle_medium, particle_shape,
-#             region_shape, num_particles; kws...)
-#     else
-#         random_particles(particle_medium, particle_shape,
-#             region_shape, volume_fraction; kws...)
-#     end
-#
-# end
 
 function random_particles(particle_medium::P, particle_shape::S,
     region_shape::Shape{Dim}, volfrac::AbstractFloat; kws...
@@ -121,12 +83,12 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
         )
     end
 
-    # Allocate memory for particles
-    L = length(current_particles)
-    particles = Vector{Particle{Dim,P,S}}(undef, N + L)
-    particles[1:L] = current_particles
+    # Allocate memory for the new particles. These can have a different type from current_particles.
+    particles = Vector{Particle{Dim,P,S}}(undef, N)
 
-    for n = L+1:L+N
+    too_close(p1, p2) = norm(origin(p1) - origin(p2)) < separation_ratio * (outer_radius(p1) + outer_radius(p2))
+
+    for n = 1:N
 
         num_attempts = 0
         overlapping = true
@@ -135,7 +97,7 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
             outside_box = true
             while outside_box
                 x = (box.dimensions ./ 2) .* (1 .- 2 .* rand(randgen,typeof(origin(box)))) + origin(box)
-                if S == Helmholtz{Float64, 2}
+                if S <: Helmholtz
                     θ = 2π*rand(randgen)
                     particles[n] = Particle(particle_medium, congruent(particle_shape, x, θ))
                 else
@@ -144,13 +106,9 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
                 outside_box = !(particles[n] ⊆ region_shape)
             end
 
-            overlapping = false
-            for i = 1:(n-1) #compare with previous particles
-                if norm(origin(particles[n]) - origin(particles[i])) < separation_ratio * (outer_radius(particles[n]) + outer_radius(particles[i]))
-                    overlapping = true
-                    break
-                end
-            end
+            # compare with the current particles and the previously placed particles
+            overlapping = any(p -> too_close(particles[n], p), current_particles) ||
+                any(i -> too_close(particles[n], particles[i]), 1:(n-1))
 
             num_attempts += 1
             if num_attempts > max_attempts_to_place_particle
@@ -160,5 +118,5 @@ function random_particles(particle_medium::P, particle_shape::S, region_shape::S
         end
     end
 
-    return particles[L+1:L+N]
+    return particles
 end

@@ -16,10 +16,7 @@ function t_matrix(p::Particle{2,Acoustic{T,2},Sphere{T,2}}, outer_medium::Acoust
         ak = outer_radius(p)*ω/outer_medium.c
 
         # set the scattering strength and type
-        if isinf(p.medium.c) || isinf(p.medium.ρ)
-            numer = diffbesselj(m, ak)
-            denom = diffhankelh1(m, ak)
-        elseif iszero(outer_medium.ρ)
+        if isinf(p.medium.c) || isinf(p.medium.ρ) || iszero(outer_medium.ρ)
             numer = diffbesselj(m, ak)
             denom = diffhankelh1(m, ak)
         elseif iszero(p.medium.ρ) || iszero(p.medium.c)

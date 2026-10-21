@@ -20,7 +20,7 @@ function volume(shape::TimeOfFlightPointWaveToPoint)
 end
 
 import Base.issubset
-function issubset(circle::Sphere{2}, shape::TimeOfFlightPointWaveToPoint)
+function issubset(circle::Sphere{T,2}, shape::TimeOfFlightPointWaveToPoint) where T
     (origin(circle)[1] - circle.radius) > 0 &&
     norm(origin(circle) - shape.listener_position) < (shape.time - 2circle.radius)
 end

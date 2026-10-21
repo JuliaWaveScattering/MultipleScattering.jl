@@ -88,20 +88,13 @@ function azimuthalnormal(dim::Int)
     end
 end
 
-# If T1 is a shape, source, or material, first calculate its symmetry
 """
     Symmetry(T)
-
-returns the symmetry of the object T. Some possible symmetries include [`PlanarSymmetry`](@ref),  [`RadialSymmetry`](@ref),  and [`WithoutSymmetry`](@ref).
-"""
-
-
-"""
     Symmetry(T1,T2)
 
-returns the combined symmetry of the two objects T1 and T2.
+returns the symmetry of the object T, or the combined symmetry of the two objects T1 and T2. Some possible symmetries include [`PlanarSymmetry`](@ref),  [`RadialSymmetry`](@ref),  and [`WithoutSymmetry`](@ref).
 """
-Symmetry(T1,T2) = Symmetry(Symmetry(T1),Symmetry(T2))
+Symmetry(T1,T2) = Symmetry(Symmetry(T1),Symmetry(T2)) # If T1 is a shape, source, or material, first calculate its symmetry
 
 Symmetry(sym1::AbstractSymmetry{Dim},sym2::AbstractSymmetry{Dim}) where Dim = WithoutSymmetry{Dim}()
 Symmetry(sym1::S,sym2::S) where S<:AbstractSymmetry = sym1

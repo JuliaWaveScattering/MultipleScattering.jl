@@ -20,11 +20,13 @@ function FrequencySimulationResult(field::Union{AbstractArray{Complex{T}},Abstra
         field = reshape(field, size(field,1), size(field,2))
     end
 
-    # We expect size(field) == (length(ω),length(x)), if it's the other way around, we assume the user just input the transpose.
-    if size(field) == (length(ω), length(x))
-        field = transpose(field)
-    elseif size(field) != (length(x),length(ω))
-        @error "we expect size(field) == (length(x),length(ω))"
+    # We expect size(field) == (length(x),length(ω)), if it's the other way around, we assume the user just input the transpose.
+    if size(field) != (length(x), length(ω))
+        if size(field) == (length(ω), length(x))
+            field = transpose(field)
+        else
+            throw(DimensionMismatch("we expect size(field) == (length(x),length(ω))"))
+        end
     end
 
     x = [SVector(xi...) for xi in x]
@@ -82,21 +84,6 @@ end
 import Base.size
 size(r::FrequencySimulationResult) = (length(r.x),length(r.ω))
 size(r::TimeSimulationResult) = (length(r.x),length(r.t))
-
-# import Base.union
-# """
-# Combine two FrequencyResults intelligently, allows user to optionally sort ω
-# and x
-# """
-# function union(r1::FrequencySimulationResult, r2::FrequencySimulationResult; sort::Function = identity)
-#     if r1.x == r2.x
-#     elseif r1.ω == r2.ω
-#     end
-# end
-#
-# function union(r1::SimulationResult,r2::SimulationResult)
-#     error("No implementation of union found for Simulation Results of type $(typeof(r1)) and $(typeof(r2))")
-# end
 
 import Base.(+)
 function +(s1::SimulationResult,s2::SimulationResult)::SimulationResult

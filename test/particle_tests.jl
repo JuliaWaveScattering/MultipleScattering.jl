@@ -115,6 +115,11 @@
         @test iscongruent(pr, pr_congruent)
         @test !iscongruent(pr, pr_dif_aperture)
         @test !iscongruent(pr, pr_different)
+        @test isequal(iso_resonator, iso_resonator_identical)
+        @test !isequal(iso_resonator, iso_resonator_dif_aperture)
+        @test isequal(resonator, resonator_identical)
+        @test !isequal(resonator, resonator_dif_aperture)
+        @test IsotropicHelmholtz(2, 1.0; aperture = 0.1) == IsotropicHelmholtz((0.0, 0.0), 1.0, 0.1)
 
         # Check that Julia fallback === works
         @test p === p_reference

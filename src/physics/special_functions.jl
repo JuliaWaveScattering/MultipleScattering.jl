@@ -26,13 +26,6 @@ atan(y::Complex,x::Complex) = - im * log( (x+y*im) / sqrt(x^2+y^2) )
 
 Returns the spherical besselj function. The order is 'm' and the argument is 'x'. Note 'x' can be a complex number.
 """
-# function sbesselj(m::Number,x::T) where T<: Union{F,Complex{F}} where F <: AbstractFloat
-    # if (abs(x) > eps(F))
-    #     return sqrt(pi/(T(2)*x)) * besselj(m+1/2,x)
-    # else
-    #     return (m > 0 ? zero(T) : one(T))
-    # end
-# end
 function sbesselj(nu::Number, x::T) where {T}
     besselj_nuhalf_x = besselj(nu + one(nu)/2, x)
     if abs(x) ≤ sqrt(eps(real(zero(besselj_nuhalf_x))))
@@ -163,7 +156,7 @@ diffhankelh1(n,z) = 0.5*(hankelh1(-1 + n, z) - hankelh1(1 + n, z))
 "Derivative of Bessel function of first kind"
 diffbesselj(n::Number,z::T) where T<:Number = 0.5*(besselj(-1 + n, z) - besselj(1 + n, z))
 
-"m-th Derivative of Hankel function of the first kind"
+"m-th Derivative of Bessel function of the first kind"
 function diffbesselj(n::Number,z::T,m::Int) where T<:Number
     if m == 0
         return besselj(n, z)
@@ -211,7 +204,7 @@ gaunt_cross_coefficient(l1::Int,m1::Int,l2::Int,m2::Int,l3::Int,m3::Int) = gaunt
 
 function lm_to_spherical_harmonic_index(l::Int,m::Int)::Int
     if l < abs(m)
-        error("The order m of a spherical harmonic must be great or equal than the degree l.")
+        error("The degree l of a spherical harmonic must be greater than or equal to the absolute value of the order m.")
     end    
     return l^2 + m + l + 1
 end    

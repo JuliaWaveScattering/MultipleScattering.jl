@@ -31,20 +31,20 @@ struct PlaneSource{T<:Real,Dim,FieldDim,P<:PhysicalMedium} <: AbstractSource{P}
             throw(DimensionMismatch("The dimensions of the field in the medium (i.e. always 1 for acoustics) do not match the dimension of the amplitude vector."))
         end
 
-        T = promote_type(eltype(direction), eltype(position), real(eltype(amplitude)))
+        T = float(promote_type(eltype(direction), eltype(position), real(eltype(amplitude))))
         new{T,Dim,FieldDim,P}(medium, SVector{Dim}(direction ./ normw), SVector{Dim}(position), complex(SVector{FieldDim}(amplitude)))
     end
 end
 
-field(s::PlaneSource{T}) where T = function (x::AbstractArray{T}, ω::T)
+field(s::PlaneSource) = function (x::AbstractVector, ω::Number)
     s.amplitude * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
 end
 
-field(s::PlaneSource{T,Dim,1}) where {T, Dim} = function (x::AbstractArray{T}, ω::T)
+field(s::PlaneSource{T,Dim,1}) where {T, Dim} = function (x::AbstractVector, ω::Number)
     s.amplitude[1] * exp(im * (ω / s.medium.c) * dot(x - s.position,s.direction))
 end
 
-field(s::PlaneSource{T}, x::AbstractArray{T}, ω::T) where T = field(s)(x,ω)
+field(s::PlaneSource, x::AbstractVector, ω::Number) = field(s)(x,ω)
 
 function PlaneSource(medium::P;
         direction = vcat(SVector(1), SVector{Dim-1}(zeros(Float64,Dim-1))),
@@ -60,7 +60,7 @@ Symmetry(s::PlaneSource{T,Dim}) where {Dim,T} = (abs(dot(s.direction,azimuthalno
 """
     RegularSource(medium::P, field::Function, coef::Function)
 
-Is a struct type which describes the source field that drives/forces the whole system. It is also known as an incident wave. It has three fields `RegularSource.medium`, `RegularSource.field`, and `RegularSource.coef`.
+Is a struct type which describes the source field that drives/forces the whole system. It is also known as an incident wave. It has three fields `RegularSource.medium`, `RegularSource.field`, and `RegularSource.coefficients`.
 
 The source field at the position 'x' and angular frequency 'ω' is given by
 ```julia-repl
@@ -69,8 +69,7 @@ x = [1.0,0.0]
 RegularSource.field(x,ω)
 ```
 
-The field `RegularSource.coef`
-regular_basis_function(medium::Acoustic{T,2}, ω::T)
+The field `RegularSource.coefficients(order,centre,ω)` returns the coefficients of the source field when expanded in the regular basis [`regular_basis_function`](@ref) centred at `centre`, up to the basis order `order`.
 """
 struct RegularSource{P<:PhysicalMedium,S<:AbstractSymmetry} <: AbstractSource{P}
     medium::P
@@ -107,14 +106,12 @@ Check that the source functions return the correct types
 function self_test(source::RegularSource{P}) where {P}
     ω = 1.0
 
-    # choose rand postion, hopefully not the source position/origin
-    x = SVector(rand(0.1:0.1:1.0,spatial_dimension(P))...)
+    # choose a fixed position, hopefully not the source position/origin
+    x = SVector(ntuple(i -> 0.1 * i + 0.0137, spatial_dimension(P)))
 
-    # Check that the result of field has the same dimension as field dimension of P
-    if field_dimension(P) == 1
-        length(first(source.coefficients(1,x,ω))) == field_dimension(P)
-    # else # this else is not necessarily correct..
-    #     source.coefficients(1,x,ω)::SVector{field_dimension(P),Complex{T}}
+    # Check that the coefficients have the same dimension as field dimension of P
+    if field_dimension(P) == 1 && length(first(source.coefficients(1,x,ω))) != 1
+        error("The coefficients of a source in a scalar medium should be a vector of numbers.")
     end
 
     return true
@@ -146,7 +143,6 @@ function regular_spherical_source(medium::PhysicalMedium{Dim},regular_coefficien
     function source_field(x,ω)
         vs = regular_basis_function(medium, ω)(coeff_order,x-position)
         return amplitude * (vs * regular_coefficients)
-
     end
 
     function source_coef(order,centre,ω)
@@ -164,17 +160,16 @@ end
 
 Returns a function of `(x,ω)` which approximates the value of the source at `(x,ω)`. That is, the source is written in terms of a regular basis expansion centred at `centre`.
 """
-function source_expand(source::AbstractSource, centre::AbstractVector{T}; basis_order::Int = 4) where T
+function source_expand(source::AbstractSource, centre::AbstractVector; basis_order::Int = 4)
 
     # Convert to SVector for efficiency and consistency
     centre = SVector(centre...)
 
-    return function (x::AbstractVector{T}, ω::T)
+    return function (x::AbstractVector, ω::Number)
         vs = regular_basis_function(source.medium, ω)
         regular_coefficients = regular_spherical_coefficients(source)
 
         res = vs(basis_order, x - centre) * regular_coefficients(basis_order,centre,ω)
-        # res = sum(regular_coefficients(basis_order,centre,ω) .* vs(basis_order, x - centre), dims = 1)[:]
         if length(res) == 1
             res = res[1]
         end
@@ -199,7 +194,7 @@ function +(s1::RegularSource{P},s2::RegularSource{P})::RegularSource{P} where {P
 end
 
 import Base.(*)
-function *(a,s::RegularSource{P,S})::RegularSource{P,S} where {P,S}
+function *(a::Number,s::RegularSource{P,S})::RegularSource{P,S} where {P,S}
 
     field(x,ω) = a * s.field(x,ω)
     coef(n,centre,ω) = a .* s.coefficients(n,centre,ω)
@@ -207,4 +202,4 @@ function *(a,s::RegularSource{P,S})::RegularSource{P,S} where {P,S}
     RegularSource{P,S}(s.medium,field,coef)
 end
 
-*(s::RegularSource,a) = *(a,s)
+*(s::RegularSource,a::Number) = *(a,s)

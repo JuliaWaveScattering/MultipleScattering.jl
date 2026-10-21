@@ -31,8 +31,8 @@ function t_matrix(p::Particle{3,Acoustic{T,3},Sphere{T,3}}, outer_medium::Acoust
     end
     Zns = Zn.(0:basis_order)
 
-    len(order::Int) = basisorder_to_basislength(Acoustic{T,3},order)
-    T_vec = - vcat(Zns[1],[repeat(Zns[l+1:l+1],len(l)-len(l-1)) for l = 1:basis_order]...)
+    # the T-matrix is the same for every m with the same degree l
+    T_vec = - [Zns[l+1] for l = 0:basis_order for m = -l:l]
 
     return Diagonal(T_vec)
 end

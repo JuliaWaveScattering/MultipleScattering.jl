@@ -57,6 +57,7 @@
         @test smaller_rectangle ⊆ rectangle
         @test rectangle == bounding_box(rectangle)
         @test rectangle ⊆ Sphere(o, outer_radius(rectangle)) # a 2D sphere is a circle
+        @test outer_radius(rectangle) ≈ sqrt(2.0^2 + 3.0^2) / 2
 
         # Test different ways to construct Rectangle produce same results
         @test Box((0.0,0.0), (1.0, 2.0)) == Box([0.0,0.0], [1.0, 2.0]) # Tuple or Vector
@@ -154,6 +155,8 @@
         @test ratio > 0.5
         @test ratio < 1.0
         @test name(time_of_flight) == "Time of flight from point source"
+        @test Sphere([5.0,0.0], 1.0) ⊆ time_of_flight
+        @test !(Sphere([-5.0,0.0], 1.0) ⊆ time_of_flight)
 
         @testset "Boundary functions" begin
             x, y = boundary_functions(TimeOfFlightPointWaveToPoint([-1.0,0.0],3.0))

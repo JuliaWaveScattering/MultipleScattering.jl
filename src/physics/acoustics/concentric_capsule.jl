@@ -35,14 +35,14 @@ function t_matrix(cap::CapsuleParticle{2,Acoustic{T,2},Sphere{T,2}}, medium::Aco
     return Diagonal(vcat(reverse(Tns), Tns[2:end]))
 end
 
-function internal_field(x::AbstractArray{T}, p::CapsuleParticle{2,Acoustic{T,2},Sphere{T,2}}, source::RegularSource{Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector) where T
+function internal_field(x::AbstractArray{T}, p::CapsuleParticle{2,Acoustic{T,2},Sphere{T,2}}, source::AbstractSource{Acoustic{T,2}}, ω::T, scattering_coefficients::AbstractVector) where T
 
-    Nh = Int((length(scattering_coefficients) - one(T))/T(2.0)) #shorthand
+    Nh = basislength_to_basisorder(Acoustic{T,2}, length(scattering_coefficients))
 
     if iszero(p.outer.medium.c) || isinf(abs((p.outer.medium.c)))
         return zero(Complex{T})
     elseif norm(x - origin(p)) > outer_radius(p)
-        @warn "point $x not insider particle $p. Returning zero."
+        @warn "point $x not inside particle $p. Returning zero."
         return zero(Complex{T})
     end
 

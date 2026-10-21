@@ -77,7 +77,7 @@ function ω_to_t(ω_arr::AbstractArray{T}) where T <: AbstractFloat
         error("expected only non-negative values for the frequencies")
     end
 
-    dω = median(abs.((circshift(ω_arr,1) - ω_arr)[2:end]))
+    dω = median(abs.(diff(ω_arr)))
 
     t_arr = LinRange(zero(T),2π/dω,2N+2)[1:(2N+1)]
     return t_arr
@@ -116,7 +116,7 @@ See also: [`DiscreteImpulse`](@ref), [`ContinuousImpulse`](@ref)
 Calculates the time response from the frequency response by approximating an
 inverse Fourier transform. The time signal is assumed to be real and the
 frequenices ω_vec are assumed to be positive (can include zero) and sorted. The
-result is convoluted in time ωith the user specified impulse.
+result is convoluted in time with the user specified impulse.
 
 We use the Fourier transform convention:
 F(ω) =  ∫ f(t)*exp(im*ω*t) dt
@@ -130,7 +130,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
         discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
         method=:DFT) where T <: AbstractFloat
 
-    # In case the used specifies discrete_impulse but not t_vec
+    # In case the user specifies discrete_impulse but not t_vec
     t_vec = discrete_impulse.t
 
     if size(field_mat,1) != size(ω_vec,1) error("Vector of frequencies ω_vec expected to be same size as size(field_mat,1)") end
@@ -138,7 +138,7 @@ function frequency_to_time(field_mat::AbstractArray{Complex{T}}, ω_vec::Abstrac
     function f(t::T,j::Int)
         fs = discrete_impulse.in_freq .* field_mat[:,j] .* exp.(-(im*t) .* ω_vec)
         if method == :DFT && ω_vec[1] == zero(T)
-            fs[1] = fs[1]/T(2) # so as to not add ω=0 tωice in the integral of ω over [-inf,inf]
+            fs[1] = fs[1]/T(2) # so as to not add ω=0 twice in the integral of ω over [-inf,inf]
         end
         fs
     end
@@ -166,7 +166,7 @@ function time_to_frequency(field_mat::Union{AbstractArray{T},AbstractArray{Compl
         discrete_impulse::DiscreteImpulse{T} = continuous_to_discrete_impulse(impulse, t_vec, ω_vec),
         method=:DFT) where T <: AbstractFloat
 
-    # In case the used specifies discrete_impulse but not ω_vec
+    # In case the user specifies discrete_impulse but not ω_vec
     ω_vec = discrete_impulse.ω
 
     # to use an impulse below in time we would need to do a discrete convolution, which we decided against.

@@ -30,16 +30,17 @@ function FrequencySimulation(source::AbstractSource{P}) where {Dim,P<:PhysicalMe
 end
 
 import Base.show
-function show(io::IO, mime::MIME"text/plain", s::FrequencySimulation{T}) where {T}
+function show(io::IO, mime::MIME"text/plain", s::FrequencySimulation{Dim}) where {Dim}
     # text/plain is repl type
     # FrequencySimulation paramaters can be determined entirely from the medium and shape so we do not need to print them
-    println(io, "FrequencySimulation{$T}")
+    println(io, "FrequencySimulation{$Dim}")
     print(io,   "medium    = ")
     show(io, s.source.medium)
     println(io)
     println(io, "particles = ")
     for particle in s.particles
         show(io, particle)
+        println(io)
     end
     return
 end
@@ -48,7 +49,7 @@ import Base.run
 
 run(particles::AbstractParticles, source::AbstractSource, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation(particles,source), x, ω; kws...)
 run(particle::AbstractParticle, source::AbstractSource, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation([particle],source), x, ω; kws...)
-run(source::AbstractSource, x::Union{Shape,Vector}, ω; kws...) = run(FrequencySimulation(source), x, ω; kws...)
+run(source::AbstractSource, x::Union{Shape,AbstractVector}, ω; kws...) = run(FrequencySimulation(source), x, ω; kws...)
 
 function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ωs::AbstractVector{<:Number}=eltype(x)[];
         kws...)::SimulationResult
@@ -60,7 +61,12 @@ function run(sim::FrequencySimulation, x::AbstractVector{<:Number}, ω::Number;
     run(sim,[x],[ω]; kws...)
 end
 
-# Function to check if particles are overlapping: return pairs of overlapping particles
+"""
+    overlapping_pairs(particles::AbstractParticles)
+    overlapping_pairs(origins, radii)
+
+Returns the pairs of indices `[i, j]` of the particles which overlap, where two particles overlap if the distance between their origins is less than the sum of their outer radiuses.
+"""
 function overlapping_pairs(origins,radii)
     nb_particles = length(radii)
     output = Vector{Int64}[]
@@ -89,12 +95,11 @@ function run(sim::FrequencySimulation, x_vec::Vector{V}, ω::Number;
     # Return an error if any particles are overlapping
     overlapping_pairs_vec = overlapping_pairs(sim.particles)
     if !isempty(overlapping_pairs_vec)
-        nb_overlaps = size(overlapping_pairs_vec,1)
+        nb_overlaps = length(overlapping_pairs_vec)
         error("Error: particles are overlapping ($nb_overlaps overlaps). The function overlapping_pairs(p::AbstractParticles) can be used to obtain the list of overlapping pairs.")
     end
 
     Dim = spatial_dimension(sim)
-    # FieldDim = field_dimension(sim)
 
     x_vec = [SVector{Dim}(x) for x in x_vec]
 
@@ -117,10 +122,9 @@ function run(sim::FrequencySimulation, x_vec::Vector{V}, ω::Number;
     end
 
     # Construct results object
-    # T = real(eltype(field_vec))
     field_vec = reshape(map(f->SVector(f...), field_vec), :, 1)
- 
-    return FrequencySimulationResult(field_vec, x_vec, Vector([ω]))
+
+    return FrequencySimulationResult(field_vec, x_vec, [ω])
 end
 
 function run(sim::FrequencySimulation, x_vec::Vector{V}, ωs::AbstractArray=[];
@@ -130,6 +134,10 @@ function run(sim::FrequencySimulation, x_vec::Vector{V}, ωs::AbstractArray=[];
         basis_order_vec::AbstractVector{Int} = [-1],
         kws...)::SimulationResult where V<:AbstractVector
 
+    if result_in_time
+        error("Using `result_in_time=true` in `run` is deprecated. Please instead use `frequency_to_time` on the results of `run`.")
+    end
+
     Dim = spatial_dimension(sim)
 
     if isempty(ωs) ωs = t_to_ω(ts) end
@@ -138,10 +146,11 @@ function run(sim::FrequencySimulation, x_vec::Vector{V}, ωs::AbstractArray=[];
     # Considering basis_order to be the maximum basis order, then to avoid too much truncation error we use smaller basis orders on the smaller frequencies.
     if basis_order_vec == [-1]
         max_basis_order = max(basis_order,min_basis_order)
-        basis_order_vec = Int.(round.(
+        # the smallest frequency gets min_basis_order, the largest gets max_basis_order
+        basis_order_vec = zeros(Int, length(ωs))
+        basis_order_vec[sortperm(ωs)] = round.(Int,
             LinRange(min_basis_order, max_basis_order, length(ωs))
-        ))
-        basis_order_vec = basis_order_vec[sortperm(ωs)]
+        )
     end
 
     # if user asks for ω = 0, then we provide
@@ -160,15 +169,7 @@ function run(sim::FrequencySimulation, x_vec::Vector{V}, ωs::AbstractArray=[];
         hcat, eachindex(ωs))
     end
 
-    if !result_in_time
-        FrequencySimulationResult(fields,x_vec,Vector(ωs))
-    else
-        @error "Using `result_in_time=true` in `run` is depricated and will be removed in later versions. Please instead use `frequency_to_time` on the results of `run`."
-        # if isempty(ts) ts = ω_to_t(ωs) end
-        #
-        # # better to use the defaults of TimeSimulationResult's Constructor.
-        # frequency_to_time(FrequencySimulationResult(fields,x_vec,Vector(ωs)); t_vec = reshape(ts,length(ts)), time_kws...)
-    end
+    return FrequencySimulationResult(fields,x_vec,Vector(ωs))
 end
 
 # Add docstring to run functions
@@ -182,7 +183,7 @@ vector of floats.
 """
 function run(s::FrequencySimulation) throw(MethodError(run, (s,))) end
 
-run(sim::FrequencySimulation, region::Shape, ω::AbstractFloat; kws...) = run(sim, region, [ω]; kws...)
+run(sim::FrequencySimulation, region::Shape, ω::Number; kws...) = run(sim, region, [ω]; kws...)
 
 """
     run(sim::FrequencySimulation, region::Shape;
@@ -223,10 +224,6 @@ function basis_coefficients(sim::FrequencySimulation{Dim,P}, ω::Number; basis_o
     # Get forcing vector from source, forms the right hand side of matrix equation to find basis_coefficients
     source_coefficient = regular_spherical_coefficients(sim.source)
     forcing = reduce(vcat, [source_coefficient(basis_order,origin(p),ω)[:] for p in sim.particles])
-    
-    # forcing = reduce(vcat, [
-    #     (source_coefficient(basis_order,origin(p),ω) |> transpose)[:]
-    # for p in sim.particles])
 
     # Find scattering coefficients by solving this forcing
     a = (S + I) \ forcing
@@ -242,21 +239,17 @@ end
 function field(sim::FrequencySimulation{Dim,P}, ω::Number, x_vec::Vector{V}, a_vec) where {Dim, P<:PhysicalMedium, T<:Number, V<:AbstractArray{T}}
 
     N = basislength_to_basisorder(P,size(a_vec,1))
-    num_particles = length(sim.particles)
     basis = outgoing_basis_function(sim.source.medium, ω)
-
-    FieldDim = field_dimension(sim)
 
     function sum_basis(x)
         sum(eachindex(sim.particles)) do i
             p = sim.particles[i]
-            # basis(N, x-origin(p)) * (reshape(a_vec[:,i],FieldDim,:) |> transpose)[:]
             basis(N, x-origin(p)) * a_vec[:,i]
         end
     end
     map(x_vec) do x
         j = findfirst(p -> x ∈ p, sim.particles)
-        if typeof(j) === Nothing
+        if isnothing(j)
             field(sim.source)(x,ω) + sum_basis(x)
         else
             p = sim.particles[j]

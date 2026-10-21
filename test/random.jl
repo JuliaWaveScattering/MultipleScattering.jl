@@ -22,6 +22,13 @@
     @test_throws ErrorException random_particles(medium, particle_shape, region_shape, 0.9)
     @test_throws ErrorException random_particles(medium, particle_shape, region_shape, 0.5; seed=3)
 
+    # particles with different types of shapes
+    particles = random_particles(medium, [Circle(radius), Box([radius, radius])];
+        num_particles = 10, region_shape = region_shape, seed = seed1
+    )
+    @test length(particles) == 10
+    @test isempty(overlapping_pairs(particles))
+
     region_shape = Sphere(3, 20.0)
     particle_shape = Sphere(radius)
     medium = Acoustic(3; ρ = 0.2, c = 0.2)

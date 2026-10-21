@@ -54,7 +54,7 @@ Helmholtz(radius::T, inner_radius::T, aperture::T) where {T} = Helmholtz{T,2}(ze
 Helmholtz(origin::NTuple{Dim}, radius::T; inner_radius::T=zero(T), aperture::T=zero(T), orientation::T=zero(T)) where {T,Dim} = Helmholtz{T,Dim}(origin, radius, inner_radius, aperture, orientation)
 
 function IsotropicHelmholtz(Dim::Int, radius::T;
-    origin::T=zeros(T, Dim),
+    origin::AbstractVector{T}=zeros(T, Dim),
     aperture::T=zero(T)) where {T}
 
     return IsotropicHelmholtz{T,Dim}(origin, radius, aperture)
@@ -76,6 +76,7 @@ Sphere(radius::T) where {T} = Sphere{T,3}(zeros(T,3), radius)
 name(shape::Sphere) = "Sphere"
 name(shape::Sphere{T,2}) where T = "Circle"
 name(shape::IsotropicHelmholtz) = "IsotropicHelmholtz"
+name(shape::Helmholtz) = "Helmholtz"
 Symmetry(shape::AbstractSphere{Dim}) where {Dim} = RadialSymmetry{Dim}()
 
 outer_radius(sphere::AbstractSphere) = sphere.radius
@@ -83,7 +84,7 @@ volume(shape::AbstractSphere{3}) = 4//3 * π * shape.radius^3
 volume(shape::AbstractSphere{2}) = π * shape.radius^2
 
 function Shape(sp::Sphere{T,Dim};
-        addtodimensions::T = 0.0,
+        addtodimensions::T = zero(T),
         vector_translation::AbstractVector{T} = zeros(T,Dim)
     ) where {T,Dim}
     Sphere(sp.origin + vector_translation, sp.radius + addtodimensions)
@@ -138,11 +139,11 @@ function isequal(c1::Sphere, c2::Sphere)
 end
 
 function isequal(c1::IsotropicHelmholtz, c2::IsotropicHelmholtz)
-    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius) && isequal(s1.aperture, s2.aperture)
+    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius) && isequal(c1.aperture, c2.aperture)
 end
 
 function isequal(c1::Helmholtz, c2::Helmholtz)
-    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius) && isequal(c1.inner_radius, c2.inner_radius) && isequal(s1.aperture, s2.aperture) && isequal(c1.orientation, c2.orientation)
+    isequal(c1.origin, c2.origin) && isequal(c1.radius, c2.radius) && isequal(c1.inner_radius, c2.inner_radius) && isequal(c1.aperture, c2.aperture) && isequal(c1.orientation, c2.orientation)
 end
 
 function iscongruent(c1::AbstractSphere, c2::AbstractSphere)

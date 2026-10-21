@@ -12,7 +12,9 @@ struct DiscreteImpulse{T<:AbstractFloat}
     in_freq::Vector{Complex{T}}
     function DiscreteImpulse{T}(t_vec::AbstractArray{T}, in_time::AbstractVector{Complex{T}}, ω_vec::AbstractArray{T}, in_freq::AbstractVector{Complex{T}}, do_self_test=true) where {T}
         impulse = new{T}(t_vec,collect(in_time),ω_vec,collect(in_freq))
-        if do_self_test self_test(impulse) end
+        if do_self_test && !self_test(impulse)
+            throw(DimensionMismatch("expected length(t) == length(in_time) and length(ω) == length(in_freq)"))
+        end
         return impulse
     end
 end
@@ -71,7 +73,7 @@ end
 """
     continuous_to_discrete_impulse(impulse::ContinuousImpulse, t_vec, ω_vec = t_to_ω(t_vec); t_shift = 0.0, ω_shift = 0.0) 
 
-Returns a [`DiscreteImpulse`](@ref) by sampling `impulse`. The signal can be shifted in time and frequency by choosing `t_shit` and `ω_shift`.
+Returns a [`DiscreteImpulse`](@ref) by sampling `impulse`. The signal can be shifted in time and frequency by choosing `t_shift` and `ω_shift`.
 """
 function continuous_to_discrete_impulse(impulse::ContinuousImpulse{T}, t_vec::AbstractArray{T}, ω_vec::AbstractArray{T} = t_to_ω(t_vec); t_shift::T = zero(T), ω_shift::T = zero(T)) where {T}
 

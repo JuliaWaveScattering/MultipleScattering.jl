@@ -1,8 +1,7 @@
 """
-    Polygon(origin::SVector{Dim,T}, radius::T) where {T, Dim}
+    Polygon(boundary_points::Vector; interior_points = [mean(boundary_points)])
 
-A [`Shape`](@ref) defined by a set of points on the boundary `boundary_points`. The `boundary_points` should be ordered such that consecutive points are connected by edges of the polygon. The `interior_points` are a set of points that lie within the polygon and can be used to quickly determine what is inside or not. See
-@doc in(x::AbstractVector, poly::Polygon).
+A [`Shape`](@ref) defined by a set of points on the boundary `boundary_points`. The `boundary_points` should be ordered such that consecutive points are connected by edges of the polygon. The `interior_points` are a set of points that lie within the polygon. To determine whether a point is inside the polygon, see `in(x::AbstractVector, poly::Polygon)`.
 """
 struct Polygon{T,Dim} <: Shape{Dim}
     boundary_points::Vector{SVector{Dim,T}}

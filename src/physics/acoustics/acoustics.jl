@@ -12,8 +12,11 @@ struct Acoustic{T,Dim} <: PhysicalMedium{Dim,1}
 end
 
 # Constructor which supplies the dimension without explicitly mentioning type
-Acoustic(ρ::T,c::Union{T,Complex{T}},Dim::Integer) where {T<:Number} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
-Acoustic(Dim::Integer; ρ::T = 0.0, c::Union{T,Complex{T}} = 0.0) where {T<:Number} =  Acoustic{T,Dim}(ρ,Complex{T}(c))
+function Acoustic(ρ::Number, c::Number, Dim::Integer)
+    T = float(promote_type(typeof(ρ), real(typeof(c))))
+    return Acoustic{T,Dim}(ρ, c)
+end
+Acoustic(Dim::Integer; ρ::Number = 0.0, c::Number = 0.0) = Acoustic(ρ, c, Dim)
 
 import Base.show
 function show(io::IO, p::Acoustic)
@@ -43,20 +46,19 @@ Checks if wave scattering from the particle `p` is physically viable given the m
 """
 function check_material(p::Particle, outer_medium::Acoustic)
 
-if isnan(abs(p.medium.c)*p.medium.ρ)
-    throw(DomainError("Particle's phase speed times density is not a number!"))
-elseif isnan(abs(outer_medium.c)*outer_medium.ρ)
-    throw(DomainError("The medium's phase speed times density is not a number!"))
-elseif iszero(outer_medium.c)
-    throw(DomainError("Wave propagation in a medium with zero phase speed is not defined"))
-elseif iszero(outer_medium.ρ) && iszero(p.medium.c*p.medium.ρ)
-    throw(DomainError("Scattering in a medium with zero density from a particle with zero density or zero phase speed is not defined"))
-elseif iszero(outer_radius(p))
-    throw(DomainError("Scattering from a circle of zero radius is not implemented yet"))
-end
+    if isnan(abs(p.medium.c)*p.medium.ρ)
+        throw(DomainError("Particle's phase speed times density is not a number!"))
+    elseif isnan(abs(outer_medium.c)*outer_medium.ρ)
+        throw(DomainError("The medium's phase speed times density is not a number!"))
+    elseif iszero(outer_medium.c)
+        throw(DomainError("Wave propagation in a medium with zero phase speed is not defined"))
+    elseif iszero(outer_medium.ρ) && iszero(p.medium.c*p.medium.ρ)
+        throw(DomainError("Scattering in a medium with zero density from a particle with zero density or zero phase speed is not defined"))
+    elseif iszero(outer_radius(p))
+        throw(DomainError("Scattering from a particle of zero radius is not implemented yet"))
+    end
 
-return true
-
+    return true
 end
 
 """
@@ -95,7 +97,7 @@ zero_neumann(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_hard(T, Dim)
 """
     sound_soft([T::Type = Float64,] Dim::Integer)
 
-Construct physical properties of a sound hard acoustic object with type T and dimension Dim.
+Construct physical properties of a sound soft acoustic object with type T and dimension Dim.
 Equivalent to a [`zero_dirichlet`](@ref) pressure boundary condition.
 
 """
@@ -126,11 +128,11 @@ See [`sound_soft`](@ref).
 zero_dirichlet(host_medium::Acoustic{T,Dim}) where {Dim,T} = sound_soft(T, Dim)
 
 """
-    internal_field(x::AbstractVector, p::Particle{Dim,Acoustic{T,Dim}},  source::RegularSource, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
+    internal_field(x::AbstractVector, p::Particle{Dim,Acoustic{T,Dim}},  source::AbstractSource, ω::T, scattering_coefficients::AbstractVector{Complex{T}})
 
 The internal field for an acoustic particle in an acoustic medium. For a sphere and circular cylinder the result is exact, for everything else it is an approximation which assumes smooth fields.
 """
-function internal_field(x::AbstractVector{T}, p::Particle{Dim,Acoustic{T,Dim}}, source::RegularSource{Acoustic{T,Dim}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where {Dim,T}
+function internal_field(x::AbstractVector{T}, p::Particle{Dim,Acoustic{T,Dim}}, source::AbstractSource{Acoustic{T,Dim}}, ω::T, scattering_coefficients::AbstractVector{Complex{T}}) where {Dim,T}
     if !(x ∈ p)
         @error "Point $x is not inside the particle with shape $(p.shape)"
     end

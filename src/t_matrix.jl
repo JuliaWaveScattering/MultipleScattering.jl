@@ -3,9 +3,9 @@
 
 Returns a finite T-matrix, with size depending on `order`, for a specific `particle` within a `medium` with specific physical properties.
 """
-function t_matrix(p::AbstractParticle{Dim}, medium::PhysicalMedium{Dim}, ω::T, order::Integer)::AbstractMatrix{T} where {T<:AbstractFloat,Dim}
-
-    error("T-matrix function is not yet written for $(name(p.medium)) $(name(p.shape)) in a $(name(medium)) medium")
+function t_matrix(p::AbstractParticle{Dim}, medium::PhysicalMedium{Dim}, ω, order::Integer) where {Dim}
+    # ω is not typed so that any new method of t_matrix is more specific than this one
+    error("T-matrix function is not yet written for a particle of type $(typeof(p)) in a medium of type $(typeof(medium)) with ω of type $(typeof(ω))")
 end
 
 """
@@ -23,27 +23,19 @@ function get_t_matrices(medium::PhysicalMedium, particles::AbstractParticles, ω
     unique_particles = Vector{AbstractParticle}(undef, 0)
     unique_t_matrices = Vector{AbstractMatrix}(undef, 0)
 
-    for p_i in eachindex(particles)
-        p = particles[p_i]
+    for (i, p) in enumerate(particles)
 
         # If we have calculated this T-matrix before, just point to that one
-        found = false
-        for cp_i in eachindex(unique_particles)
-            cp = unique_particles[cp_i]
-            if iscongruent(p, cp)
-                t_matrices[p_i] = unique_t_matrices[cp_i]
-                found = true
-                break
-            end
-        end
+        j = findfirst(cp -> iscongruent(p, cp), unique_particles)
 
-        # Congruent particle was not found, we must calculate this t-matrix
-        if !found
-            t_matrices[p_i] = t_matrix(p, medium, ω, basis_order)
-            push!(unique_particles, particles[p_i])
-            push!(unique_t_matrices, t_matrices[p_i])
+        if isnothing(j)
+            # Congruent particle was not found, we must calculate this t-matrix
+            t_matrices[i] = t_matrix(p, medium, ω, basis_order)
+            push!(unique_particles, p)
+            push!(unique_t_matrices, t_matrices[i])
+        else
+            t_matrices[i] = unique_t_matrices[j]
         end
-
     end
 
     return t_matrices

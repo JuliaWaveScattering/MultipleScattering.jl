@@ -32,8 +32,9 @@ struct CapsuleParticle{Dim,P<:PhysicalMedium,S<:Shape} <: AbstractParticle{Dim}
     outer::Particle{Dim,P,S}
     inner::Particle{Dim,P,S}
     # Enforce that particles are concentric
-    function CapsuleParticle{Dim,P,S}(p2::Particle{Dim,P,S},p1::Particle{Dim,P,S}) where {Dim,P<:PhysicalMedium{Dim},S<:Shape}
+    function CapsuleParticle{Dim,P,S}(p1::Particle{Dim,P,S},p2::Particle{Dim,P,S}) where {Dim,P<:PhysicalMedium{Dim},S<:Shape}
         if origin(p1) != origin(p2) error("outer and inner particles should share the same origin") end
+        # the outer particle is the larger one
         if outer_radius(p1) >= outer_radius(p2)
             new{Dim,P,S}(p1,p2)
         else
@@ -55,8 +56,8 @@ end
 
 Returns a particle shaped like a sphere or circle, when the particle shape is not given and with the specified `radius`.
 """
-function Particle(medium::P, radius) where {Dim, P <: PhysicalMedium{Dim}}
-    Particle{Dim,P,Sphere{typeof(radius),Dim}}(medium,Sphere(Dim,radius))
+function Particle(medium::PhysicalMedium{Dim}, radius) where {Dim}
+    Particle(medium, Sphere(Dim,radius))
 end
 
 function CapsuleParticle(p1::Particle{Dim,P,S},p2::Particle{Dim,P,S}) where {Dim,S<:Shape,P<:PhysicalMedium}
@@ -139,14 +140,16 @@ issubset(particle1::AbstractParticle, particle2::AbstractParticle) = issubset(sh
 regular_basis_function(p::Particle{Dim,P}, ω::T) where {Dim,T, P<:PhysicalMedium{Dim}} = regular_basis_function(p.medium, ω)
 
 """
-    estimate_regular_basis_order(medium::P, ω::Number, radius::Number; tol = 1e-6)
+    estimate_outgoing_basisorder(medium::PhysicalMedium, p::Particle, ω::Number; tol = 1e-6)
+
+Estimate the basis order needed to represent the field scattered by the particle `p`. This is the smallest basis order such that increasing it changes the (normalised) diagonal of the T-matrix by less than `tol`.
 """
 function estimate_outgoing_basisorder(medium::PhysicalMedium, p::Particle, ω::Number; tol = 1e-6)
 
     k = ω / real(medium.c)
 
-    # A large initial guess
-    L = Int(round(4 * abs(k*outer_radius(p)))) + 1
+    # A large initial guess, with at least two orders so that diff(ts) is not empty
+    L = Int(round(4 * abs(k*outer_radius(p)))) + 2
 
     ts = [
         norm(diag(t_matrix(p, medium, ω, l)))
@@ -155,7 +158,7 @@ function estimate_outgoing_basisorder(medium::PhysicalMedium, p::Particle, ω::N
 
     l = findfirst(diff(ts) .< tol)
 
-    return l
+    return isnothing(l) ? L : l
 end
 
 # Add generic documentation from shape

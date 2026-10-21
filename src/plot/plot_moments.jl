@@ -24,7 +24,7 @@
 
     # must include mean
     use_moments = sort(union([1; use_moments]))
-    if labs == [] labs = repeat([""], inner = length(y)) end
+    if labs == [] labs = repeat([""], inner = length(Y)) end
     colors =[:black, :green, :orange, :red]
 
     m = Y[1]

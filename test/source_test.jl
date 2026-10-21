@@ -98,4 +98,18 @@
 
     @test norm(field(source,x,ω) - s_expand(x,ω)) < 1e-10 * abs(field(source,x,ω))
 
+    # check the expansion of a 3D point source which is not at the origin
+    pointsource = point_source(a3_host, [0.3,-0.2,0.5])
+    centre = [2.0,1.0,-1.0]
+    x = centre + [0.1,0.05,-0.08]
+    s_expand = source_expand(pointsource, centre; basis_order = 8)
+
+    @test abs(field(pointsource,x,ω) - s_expand(x,ω)) < 1e-10 * abs(field(pointsource,x,ω))
+
+    # the amplitude can be a function of frequency
+    source = plane_source(a2_host; direction = [1.0,0.0], amplitude = ω -> 2ω)
+    @test field(source, [0.0,0.0], 0.5) ≈ 1.0
+
+    @test_throws DomainError plane_source(a2_host; direction = [0.0,0.0])
+
 end

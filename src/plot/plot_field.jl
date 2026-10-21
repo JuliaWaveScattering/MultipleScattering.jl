@@ -13,8 +13,8 @@
     region_shape = (region_shape != :auto) ? region_shape :
         if isempty(sim.particles)
             if bounds == :auto
-                @warn "What region to plot? For example, use keyword bounds = Box([[-1.0,-1.0],[1.0,1.0]])"
-                Box([[-1,-1],[1,1]])
+                @warn "What region to plot? For example, use keyword bounds = Box([[-1.0,-1.0,-1.0],[1.0,1.0,1.0]])"
+                Box([[-1.0,-1.0,-1.0],[1.0,1.0,1.0]])
             else bounds
             end
         else
