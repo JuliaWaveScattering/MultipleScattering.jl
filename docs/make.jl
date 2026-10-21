@@ -1,3 +1,4 @@
+
 using Documenter, MultipleScattering
 
 makedocs(
@@ -7,11 +8,13 @@ makedocs(
     sitename = "MultipleScattering.jl",
     authors = "Artur L. Gower and Jonathan Deakin",
     source = "src",
-    # modules = [MultipleScattering],
+    modules = [MultipleScattering],
+    checkdocs = :exports, # every exported function and type with a docstring should appear in the docs
     pages = [
         "Home" =>"index.md",
         "Manual" => [
             "manual/intro.md",
+            "manual/simulation.md",
             "manual/source.md",
             "manual/shapes.md",
             "manual/particles.md",
@@ -21,6 +24,7 @@ makedocs(
         ],
         "Library" => [
             "library/base.md",
+            "library/shapes.md",
             "library/acoustics.md",
             "library/random.md"
         ],

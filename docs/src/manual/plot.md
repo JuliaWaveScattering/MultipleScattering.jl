@@ -2,7 +2,7 @@
 
 The plotting for this package is supplied by the package [Plots](http://docs.juliaplots.org). The options and keywords used for the package Plots can be used for the plots in this package.
 
-Below are examples of plotting the whole field in frequency (harmonic wave) and time. The examples require the package `Plots` and, mostly, `PyPlot`.
+Below are examples of plotting the whole field in frequency (harmonic wave) and time. The examples require the package `Plots`.
 
 ## Field - Harmonic two gaps
 ```julia

@@ -15,17 +15,7 @@ The types and functions shared between all different types of physical mediums.
 ```@autodocs
 Modules = [MultipleScattering]
 Order   = [:type, :function]
-Pages   = ["src/physics/physical_medium.jl", "src/physics/special_functions.jl"]
-```
-
-## [Shapes and domains](@id base_shapes)
-
-Shapes are used to define the shape of particles, and to define containers (or configurations) where all particles are placed. It is also used in plotting.
-
-```@autodocs
-Modules = [MultipleScattering]
-Order   = [:type, :function]
-Pages   = ["src/shapes/shapes.jl", "src/shapes/sphere.jl", "src/shapes/halfspace.jl", "src/shapes/plate.jl", "src/shapes/box.jl", "src/shapes/empty_shape.jl", "src/shapes/time_of_flight.jl"]
+Pages   = ["src/physics/physical_medium.jl", "src/physics/special_functions.jl", "src/physics/electromagnetism.jl"]
 ```
 
 ## [Particle](@id base_particle)
@@ -34,9 +24,30 @@ Particle types and functions.
 
 ```@docs
 AbstractParticle
-Particle
-CapsuleParticle
-iscongruent(::AbstractParticle,::AbstractParticle)
+```
+
+```@autodocs
+Modules = [MultipleScattering]
+Order   = [:type, :function]
+Pages   = ["src/particle.jl"]
+```
+
+## [Symmetries](@id base_symmetries)
+
+Symmetries shared between the source and the material or particles. These can be used to simplify calculations.
+
+```@docs
+Symmetry
+AbstractSymmetry
+WithoutSymmetry
+AbstractPlanarSymmetry
+PlanarSymmetry
+PlanarAzimuthalSymmetry
+AbstractAzimuthalSymmetry
+AzimuthalSymmetry
+RadialSymmetry
+MultipleScattering.AbstractTranslationSymmetry
+TranslationSymmetry
 ```
 
 ## [RegularSource](@id source_base)
@@ -68,7 +79,10 @@ Simulation types and functions.
 FrequencySimulation
 run(::FrequencySimulation)
 run(::FrequencySimulation, ::Shape, ::AbstractVector)
+overlapping_pairs
+SimulationResult
 FrequencySimulationResult
+TimeSimulationResult
 basis_coefficients
 field
 scattering_matrix

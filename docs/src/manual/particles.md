@@ -10,16 +10,27 @@ end
 A `Particle` have two fields: `medium` and `shape`. The `medium` defines what kind of waves can propagate inside `Particle`, and what type of `RegularSource` can be used to scatter waves from `Particle`. One example `medium` is [Acoustic](@ref). The `shape` completely defines the geometry and position of the particle, see [Shapes](@ref) for details.
 
 For an example we can define a circular particle with acoustics medium:
-```jldoctest intro; output = false, filter = r".*"s
-using MultipleScattering;
+```jldoctest particles
+julia> using MultipleScattering;
 
-mymedium = Acoustic(2; ρ = 10.0, c = 2.0); # 2D acoustics with density ρ = 10.0 and soundspeed c = 2.0
-myshape = Sphere([-2.0, 2.0], 2.0);
-p1 = Particle(mymedium, myshape);
+julia> mymedium = Acoustic(2; ρ = 10.0, c = 2.0); # 2D acoustics with density ρ = 10.0 and soundspeed c = 2.0
 
-# output
-Sphere{Float64, 2}([-2.0, 2.0], 2.0)
+julia> myshape = Sphere([-2.0, 2.0], 2.0);
+
+julia> p1 = Particle(mymedium, myshape)
+Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere{Float64, 2}([-2.0, 2.0], 2.0))
+
+julia> outer_radius(p1), origin(p1)
+(2.0, [-2.0, 2.0])
 ```
+
+If only a radius is given, the particle is a circle (or sphere in 3D) centred at the origin:
+```jldoctest particles
+julia> Particle(mymedium, 0.5)
+Particle(Acoustic(10.0, 2.0 + 0.0im, 2), Sphere{Float64, 2}([0.0, 0.0], 0.5))
+```
+
+The medium of a particle can also describe a boundary condition. For example [`sound_hard`](@ref) (also called [`rigid`](@ref)) and [`sound_soft`](@ref) (also called [`pressure_release`](@ref)) define particles where the normal derivative of the pressure, or the pressure, is zero on the boundary.
 
 ## Placing particles in a region
 
@@ -105,4 +116,10 @@ plot(sim, ω;
 
 ## Particle internals
 
-To define the scattering from a particle we use the T-matrix method. This package only exports T-matrix for circular [`Particle`](@ref)  and circular [`CapsuleParticle`](@ref). To understand how to define new T-matrix read [Notes on the T-matrix](../maths/multiplescattering.pdf) and see the source code of [`t_matrix`](@ref).
+To define the scattering from a particle we use the T-matrix method, see [What `run` calculates](@ref run_maths). This package provides the T-matrix for acoustic particles with the shapes:
+
+- circles and spheres, which are exact and include penetrable, sound-hard, and sound-soft particles;
+- a circle inside another circle, with the same origin, given by a [`CapsuleParticle`](@ref);
+- 2D Helmholtz resonators, [`IsotropicHelmholtz`](@ref) and [`Helmholtz`](@ref), which are sound-hard.
+
+To understand how to define a new T-matrix read [Notes on the T-matrix](../maths/multiplescattering.pdf), see [New particles](@ref), and see the source code of [`t_matrix`](@ref).

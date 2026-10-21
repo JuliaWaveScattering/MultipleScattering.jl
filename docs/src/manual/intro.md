@@ -50,20 +50,20 @@ julia> particles = [p1, p2];
 ```
 See [Shapes](@ref) and [Particles](@ref) for details on different shapes and particles.
 
-If you have the package `Plots` installed you can plot the particles. Note that although they appear hollow, we consider them to filled with the same homogenous material.
+If you have the package `Plots` installed you can plot the particles. Note that although they appear hollow, we consider them to be filled with the same homogeneous material.
 ```julia
 julia> using Plots;
 
 julia> plot(particles)
 ```
 !!! note
-    Most things in this package can be plotted just by typing `plot(thing)`. However you need to have `Plots` installed, and you may need to use the backend `pyplot()`. See [Plotting](@ref) for details on plotting.
+    Most things in this package can be plotted just by typing `plot(thing)`, as long as you have the package `Plots` installed. See [Plotting](@ref) for details on plotting.
 ![Plot of response against wavenumber](../example/intro/two_particles.png)
 
 
-### Simulation and results
+### Running a simulation
 
-Once we know the medium, the particles, and the have these three components, we can build our `FrequencySimulation` object
+Once we have the medium, the particles, and the source, we can build a `FrequencySimulation` object
 ```jldoctest intro; output = false
 julia> simulation = FrequencySimulation(particles, source);
 
@@ -80,6 +80,8 @@ julia> ωs = 0.01:0.01:max_ω;
 julia> result = run(simulation, x, ωs);
 
 ```
+
+The accuracy of the result depends on the keyword `basis_order` of `run`, which has the default `basis_order = 5`. See [Simulations and results](@ref) for what `run` calculates, how to choose `basis_order`, and how to use `result`.
 
 We can plot the time-harmonic response across the frequencies `ωs` wavenumbers and at the location (-10,0) by typing:
 ```julia
@@ -114,7 +116,7 @@ julia> plot(time_result)
 ```
 ![Plot real part of acoustic field](../example/intro/plot_time_result.png)
 
-In the image above the first peak on the left is due to the incident wave (the source), and the second peak is the wave scattered by the`particles`. Note how both peaks are quite jagged. This is due to [Gibb's phenomena](https://en.wikipedia.org/wiki/Gibbs_phenomenon). To resolve this we can use a Gaussian impulse function shown below. See [Time response](@ref) for more details.
+In the image above the first peak on the left is due to the incident wave (the source), and the second peak is the wave scattered by the `particles`. Note how both peaks are quite jagged. This is due to [Gibbs phenomena](https://en.wikipedia.org/wiki/Gibbs_phenomenon). To resolve this we can use a Gaussian impulse function shown below. See [Time response](@ref) for more details.
 ```julia
 julia> t_vec = LinRange(0.,700.,400);
 

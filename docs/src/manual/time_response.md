@@ -181,7 +181,7 @@ $\phi(\mathbf x, t) = \frac{1}{2\pi} \int_{-\infty}^\infty \hat f(\omega) \hat u
 
 where the second identity results from assuming that $\phi(\mathbf x, t)$ is real, with $\mathrm Re$ being the real part. Also note that $\phi(\mathbf x,t) = (f * u)(\mathbf x, t)$, where $*$ is a convolution in time.
 
-To approximate the above integral as finite integral, one option is to assume that $|\hat f(\omega) \hat u(\mathbf x, \omega)| \to 0$ as $|\omega| \to 0$, which would allow us to truncate the integration domain between $\omega \in [-\Omega, \Omega]$. We also need to discretise the integral. Putting both of these together results in
+To approximate the above integral as finite integral, one option is to assume that $|\hat f(\omega) \hat u(\mathbf x, \omega)| \to 0$ as $|\omega| \to \infty$, which would allow us to truncate the integration domain between $\omega \in [-\Omega, \Omega]$. We also need to discretise the integral. Putting both of these together results in
 
 $\phi(\mathbf x, t) \approx \frac{1}{\pi}\mathrm{Re}\, \sum_{m=0}^M \hat f(\omega_m) \hat u(\mathbf x, \omega_m)\mathrm e^{-\mathrm i \omega_m t} \Delta \omega_m,$
 
